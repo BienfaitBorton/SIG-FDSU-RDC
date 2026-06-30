@@ -1,0 +1,11 @@
+fastapi==0.138.2
+uvicorn==0.49.0
+sqlalchemy==2.0.51
+geoalchemy2==0.20.0
+openpyxl==3.1.5
+pandas==3.0.3
+tqdm==4.68.3
+pydantic==2.13.4
+psycopg2-binary==2.9.12
+pytest==8.4.3
+httpx2==0.28.0
