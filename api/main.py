@@ -16,11 +16,16 @@ from api.routes import (
     missions,
     documents,
     photos,
+    imports,
 )
 
 app = FastAPI(
-    title="SIG-FDSU RDC API",
-    description="API FastAPI pour le référentiel administratif et les sites FDSU RDC.",
+    title="SIG-FDSU RDC - API SIG",
+    description=(
+        "API FastAPI de gestion du référentiel administratif et des sites du projet "
+        "FDSU en République démocratique du Congo. Fournit des opérations CRUD "
+        "pour les provinces, territoires, collectivités, groupements, villages, sites, missions, documents et photos."
+    ),
     version="0.1.0",
 )
 
@@ -44,6 +49,7 @@ app.include_router(sites.router, prefix="/sites", tags=["Sites"])
 app.include_router(missions.router, prefix="/missions", tags=["Missions"])
 app.include_router(documents.router, prefix="/documents", tags=["Documents"])
 app.include_router(photos.router, prefix="/photos", tags=["Photos"])
+app.include_router(imports.router, prefix="/imports", tags=["Imports"])
 
 @app.get("/", tags=["Root"])
 def read_root() -> dict[str, str]:

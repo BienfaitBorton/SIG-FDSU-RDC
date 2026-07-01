@@ -30,6 +30,9 @@ ROOT = Path(__file__).resolve().parents[1]
 LOG_DIR = ROOT / "logs"
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
+# Parent lookup cache to optimize repeated lookups when importing large files
+_PARENT_CACHE: dict[tuple[str, str, str], int | None] = {}
+
 DEFAULT_ENTITY_ORDER = ["provinces", "territoires", "collectivites", "groupements", "villages"]
 
 DEFAULT_FIELD_ALIASES = {
@@ -432,8 +435,14 @@ def _build_log_path(filename: str, entity: str) -> Path:
 
 
 def _find_parent_id(session: Session, parent_model: Any, parent_code: str, parent_field_name: str) -> int | None:
+    # simple in-memory cache to avoid repeated DB lookups for the same parent code
+    key = (parent_model.__tablename__, parent_field_name, parent_code)
+    if key in _PARENT_CACHE:
+        return _PARENT_CACHE[key]
     parent = session.scalar(select(parent_model).where(getattr(parent_model, parent_field_name) == parent_code))
-    return parent.id if parent is not None else None
+    parent_id = parent.id if parent is not None else None
+    _PARENT_CACHE[key] = parent_id
+    return parent_id
 
 
 def _process_province_row(row: dict[str, Any], mapping: dict[str, str], result: EntityResult, session: Session) -> None:
@@ -697,6 +706,8 @@ def _import_entity(
             f"Colonnes requises manquantes pour {config['display_name']} : {', '.join(missing)}"
         )
     processor = _PROCESSORS[entity]
+    # clear parent cache for this entity import to avoid stale values between entities
+    _PARENT_CACHE.clear()
     for raw in df.to_dict(orient="records"):
         try:
             processor(raw, mapping, result, session)

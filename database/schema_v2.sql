@@ -4,7 +4,10 @@
 CREATE EXTENSION IF NOT EXISTS postgis;
 
 CREATE TYPE collectivite_type AS ENUM ('Secteur', 'Chefferie', 'Cité');
-CREATE TYPE site_status AS ENUM ('Projet', 'Survey', 'Installation', 'Actif', 'Maintenance', 'Hors service');
+CREATE TYPE site_lifecycle AS ENUM ('Prévu', 'Planifié', 'En construction', 'Actif', 'Hors service');
+CREATE TYPE site_type AS ENUM ('Backbone', 'BTS', 'CCN', 'Gateway', 'Relais', 'POP', 'Autre');
+CREATE TYPE site_technologie AS ENUM ('2G', '3G', '4G', '5G', 'VSAT', 'Fibre', 'Starlink');
+CREATE TYPE site_alimentation AS ENUM ('Solaire', 'Groupe', 'SNEL', 'Mixte');
 
 CREATE TABLE provinces (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -24,6 +27,7 @@ CREATE TABLE territoires (
     nom VARCHAR(200) NOT NULL,
     code VARCHAR(5) NOT NULL,
     chef_lieu VARCHAR(200),
+    nb_sites_reference INTEGER DEFAULT 0,
     province_id BIGINT NOT NULL REFERENCES provinces(id) ON DELETE CASCADE,
     geom geometry(MULTIPOLYGON, 4326)
 );
@@ -65,24 +69,37 @@ CREATE TABLE sites (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nom VARCHAR(200) NOT NULL,
     code_site VARCHAR(30) NOT NULL UNIQUE,
+    code_fdsu VARCHAR(50) NOT NULL UNIQUE,
+    statut site_lifecycle NOT NULL,
+    programme VARCHAR(200),
+    annee_planification INTEGER,
+    phase VARCHAR(100),
+    priorite INTEGER DEFAULT 0,
+    type_site site_type NOT NULL,
     zone_fdsu VARCHAR(50),
     operateur VARCHAR(100),
-    technologie VARCHAR(100),
-    energie VARCHAR(100),
-    statut site_status,
+    technologie site_technologie,
+    alimentation site_alimentation,
+    adresse VARCHAR(500),
     date_creation DATE,
     date_installation DATE,
     date_mise_service DATE,
+    hauteur_pylone DOUBLE PRECISION,
+    capacite BIGINT,
     altitude DOUBLE PRECISION,
     precision_gps DOUBLE PRECISION,
     observations TEXT,
     latitude DOUBLE PRECISION,
     longitude DOUBLE PRECISION,
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
     village_id BIGINT NOT NULL REFERENCES villages(id) ON DELETE CASCADE,
     geom geometry(POINT, 4326)
 );
 
+CREATE INDEX sites_code_fdsu_idx ON sites (code_fdsu);
 CREATE INDEX sites_statut_idx ON sites (statut);
+CREATE INDEX sites_type_idx ON sites (type_site);
 CREATE INDEX sites_geom_gix ON sites USING GIST (geom);
 
 CREATE TABLE missions (

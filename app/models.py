@@ -4,7 +4,8 @@ from datetime import date, datetime
 from enum import Enum
 
 from geoalchemy2 import Geometry
-from sqlalchemy import BigInteger, Date, DateTime, Enum as SQLEnum, ForeignKey, Index, Numeric, String, Text, event, func, select
+from sqlalchemy import BigInteger, Date, DateTime, Enum as SQLEnum, ForeignKey, Index, Numeric, String, Text, event, func, select, Integer
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 from app.code_generator import generate_fdsu_code
@@ -21,13 +22,39 @@ class CollectiviteType(str, Enum):
     Cite = "Cité"
 
 
-class SiteStatus(str, Enum):
-    Projet = "Projet"
-    Survey = "Survey"
-    Installation = "Installation"
+class SiteLifecycle(str, Enum):
+    Prevu = "Prévu"
+    Planifie = "Planifié"
+    En_construction = "En construction"
     Actif = "Actif"
-    Maintenance = "Maintenance"
     Hors_service = "Hors service"
+
+
+class SiteType(str, Enum):
+    Backbone = "Backbone"
+    BTS = "BTS"
+    CCN = "CCN"
+    Gateway = "Gateway"
+    Relais = "Relais"
+    POP = "POP"
+    Autre = "Autre"
+
+
+class SiteTechnology(str, Enum):
+    G2 = "2G"
+    G3 = "3G"
+    G4 = "4G"
+    G5 = "5G"
+    VSAT = "VSAT"
+    Fibre = "Fibre"
+    Starlink = "Starlink"
+
+
+class SiteAlimentation(str, Enum):
+    Solaire = "Solaire"
+    Groupe = "Groupe"
+    SNEL = "SNEL"
+    Mixte = "Mixte"
 
 
 class Province(Base):
@@ -67,6 +94,7 @@ class Territoire(Base):
     nom: Mapped[str] = mapped_column(String(200), nullable=False)
     code: Mapped[str] = mapped_column(String(5), nullable=False)
     chef_lieu: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    nb_sites_reference: Mapped[int] = mapped_column(BigInteger, nullable=False, server_default="0")
     province_id: Mapped[int] = mapped_column(
         BigInteger,
         ForeignKey("provinces.id", ondelete="CASCADE"),
@@ -196,21 +224,42 @@ class Site(Base):
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     nom: Mapped[str] = mapped_column(String(200), nullable=False)
     code_site: Mapped[str] = mapped_column(String(30), nullable=False, unique=True)
+    code_fdsu: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     zone_fdsu: Mapped[str | None] = mapped_column(String(50), nullable=True)
-    operateur: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    technologie: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    energie: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    statut: Mapped[SiteStatus | None] = mapped_column(
-        SQLEnum(SiteStatus, name="site_status"), nullable=True
+    statut: Mapped[SiteLifecycle] = mapped_column(
+        SQLEnum(SiteLifecycle, name="site_lifecycle"), nullable=False
     )
+    programme: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    annee_planification: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    phase: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    priorite: Mapped[int | None] = mapped_column(Integer, nullable=True, server_default="0")
+    type_site: Mapped[SiteType] = mapped_column(
+        SQLEnum(SiteType, name="site_type"), nullable=False
+    )
+    operateur: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    technologie: Mapped[SiteTechnology | None] = mapped_column(
+        SQLEnum(SiteTechnology, name="site_technologie"), nullable=True
+    )
+    alimentation: Mapped[SiteAlimentation | None] = mapped_column(
+        SQLEnum(SiteAlimentation, name="site_alimentation"), nullable=True
+    )
+    adresse: Mapped[str | None] = mapped_column(String(500), nullable=True)
     date_creation: Mapped[date | None] = mapped_column(Date, nullable=True)
     date_installation: Mapped[date | None] = mapped_column(Date, nullable=True)
     date_mise_service: Mapped[date | None] = mapped_column(Date, nullable=True)
+    hauteur_pylone: Mapped[float | None] = mapped_column(nullable=True)
+    capacite: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
     altitude: Mapped[float | None] = mapped_column(nullable=True)
     precision_gps: Mapped[float | None] = mapped_column(nullable=True)
     observations: Mapped[str | None] = mapped_column(Text, nullable=True)
     latitude: Mapped[float | None] = mapped_column(nullable=True)
     longitude: Mapped[float | None] = mapped_column(nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=False), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=False), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
     village_id: Mapped[int] = mapped_column(
         BigInteger,
         ForeignKey("villages.id", ondelete="CASCADE"),
@@ -227,7 +276,9 @@ class Site(Base):
 
     __table_args__ = (
         Index("ix_sites_code_site", "code_site"),
+        Index("ix_sites_code_fdsu", "code_fdsu"),
         Index("ix_sites_statut", "statut"),
+        Index("ix_sites_type_site", "type_site"),
         Index("ix_sites_village_id", "village_id"),
         Index("ix_sites_geom", "geom", postgresql_using="gist"),
     )
@@ -250,9 +301,9 @@ class Site(Base):
 
     @property
     def fdsu_code(self) -> str:
-        if not self.code_site:
-            raise ValueError("Le code_site n'est pas généré")
-        return self.code_site
+        if not self.code_fdsu:
+            raise ValueError("Le code_fdsu n'est pas généré")
+        return self.code_fdsu
 
     def __repr__(self) -> str:
         return (
@@ -266,7 +317,7 @@ def auto_generate_code_site(mapper, connection, target: Site) -> None:
     if target.date_creation is None:
         target.date_creation = date.today()
 
-    if target.code_site:
+    if target.code_site and target.code_fdsu:
         return
 
     if target.village_id is None:
@@ -309,13 +360,17 @@ def auto_generate_code_site(mapper, connection, target: Site) -> None:
         except (ValueError, AttributeError):
             continue
 
-    target.code_site = generate_fdsu_code(
+    generated_code = generate_fdsu_code(
         zone=zone,
         province_code=province_code,
         territoire_code=territoire_code,
         collectivite_code=collectivite_code,
         numero=str(max_suffix + 1).zfill(3),
     )
+    if not target.code_site:
+        target.code_site = generated_code
+    if not target.code_fdsu:
+        target.code_fdsu = generated_code
 
 
 class Mission(Base):
@@ -403,3 +458,17 @@ class ImportHistory(Base):
             f"<ImportHistory(id={self.id}, filename={self.filename}, "
             f"status={self.status}, rows_total={self.rows_total})>"
         )
+
+
+class SiteHistory(Base):
+    __tablename__ = "site_history"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    site_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("sites.id", ondelete="CASCADE"), nullable=False)
+    changed_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
+    changed_by: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    action: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    data: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+
+    def __repr__(self) -> str:
+        return f"<SiteHistory(id={self.id}, site_id={self.site_id}, changed_at={self.changed_at})>"

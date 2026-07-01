@@ -24,7 +24,7 @@ def update_site(session: Session, site_id: int, payload: SiteCreate) -> Site | N
     site = session.get(Site, site_id)
     if site is None:
         return None
-    for key, value in payload.model_dump().items():
+    for key, value in payload.model_dump(exclude_unset=True).items():
         setattr(site, key, value)
     session.commit()
     session.refresh(site)

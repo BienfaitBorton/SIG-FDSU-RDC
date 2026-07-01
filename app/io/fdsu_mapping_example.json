@@ -1,0 +1,25 @@
+{
+  "province_code": "Code Province",
+  "province_name": "Nom Province",
+  "province_zone": "Zone",
+
+  "territoire_code": "Code Territoire",
+  "territoire_name": "Nom Territoire",
+
+  "collectivite_code": "Code Collectivite",
+  "collectivite_name": "Nom Collectivite",
+  "collectivite_type": "Type Collectivite",
+
+  "groupement_code": "Code Groupement",
+  "groupement_name": "Nom Groupement",
+
+  "village_code": "Code Village",
+  "village_name": "Nom Village",
+
+  "site_name": "Nom Site",
+  "site_code": "Code Site",
+  "latitude": "Latitude",
+  "longitude": "Longitude",
+  "statut": "Statut",
+  "type_site": "Type"
+}

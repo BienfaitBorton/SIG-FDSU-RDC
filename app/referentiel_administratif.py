@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+import hashlib
+import re
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.database import engine
@@ -14,6 +16,7 @@ from app.models import (
     Collectivite,
     CollectiviteType,
     Groupement,
+    ImportHistory,
     Province,
     Territoire,
     Village,
@@ -73,6 +76,50 @@ def _normalize(value: Any) -> str:
     if value is None or (isinstance(value, float) and pd.isna(value)):
         return ""
     return str(value).strip()
+
+
+_CODE_PATTERN = re.compile(r"^[A-Za-z0-9_-]{1,20}$")
+
+
+def _normalize_code(value: Any, entity: str) -> str:
+    normalized = _normalize(value)
+    if not normalized:
+        raise ImportProcessError(f"Code manquant pour {entity}.")
+    if not _CODE_PATTERN.match(normalized):
+        raise ImportProcessError(
+            f"Code invalide pour {entity} : '{value}'. Utiliser uniquement lettres, chiffres, tirets ou underscores."
+        )
+    return normalized.upper()
+
+
+def _hash_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+
+def _save_import_history(report: ImportReport, file_path: Path, username: str) -> None:
+    try:
+        with Session(engine) as history_session:
+            history_session.add(
+                ImportHistory(
+                    filename=file_path.name,
+                    username=username,
+                    imported_at=report.started_at,
+                    entity=report.entity,
+                    rows_total=report.rows_processed,
+                    rows_inserted=report.inserted,
+                    rows_updated=report.updated,
+                    rows_rejected=report.skipped + len(report.errors),
+                    duration_seconds=(datetime.now() - report.started_at).total_seconds(),
+                    status="failed" if report.errors else "success",
+                    summary="\n".join(report.format_lines()),
+                    file_hash=_hash_file(file_path),
+                )
+            )
+            history_session.commit()
+    except Exception:
+        pass
 
 
 def _parse_int(value: Any, field_name: str) -> int | None:
@@ -139,7 +186,11 @@ def import_provinces(file_path: str) -> ImportReport:
     with Session(engine) as session:
         with session.begin():
             for raw in df.to_dict(orient="records"):
-                code = _normalize(raw.get("code"))
+                try:
+                    code = _normalize_code(raw.get("code"), "province")
+                except ImportProcessError as exc:
+                    report.add_error(str(exc))
+                    continue
                 nom = _normalize(raw.get("nom"))
                 zone = _normalize(raw.get("zone"))
                 chef_lieu = _normalize(raw.get("chef_lieu"))
@@ -182,6 +233,7 @@ def import_provinces(file_path: str) -> ImportReport:
                     report.inserted += 1
 
     report.write_log(_build_log_path("provinces"))
+    _save_import_history(report, file_path, username="system")
     return report
 
 
@@ -196,7 +248,11 @@ def import_territoires(file_path: str) -> ImportReport:
     with Session(engine) as session:
         with session.begin():
             for raw in df.to_dict(orient="records"):
-                code = _normalize(raw.get("code"))
+                try:
+                    code = _normalize_code(raw.get("code"), "territoire")
+                except ImportProcessError as exc:
+                    report.add_error(str(exc))
+                    continue
                 nom = _normalize(raw.get("nom"))
                 chef_lieu = _normalize(raw.get("chef_lieu"))
                 province_code = _normalize(raw.get("province_code"))
@@ -242,6 +298,7 @@ def import_territoires(file_path: str) -> ImportReport:
                     report.inserted += 1
 
     report.write_log(_build_log_path("territoires"))
+    _save_import_history(report, file_path, username="system")
     return report
 
 
@@ -256,7 +313,11 @@ def import_collectivites(file_path: str) -> ImportReport:
     with Session(engine) as session:
         with session.begin():
             for raw in df.to_dict(orient="records"):
-                code = _normalize(raw.get("code"))
+                try:
+                    code = _normalize_code(raw.get("code"), "collectivite")
+                except ImportProcessError as exc:
+                    report.add_error(str(exc))
+                    continue
                 nom = _normalize(raw.get("nom"))
                 type_value = _normalize(raw.get("type_collectivite"))
                 territoire_code = _normalize(raw.get("territoire_code"))
@@ -303,6 +364,7 @@ def import_collectivites(file_path: str) -> ImportReport:
                     report.inserted += 1
 
     report.write_log(_build_log_path("collectivites"))
+    _save_import_history(report, file_path, username="system")
     return report
 
 
@@ -317,7 +379,11 @@ def import_groupements(file_path: str) -> ImportReport:
     with Session(engine) as session:
         with session.begin():
             for raw in df.to_dict(orient="records"):
-                code = _normalize(raw.get("code"))
+                try:
+                    code = _normalize_code(raw.get("code"), "groupement")
+                except ImportProcessError as exc:
+                    report.add_error(str(exc))
+                    continue
                 nom = _normalize(raw.get("nom"))
                 collectivite_code = _normalize(raw.get("collectivite_code"))
                 chef_lieu = _normalize(raw.get("chef_lieu"))
@@ -354,6 +420,7 @@ def import_groupements(file_path: str) -> ImportReport:
                     report.inserted += 1
 
     report.write_log(_build_log_path("groupements"))
+    _save_import_history(report, file_path, username="system")
     return report
 
 
@@ -368,7 +435,11 @@ def import_villages(file_path: str) -> ImportReport:
     with Session(engine) as session:
         with session.begin():
             for raw in df.to_dict(orient="records"):
-                code = _normalize(raw.get("code"))
+                try:
+                    code = _normalize_code(raw.get("code"), "village")
+                except ImportProcessError as exc:
+                    report.add_error(str(exc))
+                    continue
                 nom = _normalize(raw.get("nom"))
                 groupement_code = _normalize(raw.get("groupement_code"))
                 chef_lieu = _normalize(raw.get("chef_lieu"))
@@ -405,4 +476,5 @@ def import_villages(file_path: str) -> ImportReport:
                     report.inserted += 1
 
     report.write_log(_build_log_path("villages"))
+    _save_import_history(report, file_path, username="system")
     return report

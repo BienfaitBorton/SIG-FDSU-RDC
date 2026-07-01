@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.python-version
+.pytest_cache/
+.coverage
+htmlcov/
+venv/
+.venv/
+ENV/
+env/
+build/
+dist/
+downloads/
+.eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+
+# FastAPI / Uvicorn
+*.log
+*.pid
+*.sock
+
+# PostgreSQL
+*.sql
+*.dump
+pgdata/
+.postgresql_history
+
+# VS Code
+.vscode/
+.vscode/settings.json
+.history/
+
+# macOS
+.DS_Store
+
+# IDEs
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS generated
+Thumbs.db
