@@ -1,0 +1,14 @@
+{
+  "source": "collectivites.kmz",
+  "created_files": [
+    "data\\reports\\collectivity_official\\collectivity_referential_official.json",
+    "data\\reports\\collectivity_official\\collectivity_fact_sheets.json",
+    "data\\reports\\collectivity_official\\collectivity_quality_report.json",
+    "data\\reports\\collectivity_official\\collectivity_referential_report.md",
+    "data\\reports\\collectivity_official\\collectivity_files_report.json",
+    "data\\reports\\collectivity_official\\territory_collectivity_index.json",
+    "data\\reports\\collectivity_official\\province_collectivity_index.json",
+    "data\\reports\\national_counter_registry.json"
+  ],
+  "generated_at": "2026-07-03T13:41:47+00:00"
+}

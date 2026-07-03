@@ -1,0 +1,15 @@
+{
+  "source": "Groupements.kmz",
+  "created_files": [
+    "data\\reports\\groupement_official\\groupement_referential_official.json",
+    "data\\reports\\groupement_official\\groupement_fact_sheets.json",
+    "data\\reports\\groupement_official\\groupement_quality_report.json",
+    "data\\reports\\groupement_official\\groupement_referential_report.md",
+    "data\\reports\\groupement_official\\groupement_files_report.json",
+    "data\\reports\\groupement_official\\collectivity_groupement_index.json",
+    "data\\reports\\groupement_official\\territory_groupement_index.json",
+    "data\\reports\\groupement_official\\province_groupement_index.json",
+    "data\\reports\\national_counter_registry.json"
+  ],
+  "generated_at": "2026-07-03T14:58:43+00:00"
+}

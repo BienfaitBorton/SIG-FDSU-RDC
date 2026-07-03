@@ -1,0 +1,225 @@
+{
+  "city_fact_sheets": [
+    {
+      "canonical_id": "RDC-CE-VILLE-KANANGA",
+      "nom": "Kananga",
+      "province": "Kasai Central",
+      "zone_fdsu": "CE",
+      "geometry_type": "Polygon",
+      "source": "zones_fdsu.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Ville",
+        "statut": "official_candidate",
+        "qualite": 100.0,
+        "hierarchy_path": [
+          "RDC",
+          "Zone Centre",
+          "Kasai Central",
+          "Kananga"
+        ]
+      }
+    },
+    {
+      "canonical_id": "RDC-CE-VILLE-MBUJI_MAYI",
+      "nom": "Mbuji-Mayi",
+      "province": "Kasai Oriental",
+      "zone_fdsu": "CE",
+      "geometry_type": "Polygon",
+      "source": "zones_fdsu.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Ville",
+        "statut": "official_candidate",
+        "qualite": 100.0,
+        "hierarchy_path": [
+          "RDC",
+          "Zone Centre",
+          "Kasai Oriental",
+          "Mbuji-Mayi"
+        ]
+      }
+    },
+    {
+      "canonical_id": "RDC-CE-VILLE-MWENE_DITU",
+      "nom": "Mwene Ditu",
+      "province": "Lomami",
+      "zone_fdsu": "CE",
+      "geometry_type": "Polygon",
+      "source": "zones_fdsu.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Ville",
+        "statut": "official_candidate",
+        "qualite": 100.0,
+        "hierarchy_path": [
+          "RDC",
+          "Zone Centre",
+          "Lomami",
+          "Mwene Ditu"
+        ]
+      }
+    },
+    {
+      "canonical_id": "RDC-ET-VILLE-KINDU",
+      "nom": "Kindu",
+      "province": "Maniema",
+      "zone_fdsu": "ET",
+      "geometry_type": "Polygon",
+      "source": "zones_fdsu.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Ville",
+        "statut": "official_candidate",
+        "qualite": 100.0,
+        "hierarchy_path": [
+          "RDC",
+          "Zone Est",
+          "Maniema",
+          "Kindu"
+        ]
+      }
+    },
+    {
+      "canonical_id": "RDC-ET-VILLE-BENI",
+      "nom": "Beni",
+      "province": "Nord-Kivu",
+      "zone_fdsu": "ET",
+      "geometry_type": "Polygon",
+      "source": "zones_fdsu.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Ville",
+        "statut": "official_candidate",
+        "qualite": 100.0,
+        "hierarchy_path": [
+          "RDC",
+          "Zone Est",
+          "Nord-Kivu",
+          "Beni"
+        ]
+      }
+    },
+    {
+      "canonical_id": "RDC-ET-VILLE-BUTEMBO",
+      "nom": "Butembo",
+      "province": "Nord-Kivu",
+      "zone_fdsu": "ET",
+      "geometry_type": "Polygon",
+      "source": "zones_fdsu.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Ville",
+        "statut": "official_candidate",
+        "qualite": 100.0,
+        "hierarchy_path": [
+          "RDC",
+          "Zone Est",
+          "Nord-Kivu",
+          "Butembo"
+        ]
+      }
+    },
+    {
+      "canonical_id": "RDC-ET-VILLE-GOMA",
+      "nom": "Goma",
+      "province": "Nord-Kivu",
+      "zone_fdsu": "ET",
+      "geometry_type": "Polygon",
+      "source": "zones_fdsu.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Ville",
+        "statut": "official_candidate",
+        "qualite": 100.0,
+        "hierarchy_path": [
+          "RDC",
+          "Zone Est",
+          "Nord-Kivu",
+          "Goma"
+        ]
+      }
+    },
+    {
+      "canonical_id": "RDC-ET-VILLE-BUKAVU",
+      "nom": "Bukavu",
+      "province": "Sud-Kivu",
+      "zone_fdsu": "ET",
+      "geometry_type": "Polygon",
+      "source": "zones_fdsu.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Ville",
+        "statut": "official_candidate",
+        "qualite": 100.0,
+        "hierarchy_path": [
+          "RDC",
+          "Zone Est",
+          "Sud-Kivu",
+          "Bukavu"
+        ]
+      }
+    },
+    {
+      "canonical_id": "RDC-SD-VILLE-LIKASI",
+      "nom": "Likasi",
+      "province": "Haut-Katanga",
+      "zone_fdsu": "SD",
+      "geometry_type": "Polygon",
+      "source": "zones_fdsu.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Ville",
+        "statut": "official_candidate",
+        "qualite": 100.0,
+        "hierarchy_path": [
+          "RDC",
+          "Zone Sud",
+          "Haut-Katanga",
+          "Likasi"
+        ]
+      }
+    },
+    {
+      "canonical_id": "RDC-SD-VILLE-LUBUMBASHI",
+      "nom": "Lubumbashi",
+      "province": "Haut-Katanga",
+      "zone_fdsu": "SD",
+      "geometry_type": "Polygon",
+      "source": "zones_fdsu.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Ville",
+        "statut": "official_candidate",
+        "qualite": 100.0,
+        "hierarchy_path": [
+          "RDC",
+          "Zone Sud",
+          "Haut-Katanga",
+          "Lubumbashi"
+        ]
+      }
+    },
+    {
+      "canonical_id": "RDC-SD-VILLE-KOLWEZI",
+      "nom": "Kolwezi",
+      "province": "Lualaba",
+      "zone_fdsu": "SD",
+      "geometry_type": "Polygon",
+      "source": "zones_fdsu.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Ville",
+        "statut": "official_candidate",
+        "qualite": 100.0,
+        "hierarchy_path": [
+          "RDC",
+          "Zone Sud",
+          "Lualaba",
+          "Kolwezi"
+        ]
+      }
+    }
+  ],
+  "count": 11
+}

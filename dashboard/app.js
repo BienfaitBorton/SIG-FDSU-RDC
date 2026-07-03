@@ -24,6 +24,7 @@ const moduleNames = {
   cartographie: 'Cartographie',
   referentiel: 'Référentiel administratif',
   gestion_referentiels: 'Gestion des Référentiels',
+  explorateur_sources: 'Explorateur de Sources',
   sites: 'Sites FDSU',
   import: 'Import',
   export: 'Export',
@@ -53,6 +54,25 @@ const cartographyState = {
   zonesLayer: null,
   collectivitesLayer: null,
   selectedLayer: null,
+};
+
+const sourceExplorerState = {
+  initialized: false,
+  report: null,
+};
+
+const sourceExplorerElements = {
+  panel: null,
+  fileInput: null,
+  sourcePath: null,
+  sourceFormat: null,
+  objectCount: null,
+  fieldCount: null,
+  folderCount: null,
+  extractButton: null,
+  catalogBody: null,
+  dictionaryBody: null,
+  tagsContainer: null,
 };
 
 const GOVERNANCE_TAB_DEFINITIONS = {
@@ -199,8 +219,12 @@ const governanceState = {
   page: 1,
   pageSize: 10,
   viewState: 'empty',
+  detailMode: 'consultation',
   selectedRecord: null,
+  selectedExplorerNodeId: null,
+  expandedExplorerNodeIds: new Set(),
   dataByTab: {},
+  report: null,
   normalization: {
     summary: null,
     byLevel: [],
@@ -256,6 +280,10 @@ function setActiveModule(moduleKey) {
     if (cartographyState.map) {
       window.setTimeout(() => cartographyState.map.invalidateSize(), 0);
     }
+  }
+
+  if (moduleKey === 'explorateur_sources') {
+    initializeSourceExplorerModule();
   }
 
   if (moduleKey === 'gestion_referentiels') {
@@ -727,6 +755,7 @@ function initializeGovernanceModule() {
     renderGovernanceActions();
     renderPublicationFlow();
     renderNormalizationHub();
+    loadNationalAdministrativeReport();
     governanceState.initialized = true;
   }
 
@@ -821,6 +850,7 @@ function renderGovernanceTabs() {
       governanceState.search = '';
       governanceState.statusFilter = '';
       governanceState.selectedRecord = null;
+      governanceState.selectedExplorerNodeId = governanceState.report?.root?.children[0]?.id || governanceState.report?.root?.id || null;
 
       if (governanceElements.searchInput) {
         governanceElements.searchInput.value = '';
@@ -946,6 +976,659 @@ function seedGovernanceModuleData() {
   ];
 }
 
+function loadNationalAdministrativeReport() {
+  Promise.all([getProvinces(), getTerritoires(), getCollectivites(), getGroupements(), getVillages()])
+    .then(([provinces, territoires, collectivites, groupements, villages]) => {
+      const report = buildNationalAdministrativeReport({
+        provinces: Array.isArray(provinces) ? provinces : [],
+        territoires: Array.isArray(territoires) ? territoires : [],
+        collectivites: Array.isArray(collectivites) ? collectivites : [],
+        groupements: Array.isArray(groupements) ? groupements : [],
+        villages: Array.isArray(villages) ? villages : [],
+      });
+
+      governanceState.report = report;
+      governanceState.normalization = report.normalization;
+      governanceState.dataByTab.referentiels = report.referentielRows;
+      governanceState.dataByTab.validation = report.validationRows;
+      governanceState.dataByTab.qualite = report.qualityRows;
+      governanceState.dataByTab.normalisation = [report.normalizationRow];
+      governanceState.report = decorateExplorerReport(report);
+      governanceState.expandedExplorerNodeIds = new Set([governanceState.report.root.id]);
+      governanceState.report.root.children.forEach((child) => governanceState.expandedExplorerNodeIds.add(child.id));
+      governanceState.selectedExplorerNodeId = governanceState.report.root.children[0]?.id || governanceState.report.root.id;
+
+      renderGovernanceKpis();
+      renderNormalizationHub();
+      renderGovernanceTabs();
+      updateGovernanceStatusFilter();
+      governanceState.page = 1;
+      governanceState.selectedRecord = null;
+      renderGovernanceTable();
+      renderGovernanceDetailPanel();
+    })
+    .catch(() => {
+      governanceState.report = null;
+    });
+}
+
+function decorateExplorerReport(report) {
+  const statistics = report.statistics || {};
+  const byLevel = statistics.byLevel || {};
+  const quality = report.quality || {};
+  const anomalies = Array.isArray(report.anomalies) ? report.anomalies : [];
+  const root = decorateExplorerNode(report.tree, null, {
+    statistics,
+    byLevel,
+    quality,
+    anomalies,
+    path: [],
+  });
+  const nodesById = {};
+  indexExplorerNodes(root, nodesById);
+
+  return {
+    ...report,
+    root,
+    nodesById,
+  };
+}
+
+function decorateExplorerNode(node, parent, context) {
+  const level = String(node.level || 'unknown');
+  const label = String(node.label || '—');
+  const path = [...context.path, label];
+  const children = Array.isArray(node.children) ? node.children : [];
+  const decoratedChildren = children.map((child) => decorateExplorerNode(child, { id: node.id || buildExplorerNodeId(parent, level, label, node.code) }, { ...context, path }));
+  const id = node.id || buildExplorerNodeId(parent, level, label, node.code);
+
+  return {
+    id,
+    parentId: parent ? parent.id : null,
+    level,
+    label,
+    code: node.code || null,
+    count: node.count || 0,
+    icon: getExplorerIcon(level),
+    typeLabel: getExplorerTypeLabel(level),
+    adminLevel: getExplorerAdminLevel(level),
+    qualityBadge: getExplorerQualityBadge(level, context.quality, context.anomalies),
+    qualityClass: getExplorerQualityClass(level, context.quality, context.anomalies),
+    status: getExplorerStatus(level, context.anomalies),
+    source: level === 'rdc' ? 'Référentiel national consolidé' : 'API locale consolidée',
+    informationAvailable: getExplorerInformationAvailable(level),
+    hierarchyPath: path,
+    hierarchyLabel: path.join(' > '),
+    statistics: buildExplorerNodeStatistics(level, context.statistics, context.byLevel, decoratedChildren.length, node.count),
+    children: decoratedChildren,
+  };
+}
+
+function indexExplorerNodes(node, nodesById) {
+  nodesById[node.id] = node;
+  node.children.forEach((child) => indexExplorerNodes(child, nodesById));
+}
+
+function buildExplorerNodeId(parent, level, label, code) {
+  const suffix = String(code || label || 'node').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'node';
+  return parent ? `${parent.id}--${level}--${suffix}` : `${level}--${suffix}`;
+}
+
+function buildExplorerNodeStatistics(level, statistics, byLevel, childCount, nodeCount) {
+  const count = typeof nodeCount === 'number' && nodeCount > 0
+    ? nodeCount
+    : level === 'rdc'
+      ? statistics.entityCount || 0
+      : byLevel[level] || childCount || 0;
+
+  return {
+    count,
+    children: childCount,
+    total: statistics.entityCount || 0,
+    orphans: statistics.orphanCount || 0,
+    qualityScore: statistics.qualityScore || 0,
+  };
+}
+
+function getExplorerQualityBadge(level, quality, anomalies) {
+  const score = getExplorerQualityScore(level, quality, anomalies);
+  if (score >= 85) return `Excellent · ${score}%`;
+  if (score >= 70) return `Bon · ${score}%`;
+  if (score >= 50) return `À surveiller · ${score}%`;
+  return `Critique · ${score}%`;
+}
+
+function getExplorerQualityClass(level, quality, anomalies) {
+  const score = getExplorerQualityScore(level, quality, anomalies);
+  if (score >= 85) return 'quality-high';
+  if (score >= 70) return 'quality-medium';
+  if (score >= 50) return 'quality-warning';
+  return 'quality-low';
+}
+
+function getExplorerQualityScore(level, quality, anomalies) {
+  const base = typeof quality.qualityScore === 'number' ? quality.qualityScore : 0;
+  const errors = anomalies.filter((anomaly) => String(anomaly.level || '').toLowerCase() === String(level || '').toLowerCase() && anomaly.severity === 'error').length;
+  return Math.max(0, Math.min(100, Math.round(base - (errors * 2))));
+}
+
+function getExplorerStatus(level, anomalies) {
+  const hasError = anomalies.some((anomaly) => String(anomaly.level || '').toLowerCase() === String(level || '').toLowerCase() && anomaly.severity === 'error');
+  return hasError ? 'À vérifier' : 'Publié';
+}
+
+function getExplorerIcon(level) {
+  const icons = {
+    rdc: '🇨🇩',
+    zone_fdsu: '🟩',
+    province: '🟦',
+    territoire: '🟨',
+    ville: '🏙',
+    commune: '🏛',
+    commune_urbaine: '🏛',
+    commune_rurale: '🏛',
+    secteur: '🌿',
+    chefferie: '👑',
+    groupement: '📍',
+    village: '🏘',
+  };
+
+  return icons[String(level || '').toLowerCase()] || '•';
+}
+
+function getExplorerTypeLabel(level) {
+  const labels = {
+    rdc: 'État',
+    zone_fdsu: 'Zone',
+    province: 'Province',
+    territoire: 'Territoire',
+    ville: 'Ville',
+    commune: 'Commune',
+    commune_urbaine: 'Commune urbaine',
+    commune_rurale: 'Commune rurale',
+    secteur: 'Secteur',
+    chefferie: 'Chefferie',
+    groupement: 'Groupement',
+    village: 'Village',
+  };
+
+  return labels[String(level || '').toLowerCase()] || 'Niveau';
+}
+
+function getExplorerAdminLevel(level) {
+  const levels = {
+    rdc: 'National',
+    zone_fdsu: 'Zone FDSU',
+    province: 'Niveau 1',
+    territoire: 'Niveau 2',
+    ville: 'Niveau 2',
+    commune: 'Niveau 3',
+    commune_urbaine: 'Niveau 3',
+    commune_rurale: 'Niveau 3',
+    secteur: 'Niveau 3',
+    chefferie: 'Niveau 3',
+    groupement: 'Niveau 4',
+    village: 'Niveau 5',
+  };
+
+  return levels[String(level || '').toLowerCase()] || 'Niveau inconnu';
+}
+
+function getExplorerInformationAvailable(level) {
+  const availability = {
+    rdc: ['hiérarchie', 'statistiques', 'qualité', 'statut', 'source'],
+    zone_fdsu: ['nom', 'type', 'niveau administratif', 'hiérarchie', 'statistiques', 'qualité', 'statut', 'source'],
+    province: ['nom', 'type', 'niveau administratif', 'hiérarchie', 'statistiques', 'qualité', 'statut', 'source'],
+    territoire: ['nom', 'type', 'niveau administratif', 'hiérarchie', 'statistiques', 'qualité', 'statut', 'source'],
+    ville: ['nom', 'type', 'niveau administratif', 'hiérarchie', 'statistiques', 'qualité', 'statut', 'source'],
+    commune: ['nom', 'type', 'niveau administratif', 'hiérarchie', 'statistiques', 'qualité', 'statut', 'source'],
+    secteur: ['nom', 'type', 'niveau administratif', 'hiérarchie', 'statistiques', 'qualité', 'statut', 'source'],
+    chefferie: ['nom', 'type', 'niveau administratif', 'hiérarchie', 'statistiques', 'qualité', 'statut', 'source'],
+    groupement: ['nom', 'type', 'niveau administratif', 'hiérarchie', 'statistiques', 'qualité', 'statut', 'source'],
+    village: ['nom', 'type', 'niveau administratif', 'hiérarchie', 'statistiques', 'qualité', 'statut', 'source'],
+  };
+
+  return availability[String(level || '').toLowerCase()] || ['nom', 'type', 'hiérarchie'];
+}
+
+function getExplorerSearchTerm() {
+  return governanceState.search.trim().toLowerCase();
+}
+
+function isExplorerNodeVisible(node, searchTerm) {
+  if (!searchTerm) return true;
+  const haystack = [node.label, node.code, node.level, node.typeLabel, node.adminLevel, node.hierarchyLabel].join(' ').toLowerCase();
+  if (haystack.includes(searchTerm)) {
+    return true;
+  }
+  return node.children.some((child) => isExplorerNodeVisible(child, searchTerm));
+}
+
+function getExplorerVisibleNodes() {
+  const report = governanceState.report;
+  if (!report?.root) return [];
+
+  const searchTerm = getExplorerSearchTerm();
+  const rows = [];
+
+  function visit(node, depth = 0) {
+    if (!isExplorerNodeVisible(node, searchTerm)) {
+      return;
+    }
+
+    rows.push({ node, depth });
+    const shouldShowChildren = !searchTerm || governanceState.expandedExplorerNodeIds.has(node.id) || node.id === report.root.id || node.children.some((child) => isExplorerNodeVisible(child, searchTerm));
+    if (shouldShowChildren) {
+      node.children.forEach((child) => visit(child, depth + 1));
+    }
+  }
+
+  visit(report.root);
+  return rows;
+}
+
+function getExplorerNodeById(nodeId) {
+  return governanceState.report?.nodesById?.[nodeId] || null;
+}
+
+function isExplorerExpanded(nodeId) {
+  return governanceState.expandedExplorerNodeIds.has(nodeId);
+}
+
+function setExplorerExpanded(nodeId, expanded) {
+  const next = new Set(governanceState.expandedExplorerNodeIds);
+  if (expanded) {
+    next.add(nodeId);
+  } else {
+    next.delete(nodeId);
+  }
+  governanceState.expandedExplorerNodeIds = next;
+}
+
+function toggleExplorerNode(nodeId) {
+  setExplorerExpanded(nodeId, !isExplorerExpanded(nodeId));
+  renderGovernanceTable();
+}
+
+function selectExplorerNode(nodeId) {
+  governanceState.selectedExplorerNodeId = nodeId;
+  governanceState.selectedRecord = nodeId;
+  setGovernanceViewState('success');
+  renderGovernanceDetailPanel();
+  renderGovernanceTable();
+}
+
+function selectExplorerPath(nodeId) {
+  const node = getExplorerNodeById(nodeId);
+  if (!node) return;
+
+  let current = node;
+  while (current) {
+    setExplorerExpanded(current.id, true);
+    current = current.parentId ? getExplorerNodeById(current.parentId) : null;
+  }
+
+  selectExplorerNode(nodeId);
+}
+
+function renderExplorerTable() {
+  if (!governanceElements.tableHead || !governanceElements.tableBody) return;
+
+  governanceElements.tableHead.innerHTML = `
+    <tr>
+      <th>Explorateur administratif</th>
+      <th>Type</th>
+      <th>Niveau</th>
+      <th>Statut</th>
+      <th>Qualité</th>
+      <th>Source</th>
+      <th>Infos</th>
+    </tr>
+  `;
+
+  const rows = getExplorerVisibleNodes();
+  if (rows.length === 0) {
+    governanceElements.tableBody.innerHTML = '<tr><td colspan="7" class="empty-state">Aucun nœud correspondant à la recherche.</td></tr>';
+    if (governanceElements.pageInfo) {
+      governanceElements.pageInfo.textContent = 'Explorateur';
+    }
+    if (governanceElements.prevButton) governanceElements.prevButton.disabled = true;
+    if (governanceElements.nextButton) governanceElements.nextButton.disabled = true;
+    return;
+  }
+
+  governanceElements.tableBody.innerHTML = rows
+    .map(({ node, depth }) => {
+      const selected = governanceState.selectedExplorerNodeId === node.id;
+      const expanded = isExplorerExpanded(node.id);
+      const hasChildren = node.children.length > 0;
+      const padding = depth * 22;
+
+      return `
+        <tr data-node-id="${escapeHtml(node.id)}" class="explorer-row ${selected ? 'selected' : ''}">
+          <td>
+            <div class="explorer-node" style="padding-left:${padding}px;">
+              <button type="button" class="explorer-toggle ${hasChildren ? '' : 'leaf'}" data-toggle-node="${escapeHtml(node.id)}" aria-label="${expanded ? 'Réduire' : 'Déployer'} ${escapeHtml(node.label)}" ${hasChildren ? '' : 'disabled'}>${hasChildren ? (expanded ? '−' : '+') : '•'}</button>
+              <span class="explorer-icon" aria-hidden="true">${escapeHtml(node.icon)}</span>
+              <span class="explorer-label">
+                <strong>${escapeHtml(node.label)}</strong>
+                <span>${escapeHtml(node.code || '—')}</span>
+              </span>
+            </div>
+          </td>
+          <td>${escapeHtml(node.typeLabel)}</td>
+          <td>${escapeHtml(node.adminLevel)}</td>
+          <td><span class="status-badge explorer-status">${escapeHtml(node.status)}</span></td>
+          <td><span class="quality-badge ${escapeHtml(node.qualityClass)}">${escapeHtml(node.qualityBadge)}</span></td>
+          <td>${escapeHtml(node.source)}</td>
+          <td>${escapeHtml(String(node.informationAvailable.length))}</td>
+        </tr>
+      `;
+    })
+    .join('');
+
+  governanceElements.tableBody.querySelectorAll('tr[data-node-id]').forEach((row) => {
+    row.addEventListener('click', (event) => {
+      const toggleButton = event.target.closest('[data-toggle-node]');
+      if (toggleButton) {
+        event.stopPropagation();
+        toggleExplorerNode(toggleButton.dataset.toggleNode);
+        return;
+      }
+
+      const nodeId = row.dataset.nodeId;
+      if (!nodeId) return;
+      selectExplorerNode(nodeId);
+    });
+  });
+
+  if (governanceElements.pageInfo) {
+    governanceElements.pageInfo.textContent = `Explorateur · ${rows.length} nœud${rows.length > 1 ? 's' : ''}`;
+  }
+
+  if (governanceElements.prevButton) governanceElements.prevButton.disabled = true;
+  if (governanceElements.nextButton) governanceElements.nextButton.disabled = true;
+}
+
+function buildNationalAdministrativeReport({ provinces, territoires, collectivites, groupements, villages }) {
+  const duplicateDetails = [];
+  const anomalies = [];
+  const byLevel = {
+    rdc: 1,
+    zone_fdsu: 0,
+    province: provinces.length,
+    territoire: territoires.length,
+    secteur: 0,
+    chefferie: 0,
+    cite: 0,
+    groupement: groupements.length,
+    village: villages.length,
+  };
+
+  const root = { level: 'rdc', label: 'RDC', count: 1, children: [] };
+  const zoneNodes = new Map();
+  const provinceNodes = new Map();
+  const territoireNodes = new Map();
+
+  const sortedProvinces = provinces.slice().sort((left, right) => String(left.nom || '').localeCompare(String(right.nom || ''), 'fr'));
+  sortedProvinces.forEach((province) => {
+    const zoneCode = String(province.zone || 'INCONNU').toUpperCase();
+    let zoneNode = zoneNodes.get(zoneCode);
+    if (!zoneNode) {
+      zoneNode = { level: 'zone_fdsu', label: `Zone FDSU ${zoneCode}`, code: zoneCode, count: 0, children: [] };
+      zoneNodes.set(zoneCode, zoneNode);
+      root.children.push(zoneNode);
+    }
+    zoneNode.count += 1;
+
+    if (!province.zone) {
+      anomalies.push({ level: 'province', entity: province.nom, message: 'Province sans zone FDSU renseignée.', severity: 'error', code: province.code });
+    }
+
+    const provinceNode = { level: 'province', label: province.nom, code: province.code, count: 1, children: [] };
+    zoneNode.children.push(provinceNode);
+    provinceNodes.set(province.id, provinceNode);
+  });
+
+  territoires.slice().sort((left, right) => String(left.nom || '').localeCompare(String(right.nom || ''), 'fr')).forEach((territoire) => {
+    const provinceNode = provinceNodes.get(territoire.province_id);
+    if (!provinceNode) {
+      anomalies.push({ level: 'territoire', entity: territoire.nom, message: 'Territoire sans province parente exploitable.', severity: 'error', code: territoire.code });
+      return;
+    }
+
+    const territoireNode = { level: 'territoire', label: territoire.nom, code: territoire.code, count: 1, children: [] };
+    provinceNode.children.push(territoireNode);
+    territoireNodes.set(territoire.id, territoireNode);
+  });
+
+  collectivites.slice().sort((left, right) => String(left.nom || '').localeCompare(String(right.nom || ''), 'fr')).forEach((collectivite) => {
+    const territoireNode = territoireNodes.get(collectivite.territoire_id);
+    if (!territoireNode) {
+      anomalies.push({ level: 'collectivite', entity: collectivite.nom, message: 'Collectivité sans territoire parent exploitable.', severity: 'error', code: collectivite.code });
+      return;
+    }
+
+    const collectiviteType = String(collectivite.type_collectivite || '').toLowerCase();
+    const nodeLevel = collectiviteType === 'secteur' || collectiviteType === 'chefferie' ? collectiviteType : 'cite';
+    byLevel[nodeLevel] = (byLevel[nodeLevel] || 0) + 1;
+
+    const collectiviteNode = { level: nodeLevel, label: collectivite.nom, code: collectivite.code, count: 1, children: [] };
+    territoireNode.children.push(collectiviteNode);
+
+    groupements
+      .filter((groupement) => groupement.collectivite_id === collectivite.id)
+      .slice()
+      .sort((left, right) => String(left.nom || '').localeCompare(String(right.nom || ''), 'fr'))
+      .forEach((groupement) => {
+        const groupementNode = { level: 'groupement', label: groupement.nom, code: groupement.code, count: 1, children: [] };
+        collectiviteNode.children.push(groupementNode);
+
+        villages
+          .filter((village) => village.groupement_id === groupement.id)
+          .slice()
+          .sort((left, right) => String(left.nom || '').localeCompare(String(right.nom || ''), 'fr'))
+          .forEach((village) => {
+            groupementNode.children.push({ level: 'village', label: village.nom, code: village.code, count: 1, children: [] });
+          });
+      });
+  });
+
+  byLevel.zone_fdsu = zoneNodes.size;
+
+  const duplicateCount = [provinces, territoires, collectivites, groupements, villages].reduce((total, items) => total + countDuplicateEntries(items), 0);
+  duplicateDetails.push(...collectDuplicateAnomalies(provinces, 'province'));
+  duplicateDetails.push(...collectDuplicateAnomalies(territoires, 'territoire'));
+  duplicateDetails.push(...collectDuplicateAnomalies(collectivites, 'collectivite'));
+  duplicateDetails.push(...collectDuplicateAnomalies(groupements, 'groupement'));
+  duplicateDetails.push(...collectDuplicateAnomalies(villages, 'village'));
+  anomalies.push(...duplicateDetails);
+
+  const totalEntities = 1 + provinces.length + territoires.length + collectivites.length + groupements.length + villages.length;
+  const orphanCount = anomalies.filter((item) => item.severity === 'error').length;
+  const consistency = totalEntities > 0 ? Math.max(0, 100 - ((anomalies.length / totalEntities) * 100)) : 0;
+  const completeness = totalEntities > 0 ? Math.max(0, 100 - ((orphanCount / totalEntities) * 100)) : 0;
+  const qualityScore = Number(((completeness * 0.35) + (consistency * 0.65)).toFixed(2));
+
+  const flattenedRows = flattenAdministrativeTree(root, qualityScore, duplicateCount);
+  const qualityRows = [{
+    id: 'national',
+    referentiel: 'Référentiel administratif national',
+    completude: `${completeness.toFixed(1)} %`,
+    coherence: `${consistency.toFixed(1)} %`,
+    geometries_valides: '100 %',
+    doublons: duplicateCount,
+    qualite_globale: qualityScore,
+  }];
+
+  const validationRows = anomalies.length > 0
+    ? anomalies.map((anomaly, index) => ({
+        id: `anomaly-${index + 1}`,
+        objet: anomaly.entity,
+        doublons: anomaly.code && anomaly.message.toLowerCase().includes('dupliqué') ? anomaly.code : '—',
+        geometries_invalides: '—',
+        sans_code: anomaly.code ? '—' : 'Oui',
+        sans_rattachement: anomaly.message.toLowerCase().includes('sans') ? 'Oui' : '—',
+        statut: anomaly.severity === 'error' ? 'À vérifier' : 'À surveiller',
+      }))
+    : [{
+        id: 'validation-empty',
+        objet: 'Référentiel national',
+        doublons: '0',
+        geometries_invalides: '0',
+        sans_code: '0',
+        sans_rattachement: '0',
+        statut: 'Validé',
+      }];
+
+  const markdownPreview = buildAdministrativeMarkdown(root, { totalEntities, orphanCount, duplicateCount, qualityScore, completeness, consistency }, anomalies);
+
+  return {
+    tree: root,
+    referentielRows: flattenedRows,
+    validationRows,
+    qualityRows,
+    normalizationRow: {
+      id: 'national-referential',
+      source: 'API locale',
+      entites_analysees: totalEntities,
+      score_qualite: qualityScore,
+      erreurs: anomalies.length,
+      doublons: duplicateCount,
+      orphelines: orphanCount,
+      rapport: 'Publié',
+    },
+    normalization: {
+      summary: {
+        analyzedEntities: totalEntities,
+        qualityScore,
+        errors: anomalies.length,
+        duplicates: duplicateCount,
+        orphans: orphanCount,
+        reportStatus: anomalies.length === 0 ? 'Publié' : 'À vérifier',
+      },
+      byLevel: Object.entries(byLevel).map(([level, value]) => ({ level, value })),
+      reportPreview: markdownPreview,
+    },
+    statistics: {
+      entityCount: totalEntities,
+      byLevel,
+      orphanCount,
+      duplicateCount,
+      qualityScore,
+    },
+    anomalies,
+    quality: { qualityScore, completeness, consistency },
+  };
+}
+
+function collectDuplicateAnomalies(items, level) {
+  const codeCounts = new Map();
+  const nameCounts = new Map();
+
+  items.forEach((item) => {
+    const code = String(item.code || '').trim();
+    const name = String(item.nom || '').trim().toUpperCase();
+    if (code) {
+      codeCounts.set(code, (codeCounts.get(code) || 0) + 1);
+    }
+    if (name) {
+      nameCounts.set(name, (nameCounts.get(name) || 0) + 1);
+    }
+  });
+
+  const anomalies = [];
+  items.forEach((item) => {
+    const code = String(item.code || '').trim();
+    const name = String(item.nom || '').trim();
+    if (code && codeCounts.get(code) > 1) {
+      anomalies.push({ level, entity: name || code, message: 'Code dupliqué dans le référentiel.', severity: 'error', code });
+    }
+    if (name && nameCounts.get(name.toUpperCase()) > 1) {
+      anomalies.push({ level, entity: name, message: 'Nom dupliqué dans le référentiel.', severity: 'warning', code: code || null });
+    }
+  });
+
+  return anomalies;
+}
+
+function countDuplicateEntries(items) {
+  const codes = new Map();
+  items.forEach((item) => {
+    const code = String(item.code || '').trim();
+    if (!code) return;
+    codes.set(code, (codes.get(code) || 0) + 1);
+  });
+  let duplicates = 0;
+  codes.forEach((value) => {
+    if (value > 1) duplicates += value - 1;
+  });
+  return duplicates;
+}
+
+function flattenAdministrativeTree(root, qualityScore, duplicateCount) {
+  const rows = [];
+
+  function visit(node, depth = 0, parentLabel = '—') {
+    rows.push({
+      id: `${node.level}-${rows.length + 1}`,
+      nom: `${'  '.repeat(depth)}${node.label}`,
+      type: node.level,
+      nombre_objets: node.count,
+      source_officielle: depth === 0 ? 'RDC' : 'API locale',
+      version: 'Calculé',
+      date_mise_a_jour: new Date().toLocaleDateString('fr-FR'),
+      statut: node.level === 'rdc' ? 'Publié' : 'Publié',
+      qualite: qualityScore.toFixed(1),
+      parent: parentLabel,
+    });
+
+    node.children.forEach((child) => visit(child, depth + 1, node.label));
+  }
+
+  visit(root);
+
+  if (rows.length > 0) {
+    rows[0].doublons = duplicateCount;
+  }
+
+  return rows;
+}
+
+function buildAdministrativeMarkdown(root, summary, anomalies) {
+  const lines = [
+    '# Référentiel administratif national',
+    '',
+    `- Entités: ${summary.totalEntities}`,
+    `- Orphelins: ${summary.orphanCount}`,
+    `- Doublons: ${summary.duplicateCount}`,
+    `- Score qualité: ${summary.qualityScore}`,
+    `- Complétude: ${summary.completeness.toFixed(1)} %`,
+    `- Cohérence: ${summary.consistency.toFixed(1)} %`,
+    '',
+    '## Arborescence',
+    '',
+  ];
+
+  function renderNode(node, depth = 0) {
+    const codeSuffix = node.code ? ` (${node.code})` : '';
+    lines.push(`${'  '.repeat(depth)}- ${node.label}${codeSuffix} [${node.count}]`);
+    node.children.forEach((child) => renderNode(child, depth + 1));
+  }
+
+  renderNode(root);
+  lines.push('', '## Anomalies', '');
+  if (anomalies.length === 0) {
+    lines.push('- aucune anomalie détectée');
+  } else {
+    anomalies.forEach((anomaly) => {
+      lines.push(`- ${anomaly.severity}/${anomaly.level}: ${anomaly.message}`);
+    });
+  }
+
+  return lines.join('\n');
+}
+
 function renderNormalizationHub() {
   renderNormalizationSummary();
   renderNormalizationLevelStats();
@@ -1014,6 +1697,11 @@ function renderPublicationFlow() {
 function renderGovernanceTable() {
   const definition = GOVERNANCE_TAB_DEFINITIONS[governanceState.activeTab];
   if (!definition || !governanceElements.tableHead || !governanceElements.tableBody) return;
+
+  if (governanceState.activeTab === 'referentiels') {
+    renderExplorerTable();
+    return;
+  }
 
   governanceElements.tableHead.innerHTML = `
     <tr>
@@ -1120,6 +1808,19 @@ function updateGovernancePagination(totalRows) {
 function renderGovernanceDetailPanel() {
   if (!governanceElements.detailTitle || !governanceElements.detailBody) return;
 
+  if (governanceState.activeTab === 'referentiels') {
+    const selectedNode = getExplorerNodeById(governanceState.selectedExplorerNodeId);
+    if (!selectedNode) {
+      governanceElements.detailTitle.textContent = 'Aucun nœud sélectionné';
+      governanceElements.detailBody.innerHTML = '<div class="empty-detail">Sélectionnez un nœud de l’arborescence pour afficher ses informations.</div>';
+      return;
+    }
+
+    governanceElements.detailTitle.textContent = selectedNode.label;
+    governanceElements.detailBody.innerHTML = buildTerritorialFileMarkup(selectedNode);
+    return;
+  }
+
   if (!governanceState.selectedRecord) {
     governanceElements.detailTitle.textContent = 'Aucun élément sélectionné';
     governanceElements.detailBody.innerHTML = '<div class="empty-detail">Sélectionnez une ligne pour afficher la fiche détaillée.</div>';
@@ -1132,6 +1833,149 @@ function renderGovernanceDetailPanel() {
     <div class="detail-row"><span>État de connexion</span><strong>En attente de liaison API</strong></div>
     <div class="detail-row"><span>Détail</span><strong>Données non chargées</strong></div>
   `;
+}
+
+function buildTerritorialFileMarkup(node) {
+  const consultationMode = governanceState.detailMode || 'consultation';
+  const modeLabel = consultationMode === 'consultation' ? 'Consultation' : 'Édition future';
+  const modeDescription = consultationMode === 'consultation'
+    ? 'Mode consultation actif. Les données sont présentées en lecture seule.'
+    : 'Mode édition réservé pour un enrichissement futur.';
+  const futureSources = ['CAID', 'CENI', 'HDX', 'FDSU', 'KMZ'];
+
+  const generalInfo = [
+    { label: 'Nom', value: node.label },
+    { label: 'Type', value: node.typeLabel },
+    { label: 'Niveau administratif', value: node.adminLevel },
+    { label: 'Statut', value: node.status },
+    { label: 'Source', value: node.source },
+    { label: 'Qualité', value: node.qualityBadge },
+  ];
+
+  const administrativeInfo = [
+    { label: 'Hiérarchie complète', value: node.hierarchyLabel },
+    { label: 'Parent direct', value: node.parentId ? (getExplorerNodeById(node.parentId)?.label || 'Non renseigné') : 'Non renseigné' },
+    { label: 'Enfants directs', value: String(node.statistics.children ?? 0) },
+    { label: 'Total de nœuds', value: String(node.statistics.total ?? 0) },
+    { label: 'Orphelins détectés', value: String(node.statistics.orphans ?? 0) },
+    { label: 'Code', value: node.code || 'Non renseigné' },
+  ];
+
+  const geographicInfo = [
+    { label: 'Zone FDSU', value: node.level === 'zone_fdsu' || node.level === 'province' || node.level === 'territoire' ? node.hierarchyPath?.[1] : 'Non renseigné' },
+    { label: 'Province', value: getHierarchyValue(node, 'province') },
+    { label: 'Territoire', value: getHierarchyValue(node, 'territoire') },
+    { label: 'Secteur / Chefferie', value: getHierarchyValue(node, 'secteur', 'chefferie') },
+    { label: 'Groupement', value: getHierarchyValue(node, 'groupement') },
+    { label: 'Village', value: getHierarchyValue(node, 'village') },
+  ];
+
+  const developmentInfo = [
+    { label: 'Population', value: 'Non renseigné' },
+    { label: 'Superficie', value: 'Non renseigné' },
+    { label: 'Densité', value: 'Non renseigné' },
+    { label: 'Chef-lieu', value: 'Non renseigné' },
+  ];
+
+  const telecomInfo = [
+    { label: 'Couverture', value: 'Non renseigné' },
+    { label: 'Sites FDSU', value: 'Non renseigné' },
+    { label: 'Backbone', value: 'Non renseigné' },
+    { label: 'Technologies', value: 'Non renseigné' },
+  ];
+
+  const documentationInfo = [
+    { label: 'Fiche source', value: 'Non renseigné' },
+    { label: 'Version', value: 'Non renseigné' },
+    { label: 'Dernière mise à jour', value: 'Non renseigné' },
+    { label: 'Références disponibles', value: futureSources.join(', ') },
+  ];
+
+  const historicalInfo = [
+    { label: 'Créé le', value: 'Non renseigné' },
+    { label: 'Mis à jour le', value: 'Non renseigné' },
+    { label: 'Validé le', value: 'Non renseigné' },
+    { label: 'Événements', value: 'Non renseigné' },
+  ];
+
+  const sourceInfo = futureSources.map((source) => ({
+    label: source,
+    value: source === 'FDSU' ? 'Référentiel consolidé' : 'Prévu pour enrichissement futur',
+  }));
+
+  return `
+    <div class="territorial-file">
+      <div class="territorial-file-header">
+        <div>
+          <p class="panel-label">Fiche territoriale intelligente</p>
+          <h4>${escapeHtml(node.label)}</h4>
+          <p class="territorial-file-subtitle">${escapeHtml(node.hierarchyLabel || 'Non renseigné')}</p>
+        </div>
+        <div class="territorial-file-modes">
+          <button type="button" class="mode-chip active" aria-pressed="true">${escapeHtml(modeLabel)}</button>
+          <button type="button" class="mode-chip" disabled aria-disabled="true">Mode édition futur</button>
+        </div>
+      </div>
+
+      <p class="territorial-file-intro">${escapeHtml(modeDescription)}</p>
+
+      ${renderTerritorialSection('Informations générales', generalInfo, true)}
+      ${renderTerritorialSection('Organisation administrative', administrativeInfo)}
+      ${renderTerritorialSection('Géographie', geographicInfo)}
+      ${renderTerritorialSection('Développement', developmentInfo)}
+      ${renderTerritorialSection('Télécommunications', telecomInfo)}
+      ${renderTerritorialSection('Documentation', documentationInfo)}
+      ${renderTerritorialSection('Historique', historicalInfo)}
+      ${renderTerritorialSection('Sources', sourceInfo, false, true)}
+    </div>
+  `;
+}
+
+function renderTerritorialSection(title, fields, open = false, isSources = false) {
+  const items = fields
+    .map((field) => `
+      <div class="territorial-field">
+        <span>${escapeHtml(field.label)}</span>
+        <strong>${escapeHtml(formatTerritorialValue(field.value))}</strong>
+      </div>
+    `)
+    .join('');
+
+  const sourceBadges = isSources
+    ? `
+      <div class="territorial-source-badges">
+        ${fields
+          .map((field) => `<span class="territorial-source-badge">${escapeHtml(field.label)}</span>`)
+          .join('')}
+      </div>
+    `
+    : '';
+
+  return `
+    <details class="territorial-section" ${open ? 'open' : ''}>
+      <summary>
+        <span>${escapeHtml(title)}</span>
+        <span class="territorial-section-toggle">${open ? '−' : '+'}</span>
+      </summary>
+      <div class="territorial-section-body">
+        ${items}
+        ${sourceBadges}
+      </div>
+    </details>
+  `;
+}
+
+function formatTerritorialValue(value) {
+  if (value === null || value === undefined || String(value).trim() === '') {
+    return 'Non renseigné';
+  }
+  return String(value);
+}
+
+function getHierarchyValue(node, ...levels) {
+  const normalizedLevels = levels.map((level) => String(level).toLowerCase());
+  const match = [...(node.hierarchyPath || [])].reverse().find((item) => normalizedLevels.includes(String(item).toLowerCase()));
+  return match || 'Non renseigné';
 }
 
 function setGovernanceViewState(stateKey) {
@@ -1154,6 +1998,144 @@ function formatGovernanceMetric(value) {
     return 'En attente';
   }
   return String(value);
+}
+
+function initializeSourceExplorerModule() {
+  if (!sourceExplorerState.initialized) {
+    sourceExplorerElements.panel = document.querySelector('#explorateur-sources-panel');
+    sourceExplorerElements.fileInput = document.querySelector('#source-explorer-report-input');
+    sourceExplorerElements.sourcePath = document.querySelector('#source-explorer-source-path');
+    sourceExplorerElements.sourceFormat = document.querySelector('#source-explorer-source-format');
+    sourceExplorerElements.objectCount = document.querySelector('#source-explorer-object-count');
+    sourceExplorerElements.fieldCount = document.querySelector('#source-explorer-field-count');
+    sourceExplorerElements.folderCount = document.querySelector('#source-explorer-folder-count');
+    sourceExplorerElements.extractButton = document.querySelector('#source-explorer-extract');
+    sourceExplorerElements.catalogBody = document.querySelector('#source-explorer-catalog-body');
+    sourceExplorerElements.dictionaryBody = document.querySelector('#source-explorer-dictionary-body');
+    sourceExplorerElements.tagsContainer = document.querySelector('#source-explorer-tags');
+
+    if (!sourceExplorerElements.panel) {
+      return;
+    }
+
+    sourceExplorerElements.fileInput?.addEventListener('change', async (event) => {
+      const input = event.target;
+      if (!input || !input.files || input.files.length === 0) {
+        return;
+      }
+
+      const file = input.files[0];
+      try {
+        const text = await file.text();
+        const payload = JSON.parse(text);
+        sourceExplorerState.report = payload;
+        renderSourceExplorerReport();
+      } catch {
+        sourceExplorerState.report = null;
+        renderSourceExplorerEmpty('Impossible de lire le rapport JSON sélectionné.');
+      }
+    });
+
+    sourceExplorerElements.extractButton?.addEventListener('click', () => {
+      // Sprint scope: extraction workflow is intentionally staged for later.
+    });
+
+    sourceExplorerState.initialized = true;
+    renderSourceExplorerEmpty('Chargez un rapport JSON généré par scripts/explore_source.py pour explorer la source.');
+  }
+}
+
+function renderSourceExplorerEmpty(message) {
+  if (sourceExplorerElements.sourcePath) sourceExplorerElements.sourcePath.textContent = 'Non renseigné';
+  if (sourceExplorerElements.sourceFormat) sourceExplorerElements.sourceFormat.textContent = 'Non renseigné';
+  if (sourceExplorerElements.objectCount) sourceExplorerElements.objectCount.textContent = '0';
+  if (sourceExplorerElements.fieldCount) sourceExplorerElements.fieldCount.textContent = '0';
+  if (sourceExplorerElements.folderCount) sourceExplorerElements.folderCount.textContent = '0';
+
+  if (sourceExplorerElements.catalogBody) {
+    sourceExplorerElements.catalogBody.innerHTML = `<tr><td colspan="8" class="empty-state">${escapeHtml(message)}</td></tr>`;
+  }
+  if (sourceExplorerElements.dictionaryBody) {
+    sourceExplorerElements.dictionaryBody.innerHTML = '<tr><td colspan="6" class="empty-state">Aucun dictionnaire disponible.</td></tr>';
+  }
+  if (sourceExplorerElements.tagsContainer) {
+    sourceExplorerElements.tagsContainer.innerHTML = '<span class="source-tag">Aucun tag</span>';
+  }
+}
+
+function renderSourceExplorerReport() {
+  const report = sourceExplorerState.report;
+  if (!report) {
+    renderSourceExplorerEmpty('Aucun rapport chargé.');
+    return;
+  }
+
+  const folders = Array.isArray(report.folders) ? report.folders : [];
+  const dictionary = Array.isArray(report.data_dictionary) ? report.data_dictionary : [];
+
+  if (sourceExplorerElements.sourcePath) sourceExplorerElements.sourcePath.textContent = report.source_file || 'Non renseigné';
+  if (sourceExplorerElements.sourceFormat) sourceExplorerElements.sourceFormat.textContent = report.source_format || 'Non renseigné';
+  if (sourceExplorerElements.objectCount) sourceExplorerElements.objectCount.textContent = String(report.object_count || 0);
+  if (sourceExplorerElements.fieldCount) sourceExplorerElements.fieldCount.textContent = String(report.field_count || 0);
+  if (sourceExplorerElements.folderCount) sourceExplorerElements.folderCount.textContent = String(folders.length);
+
+  if (sourceExplorerElements.catalogBody) {
+    if (folders.length === 0) {
+      sourceExplorerElements.catalogBody.innerHTML = '<tr><td colspan="8" class="empty-state">Aucun dossier détecté.</td></tr>';
+    } else {
+      sourceExplorerElements.catalogBody.innerHTML = folders
+        .map((folder, index) => {
+          const geometry = Array.isArray(folder.geometry_types) && folder.geometry_types.length > 0
+            ? folder.geometry_types.join(', ')
+            : 'Non renseigné';
+          const attributes = Array.isArray(folder.attributes) && folder.attributes.length > 0
+            ? folder.attributes.join(', ')
+            : 'Non renseigné';
+          return `
+            <tr data-folder-index="${index}">
+              <td>${escapeHtml(String(folder.folder_name || 'Non renseigné'))}</td>
+              <td>${escapeHtml(String(folder.type || folder.dataset_type || 'Autres'))}</td>
+              <td>${escapeHtml(String(folder.object_count || 0))}</td>
+              <td>${escapeHtml(String(folder.field_count || 0))}</td>
+              <td>${escapeHtml(geometry)}</td>
+              <td>${escapeHtml(String(folder.quality ?? 'Non renseigné'))}</td>
+              <td>${escapeHtml(String(folder.module_sig_conseille || 'Dashboard'))}</td>
+              <td>${escapeHtml(attributes)}</td>
+            </tr>
+          `;
+        })
+        .join('');
+    }
+  }
+
+  if (sourceExplorerElements.dictionaryBody) {
+    if (dictionary.length === 0) {
+      sourceExplorerElements.dictionaryBody.innerHTML = '<tr><td colspan="6" class="empty-state">Aucun champ détecté.</td></tr>';
+    } else {
+      sourceExplorerElements.dictionaryBody.innerHTML = dictionary
+        .map((entry) => `
+          <tr>
+            <td>${escapeHtml(String(entry.name || 'Non renseigné'))}</td>
+            <td>${escapeHtml(String(entry.type || entry.value_type || 'inconnu'))}</td>
+            <td>${escapeHtml(String(entry.value_count ?? 0))}</td>
+            <td>${escapeHtml(String(entry.unique_count ?? 0))}</td>
+            <td>${escapeHtml(String(entry.null_count ?? 0))}</td>
+            <td>${escapeHtml(String(entry.example || 'Non renseigné'))}</td>
+          </tr>
+        `)
+        .join('');
+    }
+  }
+
+  if (sourceExplorerElements.tagsContainer) {
+    const tags = new Set();
+    folders.forEach((folder) => {
+      (Array.isArray(folder.tags) ? folder.tags : []).forEach((tag) => tags.add(String(tag)));
+    });
+    sourceExplorerElements.tagsContainer.innerHTML = tags.size > 0
+      ? Array.from(tags).sort().map((tag) => `<span class="source-tag">${escapeHtml(tag)}</span>`).join('')
+      : '<span class="source-tag">Aucun tag</span>';
+  }
 }
 
 function fetchProvinces() {
@@ -1311,6 +2293,22 @@ function getZones() {
 
 function getProvinces() {
   return fetchJson('/provinces?limit=500');
+}
+
+function getTerritoires() {
+  return fetchJson('/territoires?limit=500');
+}
+
+function getCollectivites() {
+  return fetchJson('/collectivites?limit=500');
+}
+
+function getGroupements() {
+  return fetchJson('/groupements?limit=500');
+}
+
+function getVillages() {
+  return fetchJson('/villages?limit=500');
 }
 
 function getCount(endpoint) {

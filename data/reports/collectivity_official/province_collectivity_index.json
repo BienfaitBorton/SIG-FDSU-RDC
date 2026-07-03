@@ -1,0 +1,5454 @@
+{
+  "provinces": [
+    {
+      "province": "Kasai",
+      "zone_fdsu": "CE",
+      "territoires": [
+        {
+          "territoire": "Dekese",
+          "collectivites": [
+            {
+              "nom": "Ndengese-Ikolombe",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-CE-COLL-DEKESE-CHEFFERIE-NDENGESE_IKOLOMBE",
+              "code_officiel": "903501"
+            },
+            {
+              "nom": "Yaelima",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-CE-COLL-DEKESE-CHEFFERIE-YAELIMA",
+              "code_officiel": "903502"
+            }
+          ],
+          "nombre_collectivites": 2
+        },
+        {
+          "territoire": "Ilebo",
+          "collectivites": [
+            {
+              "nom": "Basongo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-ILEBO-SECTEUR-BASONGO",
+              "code_officiel": "903301"
+            },
+            {
+              "nom": "Malu-Malu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-ILEBO-SECTEUR-MALU_MALU",
+              "code_officiel": "903302"
+            },
+            {
+              "nom": "Mapangu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-ILEBO-SECTEUR-MAPANGU",
+              "code_officiel": "903303"
+            },
+            {
+              "nom": "Sud-Banga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-ILEBO-SECTEUR-SUD_BANGA",
+              "code_officiel": "903304"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Kamonia",
+          "collectivites": [
+            {
+              "nom": "Bakwa Nyambi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAMONIA-SECTEUR-BAKWA_NYAMBI",
+              "code_officiel": "903202"
+            },
+            {
+              "nom": "Bapende",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAMONIA-SECTEUR-BAPENDE",
+              "code_officiel": "903209"
+            },
+            {
+              "nom": "Kasadi-Sadi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAMONIA-SECTEUR-KASADI_SADI",
+              "code_officiel": "903201"
+            },
+            {
+              "nom": "Kasai Lunyeka",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAMONIA-SECTEUR-KASAI_LUNYEKA",
+              "code_officiel": "903205"
+            },
+            {
+              "nom": "Kasai-Kabambaie",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAMONIA-SECTEUR-KASAI_KABAMBAIE",
+              "code_officiel": "903203"
+            },
+            {
+              "nom": "Kasai-Longatshimo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAMONIA-SECTEUR-KASAI_LONGATSHIMO",
+              "code_officiel": "903206"
+            },
+            {
+              "nom": "Lovua-Longatshimo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAMONIA-SECTEUR-LOVUA_LONGATSHIMO",
+              "code_officiel": "903207"
+            },
+            {
+              "nom": "Lovua-Lushiku",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAMONIA-SECTEUR-LOVUA_LUSHIKU",
+              "code_officiel": "903208"
+            },
+            {
+              "nom": "Tshikapa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAMONIA-SECTEUR-TSHIKAPA",
+              "code_officiel": "903204"
+            }
+          ],
+          "nombre_collectivites": 9
+        },
+        {
+          "territoire": "Luebo",
+          "collectivites": [
+            {
+              "nom": "Luebo-Kabambaie",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUEBO-SECTEUR-LUEBO_KABAMBAIE",
+              "code_officiel": "903103"
+            },
+            {
+              "nom": "Luebo-Lulengele",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUEBO-SECTEUR-LUEBO_LULENGELE",
+              "code_officiel": "903101"
+            },
+            {
+              "nom": "Luebo-Wedi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUEBO-SECTEUR-LUEBO_WEDI",
+              "code_officiel": "903102"
+            },
+            {
+              "nom": "Ndjoko-Punda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUEBO-SECTEUR-NDJOKO_PUNDA",
+              "code_officiel": "903104"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Mweka",
+          "collectivites": [
+            {
+              "nom": "Bakuba",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-CE-COLL-MWEKA-CHEFFERIE-BAKUBA",
+              "code_officiel": "903401"
+            }
+          ],
+          "nombre_collectivites": 1
+        }
+      ],
+      "nombre_territoires": 5
+    },
+    {
+      "province": "Kasai Central",
+      "zone_fdsu": "CE",
+      "territoires": [
+        {
+          "territoire": "Demba",
+          "collectivites": [
+            {
+              "nom": "Bena-Mamba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-DEMBA-SECTEUR-BENA_MAMBA",
+              "code_officiel": "902404"
+            },
+            {
+              "nom": "Diofwa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-DEMBA-SECTEUR-DIOFWA",
+              "code_officiel": "902401"
+            },
+            {
+              "nom": "Lombelo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-DEMBA-SECTEUR-LOMBELO",
+              "code_officiel": "902402"
+            },
+            {
+              "nom": "Lusonge",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-DEMBA-SECTEUR-LUSONGE",
+              "code_officiel": "902403"
+            },
+            {
+              "nom": "Muanza-Ngoma",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-DEMBA-SECTEUR-MUANZA_NGOMA",
+              "code_officiel": "902405"
+            },
+            {
+              "nom": "Tshibote",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-DEMBA-SECTEUR-TSHIBOTE",
+              "code_officiel": "902406"
+            },
+            {
+              "nom": "Tshibungu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-DEMBA-SECTEUR-TSHIBUNGU",
+              "code_officiel": "902407"
+            }
+          ],
+          "nombre_collectivites": 7
+        },
+        {
+          "territoire": "Dibaya",
+          "collectivites": [
+            {
+              "nom": "Dibanda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-DIBAYA-SECTEUR-DIBANDA",
+              "code_officiel": "902101"
+            },
+            {
+              "nom": "Dibataie",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-DIBAYA-SECTEUR-DIBATAIE",
+              "code_officiel": "902102"
+            },
+            {
+              "nom": "Kamwandu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-DIBAYA-SECTEUR-KAMWANDU",
+              "code_officiel": "902103"
+            },
+            {
+              "nom": "Kasangidi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-DIBAYA-SECTEUR-KASANGIDI",
+              "code_officiel": "902104"
+            },
+            {
+              "nom": "Tshishilu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-DIBAYA-SECTEUR-TSHISHILU",
+              "code_officiel": "902105"
+            }
+          ],
+          "nombre_collectivites": 5
+        },
+        {
+          "territoire": "Dimbelenge",
+          "collectivites": [
+            {
+              "nom": "Kunduyi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-DIMBELENGE-SECTEUR-KUNDUYI",
+              "code_officiel": "902503"
+            },
+            {
+              "nom": "Lubi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-DIMBELENGE-SECTEUR-LUBI",
+              "code_officiel": "902501"
+            },
+            {
+              "nom": "Lubudi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-DIMBELENGE-SECTEUR-LUBUDI",
+              "code_officiel": "902502"
+            },
+            {
+              "nom": "Lukibu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-DIMBELENGE-SECTEUR-LUKIBU",
+              "code_officiel": "902505"
+            },
+            {
+              "nom": "Mashala",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-DIMBELENGE-SECTEUR-MASHALA",
+              "code_officiel": "902504"
+            }
+          ],
+          "nombre_collectivites": 5
+        },
+        {
+          "territoire": "Kazumba",
+          "collectivites": [
+            {
+              "nom": "Bashi-Mboie",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAZUMBA-SECTEUR-BASHI_MBOIE",
+              "code_officiel": "902308"
+            },
+            {
+              "nom": "Bena-Ngoshi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAZUMBA-SECTEUR-BENA_NGOSHI",
+              "code_officiel": "902309"
+            },
+            {
+              "nom": "Bulungu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAZUMBA-SECTEUR-BULUNGU",
+              "code_officiel": "902301"
+            },
+            {
+              "nom": "Kafuba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAZUMBA-SECTEUR-KAFUBA",
+              "code_officiel": "902306"
+            },
+            {
+              "nom": "Kavula",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAZUMBA-SECTEUR-KAVULA",
+              "code_officiel": "902302"
+            },
+            {
+              "nom": "Matamba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAZUMBA-SECTEUR-MATAMBA",
+              "code_officiel": "902305"
+            },
+            {
+              "nom": "Miao",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAZUMBA-SECTEUR-MIAO",
+              "code_officiel": "902303"
+            },
+            {
+              "nom": "Muswaswa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAZUMBA-SECTEUR-MUSWASWA",
+              "code_officiel": "902304"
+            },
+            {
+              "nom": "Tshitadi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAZUMBA-SECTEUR-TSHITADI",
+              "code_officiel": "902307"
+            }
+          ],
+          "nombre_collectivites": 9
+        },
+        {
+          "territoire": "Luiza",
+          "collectivites": [
+            {
+              "nom": "Bambaie",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUIZA-SECTEUR-BAMBAIE",
+              "code_officiel": "902201"
+            },
+            {
+              "nom": "Bushimaie",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUIZA-SECTEUR-BUSHIMAIE",
+              "code_officiel": "902203"
+            },
+            {
+              "nom": "Kabalekese",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUIZA-SECTEUR-KABALEKESE",
+              "code_officiel": "902202"
+            },
+            {
+              "nom": "Kalunga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUIZA-SECTEUR-KALUNGA",
+              "code_officiel": "902204"
+            },
+            {
+              "nom": "Loatshi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUIZA-SECTEUR-LOATSHI",
+              "code_officiel": "902207"
+            },
+            {
+              "nom": "Lueta",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUIZA-SECTEUR-LUETA",
+              "code_officiel": "902205"
+            },
+            {
+              "nom": "Lusanza",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUIZA-SECTEUR-LUSANZA",
+              "code_officiel": "902206"
+            }
+          ],
+          "nombre_collectivites": 7
+        }
+      ],
+      "nombre_territoires": 5
+    },
+    {
+      "province": "Kasai Oriental",
+      "zone_fdsu": "CE",
+      "territoires": [
+        {
+          "territoire": "Kabeya-Kamwanga",
+          "collectivites": [
+            {
+              "nom": "Kalela",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KABEYA_KAMWANGA-SECTEUR-KALELA",
+              "code_officiel": "802203"
+            },
+            {
+              "nom": "Lac Munkamba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KABEYA_KAMWANGA-SECTEUR-LAC_MUNKAMBA",
+              "code_officiel": "802201"
+            },
+            {
+              "nom": "Mpemba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KABEYA_KAMWANGA-SECTEUR-MPEMBA",
+              "code_officiel": "802204"
+            },
+            {
+              "nom": "Ndomba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KABEYA_KAMWANGA-SECTEUR-NDOMBA",
+              "code_officiel": "802202"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Katanda",
+          "collectivites": [
+            {
+              "nom": "Baluba-Lubilanji",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KATANDA-SECTEUR-BALUBA_LUBILANJI",
+              "code_officiel": "802402"
+            },
+            {
+              "nom": "Mutuayi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KATANDA-SECTEUR-MUTUAYI",
+              "code_officiel": "802403"
+            },
+            {
+              "nom": "Nsangu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KATANDA-SECTEUR-NSANGU",
+              "code_officiel": "802406"
+            },
+            {
+              "nom": "Tshitolo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KATANDA-SECTEUR-TSHITOLO",
+              "code_officiel": "802404"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Lupatapata",
+          "collectivites": [
+            {
+              "nom": "Kabala",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUPATAPATA-SECTEUR-KABALA",
+              "code_officiel": "802301"
+            },
+            {
+              "nom": "Mudiba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUPATAPATA-SECTEUR-MUDIBA",
+              "code_officiel": "802302"
+            },
+            {
+              "nom": "Mukumbi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUPATAPATA-SECTEUR-MUKUMBI",
+              "code_officiel": "802303"
+            },
+            {
+              "nom": "Mulenda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUPATAPATA-SECTEUR-MULENDA",
+              "code_officiel": "802304"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Miabi",
+          "collectivites": [
+            {
+              "nom": "Kakangayi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-MIABI-SECTEUR-KAKANGAYI",
+              "code_officiel": "802102"
+            },
+            {
+              "nom": "Movo-Nkatshia",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-MIABI-SECTEUR-MOVO_NKATSHIA",
+              "code_officiel": "802105"
+            },
+            {
+              "nom": "Tshijiba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-MIABI-SECTEUR-TSHIJIBA",
+              "code_officiel": "802104"
+            },
+            {
+              "nom": "Tshilundu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-MIABI-SECTEUR-TSHILUNDU",
+              "code_officiel": "802103"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Tshilenge",
+          "collectivites": [
+            {
+              "nom": "Kampatshi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-CE-COLL-TSHILENGE-CHEFFERIE-KAMPATSHI",
+              "code_officiel": "802504"
+            },
+            {
+              "nom": "Kalelu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-TSHILENGE-SECTEUR-KALELU",
+              "code_officiel": "802507"
+            },
+            {
+              "nom": "Kalondji-Sud",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-TSHILENGE-SECTEUR-KALONDJI_SUD",
+              "code_officiel": "802505"
+            },
+            {
+              "nom": "Lukalaba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-TSHILENGE-SECTEUR-LUKALABA",
+              "code_officiel": "802502"
+            },
+            {
+              "nom": "Tshipuka",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-TSHILENGE-SECTEUR-TSHIPUKA",
+              "code_officiel": "802503"
+            }
+          ],
+          "nombre_collectivites": 5
+        }
+      ],
+      "nombre_territoires": 5
+    },
+    {
+      "province": "Lomami",
+      "zone_fdsu": "CE",
+      "territoires": [
+        {
+          "territoire": "Kabinda",
+          "collectivites": [
+            {
+              "nom": "Baluba-Lubangule",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KABINDA-SECTEUR-BALUBA_LUBANGULE",
+              "code_officiel": "804406"
+            },
+            {
+              "nom": "Kabinda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KABINDA-SECTEUR-KABINDA",
+              "code_officiel": "804402"
+            },
+            {
+              "nom": "Ludimbi-Lukula",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KABINDA-SECTEUR-LUDIMBI_LUKULA",
+              "code_officiel": "804403"
+            },
+            {
+              "nom": "Lufubu-Lomami",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KABINDA-SECTEUR-LUFUBU_LOMAMI",
+              "code_officiel": "804404"
+            },
+            {
+              "nom": "Lukashi-Lualu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KABINDA-SECTEUR-LUKASHI_LUALU",
+              "code_officiel": "804405"
+            },
+            {
+              "nom": "Vunayi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KABINDA-SECTEUR-VUNAYI",
+              "code_officiel": "804407"
+            }
+          ],
+          "nombre_collectivites": 6
+        },
+        {
+          "territoire": "Kamiji",
+          "collectivites": [
+            {
+              "nom": "Kamiji",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAMIJI-SECTEUR-KAMIJI",
+              "code_officiel": "804201"
+            },
+            {
+              "nom": "Luekeshi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KAMIJI-SECTEUR-LUEKESHI",
+              "code_officiel": "804202"
+            }
+          ],
+          "nombre_collectivites": 2
+        },
+        {
+          "territoire": "Lubao",
+          "collectivites": [
+            {
+              "nom": "Bekalebwe",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUBAO-SECTEUR-BEKALEBWE",
+              "code_officiel": "804502"
+            },
+            {
+              "nom": "Kisengwa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUBAO-SECTEUR-KISENGWA",
+              "code_officiel": "804503"
+            },
+            {
+              "nom": "Lubao",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUBAO-SECTEUR-LUBAO",
+              "code_officiel": "804504"
+            },
+            {
+              "nom": "Tshofa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUBAO-SECTEUR-TSHOFA",
+              "code_officiel": "804505"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Luilu",
+          "collectivites": [
+            {
+              "nom": "Kanutshina",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-CE-COLL-LUILU-CHEFFERIE-KANUTSHINA",
+              "code_officiel": "804101"
+            },
+            {
+              "nom": "Katshisungu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-CE-COLL-LUILU-CHEFFERIE-KATSHISUNGU",
+              "code_officiel": "804104"
+            },
+            {
+              "nom": "Mulundu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-CE-COLL-LUILU-CHEFFERIE-MULUNDU",
+              "code_officiel": "804102"
+            },
+            {
+              "nom": "Kanda-Kanda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUILU-SECTEUR-KANDA_KANDA",
+              "code_officiel": "804103"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Ngandajika",
+          "collectivites": [
+            {
+              "nom": "Bakwa-Mulumba",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-CE-COLL-NGANDAJIKA-CHEFFERIE-BAKWA_MULUMBA",
+              "code_officiel": "804305"
+            },
+            {
+              "nom": "Kalambayi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-CE-COLL-NGANDAJIKA-CHEFFERIE-KALAMBAYI",
+              "code_officiel": "804306"
+            },
+            {
+              "nom": "Baluba-Shankadi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-NGANDAJIKA-SECTEUR-BALUBA_SHANKADI",
+              "code_officiel": "804304"
+            },
+            {
+              "nom": "Gandajika",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-NGANDAJIKA-SECTEUR-GANDAJIKA",
+              "code_officiel": "804302"
+            },
+            {
+              "nom": "Tshiyamba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-NGANDAJIKA-SECTEUR-TSHIYAMBA",
+              "code_officiel": "804303"
+            }
+          ],
+          "nombre_collectivites": 5
+        }
+      ],
+      "nombre_territoires": 5
+    },
+    {
+      "province": "Sankuru",
+      "zone_fdsu": "CE",
+      "territoires": [
+        {
+          "territoire": "Katako-Kombe",
+          "collectivites": [
+            {
+              "nom": "Lukembe",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KATAKO_KOMBE-SECTEUR-LUKEMBE",
+              "code_officiel": "803405"
+            },
+            {
+              "nom": "Ngandu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KATAKO_KOMBE-SECTEUR-NGANDU",
+              "code_officiel": "803402"
+            },
+            {
+              "nom": "Ukulungu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KATAKO_KOMBE-SECTEUR-UKULUNGU",
+              "code_officiel": "803407"
+            },
+            {
+              "nom": "Watambulu-Nord",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KATAKO_KOMBE-SECTEUR-WATAMBULU_NORD",
+              "code_officiel": "803406"
+            },
+            {
+              "nom": "Watambulu-Sud",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KATAKO_KOMBE-SECTEUR-WATAMBULU_SUD",
+              "code_officiel": "803409"
+            }
+          ],
+          "nombre_collectivites": 5
+        },
+        {
+          "territoire": "Kole",
+          "collectivites": [
+            {
+              "nom": "Atshuru",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KOLE-SECTEUR-ATSHURU",
+              "code_officiel": "803204"
+            },
+            {
+              "nom": "Bankutshu-Dibele",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KOLE-SECTEUR-BANKUTSHU_DIBELE",
+              "code_officiel": "803202"
+            },
+            {
+              "nom": "Bankutshu-Lukenie",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KOLE-SECTEUR-BANKUTSHU_LUKENIE",
+              "code_officiel": "803201"
+            },
+            {
+              "nom": "Basho",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KOLE-SECTEUR-BASHO",
+              "code_officiel": "803206"
+            },
+            {
+              "nom": "Batetela-Dibele",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KOLE-SECTEUR-BATETELA_DIBELE",
+              "code_officiel": "803203"
+            },
+            {
+              "nom": "Ohindo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-KOLE-SECTEUR-OHINDO",
+              "code_officiel": "803205"
+            }
+          ],
+          "nombre_collectivites": 6
+        },
+        {
+          "territoire": "Lodja",
+          "collectivites": [
+            {
+              "nom": "Ahamba-Mange",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LODJA-SECTEUR-AHAMBA_MANGE",
+              "code_officiel": "803603"
+            },
+            {
+              "nom": "Batetela Lukenie",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LODJA-SECTEUR-BATETELA_LUKENIE",
+              "code_officiel": "803601"
+            },
+            {
+              "nom": "Kondo-Tshumbe",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LODJA-SECTEUR-KONDO_TSHUMBE",
+              "code_officiel": "803607"
+            },
+            {
+              "nom": "Lufungu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LODJA-SECTEUR-LUFUNGU",
+              "code_officiel": "803602"
+            },
+            {
+              "nom": "Lutshimba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LODJA-SECTEUR-LUTSHIMBA",
+              "code_officiel": "803605"
+            },
+            {
+              "nom": "Nambelu-Luhembe",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LODJA-SECTEUR-NAMBELU_LUHEMBE",
+              "code_officiel": "803606"
+            },
+            {
+              "nom": "Olemba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LODJA-SECTEUR-OLEMBA",
+              "code_officiel": "803604"
+            },
+            {
+              "nom": "Vungi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LODJA-SECTEUR-VUNGI",
+              "code_officiel": "803608"
+            },
+            {
+              "nom": "Watambulu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LODJA-SECTEUR-WATAMBULU",
+              "code_officiel": "803609"
+            }
+          ],
+          "nombre_collectivites": 9
+        },
+        {
+          "territoire": "Lomela",
+          "collectivites": [
+            {
+              "nom": "Djonga",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-CE-COLL-LOMELA-CHEFFERIE-DJONGA",
+              "code_officiel": "803306"
+            },
+            {
+              "nom": "Bahamba I",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LOMELA-SECTEUR-BAHAMBA_I",
+              "code_officiel": "803302"
+            },
+            {
+              "nom": "Bahamba II",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LOMELA-SECTEUR-BAHAMBA_II",
+              "code_officiel": "803301"
+            },
+            {
+              "nom": "Bakela",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LOMELA-SECTEUR-BAKELA",
+              "code_officiel": "803303"
+            },
+            {
+              "nom": "Batetela-Lomela",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LOMELA-SECTEUR-BATETELA_LOMELA",
+              "code_officiel": "803305"
+            },
+            {
+              "nom": "Okutu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LOMELA-SECTEUR-OKUTU",
+              "code_officiel": "803304"
+            }
+          ],
+          "nombre_collectivites": 6
+        },
+        {
+          "territoire": "Lubefu",
+          "collectivites": [
+            {
+              "nom": "Basonge",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUBEFU-SECTEUR-BASONGE",
+              "code_officiel": "803502"
+            },
+            {
+              "nom": "Mondja-Ngandu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUBEFU-SECTEUR-MONDJA_NGANDU",
+              "code_officiel": "803503"
+            },
+            {
+              "nom": "Ndjovu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUBEFU-SECTEUR-NDJOVU",
+              "code_officiel": "803504"
+            },
+            {
+              "nom": "Ngandu-Wuna",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUBEFU-SECTEUR-NGANDU_WUNA",
+              "code_officiel": "803501"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Lusambo",
+          "collectivites": [
+            {
+              "nom": "Basonge",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUSAMBO-SECTEUR-BASONGE",
+              "code_officiel": "803102"
+            },
+            {
+              "nom": "Batetela",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUSAMBO-SECTEUR-BATETELA",
+              "code_officiel": "803101"
+            },
+            {
+              "nom": "Entre Kunduye Mal",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUSAMBO-SECTEUR-ENTRE_KUNDUYE_MAL",
+              "code_officiel": "803104"
+            },
+            {
+              "nom": "Entre Lubi Kunduye",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUSAMBO-SECTEUR-ENTRE_LUBI_KUNDUYE",
+              "code_officiel": "803103"
+            },
+            {
+              "nom": "Kashindi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUSAMBO-SECTEUR-KASHINDI",
+              "code_officiel": "803108"
+            },
+            {
+              "nom": "Lubi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUSAMBO-SECTEUR-LUBI",
+              "code_officiel": "803105"
+            },
+            {
+              "nom": "Pania-Mutombo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUSAMBO-SECTEUR-PANIA_MUTOMBO",
+              "code_officiel": "803107"
+            },
+            {
+              "nom": "Sankuru",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-CE-COLL-LUSAMBO-SECTEUR-SANKURU",
+              "code_officiel": "803106"
+            }
+          ],
+          "nombre_collectivites": 8
+        }
+      ],
+      "nombre_territoires": 6
+    },
+    {
+      "province": "Ituri",
+      "zone_fdsu": "ET",
+      "territoires": [
+        {
+          "territoire": "",
+          "collectivites": [
+            {
+              "nom": "Bahema",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-TERRITOIRE_INCONNU-CHEFFERIE-BAHEMA",
+              "code_officiel": "10"
+            }
+          ],
+          "nombre_collectivites": 1
+        },
+        {
+          "territoire": "Aru",
+          "collectivites": [
+            {
+              "nom": "Aluru",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-ARU-CHEFFERIE-ALURU",
+              "code_officiel": "505502"
+            },
+            {
+              "nom": "Kakwa",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-ARU-CHEFFERIE-KAKWA",
+              "code_officiel": "505503"
+            },
+            {
+              "nom": "Kaliko-Omi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-ARU-CHEFFERIE-KALIKO_OMI",
+              "code_officiel": "505504"
+            },
+            {
+              "nom": "Lu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-ARU-CHEFFERIE-LU",
+              "code_officiel": "505505"
+            },
+            {
+              "nom": "Ndo-Okebo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-ARU-CHEFFERIE-NDO_OKEBO",
+              "code_officiel": "505506"
+            },
+            {
+              "nom": "Nio-Kamule",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-ARU-CHEFFERIE-NIO_KAMULE",
+              "code_officiel": "505507"
+            },
+            {
+              "nom": "Otso",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-ARU-CHEFFERIE-OTSO",
+              "code_officiel": "505508"
+            },
+            {
+              "nom": "Zaki",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-ARU-CHEFFERIE-ZAKI",
+              "code_officiel": "505509"
+            }
+          ],
+          "nombre_collectivites": 8
+        },
+        {
+          "territoire": "Djugu",
+          "collectivites": [
+            {
+              "nom": "Bahema Nord",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-DJUGU-CHEFFERIE-BAHEMA_NORD",
+              "code_officiel": "505304"
+            },
+            {
+              "nom": "Bahema-Badjere",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-DJUGU-CHEFFERIE-BAHEMA_BADJERE",
+              "code_officiel": "505311"
+            },
+            {
+              "nom": "Bahema-Banywagi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-DJUGU-CHEFFERIE-BAHEMA_BANYWAGI",
+              "code_officiel": "505305"
+            },
+            {
+              "nom": "Mabendi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-DJUGU-CHEFFERIE-MABENDI",
+              "code_officiel": "505309"
+            },
+            {
+              "nom": "Mambisa",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-DJUGU-CHEFFERIE-MAMBISA",
+              "code_officiel": "505303"
+            },
+            {
+              "nom": "Ndo-Okebo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-DJUGU-CHEFFERIE-NDO_OKEBO",
+              "code_officiel": "505310"
+            },
+            {
+              "nom": "Baniari de Kilo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-DJUGU-SECTEUR-BANIARI_DE_KILO",
+              "code_officiel": "505301"
+            },
+            {
+              "nom": "Walendu -Pitsi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-DJUGU-SECTEUR-WALENDU__PITSI",
+              "code_officiel": "505306"
+            },
+            {
+              "nom": "Walendu-Djatsi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-DJUGU-SECTEUR-WALENDU_DJATSI",
+              "code_officiel": "505307"
+            },
+            {
+              "nom": "Walendu-Tatsi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-DJUGU-SECTEUR-WALENDU_TATSI",
+              "code_officiel": "505308"
+            }
+          ],
+          "nombre_collectivites": 10
+        },
+        {
+          "territoire": "Irumu",
+          "collectivites": [
+            {
+              "nom": "Andisoma",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-IRUMU-CHEFFERIE-ANDISOMA",
+              "code_officiel": "505101"
+            },
+            {
+              "nom": "Babelebe",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-IRUMU-CHEFFERIE-BABELEBE",
+              "code_officiel": "505102"
+            },
+            {
+              "nom": "Baboa-Bakoe",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-IRUMU-CHEFFERIE-BABOA_BAKOE",
+              "code_officiel": "505103"
+            },
+            {
+              "nom": "Bahema Mitego",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-IRUMU-CHEFFERIE-BAHEMA_MITEGO",
+              "code_officiel": "505109"
+            },
+            {
+              "nom": "Bahema Sud",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-IRUMU-CHEFFERIE-BAHEMA_SUD",
+              "code_officiel": "505106"
+            },
+            {
+              "nom": "Bahema d'Irumu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-IRUMU-CHEFFERIE-BAHEMA_DIRUMU",
+              "code_officiel": "505108"
+            },
+            {
+              "nom": "Bahema-Boga",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-IRUMU-CHEFFERIE-BAHEMA_BOGA",
+              "code_officiel": "505107"
+            },
+            {
+              "nom": "Basili",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-IRUMU-CHEFFERIE-BASILI",
+              "code_officiel": "505104"
+            },
+            {
+              "nom": "Mobala",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-IRUMU-CHEFFERIE-MOBALA",
+              "code_officiel": "505112"
+            },
+            {
+              "nom": "Walendu Bindi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-IRUMU-CHEFFERIE-WALENDU_BINDI",
+              "code_officiel": "505105"
+            },
+            {
+              "nom": "Walese Vonkutu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-IRUMU-CHEFFERIE-WALESE_VONKUTU",
+              "code_officiel": "505113"
+            },
+            {
+              "nom": "Baniari-Tchabi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-IRUMU-SECTEUR-BANIARI_TCHABI",
+              "code_officiel": "505110"
+            }
+          ],
+          "nombre_collectivites": 12
+        },
+        {
+          "territoire": "Mahagi",
+          "collectivites": [
+            {
+              "nom": "Alur-Djuganda",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MAHAGI-CHEFFERIE-ALUR_DJUGANDA",
+              "code_officiel": "505401"
+            },
+            {
+              "nom": "Anghal 1 & 2",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MAHAGI-CHEFFERIE-ANGHAL_1__2",
+              "code_officiel": "505402"
+            },
+            {
+              "nom": "Djukoth 1 & 2",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MAHAGI-CHEFFERIE-DJUKOTH_1__2",
+              "code_officiel": "505403"
+            },
+            {
+              "nom": "Mokambo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MAHAGI-CHEFFERIE-MOKAMBO",
+              "code_officiel": "505404"
+            },
+            {
+              "nom": "Pandoro",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MAHAGI-CHEFFERIE-PANDORO",
+              "code_officiel": "505405"
+            },
+            {
+              "nom": "Walendu Watsi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MAHAGI-CHEFFERIE-WALENDU_WATSI",
+              "code_officiel": "505407"
+            },
+            {
+              "nom": "Wangongo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MAHAGI-CHEFFERIE-WANGONGO",
+              "code_officiel": "505406"
+            },
+            {
+              "nom": "War-Palara",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-MAHAGI-SECTEUR-WAR_PALARA",
+              "code_officiel": "505408"
+            }
+          ],
+          "nombre_collectivites": 8
+        },
+        {
+          "territoire": "Mambasa",
+          "collectivites": [
+            {
+              "nom": "Babila-Babombi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MAMBASA-CHEFFERIE-BABILA_BABOMBI",
+              "code_officiel": "505201"
+            },
+            {
+              "nom": "Bakwanza",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MAMBASA-CHEFFERIE-BAKWANZA",
+              "code_officiel": "505202"
+            },
+            {
+              "nom": "Bandaka",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MAMBASA-CHEFFERIE-BANDAKA",
+              "code_officiel": "505204"
+            },
+            {
+              "nom": "Bombo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MAMBASA-CHEFFERIE-BOMBO",
+              "code_officiel": "505203"
+            },
+            {
+              "nom": "Mambasa",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MAMBASA-CHEFFERIE-MAMBASA",
+              "code_officiel": "505205"
+            },
+            {
+              "nom": "Walese-Dese",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MAMBASA-CHEFFERIE-WALESE_DESE",
+              "code_officiel": "505206"
+            },
+            {
+              "nom": "Walese-Karo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MAMBASA-CHEFFERIE-WALESE_KARO",
+              "code_officiel": "505207"
+            }
+          ],
+          "nombre_collectivites": 7
+        }
+      ],
+      "nombre_territoires": 6
+    },
+    {
+      "province": "Maniema",
+      "zone_fdsu": "ET",
+      "territoires": [
+        {
+          "territoire": "Kabambare",
+          "collectivites": [
+            {
+              "nom": "Babuyu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-KABAMBARE-SECTEUR-BABUYU",
+              "code_officiel": "632101"
+            },
+            {
+              "nom": "Bahemba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-KABAMBARE-SECTEUR-BAHEMBA",
+              "code_officiel": "632102"
+            },
+            {
+              "nom": "Bahombo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-KABAMBARE-SECTEUR-BAHOMBO",
+              "code_officiel": "632103"
+            },
+            {
+              "nom": "Lulindi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-KABAMBARE-SECTEUR-LULINDI",
+              "code_officiel": "632104"
+            },
+            {
+              "nom": "Saramabila",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-KABAMBARE-SECTEUR-SARAMABILA",
+              "code_officiel": "632105"
+            },
+            {
+              "nom": "Wamasa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-KABAMBARE-SECTEUR-WAMASA",
+              "code_officiel": "632106"
+            }
+          ],
+          "nombre_collectivites": 6
+        },
+        {
+          "territoire": "Kailo",
+          "collectivites": [
+            {
+              "nom": "Bangengele",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-KAILO-CHEFFERIE-BANGENGELE",
+              "code_officiel": "632603"
+            },
+            {
+              "nom": "Ambwe",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-KAILO-SECTEUR-AMBWE",
+              "code_officiel": "632601"
+            },
+            {
+              "nom": "Balanga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-KAILO-SECTEUR-BALANGA",
+              "code_officiel": "632602"
+            },
+            {
+              "nom": "Wasongola",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-KAILO-SECTEUR-WASONGOLA",
+              "code_officiel": "632605"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Kasongo",
+          "collectivites": [
+            {
+              "nom": "Bakwange",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-KASONGO-CHEFFERIE-BAKWANGE",
+              "code_officiel": "632502"
+            },
+            {
+              "nom": "Basonge 1",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-KASONGO-CHEFFERIE-BASONGE_1",
+              "code_officiel": "632503"
+            },
+            {
+              "nom": "Benia-Samba",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-KASONGO-CHEFFERIE-BENIA_SAMBA",
+              "code_officiel": "632505"
+            },
+            {
+              "nom": "Nonda",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-KASONGO-CHEFFERIE-NONDA",
+              "code_officiel": "632509"
+            },
+            {
+              "nom": "Wagenia",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-KASONGO-CHEFFERIE-WAGENIA",
+              "code_officiel": "632506"
+            },
+            {
+              "nom": "Wazula",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-KASONGO-CHEFFERIE-WAZULA",
+              "code_officiel": "632507"
+            },
+            {
+              "nom": "Basonge 2 Mweho",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-KASONGO-SECTEUR-BASONGE_2_MWEHO",
+              "code_officiel": "632504"
+            },
+            {
+              "nom": "Mamba-Kasenga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-KASONGO-SECTEUR-MAMBA_KASENGA",
+              "code_officiel": "632508"
+            },
+            {
+              "nom": "Wazimba wa Mulu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-KASONGO-SECTEUR-WAZIMBA_WA_MULU",
+              "code_officiel": "632511"
+            },
+            {
+              "nom": "Wazimba-Maringa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-KASONGO-SECTEUR-WAZIMBA_MARINGA",
+              "code_officiel": "632510"
+            }
+          ],
+          "nombre_collectivites": 10
+        },
+        {
+          "territoire": "Kibombo",
+          "collectivites": [
+            {
+              "nom": "Aluba",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-KIBOMBO-CHEFFERIE-ALUBA",
+              "code_officiel": "632201"
+            },
+            {
+              "nom": "Ankutshu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-KIBOMBO-CHEFFERIE-ANKUTSHU",
+              "code_officiel": "632202"
+            },
+            {
+              "nom": "Bahina",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-KIBOMBO-CHEFFERIE-BAHINA",
+              "code_officiel": "632203"
+            },
+            {
+              "nom": "Bakongola",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-KIBOMBO-CHEFFERIE-BAKONGOLA",
+              "code_officiel": "632204"
+            },
+            {
+              "nom": "Matapa",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-KIBOMBO-CHEFFERIE-MATAPA",
+              "code_officiel": "632205"
+            }
+          ],
+          "nombre_collectivites": 5
+        },
+        {
+          "territoire": "Lubutu",
+          "collectivites": [
+            {
+              "nom": "Bitule",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-LUBUTU-SECTEUR-BITULE",
+              "code_officiel": "632302"
+            },
+            {
+              "nom": "Obokole",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-LUBUTU-SECTEUR-OBOKOLE",
+              "code_officiel": "632303"
+            }
+          ],
+          "nombre_collectivites": 2
+        },
+        {
+          "territoire": "Pangi",
+          "collectivites": [
+            {
+              "nom": "Babene",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-PANGI-CHEFFERIE-BABENE",
+              "code_officiel": "632401"
+            },
+            {
+              "nom": "Beia",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-PANGI-SECTEUR-BEIA",
+              "code_officiel": "632402"
+            },
+            {
+              "nom": "Ikama",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-PANGI-SECTEUR-IKAMA",
+              "code_officiel": "632403"
+            },
+            {
+              "nom": "Wakabango",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-PANGI-SECTEUR-WAKABANGO",
+              "code_officiel": "632404"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Punia",
+          "collectivites": [
+            {
+              "nom": "Babira Bakwame",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-PUNIA-SECTEUR-BABIRA_BAKWAME",
+              "code_officiel": "632701"
+            },
+            {
+              "nom": "Baleka",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-PUNIA-SECTEUR-BALEKA",
+              "code_officiel": "632702"
+            },
+            {
+              "nom": "Ulindi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-PUNIA-SECTEUR-ULINDI",
+              "code_officiel": "632703"
+            }
+          ],
+          "nombre_collectivites": 3
+        }
+      ],
+      "nombre_territoires": 7
+    },
+    {
+      "province": "Nord-Kivu",
+      "zone_fdsu": "ET",
+      "territoires": [
+        {
+          "territoire": "Lubero",
+          "collectivites": [
+            {
+              "nom": "Bamate",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-LUBERO-CHEFFERIE-BAMATE",
+              "code_officiel": "612301"
+            },
+            {
+              "nom": "Baswaga",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-LUBERO-CHEFFERIE-BASWAGA",
+              "code_officiel": "612303"
+            },
+            {
+              "nom": "Batangi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-LUBERO-CHEFFERIE-BATANGI",
+              "code_officiel": "612304"
+            },
+            {
+              "nom": "Bapere",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-LUBERO-SECTEUR-BAPERE",
+              "code_officiel": "612302"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Masisi",
+          "collectivites": [
+            {
+              "nom": "Bahunde",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MASISI-CHEFFERIE-BAHUNDE",
+              "code_officiel": "612601"
+            },
+            {
+              "nom": "Bashali",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MASISI-CHEFFERIE-BASHALI",
+              "code_officiel": "612602"
+            },
+            {
+              "nom": "Katoyi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-MASISI-SECTEUR-KATOYI",
+              "code_officiel": "612604"
+            },
+            {
+              "nom": "Osso",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-MASISI-SECTEUR-OSSO",
+              "code_officiel": "612603"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Nyiragongo",
+          "collectivites": [
+            {
+              "nom": "Bukumu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-NYIRAGONGO-CHEFFERIE-BUKUMU",
+              "code_officiel": "612101"
+            }
+          ],
+          "nombre_collectivites": 1
+        },
+        {
+          "territoire": "Oicha",
+          "collectivites": [
+            {
+              "nom": "Bashu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-OICHA-CHEFFERIE-BASHU",
+              "code_officiel": "612401"
+            },
+            {
+              "nom": "Watalinga",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-OICHA-CHEFFERIE-WATALINGA",
+              "code_officiel": "612404"
+            },
+            {
+              "nom": "Beni",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-OICHA-SECTEUR-BENI",
+              "code_officiel": "612402"
+            },
+            {
+              "nom": "Ruwenzori",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-OICHA-SECTEUR-RUWENZORI",
+              "code_officiel": "612403"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Rutshuru",
+          "collectivites": [
+            {
+              "nom": "Bwisha",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-RUTSHURU-CHEFFERIE-BWISHA",
+              "code_officiel": "612501"
+            },
+            {
+              "nom": "Bwito",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-RUTSHURU-CHEFFERIE-BWITO",
+              "code_officiel": "612502"
+            }
+          ],
+          "nombre_collectivites": 2
+        },
+        {
+          "territoire": "Walikale",
+          "collectivites": [
+            {
+              "nom": "Bakano",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-WALIKALE-SECTEUR-BAKANO",
+              "code_officiel": "612202"
+            },
+            {
+              "nom": "Wanianga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-WALIKALE-SECTEUR-WANIANGA",
+              "code_officiel": "612201"
+            }
+          ],
+          "nombre_collectivites": 2
+        }
+      ],
+      "nombre_territoires": 6
+    },
+    {
+      "province": "Sud-Kivu",
+      "zone_fdsu": "ET",
+      "territoires": [
+        {
+          "territoire": "Fizi",
+          "collectivites": [
+            {
+              "nom": "Lulenge",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-FIZI-SECTEUR-LULENGE",
+              "code_officiel": "622301"
+            },
+            {
+              "nom": "Mutambala",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-FIZI-SECTEUR-MUTAMBALA",
+              "code_officiel": "622303"
+            },
+            {
+              "nom": "Ngandja",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-FIZI-SECTEUR-NGANDJA",
+              "code_officiel": "622302"
+            },
+            {
+              "nom": "Tanganyika",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-FIZI-SECTEUR-TANGANYIKA",
+              "code_officiel": "622304"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Idjwi",
+          "collectivites": [
+            {
+              "nom": "Ntambuka",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-IDJWI-SECTEUR-NTAMBUKA",
+              "code_officiel": "622701"
+            },
+            {
+              "nom": "Rubenga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-IDJWI-SECTEUR-RUBENGA",
+              "code_officiel": "622702"
+            }
+          ],
+          "nombre_collectivites": 2
+        },
+        {
+          "territoire": "Kabare",
+          "collectivites": [
+            {
+              "nom": "Kabare",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-KABARE-CHEFFERIE-KABARE",
+              "code_officiel": "622801"
+            },
+            {
+              "nom": "Nindja",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-KABARE-CHEFFERIE-NINDJA",
+              "code_officiel": "622802"
+            }
+          ],
+          "nombre_collectivites": 2
+        },
+        {
+          "territoire": "Kalehe",
+          "collectivites": [
+            {
+              "nom": "Buhavu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-KALEHE-CHEFFERIE-BUHAVU",
+              "code_officiel": "622601"
+            },
+            {
+              "nom": "Buloho",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-KALEHE-CHEFFERIE-BULOHO",
+              "code_officiel": "622602"
+            }
+          ],
+          "nombre_collectivites": 2
+        },
+        {
+          "territoire": "Mwenga",
+          "collectivites": [
+            {
+              "nom": "Basile",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MWENGA-CHEFFERIE-BASILE",
+              "code_officiel": "622401"
+            },
+            {
+              "nom": "Burhinyi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MWENGA-CHEFFERIE-BURHINYI",
+              "code_officiel": "622402"
+            },
+            {
+              "nom": "Luindi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MWENGA-CHEFFERIE-LUINDI",
+              "code_officiel": "622405"
+            },
+            {
+              "nom": "Luwindja",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MWENGA-CHEFFERIE-LUWINDJA",
+              "code_officiel": "622404"
+            },
+            {
+              "nom": "Wamuzima",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-MWENGA-CHEFFERIE-WAMUZIMA",
+              "code_officiel": "622406"
+            },
+            {
+              "nom": "Itombwe",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ET-COLL-MWENGA-SECTEUR-ITOMBWE",
+              "code_officiel": "622403"
+            }
+          ],
+          "nombre_collectivites": 6
+        },
+        {
+          "territoire": "Shabunda",
+          "collectivites": [
+            {
+              "nom": "Bakisi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-SHABUNDA-CHEFFERIE-BAKISI",
+              "code_officiel": "622501"
+            },
+            {
+              "nom": "Wakabango",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-SHABUNDA-CHEFFERIE-WAKABANGO",
+              "code_officiel": "622502"
+            }
+          ],
+          "nombre_collectivites": 2
+        },
+        {
+          "territoire": "Uvira",
+          "collectivites": [
+            {
+              "nom": "Bafulero",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-UVIRA-CHEFFERIE-BAFULERO",
+              "code_officiel": "622202"
+            },
+            {
+              "nom": "Bavira",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-UVIRA-CHEFFERIE-BAVIRA",
+              "code_officiel": "622201"
+            },
+            {
+              "nom": "Plaine de la Ruzizi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-UVIRA-CHEFFERIE-PLAINE_DE_LA_RUZIZI",
+              "code_officiel": "622203"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Walungu",
+          "collectivites": [
+            {
+              "nom": "Kaziba",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-WALUNGU-CHEFFERIE-KAZIBA",
+              "code_officiel": "622102"
+            },
+            {
+              "nom": "Ngweshe",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ET-COLL-WALUNGU-CHEFFERIE-NGWESHE",
+              "code_officiel": "622101"
+            }
+          ],
+          "nombre_collectivites": 2
+        }
+      ],
+      "nombre_territoires": 8
+    },
+    {
+      "province": "Bas-Uele",
+      "zone_fdsu": "ND",
+      "territoires": [
+        {
+          "territoire": "Aketi",
+          "collectivites": [
+            {
+              "nom": "Avuru-Duma",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-AKETI-CHEFFERIE-AVURU_DUMA",
+              "code_officiel": "503203"
+            },
+            {
+              "nom": "Avuru-Gatanga",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-AKETI-CHEFFERIE-AVURU_GATANGA",
+              "code_officiel": "503202"
+            },
+            {
+              "nom": "Bondongola",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-AKETI-CHEFFERIE-BONDONGOLA",
+              "code_officiel": "503207"
+            },
+            {
+              "nom": "Mabinza",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-AKETI-CHEFFERIE-MABINZA",
+              "code_officiel": "503205"
+            },
+            {
+              "nom": "Mobati-Boyele",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-AKETI-CHEFFERIE-MOBATI_BOYELE",
+              "code_officiel": "503209"
+            },
+            {
+              "nom": "Mongwandi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-AKETI-CHEFFERIE-MONGWANDI",
+              "code_officiel": "503204"
+            },
+            {
+              "nom": "Gbandi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-AKETI-SECTEUR-GBANDI",
+              "code_officiel": "503206"
+            },
+            {
+              "nom": "Yoko",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-AKETI-SECTEUR-YOKO",
+              "code_officiel": "503208"
+            }
+          ],
+          "nombre_collectivites": 8
+        },
+        {
+          "territoire": "Ango",
+          "collectivites": [
+            {
+              "nom": "Ezo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-ANGO-CHEFFERIE-EZO",
+              "code_officiel": "503401"
+            },
+            {
+              "nom": "Mopoy",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-ANGO-CHEFFERIE-MOPOY",
+              "code_officiel": "503403"
+            },
+            {
+              "nom": "Ngindo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-ANGO-CHEFFERIE-NGINDO",
+              "code_officiel": "503402"
+            },
+            {
+              "nom": "Sasa",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-ANGO-CHEFFERIE-SASA",
+              "code_officiel": "503404"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Bambesa",
+          "collectivites": [
+            {
+              "nom": "Bakere Bakete",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BAMBESA-CHEFFERIE-BAKERE_BAKETE",
+              "code_officiel": "503507"
+            },
+            {
+              "nom": "Bakete",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BAMBESA-CHEFFERIE-BAKETE",
+              "code_officiel": "503501"
+            },
+            {
+              "nom": "Bokapo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BAMBESA-CHEFFERIE-BOKAPO",
+              "code_officiel": "503502"
+            },
+            {
+              "nom": "Bokiba",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BAMBESA-CHEFFERIE-BOKIBA",
+              "code_officiel": "503503"
+            },
+            {
+              "nom": "Bulungwa",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BAMBESA-CHEFFERIE-BULUNGWA",
+              "code_officiel": "503504"
+            },
+            {
+              "nom": "Makere I",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BAMBESA-CHEFFERIE-MAKERE_I",
+              "code_officiel": "503505"
+            },
+            {
+              "nom": "Makere II",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BAMBESA-CHEFFERIE-MAKERE_II",
+              "code_officiel": "503506"
+            },
+            {
+              "nom": "Mange",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BAMBESA-CHEFFERIE-MANGE",
+              "code_officiel": "503508"
+            },
+            {
+              "nom": "Mondwangali",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BAMBESA-CHEFFERIE-MONDWANGALI",
+              "code_officiel": "503509"
+            }
+          ],
+          "nombre_collectivites": 9
+        },
+        {
+          "territoire": "Bondo",
+          "collectivites": [
+            {
+              "nom": "Biamange",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BONDO-CHEFFERIE-BIAMANGE",
+              "code_officiel": "503301"
+            },
+            {
+              "nom": "Boso",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BONDO-CHEFFERIE-BOSO",
+              "code_officiel": "503302"
+            },
+            {
+              "nom": "Deni",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BONDO-CHEFFERIE-DENI",
+              "code_officiel": "503303"
+            },
+            {
+              "nom": "Duaru",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BONDO-CHEFFERIE-DUARU",
+              "code_officiel": "503304"
+            },
+            {
+              "nom": "Gama",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BONDO-CHEFFERIE-GAMA",
+              "code_officiel": "503305"
+            },
+            {
+              "nom": "Gaya",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BONDO-CHEFFERIE-GAYA",
+              "code_officiel": "503306"
+            },
+            {
+              "nom": "Goa",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BONDO-CHEFFERIE-GOA",
+              "code_officiel": "503307"
+            },
+            {
+              "nom": "Kasa",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BONDO-CHEFFERIE-KASA",
+              "code_officiel": "503308"
+            },
+            {
+              "nom": "Mobenge-Mondila",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BONDO-CHEFFERIE-MOBENGE_MONDILA",
+              "code_officiel": "503309"
+            },
+            {
+              "nom": "Soa",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BONDO-CHEFFERIE-SOA",
+              "code_officiel": "503310"
+            }
+          ],
+          "nombre_collectivites": 10
+        },
+        {
+          "territoire": "Buta",
+          "collectivites": [
+            {
+              "nom": "Barisi-Mongingita",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BUTA-CHEFFERIE-BARISI_MONGINGITA",
+              "code_officiel": "503101"
+            },
+            {
+              "nom": "Bayeu-Bogbama",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BUTA-CHEFFERIE-BAYEU_BOGBAMA",
+              "code_officiel": "503102"
+            },
+            {
+              "nom": "Bayeu-Bogongia",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BUTA-CHEFFERIE-BAYEU_BOGONGIA",
+              "code_officiel": "503103"
+            },
+            {
+              "nom": "Mobati",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BUTA-CHEFFERIE-MOBATI",
+              "code_officiel": "503104"
+            },
+            {
+              "nom": "Monganzolo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BUTA-CHEFFERIE-MONGANZOLO",
+              "code_officiel": "503105"
+            },
+            {
+              "nom": "Nguru",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BUTA-CHEFFERIE-NGURU",
+              "code_officiel": "503106"
+            }
+          ],
+          "nombre_collectivites": 6
+        },
+        {
+          "territoire": "Poko",
+          "collectivites": [
+            {
+              "nom": "Babena",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-POKO-CHEFFERIE-BABENA",
+              "code_officiel": "503601"
+            },
+            {
+              "nom": "Bakengaie-Avuru",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-POKO-CHEFFERIE-BAKENGAIE_AVURU",
+              "code_officiel": "503602"
+            },
+            {
+              "nom": "Gamu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-POKO-CHEFFERIE-GAMU",
+              "code_officiel": "503603"
+            },
+            {
+              "nom": "Kipate",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-POKO-CHEFFERIE-KIPATE",
+              "code_officiel": "503604"
+            },
+            {
+              "nom": "Komendeni",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-POKO-CHEFFERIE-KOMENDENI",
+              "code_officiel": "503605"
+            },
+            {
+              "nom": "Mabanga",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-POKO-CHEFFERIE-MABANGA",
+              "code_officiel": "503606"
+            },
+            {
+              "nom": "Madi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-POKO-CHEFFERIE-MADI",
+              "code_officiel": "503607"
+            },
+            {
+              "nom": "Malele",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-POKO-CHEFFERIE-MALELE",
+              "code_officiel": "503608"
+            },
+            {
+              "nom": "Ngbaradi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-POKO-CHEFFERIE-NGBARADI",
+              "code_officiel": "503609"
+            },
+            {
+              "nom": "Soronga",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-POKO-CHEFFERIE-SORONGA",
+              "code_officiel": "503610"
+            },
+            {
+              "nom": "Zune",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-POKO-CHEFFERIE-ZUNE",
+              "code_officiel": "503611"
+            },
+            {
+              "nom": "Abarambo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-POKO-SECTEUR-ABARAMBO",
+              "code_officiel": "503612"
+            },
+            {
+              "nom": "Kembisa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-POKO-SECTEUR-KEMBISA",
+              "code_officiel": "503613"
+            }
+          ],
+          "nombre_collectivites": 13
+        }
+      ],
+      "nombre_territoires": 6
+    },
+    {
+      "province": "Equateur",
+      "zone_fdsu": "ND",
+      "territoires": [
+        {
+          "territoire": "Basankusu",
+          "collectivites": [
+            {
+              "nom": "Basankusu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BASANKUSU-SECTEUR-BASANKUSU",
+              "code_officiel": "402101"
+            },
+            {
+              "nom": "Gombalo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BASANKUSU-SECTEUR-GOMBALO",
+              "code_officiel": "402103"
+            },
+            {
+              "nom": "Waka-Bokeka",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BASANKUSU-SECTEUR-WAKA_BOKEKA",
+              "code_officiel": "402102"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Bikoro",
+          "collectivites": [
+            {
+              "nom": "Ekonda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BIKORO-SECTEUR-EKONDA",
+              "code_officiel": "402402"
+            },
+            {
+              "nom": "Elanga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BIKORO-SECTEUR-ELANGA",
+              "code_officiel": "402403"
+            },
+            {
+              "nom": "Lac Ntomba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BIKORO-SECTEUR-LAC_NTOMBA",
+              "code_officiel": "402401"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Bolomba",
+          "collectivites": [
+            {
+              "nom": "Dianga",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BOLOMBA-CHEFFERIE-DIANGA",
+              "code_officiel": "402203"
+            },
+            {
+              "nom": "Bolomba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BOLOMBA-SECTEUR-BOLOMBA",
+              "code_officiel": "402204"
+            },
+            {
+              "nom": "Busira",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BOLOMBA-SECTEUR-BUSIRA",
+              "code_officiel": "402205"
+            },
+            {
+              "nom": "Lusanganya",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BOLOMBA-SECTEUR-LUSANGANYA",
+              "code_officiel": "402201"
+            },
+            {
+              "nom": "Mampoko",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BOLOMBA-SECTEUR-MAMPOKO",
+              "code_officiel": "402202"
+            }
+          ],
+          "nombre_collectivites": 5
+        },
+        {
+          "territoire": "Bomongo",
+          "collectivites": [
+            {
+              "nom": "Djamba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BOMONGO-SECTEUR-DJAMBA",
+              "code_officiel": "402701"
+            },
+            {
+              "nom": "Ngiri",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BOMONGO-SECTEUR-NGIRI",
+              "code_officiel": "402702"
+            }
+          ],
+          "nombre_collectivites": 2
+        },
+        {
+          "territoire": "Ingende",
+          "collectivites": [
+            {
+              "nom": "Bokatola",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-INGENDE-SECTEUR-BOKATOLA",
+              "code_officiel": "402301"
+            },
+            {
+              "nom": "Duali",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-INGENDE-SECTEUR-DUALI",
+              "code_officiel": "402302"
+            },
+            {
+              "nom": "Eungu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-INGENDE-SECTEUR-EUNGU",
+              "code_officiel": "402303"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Lukolela",
+          "collectivites": [
+            {
+              "nom": "Banunu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-LUKOLELA-SECTEUR-BANUNU",
+              "code_officiel": "402501"
+            },
+            {
+              "nom": "Lusakani",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-LUKOLELA-SECTEUR-LUSAKANI",
+              "code_officiel": "402502"
+            },
+            {
+              "nom": "Mpama",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-LUKOLELA-SECTEUR-MPAMA",
+              "code_officiel": "402503"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Mankanza",
+          "collectivites": [
+            {
+              "nom": "Bangala",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-MANKANZA-SECTEUR-BANGALA",
+              "code_officiel": "402601"
+            },
+            {
+              "nom": "Mweko",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-MANKANZA-SECTEUR-MWEKO",
+              "code_officiel": "402602"
+            },
+            {
+              "nom": "Ndobo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-MANKANZA-SECTEUR-NDOBO",
+              "code_officiel": "402603"
+            }
+          ],
+          "nombre_collectivites": 3
+        }
+      ],
+      "nombre_territoires": 7
+    },
+    {
+      "province": "Haut-Uele",
+      "zone_fdsu": "ND",
+      "territoires": [
+        {
+          "territoire": "Dungu",
+          "collectivites": [
+            {
+              "nom": "Malingindu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-DUNGU-CHEFFERIE-MALINGINDU",
+              "code_officiel": "504301"
+            },
+            {
+              "nom": "Ndolomo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-DUNGU-CHEFFERIE-NDOLOMO",
+              "code_officiel": "504302"
+            },
+            {
+              "nom": "Wando",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-DUNGU-CHEFFERIE-WANDO",
+              "code_officiel": "504303"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Faradje",
+          "collectivites": [
+            {
+              "nom": "Dongo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-FARADJE-CHEFFERIE-DONGO",
+              "code_officiel": "504404"
+            },
+            {
+              "nom": "Kakwa",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-FARADJE-CHEFFERIE-KAKWA",
+              "code_officiel": "504409"
+            },
+            {
+              "nom": "Logo-Bagela",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-FARADJE-CHEFFERIE-LOGO_BAGELA",
+              "code_officiel": "504408"
+            },
+            {
+              "nom": "Logo-Doka",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-FARADJE-CHEFFERIE-LOGO_DOKA",
+              "code_officiel": "504405"
+            },
+            {
+              "nom": "Logo-Lolia",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-FARADJE-CHEFFERIE-LOGO_LOLIA",
+              "code_officiel": "504403"
+            },
+            {
+              "nom": "Logo-Obeleba",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-FARADJE-CHEFFERIE-LOGO_OBELEBA",
+              "code_officiel": "504406"
+            },
+            {
+              "nom": "Logo-Ogambi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-FARADJE-CHEFFERIE-LOGO_OGAMBI",
+              "code_officiel": "504401"
+            },
+            {
+              "nom": "Mondo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-FARADJE-CHEFFERIE-MONDO",
+              "code_officiel": "504407"
+            }
+          ],
+          "nombre_collectivites": 8
+        },
+        {
+          "territoire": "Niangara",
+          "collectivites": [
+            {
+              "nom": "Boemi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-NIANGARA-CHEFFERIE-BOEMI",
+              "code_officiel": "504201"
+            },
+            {
+              "nom": "Kereboro",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-NIANGARA-CHEFFERIE-KEREBORO",
+              "code_officiel": "504202"
+            },
+            {
+              "nom": "Kopa",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-NIANGARA-CHEFFERIE-KOPA",
+              "code_officiel": "504203"
+            },
+            {
+              "nom": "Mangbele",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-NIANGARA-CHEFFERIE-MANGBELE",
+              "code_officiel": "504204"
+            },
+            {
+              "nom": "Mangbetu-Mabisanga",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-NIANGARA-CHEFFERIE-MANGBETU_MABISANGA",
+              "code_officiel": "504205"
+            },
+            {
+              "nom": "Manziga",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-NIANGARA-CHEFFERIE-MANZIGA",
+              "code_officiel": "504206"
+            },
+            {
+              "nom": "Okondo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-NIANGARA-CHEFFERIE-OKONDO",
+              "code_officiel": "504207"
+            }
+          ],
+          "nombre_collectivites": 7
+        },
+        {
+          "territoire": "Rungu",
+          "collectivites": [
+            {
+              "nom": "Azanga",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-RUNGU-CHEFFERIE-AZANGA",
+              "code_officiel": "504101"
+            },
+            {
+              "nom": "Mayogo-Mabozo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-RUNGU-CHEFFERIE-MAYOGO_MABOZO",
+              "code_officiel": "504103"
+            },
+            {
+              "nom": "Mayogo-Magbaie",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-RUNGU-CHEFFERIE-MAYOGO_MAGBAIE",
+              "code_officiel": "504104"
+            },
+            {
+              "nom": "Mboli",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-RUNGU-CHEFFERIE-MBOLI",
+              "code_officiel": "504105"
+            },
+            {
+              "nom": "Medje-Mango",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-RUNGU-CHEFFERIE-MEDJE_MANGO",
+              "code_officiel": "504106"
+            },
+            {
+              "nom": "Mongo-Masi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-RUNGU-CHEFFERIE-MONGO_MASI",
+              "code_officiel": "504107"
+            },
+            {
+              "nom": "Ndey",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-RUNGU-CHEFFERIE-NDEY",
+              "code_officiel": "504108"
+            }
+          ],
+          "nombre_collectivites": 7
+        },
+        {
+          "territoire": "Wamba",
+          "collectivites": [
+            {
+              "nom": "Bafwagada",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-WAMBA-CHEFFERIE-BAFWAGADA",
+              "code_officiel": "504601"
+            },
+            {
+              "nom": "Bafwakoy",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-WAMBA-CHEFFERIE-BAFWAKOY",
+              "code_officiel": "504606"
+            },
+            {
+              "nom": "Balika-Toriko",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-WAMBA-CHEFFERIE-BALIKA_TORIKO",
+              "code_officiel": "504607"
+            },
+            {
+              "nom": "Mabudu-Malika-Baberu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-WAMBA-CHEFFERIE-MABUDU_MALIKA_BABERU",
+              "code_officiel": "504602"
+            },
+            {
+              "nom": "Maha",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-WAMBA-CHEFFERIE-MAHA",
+              "code_officiel": "504603"
+            },
+            {
+              "nom": "Makoda",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-WAMBA-CHEFFERIE-MAKODA",
+              "code_officiel": "504604"
+            },
+            {
+              "nom": "Malamba",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-WAMBA-CHEFFERIE-MALAMBA",
+              "code_officiel": "504605"
+            },
+            {
+              "nom": "Malika",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-WAMBA-CHEFFERIE-MALIKA",
+              "code_officiel": "504609"
+            },
+            {
+              "nom": "Mangbele",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-WAMBA-CHEFFERIE-MANGBELE",
+              "code_officiel": "504610"
+            },
+            {
+              "nom": "Timoniko",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-WAMBA-CHEFFERIE-TIMONIKO",
+              "code_officiel": "504611"
+            },
+            {
+              "nom": "Wadimbisa-Mabudu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-WAMBA-CHEFFERIE-WADIMBISA_MABUDU",
+              "code_officiel": "504612"
+            }
+          ],
+          "nombre_collectivites": 11
+        },
+        {
+          "territoire": "Watsa",
+          "collectivites": [
+            {
+              "nom": "Andikofa",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-WATSA-CHEFFERIE-ANDIKOFA",
+              "code_officiel": "504501"
+            },
+            {
+              "nom": "Andobi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-WATSA-CHEFFERIE-ANDOBI",
+              "code_officiel": "504502"
+            },
+            {
+              "nom": "Ateru",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-WATSA-CHEFFERIE-ATERU",
+              "code_officiel": "504503"
+            },
+            {
+              "nom": "Kebo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-WATSA-CHEFFERIE-KEBO",
+              "code_officiel": "504506"
+            },
+            {
+              "nom": "Mari-Minza",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-WATSA-CHEFFERIE-MARI_MINZA",
+              "code_officiel": "504510"
+            },
+            {
+              "nom": "Walese",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-WATSA-CHEFFERIE-WALESE",
+              "code_officiel": "504509"
+            },
+            {
+              "nom": "Gombari",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-WATSA-SECTEUR-GOMBARI",
+              "code_officiel": "504505"
+            },
+            {
+              "nom": "Kibali",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-WATSA-SECTEUR-KIBALI",
+              "code_officiel": "504507"
+            },
+            {
+              "nom": "Mangbutu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-WATSA-SECTEUR-MANGBUTU",
+              "code_officiel": "504508"
+            }
+          ],
+          "nombre_collectivites": 9
+        }
+      ],
+      "nombre_territoires": 6
+    },
+    {
+      "province": "Mongala",
+      "zone_fdsu": "ND",
+      "territoires": [
+        {
+          "territoire": "Bondanganga",
+          "collectivites": [
+            {
+              "nom": "Bongandanga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BONDANGANGA-SECTEUR-BONGANDANGA",
+              "code_officiel": "406301"
+            },
+            {
+              "nom": "Boso-Djanoa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BONDANGANGA-SECTEUR-BOSO_DJANOA",
+              "code_officiel": "406303"
+            },
+            {
+              "nom": "Boso-Melo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BONDANGANGA-SECTEUR-BOSO_MELO",
+              "code_officiel": "406302"
+            },
+            {
+              "nom": "Boso-Simba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BONDANGANGA-SECTEUR-BOSO_SIMBA",
+              "code_officiel": "406304"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Bumba",
+          "collectivites": [
+            {
+              "nom": "Banda-Yowa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BUMBA-SECTEUR-BANDA_YOWA",
+              "code_officiel": "406207"
+            },
+            {
+              "nom": "Itimbiri",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BUMBA-SECTEUR-ITIMBIRI",
+              "code_officiel": "406202"
+            },
+            {
+              "nom": "Loeka",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BUMBA-SECTEUR-LOEKA",
+              "code_officiel": "406205"
+            },
+            {
+              "nom": "Molua",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BUMBA-SECTEUR-MOLUA",
+              "code_officiel": "406204"
+            },
+            {
+              "nom": "Monzamboli",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BUMBA-SECTEUR-MONZAMBOLI",
+              "code_officiel": "406206"
+            },
+            {
+              "nom": "Yandongi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BUMBA-SECTEUR-YANDONGI",
+              "code_officiel": "406203"
+            }
+          ],
+          "nombre_collectivites": 6
+        },
+        {
+          "territoire": "Lisala",
+          "collectivites": [
+            {
+              "nom": "Mongala-Motima",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-LISALA-SECTEUR-MONGALA_MOTIMA",
+              "code_officiel": "406104"
+            },
+            {
+              "nom": "Ngombe-Doko",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-LISALA-SECTEUR-NGOMBE_DOKO",
+              "code_officiel": "406102"
+            },
+            {
+              "nom": "Ngombe-Mobangi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-LISALA-SECTEUR-NGOMBE_MOBANGI",
+              "code_officiel": "406103"
+            }
+          ],
+          "nombre_collectivites": 3
+        }
+      ],
+      "nombre_territoires": 3
+    },
+    {
+      "province": "Nord-Ubangi",
+      "zone_fdsu": "ND",
+      "territoires": [
+        {
+          "territoire": "Basobolo",
+          "collectivites": [
+            {
+              "nom": "Bandas",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BASOBOLO-SECTEUR-BANDAS",
+              "code_officiel": "405403"
+            },
+            {
+              "nom": "Bili",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BASOBOLO-SECTEUR-BILI",
+              "code_officiel": "405402"
+            },
+            {
+              "nom": "Bosobolo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BASOBOLO-SECTEUR-BOSOBOLO",
+              "code_officiel": "405401"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Businga",
+          "collectivites": [
+            {
+              "nom": "Bodangabo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BUSINGA-SECTEUR-BODANGABO",
+              "code_officiel": "405302"
+            },
+            {
+              "nom": "Businga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BUSINGA-SECTEUR-BUSINGA",
+              "code_officiel": "405303"
+            },
+            {
+              "nom": "Karawa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BUSINGA-SECTEUR-KARAWA",
+              "code_officiel": "405304"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Mobayi-Mbongo",
+          "collectivites": [
+            {
+              "nom": "Mobayi-Mbongo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-MOBAYI_MBONGO-SECTEUR-MOBAYI_MBONGO",
+              "code_officiel": "405102"
+            },
+            {
+              "nom": "Otto-Banza",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-MOBAYI_MBONGO-SECTEUR-OTTO_BANZA",
+              "code_officiel": "405101"
+            }
+          ],
+          "nombre_collectivites": 2
+        },
+        {
+          "territoire": "Yakoma",
+          "collectivites": [
+            {
+              "nom": "Abumombazi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-YAKOMA-SECTEUR-ABUMOMBAZI",
+              "code_officiel": "405201"
+            },
+            {
+              "nom": "Wapinda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-YAKOMA-SECTEUR-WAPINDA",
+              "code_officiel": "405202"
+            },
+            {
+              "nom": "Yakoma",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-YAKOMA-SECTEUR-YAKOMA",
+              "code_officiel": "405203"
+            }
+          ],
+          "nombre_collectivites": 3
+        }
+      ],
+      "nombre_territoires": 4
+    },
+    {
+      "province": "Sud-Ubangi",
+      "zone_fdsu": "ND",
+      "territoires": [
+        {
+          "territoire": "Budjala",
+          "collectivites": [
+            {
+              "nom": "Banza",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BUDJALA-SECTEUR-BANZA",
+              "code_officiel": "403201"
+            },
+            {
+              "nom": "Bolingo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BUDJALA-SECTEUR-BOLINGO",
+              "code_officiel": "403202"
+            },
+            {
+              "nom": "Mongala-Molima",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BUDJALA-SECTEUR-MONGALA_MOLIMA",
+              "code_officiel": "403203"
+            },
+            {
+              "nom": "Ndolo-Liboko",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BUDJALA-SECTEUR-NDOLO_LIBOKO",
+              "code_officiel": "403205"
+            },
+            {
+              "nom": "Ngombe-Doko de Lekimi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BUDJALA-SECTEUR-NGOMBE_DOKO_DE_LEKIMI",
+              "code_officiel": "403204"
+            }
+          ],
+          "nombre_collectivites": 5
+        },
+        {
+          "territoire": "Gemena",
+          "collectivites": [
+            {
+              "nom": "Banga-Kungu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-GEMENA-SECTEUR-BANGA_KUNGU",
+              "code_officiel": "403101"
+            },
+            {
+              "nom": "Bowase",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-GEMENA-SECTEUR-BOWASE",
+              "code_officiel": "403102"
+            },
+            {
+              "nom": "Mbari",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-GEMENA-SECTEUR-MBARI",
+              "code_officiel": "403104"
+            },
+            {
+              "nom": "Nguya",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-GEMENA-SECTEUR-NGUYA",
+              "code_officiel": "403103"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Kungu",
+          "collectivites": [
+            {
+              "nom": "Bomboma",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-KUNGU-SECTEUR-BOMBOMA",
+              "code_officiel": "403301"
+            },
+            {
+              "nom": "Dongo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-KUNGU-SECTEUR-DONGO",
+              "code_officiel": "403302"
+            },
+            {
+              "nom": "Lua",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-KUNGU-SECTEUR-LUA",
+              "code_officiel": "403303"
+            },
+            {
+              "nom": "Mwanda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-KUNGU-SECTEUR-MWANDA",
+              "code_officiel": "403304"
+            },
+            {
+              "nom": "Songo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-KUNGU-SECTEUR-SONGO",
+              "code_officiel": "403305"
+            }
+          ],
+          "nombre_collectivites": 5
+        },
+        {
+          "territoire": "Libenge",
+          "collectivites": [
+            {
+              "nom": "Libenge-Centre",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-LIBENGE-SECTEUR-LIBENGE_CENTRE",
+              "code_officiel": "403402"
+            },
+            {
+              "nom": "Libenge-Nord",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-LIBENGE-SECTEUR-LIBENGE_NORD",
+              "code_officiel": "403401"
+            },
+            {
+              "nom": "Libenge-Sud",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-LIBENGE-SECTEUR-LIBENGE_SUD",
+              "code_officiel": "403403"
+            }
+          ],
+          "nombre_collectivites": 3
+        }
+      ],
+      "nombre_territoires": 4
+    },
+    {
+      "province": "Tshopo",
+      "zone_fdsu": "ND",
+      "territoires": [
+        {
+          "territoire": "Bafwasende",
+          "collectivites": [
+            {
+              "nom": "Bafwandaka",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BAFWASENDE-SECTEUR-BAFWANDAKA",
+              "code_officiel": "502201"
+            },
+            {
+              "nom": "Bakumu d'Angumu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BAFWASENDE-SECTEUR-BAKUMU_DANGUMU",
+              "code_officiel": "502202"
+            },
+            {
+              "nom": "Bakundumu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BAFWASENDE-SECTEUR-BAKUNDUMU",
+              "code_officiel": "502203"
+            },
+            {
+              "nom": "Barumbi-Opienge",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BAFWASENDE-SECTEUR-BARUMBI_OPIENGE",
+              "code_officiel": "502204"
+            },
+            {
+              "nom": "Bekeni-Kondolole",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BAFWASENDE-SECTEUR-BEKENI_KONDOLOLE",
+              "code_officiel": "502205"
+            },
+            {
+              "nom": "Bemili",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BAFWASENDE-SECTEUR-BEMILI",
+              "code_officiel": "502206"
+            }
+          ],
+          "nombre_collectivites": 6
+        },
+        {
+          "territoire": "Banalia",
+          "collectivites": [
+            {
+              "nom": "Baboa de Kole",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BANALIA-SECTEUR-BABOA_DE_KOLE",
+              "code_officiel": "502102"
+            },
+            {
+              "nom": "Baboro",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BANALIA-SECTEUR-BABORO",
+              "code_officiel": "502101"
+            },
+            {
+              "nom": "Bamanga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BANALIA-SECTEUR-BAMANGA",
+              "code_officiel": "502103"
+            },
+            {
+              "nom": "Banalia Bangba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BANALIA-SECTEUR-BANALIA_BANGBA",
+              "code_officiel": "502104"
+            },
+            {
+              "nom": "Popoy",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BANALIA-SECTEUR-POPOY",
+              "code_officiel": "502105"
+            }
+          ],
+          "nombre_collectivites": 5
+        },
+        {
+          "territoire": "Basoko",
+          "collectivites": [
+            {
+              "nom": "Wahanga",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BASOKO-CHEFFERIE-WAHANGA",
+              "code_officiel": "502710"
+            },
+            {
+              "nom": "Yaliwasa",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BASOKO-CHEFFERIE-YALIWASA",
+              "code_officiel": "502708"
+            },
+            {
+              "nom": "Yamandundu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BASOKO-CHEFFERIE-YAMANDUNDU",
+              "code_officiel": "502709"
+            },
+            {
+              "nom": "Bangelema",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BASOKO-SECTEUR-BANGELEMA",
+              "code_officiel": "502703"
+            },
+            {
+              "nom": "Bomenge",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BASOKO-SECTEUR-BOMENGE",
+              "code_officiel": "502704"
+            },
+            {
+              "nom": "Lukutu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BASOKO-SECTEUR-LUKUTU",
+              "code_officiel": "502705"
+            },
+            {
+              "nom": "Mobango Itimbiri",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BASOKO-SECTEUR-MOBANGO_ITIMBIRI",
+              "code_officiel": "502706"
+            },
+            {
+              "nom": "Turumbu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BASOKO-SECTEUR-TURUMBU",
+              "code_officiel": "502707"
+            }
+          ],
+          "nombre_collectivites": 8
+        },
+        {
+          "territoire": "Isangi",
+          "collectivites": [
+            {
+              "nom": "Baluolambila",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-ISANGI-CHEFFERIE-BALUOLAMBILA",
+              "code_officiel": "502506"
+            },
+            {
+              "nom": "Bolomboki",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-ISANGI-CHEFFERIE-BOLOMBOKI",
+              "code_officiel": "502502"
+            },
+            {
+              "nom": "Kombe",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-ISANGI-CHEFFERIE-KOMBE",
+              "code_officiel": "502503"
+            },
+            {
+              "nom": "Yalihila",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-ISANGI-CHEFFERIE-YALIHILA",
+              "code_officiel": "502517"
+            },
+            {
+              "nom": "Yalikoka-Mboso",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-ISANGI-CHEFFERIE-YALIKOKA_MBOSO",
+              "code_officiel": "502511"
+            },
+            {
+              "nom": "Bambelota",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-ISANGI-SECTEUR-BAMBELOTA",
+              "code_officiel": "502505"
+            },
+            {
+              "nom": "Liutua",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-ISANGI-SECTEUR-LIUTUA",
+              "code_officiel": "502513"
+            },
+            {
+              "nom": "Lokombe",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-ISANGI-SECTEUR-LOKOMBE",
+              "code_officiel": "502501"
+            },
+            {
+              "nom": "Lueta",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-ISANGI-SECTEUR-LUETA",
+              "code_officiel": "502504"
+            },
+            {
+              "nom": "Turumbu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-ISANGI-SECTEUR-TURUMBU",
+              "code_officiel": "502507"
+            },
+            {
+              "nom": "Yalikandja-Yanongo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-ISANGI-SECTEUR-YALIKANDJA_YANONGO",
+              "code_officiel": "502514"
+            },
+            {
+              "nom": "Yaokandja",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-ISANGI-SECTEUR-YAOKANDJA",
+              "code_officiel": "502518"
+            },
+            {
+              "nom": "Yawembe-Basoa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-ISANGI-SECTEUR-YAWEMBE_BASOA",
+              "code_officiel": "502512"
+            }
+          ],
+          "nombre_collectivites": 13
+        },
+        {
+          "territoire": "Opala",
+          "collectivites": [
+            {
+              "nom": "Kembe",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-OPALA-CHEFFERIE-KEMBE",
+              "code_officiel": "502409"
+            },
+            {
+              "nom": "Mongo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-OPALA-CHEFFERIE-MONGO",
+              "code_officiel": "502408"
+            },
+            {
+              "nom": "Yalingo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-OPALA-CHEFFERIE-YALINGO",
+              "code_officiel": "502406"
+            },
+            {
+              "nom": "Yapandu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-OPALA-CHEFFERIE-YAPANDU",
+              "code_officiel": "502407"
+            },
+            {
+              "nom": "Yeyango",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-OPALA-CHEFFERIE-YEYANGO",
+              "code_officiel": "502404"
+            },
+            {
+              "nom": "Yomale",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-OPALA-CHEFFERIE-YOMALE",
+              "code_officiel": "502402"
+            },
+            {
+              "nom": "Balinga-Lindja",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-OPALA-SECTEUR-BALINGA_LINDJA",
+              "code_officiel": "502401"
+            },
+            {
+              "nom": "Iye",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-OPALA-SECTEUR-IYE",
+              "code_officiel": "502405"
+            },
+            {
+              "nom": "Lobaie",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-OPALA-SECTEUR-LOBAIE",
+              "code_officiel": "502411"
+            },
+            {
+              "nom": "Tooli",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-OPALA-SECTEUR-TOOLI",
+              "code_officiel": "502410"
+            },
+            {
+              "nom": "Yawende-Loolo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-OPALA-SECTEUR-YAWENDE_LOOLO",
+              "code_officiel": "502403"
+            }
+          ],
+          "nombre_collectivites": 11
+        },
+        {
+          "territoire": "Ubundu",
+          "collectivites": [
+            {
+              "nom": "Kirundu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-UBUNDU-CHEFFERIE-KIRUNDU",
+              "code_officiel": "502308"
+            },
+            {
+              "nom": "Bakumu-Kilinga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-UBUNDU-SECTEUR-BAKUMU_KILINGA",
+              "code_officiel": "502305"
+            },
+            {
+              "nom": "Bakumu-Mandombe",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-UBUNDU-SECTEUR-BAKUMU_MANDOMBE",
+              "code_officiel": "502303"
+            },
+            {
+              "nom": "Bakumu-Mangongo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-UBUNDU-SECTEUR-BAKUMU_MANGONGO",
+              "code_officiel": "502302"
+            },
+            {
+              "nom": "Bakumu-d'Obiatuku",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-UBUNDU-SECTEUR-BAKUMU_DOBIATUKU",
+              "code_officiel": "502304"
+            },
+            {
+              "nom": "Mituku-Bamoya",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-UBUNDU-SECTEUR-MITUKU_BAMOYA",
+              "code_officiel": "502309"
+            },
+            {
+              "nom": "Mituku-Basikate",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-UBUNDU-SECTEUR-MITUKU_BASIKATE",
+              "code_officiel": "502310"
+            },
+            {
+              "nom": "Walengola Lilo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-UBUNDU-SECTEUR-WALENGOLA_LILO",
+              "code_officiel": "502306"
+            },
+            {
+              "nom": "Walengola Lowa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-UBUNDU-SECTEUR-WALENGOLA_LOWA",
+              "code_officiel": "502307"
+            },
+            {
+              "nom": "Walengola-Babira",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-UBUNDU-SECTEUR-WALENGOLA_BABIRA",
+              "code_officiel": "502311"
+            },
+            {
+              "nom": "Walengola-Baleka",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-UBUNDU-SECTEUR-WALENGOLA_BALEKA",
+              "code_officiel": "502301"
+            }
+          ],
+          "nombre_collectivites": 11
+        },
+        {
+          "territoire": "Yahuma",
+          "collectivites": [
+            {
+              "nom": "Mombesa",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-YAHUMA-CHEFFERIE-MOMBESA",
+              "code_officiel": "502604"
+            },
+            {
+              "nom": "Bolinga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-YAHUMA-SECTEUR-BOLINGA",
+              "code_officiel": "502601"
+            },
+            {
+              "nom": "Bosoku",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-YAHUMA-SECTEUR-BOSOKU",
+              "code_officiel": "502602"
+            },
+            {
+              "nom": "Buma",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-YAHUMA-SECTEUR-BUMA",
+              "code_officiel": "502603"
+            }
+          ],
+          "nombre_collectivites": 4
+        }
+      ],
+      "nombre_territoires": 7
+    },
+    {
+      "province": "Tshuapa",
+      "zone_fdsu": "ND",
+      "territoires": [
+        {
+          "territoire": "Befale",
+          "collectivites": [
+            {
+              "nom": "Befumbo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BEFALE-SECTEUR-BEFUMBO",
+              "code_officiel": "407201"
+            },
+            {
+              "nom": "Duale",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BEFALE-SECTEUR-DUALE",
+              "code_officiel": "407202"
+            },
+            {
+              "nom": "Lomako",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BEFALE-SECTEUR-LOMAKO",
+              "code_officiel": "407203"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Boende",
+          "collectivites": [
+            {
+              "nom": "Bolua",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BOENDE-SECTEUR-BOLUA",
+              "code_officiel": "407103"
+            },
+            {
+              "nom": "Djera",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BOENDE-SECTEUR-DJERA",
+              "code_officiel": "407101"
+            },
+            {
+              "nom": "Lofoy",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BOENDE-SECTEUR-LOFOY",
+              "code_officiel": "407102"
+            },
+            {
+              "nom": "Wini",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BOENDE-SECTEUR-WINI",
+              "code_officiel": "407104"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Bokungu",
+          "collectivites": [
+            {
+              "nom": "Nkole",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-ND-COLL-BOKUNGU-CHEFFERIE-NKOLE",
+              "code_officiel": "407503"
+            },
+            {
+              "nom": "Lolaka",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BOKUNGU-SECTEUR-LOLAKA",
+              "code_officiel": "407501"
+            },
+            {
+              "nom": "Loombo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BOKUNGU-SECTEUR-LOOMBO",
+              "code_officiel": "407505"
+            },
+            {
+              "nom": "Luando",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BOKUNGU-SECTEUR-LUANDO",
+              "code_officiel": "407504"
+            },
+            {
+              "nom": "Luay",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-BOKUNGU-SECTEUR-LUAY",
+              "code_officiel": "407502"
+            }
+          ],
+          "nombre_collectivites": 5
+        },
+        {
+          "territoire": "Djolu",
+          "collectivites": [
+            {
+              "nom": "Djolu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-DJOLU-SECTEUR-DJOLU",
+              "code_officiel": "407301"
+            },
+            {
+              "nom": "Lingomo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-DJOLU-SECTEUR-LINGOMO",
+              "code_officiel": "407302"
+            },
+            {
+              "nom": "Luo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-DJOLU-SECTEUR-LUO",
+              "code_officiel": "407303"
+            },
+            {
+              "nom": "Yala",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-DJOLU-SECTEUR-YALA",
+              "code_officiel": "407304"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Ikela",
+          "collectivites": [
+            {
+              "nom": "Lofome",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-IKELA-SECTEUR-LOFOME",
+              "code_officiel": "407404"
+            },
+            {
+              "nom": "Loile",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-IKELA-SECTEUR-LOILE",
+              "code_officiel": "407401"
+            },
+            {
+              "nom": "Lokina",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-IKELA-SECTEUR-LOKINA",
+              "code_officiel": "407402"
+            },
+            {
+              "nom": "Tshuapa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-IKELA-SECTEUR-TSHUAPA",
+              "code_officiel": "407403"
+            },
+            {
+              "nom": "Tumbenga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-IKELA-SECTEUR-TUMBENGA",
+              "code_officiel": "407406"
+            }
+          ],
+          "nombre_collectivites": 5
+        },
+        {
+          "territoire": "Monkoto",
+          "collectivites": [
+            {
+              "nom": "Bianga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-MONKOTO-SECTEUR-BIANGA",
+              "code_officiel": "407602"
+            },
+            {
+              "nom": "Monkoto",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-MONKOTO-SECTEUR-MONKOTO",
+              "code_officiel": "407601"
+            },
+            {
+              "nom": "Nongo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-ND-COLL-MONKOTO-SECTEUR-NONGO",
+              "code_officiel": "407603"
+            }
+          ],
+          "nombre_collectivites": 3
+        }
+      ],
+      "nombre_territoires": 6
+    },
+    {
+      "province": "Kongo Central",
+      "zone_fdsu": "OT",
+      "territoires": [
+        {
+          "territoire": "Kasangulu",
+          "collectivites": [
+            {
+              "nom": "Kasangulu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KASANGULU-SECTEUR-KASANGULU",
+              "code_officiel": "205202"
+            },
+            {
+              "nom": "Luila",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KASANGULU-SECTEUR-LUILA",
+              "code_officiel": "205203"
+            },
+            {
+              "nom": "Lukunga-Mputu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KASANGULU-SECTEUR-LUKUNGA_MPUTU",
+              "code_officiel": "205204"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Kimvula",
+          "collectivites": [
+            {
+              "nom": "Benga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KIMVULA-SECTEUR-BENGA",
+              "code_officiel": "205301"
+            },
+            {
+              "nom": "Lubisi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KIMVULA-SECTEUR-LUBISI",
+              "code_officiel": "205302"
+            },
+            {
+              "nom": "Lula-Lumene",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KIMVULA-SECTEUR-LULA_LUMENE",
+              "code_officiel": "205303"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Lukula",
+          "collectivites": [
+            {
+              "nom": "Fubu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-LUKULA-SECTEUR-FUBU",
+              "code_officiel": "203302"
+            },
+            {
+              "nom": "Kakongo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-LUKULA-SECTEUR-KAKONGO",
+              "code_officiel": "203303"
+            },
+            {
+              "nom": "Patu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-LUKULA-SECTEUR-PATU",
+              "code_officiel": "203304"
+            },
+            {
+              "nom": "Tsanga-Sud",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-LUKULA-SECTEUR-TSANGA_SUD",
+              "code_officiel": "203305"
+            },
+            {
+              "nom": "Tsundi-Sud",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-LUKULA-SECTEUR-TSUNDI_SUD",
+              "code_officiel": "203307"
+            }
+          ],
+          "nombre_collectivites": 5
+        },
+        {
+          "territoire": "Luozi",
+          "collectivites": [
+            {
+              "nom": "Balari",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-LUOZI-SECTEUR-BALARI",
+              "code_officiel": "204301"
+            },
+            {
+              "nom": "Kenge",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-LUOZI-SECTEUR-KENGE",
+              "code_officiel": "204302"
+            },
+            {
+              "nom": "Kimbanza",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-LUOZI-SECTEUR-KIMBANZA",
+              "code_officiel": "204303"
+            },
+            {
+              "nom": "Kimumba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-LUOZI-SECTEUR-KIMUMBA",
+              "code_officiel": "204304"
+            },
+            {
+              "nom": "Kinkenge",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-LUOZI-SECTEUR-KINKENGE",
+              "code_officiel": "204305"
+            },
+            {
+              "nom": "Kivunda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-LUOZI-SECTEUR-KIVUNDA",
+              "code_officiel": "204306"
+            },
+            {
+              "nom": "Mbanza Mona",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-LUOZI-SECTEUR-MBANZA_MONA",
+              "code_officiel": "204307"
+            },
+            {
+              "nom": "Mbanza Ngoyo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-LUOZI-SECTEUR-MBANZA_NGOYO",
+              "code_officiel": "204309"
+            },
+            {
+              "nom": "Mbanza-Mwembe",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-LUOZI-SECTEUR-MBANZA_MWEMBE",
+              "code_officiel": "204308"
+            },
+            {
+              "nom": "Mongo Luala",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-LUOZI-SECTEUR-MONGO_LUALA",
+              "code_officiel": "204310"
+            }
+          ],
+          "nombre_collectivites": 10
+        },
+        {
+          "territoire": "Madimba",
+          "collectivites": [
+            {
+              "nom": "Luidi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MADIMBA-SECTEUR-LUIDI",
+              "code_officiel": "205101"
+            },
+            {
+              "nom": "Mfidi Malele",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MADIMBA-SECTEUR-MFIDI_MALELE",
+              "code_officiel": "205102"
+            },
+            {
+              "nom": "Mfuma Kibambi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MADIMBA-SECTEUR-MFUMA_KIBAMBI",
+              "code_officiel": "205103"
+            },
+            {
+              "nom": "Ngeba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MADIMBA-SECTEUR-NGEBA",
+              "code_officiel": "205104"
+            },
+            {
+              "nom": "Ngufu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MADIMBA-SECTEUR-NGUFU",
+              "code_officiel": "205105"
+            },
+            {
+              "nom": "Wungu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MADIMBA-SECTEUR-WUNGU",
+              "code_officiel": "205106"
+            }
+          ],
+          "nombre_collectivites": 6
+        },
+        {
+          "territoire": "Mbanza-Ngungu",
+          "collectivites": [
+            {
+              "nom": "Boko",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MBANZA_NGUNGU-SECTEUR-BOKO",
+              "code_officiel": "204101"
+            },
+            {
+              "nom": "Gombe Matadi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MBANZA_NGUNGU-SECTEUR-GOMBE_MATADI",
+              "code_officiel": "204102"
+            },
+            {
+              "nom": "Gombe-Sud",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MBANZA_NGUNGU-SECTEUR-GOMBE_SUD",
+              "code_officiel": "204106"
+            },
+            {
+              "nom": "Kivulu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MBANZA_NGUNGU-SECTEUR-KIVULU",
+              "code_officiel": "204107"
+            },
+            {
+              "nom": "Kwilu-Ngongo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MBANZA_NGUNGU-SECTEUR-KWILU_NGONGO",
+              "code_officiel": "204108"
+            },
+            {
+              "nom": "Lunzadi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MBANZA_NGUNGU-SECTEUR-LUNZADI",
+              "code_officiel": "204104"
+            },
+            {
+              "nom": "Ntimansi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MBANZA_NGUNGU-SECTEUR-NTIMANSI",
+              "code_officiel": "204109"
+            }
+          ],
+          "nombre_collectivites": 7
+        },
+        {
+          "territoire": "Moanda",
+          "collectivites": [
+            {
+              "nom": "Assolongo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MOANDA-SECTEUR-ASSOLONGO",
+              "code_officiel": "202402"
+            },
+            {
+              "nom": "Boma-Bungu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MOANDA-SECTEUR-BOMA_BUNGU",
+              "code_officiel": "202403"
+            },
+            {
+              "nom": "La Mer",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MOANDA-SECTEUR-LA_MER",
+              "code_officiel": "202404"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Seke-Banza",
+          "collectivites": [
+            {
+              "nom": "Bundi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-SEKE_BANZA-SECTEUR-BUNDI",
+              "code_officiel": "203202"
+            },
+            {
+              "nom": "Isangila",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-SEKE_BANZA-SECTEUR-ISANGILA",
+              "code_officiel": "203205"
+            },
+            {
+              "nom": "Lufu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-SEKE_BANZA-SECTEUR-LUFU",
+              "code_officiel": "203203"
+            },
+            {
+              "nom": "Mbavu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-SEKE_BANZA-SECTEUR-MBAVU",
+              "code_officiel": "203206"
+            },
+            {
+              "nom": "Sumbi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-SEKE_BANZA-SECTEUR-SUMBI",
+              "code_officiel": "203204"
+            }
+          ],
+          "nombre_collectivites": 5
+        },
+        {
+          "territoire": "Songololo",
+          "collectivites": [
+            {
+              "nom": "Bamboma",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-SONGOLOLO-SECTEUR-BAMBOMA",
+              "code_officiel": "204201"
+            },
+            {
+              "nom": "Kimpese",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-SONGOLOLO-SECTEUR-KIMPESE",
+              "code_officiel": "204207"
+            },
+            {
+              "nom": "Luima",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-SONGOLOLO-SECTEUR-LUIMA",
+              "code_officiel": "204203"
+            },
+            {
+              "nom": "Palabala",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-SONGOLOLO-SECTEUR-PALABALA",
+              "code_officiel": "204204"
+            },
+            {
+              "nom": "Wombo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-SONGOLOLO-SECTEUR-WOMBO",
+              "code_officiel": "204205"
+            }
+          ],
+          "nombre_collectivites": 5
+        },
+        {
+          "territoire": "Tshela",
+          "collectivites": [
+            {
+              "nom": "Bula-Naku",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-TSHELA-SECTEUR-BULA_NAKU",
+              "code_officiel": "203106"
+            },
+            {
+              "nom": "Loango",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-TSHELA-SECTEUR-LOANGO",
+              "code_officiel": "203103"
+            },
+            {
+              "nom": "Lubolo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-TSHELA-SECTEUR-LUBOLO",
+              "code_officiel": "203104"
+            },
+            {
+              "nom": "Lubuzi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-TSHELA-SECTEUR-LUBUZI",
+              "code_officiel": "203108"
+            },
+            {
+              "nom": "Maduda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-TSHELA-SECTEUR-MADUDA",
+              "code_officiel": "203109"
+            },
+            {
+              "nom": "Nganda Sundi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-TSHELA-SECTEUR-NGANDA_SUNDI",
+              "code_officiel": "203107"
+            },
+            {
+              "nom": "Nzobe-Luzi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-TSHELA-SECTEUR-NZOBE_LUZI",
+              "code_officiel": "203105"
+            },
+            {
+              "nom": "Tshela-Banga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-TSHELA-SECTEUR-TSHELA_BANGA",
+              "code_officiel": "203102"
+            }
+          ],
+          "nombre_collectivites": 8
+        }
+      ],
+      "nombre_territoires": 10
+    },
+    {
+      "province": "Kwango",
+      "zone_fdsu": "OT",
+      "territoires": [
+        {
+          "territoire": "Feshi",
+          "collectivites": [
+            {
+              "nom": "Feshi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-FESHI-SECTEUR-FESHI",
+              "code_officiel": "305205"
+            },
+            {
+              "nom": "Ganeketi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-FESHI-SECTEUR-GANEKETI",
+              "code_officiel": "305202"
+            },
+            {
+              "nom": "Lobo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-FESHI-SECTEUR-LOBO",
+              "code_officiel": "305203"
+            },
+            {
+              "nom": "Mukoso",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-FESHI-SECTEUR-MUKOSO",
+              "code_officiel": "305204"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Kahemba",
+          "collectivites": [
+            {
+              "nom": "Muloshi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-OT-COLL-KAHEMBA-CHEFFERIE-MULOSHI",
+              "code_officiel": "305303"
+            },
+            {
+              "nom": "Mwamushiko",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-OT-COLL-KAHEMBA-CHEFFERIE-MWAMUSHIKO",
+              "code_officiel": "305304"
+            },
+            {
+              "nom": "Mwendjila",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-OT-COLL-KAHEMBA-CHEFFERIE-MWENDJILA",
+              "code_officiel": "305305"
+            },
+            {
+              "nom": "Bangu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KAHEMBA-SECTEUR-BANGU",
+              "code_officiel": "305301"
+            },
+            {
+              "nom": "Bindu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KAHEMBA-SECTEUR-BINDU",
+              "code_officiel": "305302"
+            },
+            {
+              "nom": "Kulindji",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KAHEMBA-SECTEUR-KULINDJI",
+              "code_officiel": "305307"
+            }
+          ],
+          "nombre_collectivites": 6
+        },
+        {
+          "territoire": "Kasongo-Lunda",
+          "collectivites": [
+            {
+              "nom": "Kasa",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-OT-COLL-KASONGO_LUNDA-CHEFFERIE-KASA",
+              "code_officiel": "305403"
+            },
+            {
+              "nom": "Kasongo-Lunda",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-OT-COLL-KASONGO_LUNDA-CHEFFERIE-KASONGO_LUNDA",
+              "code_officiel": "305402"
+            },
+            {
+              "nom": "Kibunda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KASONGO_LUNDA-SECTEUR-KIBUNDA",
+              "code_officiel": "305404"
+            },
+            {
+              "nom": "Kingulu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KASONGO_LUNDA-SECTEUR-KINGULU",
+              "code_officiel": "305405"
+            },
+            {
+              "nom": "Kizamba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KASONGO_LUNDA-SECTEUR-KIZAMBA",
+              "code_officiel": "305406"
+            },
+            {
+              "nom": "Mawanga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KASONGO_LUNDA-SECTEUR-MAWANGA",
+              "code_officiel": "305407"
+            },
+            {
+              "nom": "Panzi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KASONGO_LUNDA-SECTEUR-PANZI",
+              "code_officiel": "305408"
+            },
+            {
+              "nom": "Swa Tenda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KASONGO_LUNDA-SECTEUR-SWA_TENDA",
+              "code_officiel": "305409"
+            }
+          ],
+          "nombre_collectivites": 8
+        },
+        {
+          "territoire": "Kenge",
+          "collectivites": [
+            {
+              "nom": "Palende-Nord",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-OT-COLL-KENGE-CHEFFERIE-PALENDE_NORD",
+              "code_officiel": "305101"
+            },
+            {
+              "nom": "Bukanga-Lonzo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KENGE-SECTEUR-BUKANGA_LONZO",
+              "code_officiel": "305102"
+            },
+            {
+              "nom": "Dinga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KENGE-SECTEUR-DINGA",
+              "code_officiel": "305106"
+            },
+            {
+              "nom": "Kolokoso",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KENGE-SECTEUR-KOLOKOSO",
+              "code_officiel": "305105"
+            },
+            {
+              "nom": "Mosamba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KENGE-SECTEUR-MOSAMBA",
+              "code_officiel": "305103"
+            }
+          ],
+          "nombre_collectivites": 5
+        },
+        {
+          "territoire": "Popokabaka",
+          "collectivites": [
+            {
+              "nom": "Lufuna",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-POPOKABAKA-SECTEUR-LUFUNA",
+              "code_officiel": "305501"
+            },
+            {
+              "nom": "Popokabaka",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-POPOKABAKA-SECTEUR-POPOKABAKA",
+              "code_officiel": "305504"
+            },
+            {
+              "nom": "Yonso",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-POPOKABAKA-SECTEUR-YONSO",
+              "code_officiel": "305503"
+            }
+          ],
+          "nombre_collectivites": 3
+        }
+      ],
+      "nombre_territoires": 5
+    },
+    {
+      "province": "Kwilu",
+      "zone_fdsu": "OT",
+      "territoires": [
+        {
+          "territoire": "Bagata",
+          "collectivites": [
+            {
+              "nom": "Kidzweme",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-BAGATA-SECTEUR-KIDZWEME",
+              "code_officiel": "303301"
+            },
+            {
+              "nom": "Kwango-Kasai",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-BAGATA-SECTEUR-KWANGO_KASAI",
+              "code_officiel": "303302"
+            },
+            {
+              "nom": "Kwilu-Ntobere",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-BAGATA-SECTEUR-KWILU_NTOBERE",
+              "code_officiel": "303303"
+            },
+            {
+              "nom": "Manzasay",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-BAGATA-SECTEUR-MANZASAY",
+              "code_officiel": "303304"
+            },
+            {
+              "nom": "Wamba-Fatundu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-BAGATA-SECTEUR-WAMBA_FATUNDU",
+              "code_officiel": "303305"
+            }
+          ],
+          "nombre_collectivites": 5
+        },
+        {
+          "territoire": "Bulungu",
+          "collectivites": [
+            {
+              "nom": "Dwe",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-BULUNGU-SECTEUR-DWE",
+              "code_officiel": "303102"
+            },
+            {
+              "nom": "Imbongo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-BULUNGU-SECTEUR-IMBONGO",
+              "code_officiel": "303103"
+            },
+            {
+              "nom": "Kilunda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-BULUNGU-SECTEUR-KILUNDA",
+              "code_officiel": "303104"
+            },
+            {
+              "nom": "Kipuka",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-BULUNGU-SECTEUR-KIPUKA",
+              "code_officiel": "303105"
+            },
+            {
+              "nom": "Kwenge",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-BULUNGU-SECTEUR-KWENGE",
+              "code_officiel": "303106"
+            },
+            {
+              "nom": "Kwilu-Kimbata",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-BULUNGU-SECTEUR-KWILU_KIMBATA",
+              "code_officiel": "303107"
+            },
+            {
+              "nom": "Luniungu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-BULUNGU-SECTEUR-LUNIUNGU",
+              "code_officiel": "303108"
+            },
+            {
+              "nom": "Mikwi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-BULUNGU-SECTEUR-MIKWI",
+              "code_officiel": "303109"
+            },
+            {
+              "nom": "Niadi Nkara",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-BULUNGU-SECTEUR-NIADI_NKARA",
+              "code_officiel": "303110"
+            },
+            {
+              "nom": "Nko",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-BULUNGU-SECTEUR-NKO",
+              "code_officiel": "303111"
+            }
+          ],
+          "nombre_collectivites": 10
+        },
+        {
+          "territoire": "Gungu",
+          "collectivites": [
+            {
+              "nom": "Gungu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-GUNGU-SECTEUR-GUNGU",
+              "code_officiel": "303512"
+            },
+            {
+              "nom": "Kandale",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-GUNGU-SECTEUR-KANDALE",
+              "code_officiel": "303502"
+            },
+            {
+              "nom": "Kilamba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-GUNGU-SECTEUR-KILAMBA",
+              "code_officiel": "303503"
+            },
+            {
+              "nom": "Kilemba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-GUNGU-SECTEUR-KILEMBA",
+              "code_officiel": "303504"
+            },
+            {
+              "nom": "Kisunzu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-GUNGU-SECTEUR-KISUNZU",
+              "code_officiel": "303505"
+            },
+            {
+              "nom": "Kobo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-GUNGU-SECTEUR-KOBO",
+              "code_officiel": "303507"
+            },
+            {
+              "nom": "Kondo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-GUNGU-SECTEUR-KONDO",
+              "code_officiel": "303506"
+            },
+            {
+              "nom": "Lozo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-GUNGU-SECTEUR-LOZO",
+              "code_officiel": "303508"
+            },
+            {
+              "nom": "Lukamba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-GUNGU-SECTEUR-LUKAMBA",
+              "code_officiel": "303509"
+            },
+            {
+              "nom": "Mudikalunga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-GUNGU-SECTEUR-MUDIKALUNGA",
+              "code_officiel": "303510"
+            },
+            {
+              "nom": "Mungindu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-GUNGU-SECTEUR-MUNGINDU",
+              "code_officiel": "303511"
+            },
+            {
+              "nom": "Ngudi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-GUNGU-SECTEUR-NGUDI",
+              "code_officiel": "303513"
+            }
+          ],
+          "nombre_collectivites": 12
+        },
+        {
+          "territoire": "Idiofa",
+          "collectivites": [
+            {
+              "nom": "Banga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-IDIOFA-SECTEUR-BANGA",
+              "code_officiel": "303401"
+            },
+            {
+              "nom": "Belo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-IDIOFA-SECTEUR-BELO",
+              "code_officiel": "303402"
+            },
+            {
+              "nom": "Bulwem",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-IDIOFA-SECTEUR-BULWEM",
+              "code_officiel": "303403"
+            },
+            {
+              "nom": "Kalanganda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-IDIOFA-SECTEUR-KALANGANDA",
+              "code_officiel": "303405"
+            },
+            {
+              "nom": "Kanga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-IDIOFA-SECTEUR-KANGA",
+              "code_officiel": "303406"
+            },
+            {
+              "nom": "Kapia",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-IDIOFA-SECTEUR-KAPIA",
+              "code_officiel": "303407"
+            },
+            {
+              "nom": "Kipuku",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-IDIOFA-SECTEUR-KIPUKU",
+              "code_officiel": "303408"
+            },
+            {
+              "nom": "Madimbi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-IDIOFA-SECTEUR-MADIMBI",
+              "code_officiel": "303409"
+            },
+            {
+              "nom": "Mateko",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-IDIOFA-SECTEUR-MATEKO",
+              "code_officiel": "303410"
+            },
+            {
+              "nom": "Musanga-Idiofa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-IDIOFA-SECTEUR-MUSANGA_IDIOFA",
+              "code_officiel": "303404"
+            },
+            {
+              "nom": "Sedzo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-IDIOFA-SECTEUR-SEDZO",
+              "code_officiel": "303411"
+            },
+            {
+              "nom": "Yasa-Lokwa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-IDIOFA-SECTEUR-YASA_LOKWA",
+              "code_officiel": "303412"
+            }
+          ],
+          "nombre_collectivites": 12
+        },
+        {
+          "territoire": "Masi-Manimba",
+          "collectivites": [
+            {
+              "nom": "Bindungi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MASI_MANIMBA-SECTEUR-BINDUNGI",
+              "code_officiel": "303201"
+            },
+            {
+              "nom": "Kibolo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MASI_MANIMBA-SECTEUR-KIBOLO",
+              "code_officiel": "303204"
+            },
+            {
+              "nom": "Kinzenga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MASI_MANIMBA-SECTEUR-KINZENGA",
+              "code_officiel": "303202"
+            },
+            {
+              "nom": "Kinzenzengo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MASI_MANIMBA-SECTEUR-KINZENZENGO",
+              "code_officiel": "303203"
+            },
+            {
+              "nom": "Kitoy",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MASI_MANIMBA-SECTEUR-KITOY",
+              "code_officiel": "303205"
+            },
+            {
+              "nom": "Masi-Manimba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MASI_MANIMBA-SECTEUR-MASI_MANIMBA",
+              "code_officiel": "303206"
+            },
+            {
+              "nom": "Mokamo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MASI_MANIMBA-SECTEUR-MOKAMO",
+              "code_officiel": "303208"
+            },
+            {
+              "nom": "Mosango",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MASI_MANIMBA-SECTEUR-MOSANGO",
+              "code_officiel": "303209"
+            },
+            {
+              "nom": "Pay-Kongila",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MASI_MANIMBA-SECTEUR-PAY_KONGILA",
+              "code_officiel": "303207"
+            },
+            {
+              "nom": "Sungu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-MASI_MANIMBA-SECTEUR-SUNGU",
+              "code_officiel": "303210"
+            }
+          ],
+          "nombre_collectivites": 10
+        }
+      ],
+      "nombre_territoires": 5
+    },
+    {
+      "province": "Maindombe",
+      "zone_fdsu": "OT",
+      "territoires": [
+        {
+          "territoire": "Bolobo",
+          "collectivites": [
+            {
+              "nom": "Bateke-Nord",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-OT-COLL-BOLOBO-CHEFFERIE-BATEKE_NORD",
+              "code_officiel": "306102"
+            }
+          ],
+          "nombre_collectivites": 1
+        },
+        {
+          "territoire": "Inongo",
+          "collectivites": [
+            {
+              "nom": "Basengele",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-INONGO-SECTEUR-BASENGELE",
+              "code_officiel": "302101"
+            },
+            {
+              "nom": "Bolia",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-INONGO-SECTEUR-BOLIA",
+              "code_officiel": "302102"
+            },
+            {
+              "nom": "Inongo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-INONGO-SECTEUR-INONGO",
+              "code_officiel": "302103"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Kiri",
+          "collectivites": [
+            {
+              "nom": "Beronge",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KIRI-SECTEUR-BERONGE",
+              "code_officiel": "302201"
+            },
+            {
+              "nom": "Lutoy",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KIRI-SECTEUR-LUTOY",
+              "code_officiel": "302202"
+            },
+            {
+              "nom": "Pendjwa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KIRI-SECTEUR-PENDJWA",
+              "code_officiel": "302203"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Kutu",
+          "collectivites": [
+            {
+              "nom": "Badia",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-OT-COLL-KUTU-CHEFFERIE-BADIA",
+              "code_officiel": "302401"
+            },
+            {
+              "nom": "Batere",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-OT-COLL-KUTU-CHEFFERIE-BATERE",
+              "code_officiel": "302402"
+            },
+            {
+              "nom": "Kemba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KUTU-SECTEUR-KEMBA",
+              "code_officiel": "302403"
+            },
+            {
+              "nom": "Luabu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KUTU-SECTEUR-LUABU",
+              "code_officiel": "302404"
+            },
+            {
+              "nom": "Mfimi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KUTU-SECTEUR-MFIMI",
+              "code_officiel": "302405"
+            }
+          ],
+          "nombre_collectivites": 5
+        },
+        {
+          "territoire": "Kwamouth",
+          "collectivites": [
+            {
+              "nom": "Bateke-Sud/TWA",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-KWAMOUTH-SECTEUR-BATEKE_SUDTWA",
+              "code_officiel": "306201"
+            }
+          ],
+          "nombre_collectivites": 1
+        },
+        {
+          "territoire": "Mushie",
+          "collectivites": [
+            {
+              "nom": "Baboma-Nord",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-OT-COLL-MUSHIE-CHEFFERIE-BABOMA_NORD",
+              "code_officiel": "306301"
+            }
+          ],
+          "nombre_collectivites": 1
+        },
+        {
+          "territoire": "Oshwe",
+          "collectivites": [
+            {
+              "nom": "Entre Lukenie-Lokoro Nkaw",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-OSHWE-SECTEUR-ENTRE_LUKENIE_LOKORO_NKAW",
+              "code_officiel": "302301"
+            },
+            {
+              "nom": "Kangara",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-OSHWE-SECTEUR-KANGARA",
+              "code_officiel": "302302"
+            },
+            {
+              "nom": "Lokolama",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-OSHWE-SECTEUR-LOKOLAMA",
+              "code_officiel": "302303"
+            },
+            {
+              "nom": "Lukenie",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-OSHWE-SECTEUR-LUKENIE",
+              "code_officiel": "302304"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Yumbi",
+          "collectivites": [
+            {
+              "nom": "Mongama",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-OT-COLL-YUMBI-SECTEUR-MONGAMA",
+              "code_officiel": "306402"
+            }
+          ],
+          "nombre_collectivites": 1
+        }
+      ],
+      "nombre_territoires": 8
+    },
+    {
+      "province": "Haut-Katanga",
+      "zone_fdsu": "SD",
+      "territoires": [
+        {
+          "territoire": "Kambove",
+          "collectivites": [
+            {
+              "nom": "Basanga",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-KAMBOVE-CHEFFERIE-BASANGA",
+              "code_officiel": "707602"
+            },
+            {
+              "nom": "Lufira",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-KAMBOVE-SECTEUR-LUFIRA",
+              "code_officiel": "707603"
+            },
+            {
+              "nom": "Sources du fleuve Congo",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-KAMBOVE-SECTEUR-SOURCES_DU_FLEUVE_CONGO",
+              "code_officiel": "707604"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Kasenga",
+          "collectivites": [
+            {
+              "nom": "Bakunda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-KASENGA-SECTEUR-BAKUNDA",
+              "code_officiel": "707302"
+            },
+            {
+              "nom": "Kafira",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-KASENGA-SECTEUR-KAFIRA",
+              "code_officiel": "707303"
+            },
+            {
+              "nom": "Kisamamba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-KASENGA-SECTEUR-KISAMAMBA",
+              "code_officiel": "707304"
+            },
+            {
+              "nom": "Luapula",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-KASENGA-SECTEUR-LUAPULA",
+              "code_officiel": "707305"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Kipushi",
+          "collectivites": [
+            {
+              "nom": "Kaponda",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-KIPUSHI-CHEFFERIE-KAPONDA",
+              "code_officiel": "707103"
+            },
+            {
+              "nom": "Kinyama",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-KIPUSHI-CHEFFERIE-KINYAMA",
+              "code_officiel": "707104"
+            },
+            {
+              "nom": "Bukanda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-KIPUSHI-SECTEUR-BUKANDA",
+              "code_officiel": "707102"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Mitwaba",
+          "collectivites": [
+            {
+              "nom": "Kiona-Ngoie",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-MITWABA-CHEFFERIE-KIONA_NGOIE",
+              "code_officiel": "707402"
+            },
+            {
+              "nom": "Balomotwa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-MITWABA-SECTEUR-BALOMOTWA",
+              "code_officiel": "707403"
+            },
+            {
+              "nom": "Banweshi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-MITWABA-SECTEUR-BANWESHI",
+              "code_officiel": "707404"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Pweto",
+          "collectivites": [
+            {
+              "nom": "Kiona-Nzini",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-PWETO-CHEFFERIE-KIONA_NZINI",
+              "code_officiel": "707502"
+            },
+            {
+              "nom": "Pweto",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-PWETO-CHEFFERIE-PWETO",
+              "code_officiel": "707504"
+            },
+            {
+              "nom": "Moero",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-PWETO-SECTEUR-MOERO",
+              "code_officiel": "707501"
+            },
+            {
+              "nom": "Mwenge",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-PWETO-SECTEUR-MWENGE",
+              "code_officiel": "707503"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Sakania",
+          "collectivites": [
+            {
+              "nom": "Balala",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-SAKANIA-SECTEUR-BALALA",
+              "code_officiel": "707201"
+            },
+            {
+              "nom": "Balamba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-SAKANIA-SECTEUR-BALAMBA",
+              "code_officiel": "707202"
+            },
+            {
+              "nom": "Baushi-Mwenda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-SAKANIA-SECTEUR-BAUSHI_MWENDA",
+              "code_officiel": "707203"
+            }
+          ],
+          "nombre_collectivites": 3
+        }
+      ],
+      "nombre_territoires": 6
+    },
+    {
+      "province": "Haut-Lomami",
+      "zone_fdsu": "SD",
+      "territoires": [
+        {
+          "territoire": "Bukama",
+          "collectivites": [
+            {
+              "nom": "Butumba",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-BUKAMA-CHEFFERIE-BUTUMBA",
+              "code_officiel": "705501"
+            },
+            {
+              "nom": "Kabondo Dianda",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-BUKAMA-CHEFFERIE-KABONDO_DIANDA",
+              "code_officiel": "705502"
+            },
+            {
+              "nom": "Kibanda",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-BUKAMA-CHEFFERIE-KIBANDA",
+              "code_officiel": "705503"
+            },
+            {
+              "nom": "Kinkondja",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-BUKAMA-CHEFFERIE-KINKONDJA",
+              "code_officiel": "705504"
+            },
+            {
+              "nom": "Kapamayi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-BUKAMA-SECTEUR-KAPAMAYI",
+              "code_officiel": "705505"
+            },
+            {
+              "nom": "Lualaba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-BUKAMA-SECTEUR-LUALABA",
+              "code_officiel": "705506"
+            }
+          ],
+          "nombre_collectivites": 6
+        },
+        {
+          "territoire": "Kabongo",
+          "collectivites": [
+            {
+              "nom": "Kabongo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-KABONGO-CHEFFERIE-KABONGO",
+              "code_officiel": "705302"
+            },
+            {
+              "nom": "Kayamba",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-KABONGO-CHEFFERIE-KAYAMBA",
+              "code_officiel": "705303"
+            },
+            {
+              "nom": "Nord-Baluba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-KABONGO-SECTEUR-NORD_BALUBA",
+              "code_officiel": "705304"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Kamina",
+          "collectivites": [
+            {
+              "nom": "Kasongo Nyembo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-KAMINA-CHEFFERIE-KASONGO_NYEMBO",
+              "code_officiel": "705101"
+            },
+            {
+              "nom": "Kinda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-KAMINA-SECTEUR-KINDA",
+              "code_officiel": "705102"
+            }
+          ],
+          "nombre_collectivites": 2
+        },
+        {
+          "territoire": "Kaniama",
+          "collectivites": [
+            {
+              "nom": "Mutombo-Mukulu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-KANIAMA-CHEFFERIE-MUTOMBO_MUKULU",
+              "code_officiel": "705201"
+            }
+          ],
+          "nombre_collectivites": 1
+        },
+        {
+          "territoire": "Malemba-Nkulu",
+          "collectivites": [
+            {
+              "nom": "Kayumba",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-MALEMBA_NKULU-CHEFFERIE-KAYUMBA",
+              "code_officiel": "705401"
+            },
+            {
+              "nom": "Mulongo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-MALEMBA_NKULU-CHEFFERIE-MULONGO",
+              "code_officiel": "705402"
+            },
+            {
+              "nom": "Museka",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-MALEMBA_NKULU-CHEFFERIE-MUSEKA",
+              "code_officiel": "705403"
+            },
+            {
+              "nom": "Nkulu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-MALEMBA_NKULU-CHEFFERIE-NKULU",
+              "code_officiel": "705404"
+            },
+            {
+              "nom": "Badia",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-MALEMBA_NKULU-SECTEUR-BADIA",
+              "code_officiel": "705405"
+            },
+            {
+              "nom": "Mwanza",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-MALEMBA_NKULU-SECTEUR-MWANZA",
+              "code_officiel": "705406"
+            }
+          ],
+          "nombre_collectivites": 6
+        }
+      ],
+      "nombre_territoires": 5
+    },
+    {
+      "province": "Lualaba",
+      "zone_fdsu": "SD",
+      "territoires": [
+        {
+          "territoire": "Dilolo",
+          "collectivites": [
+            {
+              "nom": "Muyeye",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-DILOLO-CHEFFERIE-MUYEYE",
+              "code_officiel": "704101"
+            },
+            {
+              "nom": "Mwandakala",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-DILOLO-CHEFFERIE-MWANDAKALA",
+              "code_officiel": "704102"
+            },
+            {
+              "nom": "Mwatshisenge",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-DILOLO-CHEFFERIE-MWATSHISENGE",
+              "code_officiel": "704103"
+            },
+            {
+              "nom": "Ndumba",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-DILOLO-CHEFFERIE-NDUMBA",
+              "code_officiel": "704111"
+            },
+            {
+              "nom": "Saluseke",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-DILOLO-CHEFFERIE-SALUSEKE",
+              "code_officiel": "704104"
+            },
+            {
+              "nom": "Tshisangana",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-DILOLO-CHEFFERIE-TSHISANGANA",
+              "code_officiel": "704105"
+            },
+            {
+              "nom": "Luena",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-DILOLO-SECTEUR-LUENA",
+              "code_officiel": "704106"
+            },
+            {
+              "nom": "Lulua-Lukoshi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-DILOLO-SECTEUR-LULUA_LUKOSHI",
+              "code_officiel": "704109"
+            },
+            {
+              "nom": "Mutanda",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-DILOLO-SECTEUR-MUTANDA",
+              "code_officiel": "704107"
+            }
+          ],
+          "nombre_collectivites": 9
+        },
+        {
+          "territoire": "Kapanga",
+          "collectivites": [
+            {
+              "nom": "Mwant-Yav",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-KAPANGA-CHEFFERIE-MWANT_YAV",
+              "code_officiel": "704301"
+            }
+          ],
+          "nombre_collectivites": 1
+        },
+        {
+          "territoire": "Lubudi",
+          "collectivites": [
+            {
+              "nom": "Bayeke",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-LUBUDI-CHEFFERIE-BAYEKE",
+              "code_officiel": "703401"
+            },
+            {
+              "nom": "Mazangule",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-LUBUDI-CHEFFERIE-MAZANGULE",
+              "code_officiel": "703402"
+            },
+            {
+              "nom": "Mulumbu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-LUBUDI-CHEFFERIE-MULUMBU",
+              "code_officiel": "703403"
+            },
+            {
+              "nom": "Mwana-Muadi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-LUBUDI-CHEFFERIE-MWANA_MUADI",
+              "code_officiel": "703404"
+            }
+          ],
+          "nombre_collectivites": 4
+        },
+        {
+          "territoire": "Mutshatsha",
+          "collectivites": [
+            {
+              "nom": "Lufupa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-MUTSHATSHA-SECTEUR-LUFUPA",
+              "code_officiel": "703301"
+            },
+            {
+              "nom": "Luilu",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-MUTSHATSHA-SECTEUR-LUILU",
+              "code_officiel": "703302"
+            },
+            {
+              "nom": "Mukuleshi",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-MUTSHATSHA-SECTEUR-MUKULESHI",
+              "code_officiel": "703303"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Sandoa",
+          "collectivites": [
+            {
+              "nom": "Kayembe-Mukulu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-SANDOA-CHEFFERIE-KAYEMBE_MUKULU",
+              "code_officiel": "704201"
+            },
+            {
+              "nom": "Lumanga",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-SANDOA-CHEFFERIE-LUMANGA",
+              "code_officiel": "704208"
+            },
+            {
+              "nom": "Mbako",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-SANDOA-CHEFFERIE-MBAKO",
+              "code_officiel": "704209"
+            },
+            {
+              "nom": "Muteba",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-SANDOA-CHEFFERIE-MUTEBA",
+              "code_officiel": "704206"
+            },
+            {
+              "nom": "Sakundundu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-SANDOA-CHEFFERIE-SAKUNDUNDU",
+              "code_officiel": "704207"
+            },
+            {
+              "nom": "Samutoma",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-SANDOA-CHEFFERIE-SAMUTOMA",
+              "code_officiel": "704202"
+            },
+            {
+              "nom": "Tshibamba",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-SANDOA-CHEFFERIE-TSHIBAMBA",
+              "code_officiel": "704203"
+            },
+            {
+              "nom": "Tshipao",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-SANDOA-CHEFFERIE-TSHIPAO",
+              "code_officiel": "704204"
+            }
+          ],
+          "nombre_collectivites": 8
+        }
+      ],
+      "nombre_territoires": 5
+    },
+    {
+      "province": "Tanganyika",
+      "zone_fdsu": "SD",
+      "territoires": [
+        {
+          "territoire": "Kabalo",
+          "collectivites": [
+            {
+              "nom": "Luela-Luvunguye",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-KABALO-SECTEUR-LUELA_LUVUNGUYE",
+              "code_officiel": "706401"
+            },
+            {
+              "nom": "Lukuswa",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-KABALO-SECTEUR-LUKUSWA",
+              "code_officiel": "706402"
+            }
+          ],
+          "nombre_collectivites": 2
+        },
+        {
+          "territoire": "Kalemie",
+          "collectivites": [
+            {
+              "nom": "Benze",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-KALEMIE-CHEFFERIE-BENZE",
+              "code_officiel": "706102"
+            },
+            {
+              "nom": "Rutuku",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-KALEMIE-CHEFFERIE-RUTUKU",
+              "code_officiel": "706103"
+            },
+            {
+              "nom": "Tumbwe",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-KALEMIE-CHEFFERIE-TUMBWE",
+              "code_officiel": "706101"
+            }
+          ],
+          "nombre_collectivites": 3
+        },
+        {
+          "territoire": "Kongolo",
+          "collectivites": [
+            {
+              "nom": "Bayashi",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-KONGOLO-CHEFFERIE-BAYASHI",
+              "code_officiel": "706502"
+            },
+            {
+              "nom": "Bena-Nyembo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-KONGOLO-CHEFFERIE-BENA_NYEMBO",
+              "code_officiel": "706509"
+            },
+            {
+              "nom": "Lubunda",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-KONGOLO-CHEFFERIE-LUBUNDA",
+              "code_officiel": "706504"
+            },
+            {
+              "nom": "Mambwe",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-KONGOLO-CHEFFERIE-MAMBWE",
+              "code_officiel": "706510"
+            },
+            {
+              "nom": "Munono",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-KONGOLO-CHEFFERIE-MUNONO",
+              "code_officiel": "706505"
+            },
+            {
+              "nom": "Nkuvu",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-KONGOLO-CHEFFERIE-NKUVU",
+              "code_officiel": "706506"
+            },
+            {
+              "nom": "Yambula",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-KONGOLO-CHEFFERIE-YAMBULA",
+              "code_officiel": "706507"
+            },
+            {
+              "nom": "Baluba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-KONGOLO-SECTEUR-BALUBA",
+              "code_officiel": "706501"
+            },
+            {
+              "nom": "Basonge",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-KONGOLO-SECTEUR-BASONGE",
+              "code_officiel": "706503"
+            }
+          ],
+          "nombre_collectivites": 9
+        },
+        {
+          "territoire": "Manono",
+          "collectivites": [
+            {
+              "nom": "Bakongolo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-MANONO-CHEFFERIE-BAKONGOLO",
+              "code_officiel": "706304"
+            },
+            {
+              "nom": "Kamalondo",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-MANONO-CHEFFERIE-KAMALONDO",
+              "code_officiel": "706302"
+            },
+            {
+              "nom": "Kiluba",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-MANONO-CHEFFERIE-KILUBA",
+              "code_officiel": "706301"
+            },
+            {
+              "nom": "Kyofwe",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-MANONO-SECTEUR-KYOFWE",
+              "code_officiel": "706303"
+            },
+            {
+              "nom": "Luvua",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-MANONO-SECTEUR-LUVUA",
+              "code_officiel": "706305"
+            },
+            {
+              "nom": "Niemba",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-MANONO-SECTEUR-NIEMBA",
+              "code_officiel": "706306"
+            }
+          ],
+          "nombre_collectivites": 6
+        },
+        {
+          "territoire": "Moba",
+          "collectivites": [
+            {
+              "nom": "Bena-Tanga",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-MOBA-CHEFFERIE-BENA_TANGA",
+              "code_officiel": "706205"
+            },
+            {
+              "nom": "Kansabala",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-MOBA-CHEFFERIE-KANSABALA",
+              "code_officiel": "706202"
+            },
+            {
+              "nom": "Kayabala",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-MOBA-CHEFFERIE-KAYABALA",
+              "code_officiel": "706204"
+            },
+            {
+              "nom": "Manda",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-MOBA-CHEFFERIE-MANDA",
+              "code_officiel": "706203"
+            },
+            {
+              "nom": "Nganye",
+              "type_collectivite": "Chefferie",
+              "canonical_id": "RDC-SD-COLL-MOBA-CHEFFERIE-NGANYE",
+              "code_officiel": "706201"
+            },
+            {
+              "nom": "Bena-Kamanya",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-MOBA-SECTEUR-BENA_KAMANYA",
+              "code_officiel": "706206"
+            }
+          ],
+          "nombre_collectivites": 6
+        },
+        {
+          "territoire": "Nyunzu",
+          "collectivites": [
+            {
+              "nom": "Nord-Lukuga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-NYUNZU-SECTEUR-NORD_LUKUGA",
+              "code_officiel": "706602"
+            },
+            {
+              "nom": "Sud-Lukuga",
+              "type_collectivite": "Secteur",
+              "canonical_id": "RDC-SD-COLL-NYUNZU-SECTEUR-SUD_LUKUGA",
+              "code_officiel": "706601"
+            }
+          ],
+          "nombre_collectivites": 2
+        }
+      ],
+      "nombre_territoires": 6
+    }
+  ],
+  "count": 25
+}

@@ -1,0 +1,2092 @@
+{
+  "territories": [
+    {
+      "territoire": "Dekese",
+      "province": "Kasai",
+      "zone_fdsu": "CE",
+      "secteurs": [],
+      "chefferies": [
+        "Ndengese-Ikolombe",
+        "Yaelima"
+      ],
+      "nombre_collectivites": 2
+    },
+    {
+      "territoire": "Ilebo",
+      "province": "Kasai",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Basongo",
+        "Malu-Malu",
+        "Mapangu",
+        "Sud-Banga"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Kamonia",
+      "province": "Kasai",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Bakwa Nyambi",
+        "Bapende",
+        "Kasadi-Sadi",
+        "Kasai Lunyeka",
+        "Kasai-Kabambaie",
+        "Kasai-Longatshimo",
+        "Lovua-Longatshimo",
+        "Lovua-Lushiku",
+        "Tshikapa"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 9
+    },
+    {
+      "territoire": "Luebo",
+      "province": "Kasai",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Luebo-Kabambaie",
+        "Luebo-Lulengele",
+        "Luebo-Wedi",
+        "Ndjoko-Punda"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Mweka",
+      "province": "Kasai",
+      "zone_fdsu": "CE",
+      "secteurs": [],
+      "chefferies": [
+        "Bakuba"
+      ],
+      "nombre_collectivites": 1
+    },
+    {
+      "territoire": "Demba",
+      "province": "Kasai Central",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Bena-Mamba",
+        "Diofwa",
+        "Lombelo",
+        "Lusonge",
+        "Muanza-Ngoma",
+        "Tshibote",
+        "Tshibungu"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 7
+    },
+    {
+      "territoire": "Dibaya",
+      "province": "Kasai Central",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Dibanda",
+        "Dibataie",
+        "Kamwandu",
+        "Kasangidi",
+        "Tshishilu"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 5
+    },
+    {
+      "territoire": "Dimbelenge",
+      "province": "Kasai Central",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Kunduyi",
+        "Lubi",
+        "Lubudi",
+        "Lukibu",
+        "Mashala"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 5
+    },
+    {
+      "territoire": "Kazumba",
+      "province": "Kasai Central",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Bashi-Mboie",
+        "Bena-Ngoshi",
+        "Bulungu",
+        "Kafuba",
+        "Kavula",
+        "Matamba",
+        "Miao",
+        "Muswaswa",
+        "Tshitadi"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 9
+    },
+    {
+      "territoire": "Luiza",
+      "province": "Kasai Central",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Bambaie",
+        "Bushimaie",
+        "Kabalekese",
+        "Kalunga",
+        "Loatshi",
+        "Lueta",
+        "Lusanza"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 7
+    },
+    {
+      "territoire": "Kabeya-Kamwanga",
+      "province": "Kasai Oriental",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Kalela",
+        "Lac Munkamba",
+        "Mpemba",
+        "Ndomba"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Katanda",
+      "province": "Kasai Oriental",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Baluba-Lubilanji",
+        "Mutuayi",
+        "Nsangu",
+        "Tshitolo"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Lupatapata",
+      "province": "Kasai Oriental",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Kabala",
+        "Mudiba",
+        "Mukumbi",
+        "Mulenda"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Miabi",
+      "province": "Kasai Oriental",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Kakangayi",
+        "Movo-Nkatshia",
+        "Tshijiba",
+        "Tshilundu"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Tshilenge",
+      "province": "Kasai Oriental",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Kalelu",
+        "Kalondji-Sud",
+        "Lukalaba",
+        "Tshipuka"
+      ],
+      "chefferies": [
+        "Kampatshi"
+      ],
+      "nombre_collectivites": 5
+    },
+    {
+      "territoire": "Kabinda",
+      "province": "Lomami",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Baluba-Lubangule",
+        "Kabinda",
+        "Ludimbi-Lukula",
+        "Lufubu-Lomami",
+        "Lukashi-Lualu",
+        "Vunayi"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 6
+    },
+    {
+      "territoire": "Kamiji",
+      "province": "Lomami",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Kamiji",
+        "Luekeshi"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 2
+    },
+    {
+      "territoire": "Lubao",
+      "province": "Lomami",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Bekalebwe",
+        "Kisengwa",
+        "Lubao",
+        "Tshofa"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Luilu",
+      "province": "Lomami",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Kanda-Kanda"
+      ],
+      "chefferies": [
+        "Kanutshina",
+        "Katshisungu",
+        "Mulundu"
+      ],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Ngandajika",
+      "province": "Lomami",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Baluba-Shankadi",
+        "Gandajika",
+        "Tshiyamba"
+      ],
+      "chefferies": [
+        "Bakwa-Mulumba",
+        "Kalambayi"
+      ],
+      "nombre_collectivites": 5
+    },
+    {
+      "territoire": "Katako-Kombe",
+      "province": "Sankuru",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Lukembe",
+        "Ngandu",
+        "Ukulungu",
+        "Watambulu-Nord",
+        "Watambulu-Sud"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 5
+    },
+    {
+      "territoire": "Kole",
+      "province": "Sankuru",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Atshuru",
+        "Bankutshu-Dibele",
+        "Bankutshu-Lukenie",
+        "Basho",
+        "Batetela-Dibele",
+        "Ohindo"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 6
+    },
+    {
+      "territoire": "Lodja",
+      "province": "Sankuru",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Ahamba-Mange",
+        "Batetela Lukenie",
+        "Kondo-Tshumbe",
+        "Lufungu",
+        "Lutshimba",
+        "Nambelu-Luhembe",
+        "Olemba",
+        "Vungi",
+        "Watambulu"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 9
+    },
+    {
+      "territoire": "Lomela",
+      "province": "Sankuru",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Bahamba I",
+        "Bahamba II",
+        "Bakela",
+        "Batetela-Lomela",
+        "Okutu"
+      ],
+      "chefferies": [
+        "Djonga"
+      ],
+      "nombre_collectivites": 6
+    },
+    {
+      "territoire": "Lubefu",
+      "province": "Sankuru",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Basonge",
+        "Mondja-Ngandu",
+        "Ndjovu",
+        "Ngandu-Wuna"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Lusambo",
+      "province": "Sankuru",
+      "zone_fdsu": "CE",
+      "secteurs": [
+        "Basonge",
+        "Batetela",
+        "Entre Kunduye Mal",
+        "Entre Lubi Kunduye",
+        "Kashindi",
+        "Lubi",
+        "Pania-Mutombo",
+        "Sankuru"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 8
+    },
+    {
+      "territoire": "",
+      "province": "Ituri",
+      "zone_fdsu": "ET",
+      "secteurs": [],
+      "chefferies": [
+        "Bahema"
+      ],
+      "nombre_collectivites": 1
+    },
+    {
+      "territoire": "Aru",
+      "province": "Ituri",
+      "zone_fdsu": "ET",
+      "secteurs": [],
+      "chefferies": [
+        "Aluru",
+        "Kakwa",
+        "Kaliko-Omi",
+        "Lu",
+        "Ndo-Okebo",
+        "Nio-Kamule",
+        "Otso",
+        "Zaki"
+      ],
+      "nombre_collectivites": 8
+    },
+    {
+      "territoire": "Djugu",
+      "province": "Ituri",
+      "zone_fdsu": "ET",
+      "secteurs": [
+        "Baniari de Kilo",
+        "Walendu -Pitsi",
+        "Walendu-Djatsi",
+        "Walendu-Tatsi"
+      ],
+      "chefferies": [
+        "Bahema Nord",
+        "Bahema-Badjere",
+        "Bahema-Banywagi",
+        "Mabendi",
+        "Mambisa",
+        "Ndo-Okebo"
+      ],
+      "nombre_collectivites": 10
+    },
+    {
+      "territoire": "Irumu",
+      "province": "Ituri",
+      "zone_fdsu": "ET",
+      "secteurs": [
+        "Baniari-Tchabi"
+      ],
+      "chefferies": [
+        "Andisoma",
+        "Babelebe",
+        "Baboa-Bakoe",
+        "Bahema Mitego",
+        "Bahema Sud",
+        "Bahema d'Irumu",
+        "Bahema-Boga",
+        "Basili",
+        "Mobala",
+        "Walendu Bindi",
+        "Walese Vonkutu"
+      ],
+      "nombre_collectivites": 12
+    },
+    {
+      "territoire": "Mahagi",
+      "province": "Ituri",
+      "zone_fdsu": "ET",
+      "secteurs": [
+        "War-Palara"
+      ],
+      "chefferies": [
+        "Alur-Djuganda",
+        "Anghal 1 & 2",
+        "Djukoth 1 & 2",
+        "Mokambo",
+        "Pandoro",
+        "Walendu Watsi",
+        "Wangongo"
+      ],
+      "nombre_collectivites": 8
+    },
+    {
+      "territoire": "Mambasa",
+      "province": "Ituri",
+      "zone_fdsu": "ET",
+      "secteurs": [],
+      "chefferies": [
+        "Babila-Babombi",
+        "Bakwanza",
+        "Bandaka",
+        "Bombo",
+        "Mambasa",
+        "Walese-Dese",
+        "Walese-Karo"
+      ],
+      "nombre_collectivites": 7
+    },
+    {
+      "territoire": "Kabambare",
+      "province": "Maniema",
+      "zone_fdsu": "ET",
+      "secteurs": [
+        "Babuyu",
+        "Bahemba",
+        "Bahombo",
+        "Lulindi",
+        "Saramabila",
+        "Wamasa"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 6
+    },
+    {
+      "territoire": "Kailo",
+      "province": "Maniema",
+      "zone_fdsu": "ET",
+      "secteurs": [
+        "Ambwe",
+        "Balanga",
+        "Wasongola"
+      ],
+      "chefferies": [
+        "Bangengele"
+      ],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Kasongo",
+      "province": "Maniema",
+      "zone_fdsu": "ET",
+      "secteurs": [
+        "Basonge 2 Mweho",
+        "Mamba-Kasenga",
+        "Wazimba wa Mulu",
+        "Wazimba-Maringa"
+      ],
+      "chefferies": [
+        "Bakwange",
+        "Basonge 1",
+        "Benia-Samba",
+        "Nonda",
+        "Wagenia",
+        "Wazula"
+      ],
+      "nombre_collectivites": 10
+    },
+    {
+      "territoire": "Kibombo",
+      "province": "Maniema",
+      "zone_fdsu": "ET",
+      "secteurs": [],
+      "chefferies": [
+        "Aluba",
+        "Ankutshu",
+        "Bahina",
+        "Bakongola",
+        "Matapa"
+      ],
+      "nombre_collectivites": 5
+    },
+    {
+      "territoire": "Lubutu",
+      "province": "Maniema",
+      "zone_fdsu": "ET",
+      "secteurs": [
+        "Bitule",
+        "Obokole"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 2
+    },
+    {
+      "territoire": "Pangi",
+      "province": "Maniema",
+      "zone_fdsu": "ET",
+      "secteurs": [
+        "Beia",
+        "Ikama",
+        "Wakabango"
+      ],
+      "chefferies": [
+        "Babene"
+      ],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Punia",
+      "province": "Maniema",
+      "zone_fdsu": "ET",
+      "secteurs": [
+        "Babira Bakwame",
+        "Baleka",
+        "Ulindi"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Lubero",
+      "province": "Nord-Kivu",
+      "zone_fdsu": "ET",
+      "secteurs": [
+        "Bapere"
+      ],
+      "chefferies": [
+        "Bamate",
+        "Baswaga",
+        "Batangi"
+      ],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Masisi",
+      "province": "Nord-Kivu",
+      "zone_fdsu": "ET",
+      "secteurs": [
+        "Katoyi",
+        "Osso"
+      ],
+      "chefferies": [
+        "Bahunde",
+        "Bashali"
+      ],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Nyiragongo",
+      "province": "Nord-Kivu",
+      "zone_fdsu": "ET",
+      "secteurs": [],
+      "chefferies": [
+        "Bukumu"
+      ],
+      "nombre_collectivites": 1
+    },
+    {
+      "territoire": "Oicha",
+      "province": "Nord-Kivu",
+      "zone_fdsu": "ET",
+      "secteurs": [
+        "Beni",
+        "Ruwenzori"
+      ],
+      "chefferies": [
+        "Bashu",
+        "Watalinga"
+      ],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Rutshuru",
+      "province": "Nord-Kivu",
+      "zone_fdsu": "ET",
+      "secteurs": [],
+      "chefferies": [
+        "Bwisha",
+        "Bwito"
+      ],
+      "nombre_collectivites": 2
+    },
+    {
+      "territoire": "Walikale",
+      "province": "Nord-Kivu",
+      "zone_fdsu": "ET",
+      "secteurs": [
+        "Bakano",
+        "Wanianga"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 2
+    },
+    {
+      "territoire": "Fizi",
+      "province": "Sud-Kivu",
+      "zone_fdsu": "ET",
+      "secteurs": [
+        "Lulenge",
+        "Mutambala",
+        "Ngandja",
+        "Tanganyika"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Idjwi",
+      "province": "Sud-Kivu",
+      "zone_fdsu": "ET",
+      "secteurs": [
+        "Ntambuka",
+        "Rubenga"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 2
+    },
+    {
+      "territoire": "Kabare",
+      "province": "Sud-Kivu",
+      "zone_fdsu": "ET",
+      "secteurs": [],
+      "chefferies": [
+        "Kabare",
+        "Nindja"
+      ],
+      "nombre_collectivites": 2
+    },
+    {
+      "territoire": "Kalehe",
+      "province": "Sud-Kivu",
+      "zone_fdsu": "ET",
+      "secteurs": [],
+      "chefferies": [
+        "Buhavu",
+        "Buloho"
+      ],
+      "nombre_collectivites": 2
+    },
+    {
+      "territoire": "Mwenga",
+      "province": "Sud-Kivu",
+      "zone_fdsu": "ET",
+      "secteurs": [
+        "Itombwe"
+      ],
+      "chefferies": [
+        "Basile",
+        "Burhinyi",
+        "Luindi",
+        "Luwindja",
+        "Wamuzima"
+      ],
+      "nombre_collectivites": 6
+    },
+    {
+      "territoire": "Shabunda",
+      "province": "Sud-Kivu",
+      "zone_fdsu": "ET",
+      "secteurs": [],
+      "chefferies": [
+        "Bakisi",
+        "Wakabango"
+      ],
+      "nombre_collectivites": 2
+    },
+    {
+      "territoire": "Uvira",
+      "province": "Sud-Kivu",
+      "zone_fdsu": "ET",
+      "secteurs": [],
+      "chefferies": [
+        "Bafulero",
+        "Bavira",
+        "Plaine de la Ruzizi"
+      ],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Walungu",
+      "province": "Sud-Kivu",
+      "zone_fdsu": "ET",
+      "secteurs": [],
+      "chefferies": [
+        "Kaziba",
+        "Ngweshe"
+      ],
+      "nombre_collectivites": 2
+    },
+    {
+      "territoire": "Aketi",
+      "province": "Bas-Uele",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Gbandi",
+        "Yoko"
+      ],
+      "chefferies": [
+        "Avuru-Duma",
+        "Avuru-Gatanga",
+        "Bondongola",
+        "Mabinza",
+        "Mobati-Boyele",
+        "Mongwandi"
+      ],
+      "nombre_collectivites": 8
+    },
+    {
+      "territoire": "Ango",
+      "province": "Bas-Uele",
+      "zone_fdsu": "ND",
+      "secteurs": [],
+      "chefferies": [
+        "Ezo",
+        "Mopoy",
+        "Ngindo",
+        "Sasa"
+      ],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Bambesa",
+      "province": "Bas-Uele",
+      "zone_fdsu": "ND",
+      "secteurs": [],
+      "chefferies": [
+        "Bakere Bakete",
+        "Bakete",
+        "Bokapo",
+        "Bokiba",
+        "Bulungwa",
+        "Makere I",
+        "Makere II",
+        "Mange",
+        "Mondwangali"
+      ],
+      "nombre_collectivites": 9
+    },
+    {
+      "territoire": "Bondo",
+      "province": "Bas-Uele",
+      "zone_fdsu": "ND",
+      "secteurs": [],
+      "chefferies": [
+        "Biamange",
+        "Boso",
+        "Deni",
+        "Duaru",
+        "Gama",
+        "Gaya",
+        "Goa",
+        "Kasa",
+        "Mobenge-Mondila",
+        "Soa"
+      ],
+      "nombre_collectivites": 10
+    },
+    {
+      "territoire": "Buta",
+      "province": "Bas-Uele",
+      "zone_fdsu": "ND",
+      "secteurs": [],
+      "chefferies": [
+        "Barisi-Mongingita",
+        "Bayeu-Bogbama",
+        "Bayeu-Bogongia",
+        "Mobati",
+        "Monganzolo",
+        "Nguru"
+      ],
+      "nombre_collectivites": 6
+    },
+    {
+      "territoire": "Poko",
+      "province": "Bas-Uele",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Abarambo",
+        "Kembisa"
+      ],
+      "chefferies": [
+        "Babena",
+        "Bakengaie-Avuru",
+        "Gamu",
+        "Kipate",
+        "Komendeni",
+        "Mabanga",
+        "Madi",
+        "Malele",
+        "Ngbaradi",
+        "Soronga",
+        "Zune"
+      ],
+      "nombre_collectivites": 13
+    },
+    {
+      "territoire": "Basankusu",
+      "province": "Equateur",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Basankusu",
+        "Gombalo",
+        "Waka-Bokeka"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Bikoro",
+      "province": "Equateur",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Ekonda",
+        "Elanga",
+        "Lac Ntomba"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Bolomba",
+      "province": "Equateur",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Bolomba",
+        "Busira",
+        "Lusanganya",
+        "Mampoko"
+      ],
+      "chefferies": [
+        "Dianga"
+      ],
+      "nombre_collectivites": 5
+    },
+    {
+      "territoire": "Bomongo",
+      "province": "Equateur",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Djamba",
+        "Ngiri"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 2
+    },
+    {
+      "territoire": "Ingende",
+      "province": "Equateur",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Bokatola",
+        "Duali",
+        "Eungu"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Lukolela",
+      "province": "Equateur",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Banunu",
+        "Lusakani",
+        "Mpama"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Mankanza",
+      "province": "Equateur",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Bangala",
+        "Mweko",
+        "Ndobo"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Dungu",
+      "province": "Haut-Uele",
+      "zone_fdsu": "ND",
+      "secteurs": [],
+      "chefferies": [
+        "Malingindu",
+        "Ndolomo",
+        "Wando"
+      ],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Faradje",
+      "province": "Haut-Uele",
+      "zone_fdsu": "ND",
+      "secteurs": [],
+      "chefferies": [
+        "Dongo",
+        "Kakwa",
+        "Logo-Bagela",
+        "Logo-Doka",
+        "Logo-Lolia",
+        "Logo-Obeleba",
+        "Logo-Ogambi",
+        "Mondo"
+      ],
+      "nombre_collectivites": 8
+    },
+    {
+      "territoire": "Niangara",
+      "province": "Haut-Uele",
+      "zone_fdsu": "ND",
+      "secteurs": [],
+      "chefferies": [
+        "Boemi",
+        "Kereboro",
+        "Kopa",
+        "Mangbele",
+        "Mangbetu-Mabisanga",
+        "Manziga",
+        "Okondo"
+      ],
+      "nombre_collectivites": 7
+    },
+    {
+      "territoire": "Rungu",
+      "province": "Haut-Uele",
+      "zone_fdsu": "ND",
+      "secteurs": [],
+      "chefferies": [
+        "Azanga",
+        "Mayogo-Mabozo",
+        "Mayogo-Magbaie",
+        "Mboli",
+        "Medje-Mango",
+        "Mongo-Masi",
+        "Ndey"
+      ],
+      "nombre_collectivites": 7
+    },
+    {
+      "territoire": "Wamba",
+      "province": "Haut-Uele",
+      "zone_fdsu": "ND",
+      "secteurs": [],
+      "chefferies": [
+        "Bafwagada",
+        "Bafwakoy",
+        "Balika-Toriko",
+        "Mabudu-Malika-Baberu",
+        "Maha",
+        "Makoda",
+        "Malamba",
+        "Malika",
+        "Mangbele",
+        "Timoniko",
+        "Wadimbisa-Mabudu"
+      ],
+      "nombre_collectivites": 11
+    },
+    {
+      "territoire": "Watsa",
+      "province": "Haut-Uele",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Gombari",
+        "Kibali",
+        "Mangbutu"
+      ],
+      "chefferies": [
+        "Andikofa",
+        "Andobi",
+        "Ateru",
+        "Kebo",
+        "Mari-Minza",
+        "Walese"
+      ],
+      "nombre_collectivites": 9
+    },
+    {
+      "territoire": "Bondanganga",
+      "province": "Mongala",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Bongandanga",
+        "Boso-Djanoa",
+        "Boso-Melo",
+        "Boso-Simba"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Bumba",
+      "province": "Mongala",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Banda-Yowa",
+        "Itimbiri",
+        "Loeka",
+        "Molua",
+        "Monzamboli",
+        "Yandongi"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 6
+    },
+    {
+      "territoire": "Lisala",
+      "province": "Mongala",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Mongala-Motima",
+        "Ngombe-Doko",
+        "Ngombe-Mobangi"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Basobolo",
+      "province": "Nord-Ubangi",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Bandas",
+        "Bili",
+        "Bosobolo"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Businga",
+      "province": "Nord-Ubangi",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Bodangabo",
+        "Businga",
+        "Karawa"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Mobayi-Mbongo",
+      "province": "Nord-Ubangi",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Mobayi-Mbongo",
+        "Otto-Banza"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 2
+    },
+    {
+      "territoire": "Yakoma",
+      "province": "Nord-Ubangi",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Abumombazi",
+        "Wapinda",
+        "Yakoma"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Budjala",
+      "province": "Sud-Ubangi",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Banza",
+        "Bolingo",
+        "Mongala-Molima",
+        "Ndolo-Liboko",
+        "Ngombe-Doko de Lekimi"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 5
+    },
+    {
+      "territoire": "Gemena",
+      "province": "Sud-Ubangi",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Banga-Kungu",
+        "Bowase",
+        "Mbari",
+        "Nguya"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Kungu",
+      "province": "Sud-Ubangi",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Bomboma",
+        "Dongo",
+        "Lua",
+        "Mwanda",
+        "Songo"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 5
+    },
+    {
+      "territoire": "Libenge",
+      "province": "Sud-Ubangi",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Libenge-Centre",
+        "Libenge-Nord",
+        "Libenge-Sud"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Bafwasende",
+      "province": "Tshopo",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Bafwandaka",
+        "Bakumu d'Angumu",
+        "Bakundumu",
+        "Barumbi-Opienge",
+        "Bekeni-Kondolole",
+        "Bemili"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 6
+    },
+    {
+      "territoire": "Banalia",
+      "province": "Tshopo",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Baboa de Kole",
+        "Baboro",
+        "Bamanga",
+        "Banalia Bangba",
+        "Popoy"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 5
+    },
+    {
+      "territoire": "Basoko",
+      "province": "Tshopo",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Bangelema",
+        "Bomenge",
+        "Lukutu",
+        "Mobango Itimbiri",
+        "Turumbu"
+      ],
+      "chefferies": [
+        "Wahanga",
+        "Yaliwasa",
+        "Yamandundu"
+      ],
+      "nombre_collectivites": 8
+    },
+    {
+      "territoire": "Isangi",
+      "province": "Tshopo",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Bambelota",
+        "Liutua",
+        "Lokombe",
+        "Lueta",
+        "Turumbu",
+        "Yalikandja-Yanongo",
+        "Yaokandja",
+        "Yawembe-Basoa"
+      ],
+      "chefferies": [
+        "Baluolambila",
+        "Bolomboki",
+        "Kombe",
+        "Yalihila",
+        "Yalikoka-Mboso"
+      ],
+      "nombre_collectivites": 13
+    },
+    {
+      "territoire": "Opala",
+      "province": "Tshopo",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Balinga-Lindja",
+        "Iye",
+        "Lobaie",
+        "Tooli",
+        "Yawende-Loolo"
+      ],
+      "chefferies": [
+        "Kembe",
+        "Mongo",
+        "Yalingo",
+        "Yapandu",
+        "Yeyango",
+        "Yomale"
+      ],
+      "nombre_collectivites": 11
+    },
+    {
+      "territoire": "Ubundu",
+      "province": "Tshopo",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Bakumu-Kilinga",
+        "Bakumu-Mandombe",
+        "Bakumu-Mangongo",
+        "Bakumu-d'Obiatuku",
+        "Mituku-Bamoya",
+        "Mituku-Basikate",
+        "Walengola Lilo",
+        "Walengola Lowa",
+        "Walengola-Babira",
+        "Walengola-Baleka"
+      ],
+      "chefferies": [
+        "Kirundu"
+      ],
+      "nombre_collectivites": 11
+    },
+    {
+      "territoire": "Yahuma",
+      "province": "Tshopo",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Bolinga",
+        "Bosoku",
+        "Buma"
+      ],
+      "chefferies": [
+        "Mombesa"
+      ],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Befale",
+      "province": "Tshuapa",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Befumbo",
+        "Duale",
+        "Lomako"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Boende",
+      "province": "Tshuapa",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Bolua",
+        "Djera",
+        "Lofoy",
+        "Wini"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Bokungu",
+      "province": "Tshuapa",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Lolaka",
+        "Loombo",
+        "Luando",
+        "Luay"
+      ],
+      "chefferies": [
+        "Nkole"
+      ],
+      "nombre_collectivites": 5
+    },
+    {
+      "territoire": "Djolu",
+      "province": "Tshuapa",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Djolu",
+        "Lingomo",
+        "Luo",
+        "Yala"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Ikela",
+      "province": "Tshuapa",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Lofome",
+        "Loile",
+        "Lokina",
+        "Tshuapa",
+        "Tumbenga"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 5
+    },
+    {
+      "territoire": "Monkoto",
+      "province": "Tshuapa",
+      "zone_fdsu": "ND",
+      "secteurs": [
+        "Bianga",
+        "Monkoto",
+        "Nongo"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Kasangulu",
+      "province": "Kongo Central",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Kasangulu",
+        "Luila",
+        "Lukunga-Mputu"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Kimvula",
+      "province": "Kongo Central",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Benga",
+        "Lubisi",
+        "Lula-Lumene"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Lukula",
+      "province": "Kongo Central",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Fubu",
+        "Kakongo",
+        "Patu",
+        "Tsanga-Sud",
+        "Tsundi-Sud"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 5
+    },
+    {
+      "territoire": "Luozi",
+      "province": "Kongo Central",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Balari",
+        "Kenge",
+        "Kimbanza",
+        "Kimumba",
+        "Kinkenge",
+        "Kivunda",
+        "Mbanza Mona",
+        "Mbanza Ngoyo",
+        "Mbanza-Mwembe",
+        "Mongo Luala"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 10
+    },
+    {
+      "territoire": "Madimba",
+      "province": "Kongo Central",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Luidi",
+        "Mfidi Malele",
+        "Mfuma Kibambi",
+        "Ngeba",
+        "Ngufu",
+        "Wungu"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 6
+    },
+    {
+      "territoire": "Mbanza-Ngungu",
+      "province": "Kongo Central",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Boko",
+        "Gombe Matadi",
+        "Gombe-Sud",
+        "Kivulu",
+        "Kwilu-Ngongo",
+        "Lunzadi",
+        "Ntimansi"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 7
+    },
+    {
+      "territoire": "Moanda",
+      "province": "Kongo Central",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Assolongo",
+        "Boma-Bungu",
+        "La Mer"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Seke-Banza",
+      "province": "Kongo Central",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Bundi",
+        "Isangila",
+        "Lufu",
+        "Mbavu",
+        "Sumbi"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 5
+    },
+    {
+      "territoire": "Songololo",
+      "province": "Kongo Central",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Bamboma",
+        "Kimpese",
+        "Luima",
+        "Palabala",
+        "Wombo"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 5
+    },
+    {
+      "territoire": "Tshela",
+      "province": "Kongo Central",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Bula-Naku",
+        "Loango",
+        "Lubolo",
+        "Lubuzi",
+        "Maduda",
+        "Nganda Sundi",
+        "Nzobe-Luzi",
+        "Tshela-Banga"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 8
+    },
+    {
+      "territoire": "Feshi",
+      "province": "Kwango",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Feshi",
+        "Ganeketi",
+        "Lobo",
+        "Mukoso"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Kahemba",
+      "province": "Kwango",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Bangu",
+        "Bindu",
+        "Kulindji"
+      ],
+      "chefferies": [
+        "Muloshi",
+        "Mwamushiko",
+        "Mwendjila"
+      ],
+      "nombre_collectivites": 6
+    },
+    {
+      "territoire": "Kasongo-Lunda",
+      "province": "Kwango",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Kibunda",
+        "Kingulu",
+        "Kizamba",
+        "Mawanga",
+        "Panzi",
+        "Swa Tenda"
+      ],
+      "chefferies": [
+        "Kasa",
+        "Kasongo-Lunda"
+      ],
+      "nombre_collectivites": 8
+    },
+    {
+      "territoire": "Kenge",
+      "province": "Kwango",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Bukanga-Lonzo",
+        "Dinga",
+        "Kolokoso",
+        "Mosamba"
+      ],
+      "chefferies": [
+        "Palende-Nord"
+      ],
+      "nombre_collectivites": 5
+    },
+    {
+      "territoire": "Popokabaka",
+      "province": "Kwango",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Lufuna",
+        "Popokabaka",
+        "Yonso"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Bagata",
+      "province": "Kwilu",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Kidzweme",
+        "Kwango-Kasai",
+        "Kwilu-Ntobere",
+        "Manzasay",
+        "Wamba-Fatundu"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 5
+    },
+    {
+      "territoire": "Bulungu",
+      "province": "Kwilu",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Dwe",
+        "Imbongo",
+        "Kilunda",
+        "Kipuka",
+        "Kwenge",
+        "Kwilu-Kimbata",
+        "Luniungu",
+        "Mikwi",
+        "Niadi Nkara",
+        "Nko"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 10
+    },
+    {
+      "territoire": "Gungu",
+      "province": "Kwilu",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Gungu",
+        "Kandale",
+        "Kilamba",
+        "Kilemba",
+        "Kisunzu",
+        "Kobo",
+        "Kondo",
+        "Lozo",
+        "Lukamba",
+        "Mudikalunga",
+        "Mungindu",
+        "Ngudi"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 12
+    },
+    {
+      "territoire": "Idiofa",
+      "province": "Kwilu",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Banga",
+        "Belo",
+        "Bulwem",
+        "Kalanganda",
+        "Kanga",
+        "Kapia",
+        "Kipuku",
+        "Madimbi",
+        "Mateko",
+        "Musanga-Idiofa",
+        "Sedzo",
+        "Yasa-Lokwa"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 12
+    },
+    {
+      "territoire": "Masi-Manimba",
+      "province": "Kwilu",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Bindungi",
+        "Kibolo",
+        "Kinzenga",
+        "Kinzenzengo",
+        "Kitoy",
+        "Masi-Manimba",
+        "Mokamo",
+        "Mosango",
+        "Pay-Kongila",
+        "Sungu"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 10
+    },
+    {
+      "territoire": "Bolobo",
+      "province": "Maindombe",
+      "zone_fdsu": "OT",
+      "secteurs": [],
+      "chefferies": [
+        "Bateke-Nord"
+      ],
+      "nombre_collectivites": 1
+    },
+    {
+      "territoire": "Inongo",
+      "province": "Maindombe",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Basengele",
+        "Bolia",
+        "Inongo"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Kiri",
+      "province": "Maindombe",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Beronge",
+        "Lutoy",
+        "Pendjwa"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Kutu",
+      "province": "Maindombe",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Kemba",
+        "Luabu",
+        "Mfimi"
+      ],
+      "chefferies": [
+        "Badia",
+        "Batere"
+      ],
+      "nombre_collectivites": 5
+    },
+    {
+      "territoire": "Kwamouth",
+      "province": "Maindombe",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Bateke-Sud/TWA"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 1
+    },
+    {
+      "territoire": "Mushie",
+      "province": "Maindombe",
+      "zone_fdsu": "OT",
+      "secteurs": [],
+      "chefferies": [
+        "Baboma-Nord"
+      ],
+      "nombre_collectivites": 1
+    },
+    {
+      "territoire": "Oshwe",
+      "province": "Maindombe",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Entre Lukenie-Lokoro Nkaw",
+        "Kangara",
+        "Lokolama",
+        "Lukenie"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Yumbi",
+      "province": "Maindombe",
+      "zone_fdsu": "OT",
+      "secteurs": [
+        "Mongama"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 1
+    },
+    {
+      "territoire": "Kambove",
+      "province": "Haut-Katanga",
+      "zone_fdsu": "SD",
+      "secteurs": [
+        "Lufira",
+        "Sources du fleuve Congo"
+      ],
+      "chefferies": [
+        "Basanga"
+      ],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Kasenga",
+      "province": "Haut-Katanga",
+      "zone_fdsu": "SD",
+      "secteurs": [
+        "Bakunda",
+        "Kafira",
+        "Kisamamba",
+        "Luapula"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Kipushi",
+      "province": "Haut-Katanga",
+      "zone_fdsu": "SD",
+      "secteurs": [
+        "Bukanda"
+      ],
+      "chefferies": [
+        "Kaponda",
+        "Kinyama"
+      ],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Mitwaba",
+      "province": "Haut-Katanga",
+      "zone_fdsu": "SD",
+      "secteurs": [
+        "Balomotwa",
+        "Banweshi"
+      ],
+      "chefferies": [
+        "Kiona-Ngoie"
+      ],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Pweto",
+      "province": "Haut-Katanga",
+      "zone_fdsu": "SD",
+      "secteurs": [
+        "Moero",
+        "Mwenge"
+      ],
+      "chefferies": [
+        "Kiona-Nzini",
+        "Pweto"
+      ],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Sakania",
+      "province": "Haut-Katanga",
+      "zone_fdsu": "SD",
+      "secteurs": [
+        "Balala",
+        "Balamba",
+        "Baushi-Mwenda"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Bukama",
+      "province": "Haut-Lomami",
+      "zone_fdsu": "SD",
+      "secteurs": [
+        "Kapamayi",
+        "Lualaba"
+      ],
+      "chefferies": [
+        "Butumba",
+        "Kabondo Dianda",
+        "Kibanda",
+        "Kinkondja"
+      ],
+      "nombre_collectivites": 6
+    },
+    {
+      "territoire": "Kabongo",
+      "province": "Haut-Lomami",
+      "zone_fdsu": "SD",
+      "secteurs": [
+        "Nord-Baluba"
+      ],
+      "chefferies": [
+        "Kabongo",
+        "Kayamba"
+      ],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Kamina",
+      "province": "Haut-Lomami",
+      "zone_fdsu": "SD",
+      "secteurs": [
+        "Kinda"
+      ],
+      "chefferies": [
+        "Kasongo Nyembo"
+      ],
+      "nombre_collectivites": 2
+    },
+    {
+      "territoire": "Kaniama",
+      "province": "Haut-Lomami",
+      "zone_fdsu": "SD",
+      "secteurs": [],
+      "chefferies": [
+        "Mutombo-Mukulu"
+      ],
+      "nombre_collectivites": 1
+    },
+    {
+      "territoire": "Malemba-Nkulu",
+      "province": "Haut-Lomami",
+      "zone_fdsu": "SD",
+      "secteurs": [
+        "Badia",
+        "Mwanza"
+      ],
+      "chefferies": [
+        "Kayumba",
+        "Mulongo",
+        "Museka",
+        "Nkulu"
+      ],
+      "nombre_collectivites": 6
+    },
+    {
+      "territoire": "Dilolo",
+      "province": "Lualaba",
+      "zone_fdsu": "SD",
+      "secteurs": [
+        "Luena",
+        "Lulua-Lukoshi",
+        "Mutanda"
+      ],
+      "chefferies": [
+        "Muyeye",
+        "Mwandakala",
+        "Mwatshisenge",
+        "Ndumba",
+        "Saluseke",
+        "Tshisangana"
+      ],
+      "nombre_collectivites": 9
+    },
+    {
+      "territoire": "Kapanga",
+      "province": "Lualaba",
+      "zone_fdsu": "SD",
+      "secteurs": [],
+      "chefferies": [
+        "Mwant-Yav"
+      ],
+      "nombre_collectivites": 1
+    },
+    {
+      "territoire": "Lubudi",
+      "province": "Lualaba",
+      "zone_fdsu": "SD",
+      "secteurs": [],
+      "chefferies": [
+        "Bayeke",
+        "Mazangule",
+        "Mulumbu",
+        "Mwana-Muadi"
+      ],
+      "nombre_collectivites": 4
+    },
+    {
+      "territoire": "Mutshatsha",
+      "province": "Lualaba",
+      "zone_fdsu": "SD",
+      "secteurs": [
+        "Lufupa",
+        "Luilu",
+        "Mukuleshi"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Sandoa",
+      "province": "Lualaba",
+      "zone_fdsu": "SD",
+      "secteurs": [],
+      "chefferies": [
+        "Kayembe-Mukulu",
+        "Lumanga",
+        "Mbako",
+        "Muteba",
+        "Sakundundu",
+        "Samutoma",
+        "Tshibamba",
+        "Tshipao"
+      ],
+      "nombre_collectivites": 8
+    },
+    {
+      "territoire": "Kabalo",
+      "province": "Tanganyika",
+      "zone_fdsu": "SD",
+      "secteurs": [
+        "Luela-Luvunguye",
+        "Lukuswa"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 2
+    },
+    {
+      "territoire": "Kalemie",
+      "province": "Tanganyika",
+      "zone_fdsu": "SD",
+      "secteurs": [],
+      "chefferies": [
+        "Benze",
+        "Rutuku",
+        "Tumbwe"
+      ],
+      "nombre_collectivites": 3
+    },
+    {
+      "territoire": "Kongolo",
+      "province": "Tanganyika",
+      "zone_fdsu": "SD",
+      "secteurs": [
+        "Baluba",
+        "Basonge"
+      ],
+      "chefferies": [
+        "Bayashi",
+        "Bena-Nyembo",
+        "Lubunda",
+        "Mambwe",
+        "Munono",
+        "Nkuvu",
+        "Yambula"
+      ],
+      "nombre_collectivites": 9
+    },
+    {
+      "territoire": "Manono",
+      "province": "Tanganyika",
+      "zone_fdsu": "SD",
+      "secteurs": [
+        "Kyofwe",
+        "Luvua",
+        "Niemba"
+      ],
+      "chefferies": [
+        "Bakongolo",
+        "Kamalondo",
+        "Kiluba"
+      ],
+      "nombre_collectivites": 6
+    },
+    {
+      "territoire": "Moba",
+      "province": "Tanganyika",
+      "zone_fdsu": "SD",
+      "secteurs": [
+        "Bena-Kamanya"
+      ],
+      "chefferies": [
+        "Bena-Tanga",
+        "Kansabala",
+        "Kayabala",
+        "Manda",
+        "Nganye"
+      ],
+      "nombre_collectivites": 6
+    },
+    {
+      "territoire": "Nyunzu",
+      "province": "Tanganyika",
+      "zone_fdsu": "SD",
+      "secteurs": [
+        "Nord-Lukuga",
+        "Sud-Lukuga"
+      ],
+      "chefferies": [],
+      "nombre_collectivites": 2
+    }
+  ],
+  "count": 146
+}

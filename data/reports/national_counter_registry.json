@@ -1,0 +1,51 @@
+{
+  "generated_at": "2026-07-03T14:59:05+00:00",
+  "source": "collectivites.kmz",
+  "registre_national_des_compteurs": {
+    "provinces": {
+      "nombre": 26,
+      "statut": "validées"
+    },
+    "territoires": {
+      "nombre": 145,
+      "statut": "validés"
+    },
+    "villes": {
+      "nombre": 11,
+      "statut": "validées"
+    },
+    "secteurs": {
+      "nombre": 473,
+      "statut": "validés provisoirement"
+    },
+    "chefferies": {
+      "nombre": 260,
+      "statut": "validées provisoirement"
+    },
+    "collectivites": {
+      "nombre": 733,
+      "statut": "validées provisoirement"
+    },
+    "anomalies_collectivites": {
+      "nombre": 1
+    },
+    "groupements": {
+      "attendu_officiel": 6053,
+      "trouve": 1681,
+      "couverture": "27.77%",
+      "statut": "partiel",
+      "validation": "non publié",
+      "anomalies": 179,
+      "orphelins": 1,
+      "territoires_sans_groupement": 27,
+      "collectivites_sans_groupement": 250,
+      "recommandation": "source partielle, à compléter avec une autre source avant validation nationale"
+    },
+    "anomalies_groupements": {
+      "nombre": 179,
+      "orphelins": 1,
+      "incoherences_attributaires": 176
+    }
+  },
+  "source_groupements": "Groupements.kmz"
+}

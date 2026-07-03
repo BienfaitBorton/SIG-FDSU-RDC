@@ -1,0 +1,421 @@
+{
+  "province_fact_sheets": [
+    {
+      "canonical_id": "RDC-CE-PROV-KASAI",
+      "nom": "Kasai",
+      "zone_fdsu": "CE",
+      "zone_nom": "Centre",
+      "code_officiel": "903",
+      "chef_lieu": "Tshikapa",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-CE-PROV-KASAI_CENTRAL",
+      "nom": "Kasai Central",
+      "zone_fdsu": "CE",
+      "zone_nom": "Centre",
+      "code_officiel": "902",
+      "chef_lieu": "Kananga",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-CE-PROV-KASAI_ORIENTAL",
+      "nom": "Kasai Oriental",
+      "zone_fdsu": "CE",
+      "zone_nom": "Centre",
+      "code_officiel": "802",
+      "chef_lieu": "Mbuji-Mayi",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-CE-PROV-LOMAMI",
+      "nom": "Lomami",
+      "zone_fdsu": "CE",
+      "zone_nom": "Centre",
+      "code_officiel": "804",
+      "chef_lieu": "Kabinda",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-CE-PROV-SANKURU",
+      "nom": "Sankuru",
+      "zone_fdsu": "CE",
+      "zone_nom": "Centre",
+      "code_officiel": "803",
+      "chef_lieu": "Lusambo",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-ET-PROV-MANIEMA",
+      "nom": "Maniema",
+      "zone_fdsu": "ET",
+      "zone_nom": "Est",
+      "code_officiel": "63",
+      "chef_lieu": "Kindu",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-ET-PROV-SUD-KIVU",
+      "nom": "Sud-Kivu",
+      "zone_fdsu": "ET",
+      "zone_nom": "Est",
+      "code_officiel": "62",
+      "chef_lieu": "Bukavu",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-ND-PROV-BAS-UELE",
+      "nom": "Bas-Uele",
+      "zone_fdsu": "ND",
+      "zone_nom": "Nord",
+      "code_officiel": "503",
+      "chef_lieu": "Buta",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-ND-PROV-HAUT-UELE",
+      "nom": "Haut-Uele",
+      "zone_fdsu": "ND",
+      "zone_nom": "Nord",
+      "code_officiel": "504",
+      "chef_lieu": "Isiro",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-ND-PROV-ITURI",
+      "nom": "Ituri",
+      "zone_fdsu": "ND",
+      "zone_nom": "Nord",
+      "code_officiel": "505",
+      "chef_lieu": "Bunia",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-ND-PROV-MONGALA",
+      "nom": "Mongala",
+      "zone_fdsu": "ND",
+      "zone_nom": "Nord",
+      "code_officiel": "406",
+      "chef_lieu": "Lisala",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-ND-PROV-NORD-KIVU",
+      "nom": "Nord-Kivu",
+      "zone_fdsu": "ND",
+      "zone_nom": "Nord",
+      "code_officiel": "61",
+      "chef_lieu": "Goma",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-ND-PROV-NORD-UBANGI",
+      "nom": "Nord-Ubangi",
+      "zone_fdsu": "ND",
+      "zone_nom": "Nord",
+      "code_officiel": "405",
+      "chef_lieu": "Gbadolite",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-ND-PROV-SUD-UBANGI",
+      "nom": "Sud-Ubangi",
+      "zone_fdsu": "ND",
+      "zone_nom": "Nord",
+      "code_officiel": "403",
+      "chef_lieu": "Gemena",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-ND-PROV-TSHOPO",
+      "nom": "Tshopo",
+      "zone_fdsu": "ND",
+      "zone_nom": "Nord",
+      "code_officiel": "502",
+      "chef_lieu": "Kisangani",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-OT-PROV-EQUATEUR",
+      "nom": "Equateur",
+      "zone_fdsu": "OT",
+      "zone_nom": "Ouest",
+      "code_officiel": "402",
+      "chef_lieu": "Mbandaka",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-OT-PROV-KINSHASA",
+      "nom": "Kinshasa",
+      "zone_fdsu": "OT",
+      "zone_nom": "Ouest",
+      "code_officiel": "10",
+      "chef_lieu": "Kinshasa",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-OT-PROV-KONGO_CENTRAL",
+      "nom": "Kongo Central",
+      "zone_fdsu": "OT",
+      "zone_nom": "Ouest",
+      "code_officiel": "20",
+      "chef_lieu": "Matadi",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-OT-PROV-KWANGO",
+      "nom": "Kwango",
+      "zone_fdsu": "OT",
+      "zone_nom": "Ouest",
+      "code_officiel": "305",
+      "chef_lieu": "Kenge",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-OT-PROV-KWILU",
+      "nom": "Kwilu",
+      "zone_fdsu": "OT",
+      "zone_nom": "Ouest",
+      "code_officiel": "303",
+      "chef_lieu": "Bandundu",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-OT-PROV-MAI-NDOMBE",
+      "nom": "Mai-ndombe",
+      "zone_fdsu": "OT",
+      "zone_nom": "Ouest",
+      "code_officiel": "302",
+      "chef_lieu": "Inongo",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-OT-PROV-TSHUAPA",
+      "nom": "Tshuapa",
+      "zone_fdsu": "OT",
+      "zone_nom": "Ouest",
+      "code_officiel": "407",
+      "chef_lieu": "Boende",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-SD-PROV-HAUT-KATANGA",
+      "nom": "Haut-Katanga",
+      "zone_fdsu": "SD",
+      "zone_nom": "Sud",
+      "code_officiel": "707",
+      "chef_lieu": "Lubumbashi",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-SD-PROV-HAUT-LOMAMI",
+      "nom": "Haut-Lomami",
+      "zone_fdsu": "SD",
+      "zone_nom": "Sud",
+      "code_officiel": "705",
+      "chef_lieu": "Kamina",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-SD-PROV-LUALABA",
+      "nom": "Lualaba",
+      "zone_fdsu": "SD",
+      "zone_nom": "Sud",
+      "code_officiel": "704",
+      "chef_lieu": "Kolwezi",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    },
+    {
+      "canonical_id": "RDC-SD-PROV-TANGANYIKA",
+      "nom": "Tanganyika",
+      "zone_fdsu": "SD",
+      "zone_nom": "Sud",
+      "code_officiel": "706",
+      "chef_lieu": "Kalemie",
+      "geometry_type": "MultiPolygon",
+      "source": "Province26.kmz",
+      "quality_flags": [],
+      "metadata": {
+        "niveau": "Province",
+        "statut": "official_candidate",
+        "qualite": 100.0
+      }
+    }
+  ],
+  "count": 26
+}

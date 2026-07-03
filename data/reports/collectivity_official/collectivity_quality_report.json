@@ -1,0 +1,26 @@
+{
+  "source_file": "collectivites.kmz",
+  "generated_at": "2026-07-03T13:41:47+00:00",
+  "collectivity_count": 733,
+  "secteur_count": 473,
+  "chefferie_count": 260,
+  "missing_territory_count": 1,
+  "missing_province_count": 0,
+  "missing_zone_count": 0,
+  "invalid_geometry_count": 0,
+  "duplicate_count": 0,
+  "unknown_type_count": 0,
+  "duplicate_keys": [],
+  "anomalies": [
+    {
+      "entite": "Bahema",
+      "type": "Chefferie",
+      "province": "Ituri",
+      "probleme": "territoire parent non déterminé",
+      "cause": "CODE_INS = 10 insuffisant pour rattachement territorial fiable",
+      "statut": "À valider manuellement",
+      "suggestion": "vérifier le territoire de rattachement officiel avant publication"
+    }
+  ],
+  "global_score": 99.97
+}

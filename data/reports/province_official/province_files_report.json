@@ -1,0 +1,10 @@
+{
+  "source": "Province26.kmz",
+  "created_files": [
+    "data\\reports\\province_official\\province_referential_official.json",
+    "data\\reports\\province_official\\province_fact_sheets.json",
+    "data\\reports\\province_official\\province_quality_report.json",
+    "data\\reports\\province_official\\province_referential_report.md"
+  ],
+  "generated_at": "2026-07-03T10:01:04+00:00"
+}

@@ -1,0 +1,55 @@
+country:
+  code: RDC
+  name: Republique Democratique du Congo
+
+zones:
+  - code: ND
+    nom: Nord
+    couleur: "#1F77B4"
+    provinces:
+      - Bas-Uele
+      - Haut-Uele
+      - Ituri
+      - Nord-Kivu
+      - Nord-Ubangi
+      - Sud-Ubangi
+      - Tshopo
+      - Mongala
+
+  - code: OT
+    nom: Ouest
+    couleur: "#2CA02C"
+    provinces:
+      - Equateur
+      - Kongo Central
+      - Kwango
+      - Kwilu
+      - Mai-Ndombe
+      - Tshuapa
+      - Kinshasa
+
+  - code: CE
+    nom: Centre
+    couleur: "#FF7F0E"
+    provinces:
+      - Kasai
+      - Kasai Central
+      - Kasai Oriental
+      - Lomami
+      - Sankuru
+
+  - code: SD
+    nom: Sud
+    couleur: "#D62728"
+    provinces:
+      - Haut-Katanga
+      - Haut-Lomami
+      - Lualaba
+      - Tanganyika
+
+  - code: ET
+    nom: Est
+    couleur: "#17BECF"
+    provinces:
+      - Maniema
+      - Sud-Kivu

@@ -35,6 +35,10 @@
           <span class="nav-icon">🗂️</span>
           <span>Gestion des Référentiels</span>
         </button>
+        <button class="nav-item" data-module="explorateur_sources">
+          <span class="nav-icon">🧪</span>
+          <span>Explorateur de Sources</span>
+        </button>
         <button class="nav-item" data-module="sites">
           <span class="nav-icon">📍</span>
           <span>Sites FDSU</span>
@@ -463,6 +467,86 @@
             <span class="panel-badge">Bientôt</span>
           </div>
           <p>Exploration et synthèse des sites FDSU dans le territoire national.</p>
+        </div>
+
+        <div class="module-panel hidden" id="explorateur-sources-panel" data-module="explorateur_sources">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Explorateur de Sources</p>
+              <h2>Catalogue géographique en lecture seule</h2>
+            </div>
+            <span class="panel-badge">Sans import BD</span>
+          </div>
+
+          <section class="source-explorer-toolbar">
+            <div class="source-explorer-loader">
+              <label for="source-explorer-report-input">Rapport JSON</label>
+              <input id="source-explorer-report-input" type="file" accept=".json,application/json" />
+              <p>Utiliser un rapport généré par <strong>scripts/explore_source.py</strong>.</p>
+            </div>
+            <button id="source-explorer-extract" type="button" class="governance-action-button" disabled>Extraire</button>
+          </section>
+
+          <section class="source-explorer-kpis">
+            <article class="summary-card">
+              <p class="summary-label">Source</p>
+              <p class="summary-value" id="source-explorer-source-path">Non renseigné</p>
+            </article>
+            <article class="summary-card">
+              <p class="summary-label">Format</p>
+              <p class="summary-value" id="source-explorer-source-format">Non renseigné</p>
+            </article>
+            <article class="summary-card">
+              <p class="summary-label">Objets</p>
+              <p class="summary-value" id="source-explorer-object-count">0</p>
+            </article>
+            <article class="summary-card">
+              <p class="summary-label">Champs</p>
+              <p class="summary-value" id="source-explorer-field-count">0</p>
+            </article>
+            <article class="summary-card">
+              <p class="summary-label">Dossiers</p>
+              <p class="summary-value" id="source-explorer-folder-count">0</p>
+            </article>
+          </section>
+
+          <section class="source-explorer-tags" id="source-explorer-tags"></section>
+
+          <section class="table-frame source-explorer-table">
+            <h3>Catalogue des Données</h3>
+            <table class="governance-table">
+              <thead>
+                <tr>
+                  <th>Nom du dossier</th>
+                  <th>Type</th>
+                  <th>Nombre d'objets</th>
+                  <th>Nombre de champs</th>
+                  <th>Type de géométrie</th>
+                  <th>Qualité</th>
+                  <th>Module SIG conseillé</th>
+                  <th>Liste des attributs</th>
+                </tr>
+              </thead>
+              <tbody id="source-explorer-catalog-body"></tbody>
+            </table>
+          </section>
+
+          <section class="table-frame source-explorer-table">
+            <h3>Dictionnaire de Données</h3>
+            <table class="governance-table">
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Type</th>
+                  <th>Nombre de valeurs</th>
+                  <th>Valeurs uniques</th>
+                  <th>Valeurs nulles</th>
+                  <th>Exemple</th>
+                </tr>
+              </thead>
+              <tbody id="source-explorer-dictionary-body"></tbody>
+            </table>
+          </section>
         </div>
 
         <div class="module-panel hidden" id="import-panel" data-module="import">

@@ -1,0 +1,7251 @@
+{
+  "generated_at": "2026-07-03T14:59:05+00:00",
+  "source": "data/raw/Groupements.kmz",
+  "national_reference": {
+    "expected_groupements": 6053,
+    "found_groupements": 1681,
+    "gap": 4372,
+    "coverage_percent": 27.77
+  },
+  "quality_snapshot": {
+    "attached_count": 1680,
+    "orphan_count": 1,
+    "anomaly_count": 179,
+    "global_score": 99.44
+  },
+  "distribution_by_province": [
+    {
+      "province": "Sud-Kivu",
+      "groupements": 159,
+      "collectivites_total": 23,
+      "collectivites_avec_groupements": 23,
+      "collectivity_coverage_percent": 100.0
+    },
+    {
+      "province": "Maniema",
+      "groupements": 128,
+      "collectivites_total": 34,
+      "collectivites_avec_groupements": 28,
+      "collectivity_coverage_percent": 82.35
+    },
+    {
+      "province": "Tshopo",
+      "groupements": 116,
+      "collectivites_total": 58,
+      "collectivites_avec_groupements": 52,
+      "collectivity_coverage_percent": 89.66
+    },
+    {
+      "province": "Tshuapa",
+      "groupements": 113,
+      "collectivites_total": 24,
+      "collectivites_avec_groupements": 24,
+      "collectivity_coverage_percent": 100.0
+    },
+    {
+      "province": "Kongo Central",
+      "groupements": 90,
+      "collectivites_total": 55,
+      "collectivites_avec_groupements": 33,
+      "collectivity_coverage_percent": 60.0
+    },
+    {
+      "province": "Equateur",
+      "groupements": 84,
+      "collectivites_total": 22,
+      "collectivites_avec_groupements": 21,
+      "collectivity_coverage_percent": 95.45
+    },
+    {
+      "province": "Sud-Ubangi",
+      "groupements": 84,
+      "collectivites_total": 17,
+      "collectivites_avec_groupements": 16,
+      "collectivity_coverage_percent": 94.12
+    },
+    {
+      "province": "Lualaba",
+      "groupements": 82,
+      "collectivites_total": 25,
+      "collectivites_avec_groupements": 24,
+      "collectivity_coverage_percent": 96.0
+    },
+    {
+      "province": "Tanganyika",
+      "groupements": 80,
+      "collectivites_total": 28,
+      "collectivites_avec_groupements": 23,
+      "collectivity_coverage_percent": 82.14
+    },
+    {
+      "province": "Sankuru",
+      "groupements": 77,
+      "collectivites_total": 38,
+      "collectivites_avec_groupements": 25,
+      "collectivity_coverage_percent": 65.79
+    },
+    {
+      "province": "Kwilu",
+      "groupements": 76,
+      "collectivites_total": 49,
+      "collectivites_avec_groupements": 15,
+      "collectivity_coverage_percent": 30.61
+    },
+    {
+      "province": "Haut-Lomami",
+      "groupements": 65,
+      "collectivites_total": 18,
+      "collectivites_avec_groupements": 11,
+      "collectivity_coverage_percent": 61.11
+    },
+    {
+      "province": "Ituri",
+      "groupements": 64,
+      "collectivites_total": 46,
+      "collectivites_avec_groupements": 32,
+      "collectivity_coverage_percent": 69.57
+    },
+    {
+      "province": "Nord-Kivu",
+      "groupements": 63,
+      "collectivites_total": 17,
+      "collectivites_avec_groupements": 16,
+      "collectivity_coverage_percent": 94.12
+    },
+    {
+      "province": "Haut-Katanga",
+      "groupements": 60,
+      "collectivites_total": 20,
+      "collectivites_avec_groupements": 20,
+      "collectivity_coverage_percent": 100.0
+    },
+    {
+      "province": "Kasai Central",
+      "groupements": 55,
+      "collectivites_total": 33,
+      "collectivites_avec_groupements": 22,
+      "collectivity_coverage_percent": 66.67
+    },
+    {
+      "province": "Lomami",
+      "groupements": 55,
+      "collectivites_total": 21,
+      "collectivites_avec_groupements": 12,
+      "collectivity_coverage_percent": 57.14
+    },
+    {
+      "province": "Kasai",
+      "groupements": 53,
+      "collectivites_total": 20,
+      "collectivites_avec_groupements": 16,
+      "collectivity_coverage_percent": 80.0
+    },
+    {
+      "province": "Mongala",
+      "groupements": 47,
+      "collectivites_total": 13,
+      "collectivites_avec_groupements": 11,
+      "collectivity_coverage_percent": 84.62
+    },
+    {
+      "province": "Nord-Ubangi",
+      "groupements": 44,
+      "collectivites_total": 11,
+      "collectivites_avec_groupements": 9,
+      "collectivity_coverage_percent": 81.82
+    },
+    {
+      "province": "Haut-Uele",
+      "groupements": 41,
+      "collectivites_total": 45,
+      "collectivites_avec_groupements": 20,
+      "collectivity_coverage_percent": 44.44
+    },
+    {
+      "province": "Bas-Uele",
+      "groupements": 39,
+      "collectivites_total": 50,
+      "collectivites_avec_groupements": 25,
+      "collectivity_coverage_percent": 50.0
+    },
+    {
+      "province": "Kasai Oriental",
+      "groupements": 4,
+      "collectivites_total": 21,
+      "collectivites_avec_groupements": 4,
+      "collectivity_coverage_percent": 19.05
+    },
+    {
+      "province": "Kwango",
+      "groupements": 1,
+      "collectivites_total": 26,
+      "collectivites_avec_groupements": 1,
+      "collectivity_coverage_percent": 3.85
+    },
+    {
+      "province": "NON_DETERMINEE",
+      "groupements": 1,
+      "collectivites_total": 0,
+      "collectivites_avec_groupements": 0,
+      "collectivity_coverage_percent": 0.0
+    },
+    {
+      "province": "Kinshasa",
+      "groupements": 0,
+      "collectivites_total": 0,
+      "collectivites_avec_groupements": 0,
+      "collectivity_coverage_percent": 0.0
+    },
+    {
+      "province": "Mai-ndombe",
+      "groupements": 0,
+      "collectivites_total": 0,
+      "collectivites_avec_groupements": 0,
+      "collectivity_coverage_percent": 0.0
+    }
+  ],
+  "distribution_by_territory": [
+    {
+      "province": "Bas-Uele",
+      "territoire": "Aketi",
+      "groupements": 6
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Ango",
+      "groupements": 10
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Bambesa",
+      "groupements": 2
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Bondo",
+      "groupements": 10
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Buta",
+      "groupements": 1
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Poko",
+      "groupements": 10
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Basankusu",
+      "groupements": 16
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Bikoro",
+      "groupements": 15
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Bolomba",
+      "groupements": 17
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Bomongo",
+      "groupements": 16
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Ingende",
+      "groupements": 12
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Lukolela",
+      "groupements": 4
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Mankanza",
+      "groupements": 4
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Kambove",
+      "groupements": 10
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Kasenga",
+      "groupements": 13
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Kipushi",
+      "groupements": 5
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Mitwaba",
+      "groupements": 12
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Pweto",
+      "groupements": 13
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Sakania",
+      "groupements": 7
+    },
+    {
+      "province": "Haut-Lomami",
+      "territoire": "Bukama",
+      "groupements": 13
+    },
+    {
+      "province": "Haut-Lomami",
+      "territoire": "Kabongo",
+      "groupements": 19
+    },
+    {
+      "province": "Haut-Lomami",
+      "territoire": "Kamina",
+      "groupements": 21
+    },
+    {
+      "province": "Haut-Lomami",
+      "territoire": "Kaniama",
+      "groupements": 12
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Dungu",
+      "groupements": 5
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Faradje",
+      "groupements": 16
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Niangara",
+      "groupements": 10
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Rungu",
+      "groupements": 6
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Wamba",
+      "groupements": 4
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Aru",
+      "groupements": 7
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Djugu",
+      "groupements": 26
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Irumu",
+      "groupements": 8
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Mahagi",
+      "groupements": 13
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Mambasa",
+      "groupements": 10
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Dekese",
+      "groupements": 12
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Ilebo",
+      "groupements": 7
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Kamonia",
+      "groupements": 17
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Luebo",
+      "groupements": 10
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Mweka",
+      "groupements": 7
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Demba",
+      "groupements": 6
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Dibaya",
+      "groupements": 13
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Kazumba",
+      "groupements": 20
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Luiza",
+      "groupements": 16
+    },
+    {
+      "province": "Kasai Oriental",
+      "territoire": "Katanda",
+      "groupements": 1
+    },
+    {
+      "province": "Kasai Oriental",
+      "territoire": "Miabi",
+      "groupements": 1
+    },
+    {
+      "province": "Kasai Oriental",
+      "territoire": "Tshilenge",
+      "groupements": 2
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Kasangulu",
+      "groupements": 17
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Kimvula",
+      "groupements": 6
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Lukula",
+      "groupements": 10
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Luozi",
+      "groupements": 26
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Madimba",
+      "groupements": 16
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Songololo",
+      "groupements": 9
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Tshela",
+      "groupements": 6
+    },
+    {
+      "province": "Kwango",
+      "territoire": "Kenge",
+      "groupements": 1
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Bulungu",
+      "groupements": 2
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Idiofa",
+      "groupements": 33
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Masi-Manimba",
+      "groupements": 41
+    },
+    {
+      "province": "Lomami",
+      "territoire": "Kabinda",
+      "groupements": 20
+    },
+    {
+      "province": "Lomami",
+      "territoire": "Lubao",
+      "groupements": 24
+    },
+    {
+      "province": "Lomami",
+      "territoire": "Ngandajika",
+      "groupements": 11
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Dilolo",
+      "groupements": 23
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Kapanga",
+      "groupements": 11
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Lubudi",
+      "groupements": 9
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Mutshatsha",
+      "groupements": 7
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Sandoa",
+      "groupements": 32
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kabambare",
+      "groupements": 17
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kailo",
+      "groupements": 15
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kasongo",
+      "groupements": 23
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kibombo",
+      "groupements": 22
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Lubutu",
+      "groupements": 7
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Pangi",
+      "groupements": 29
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Punia",
+      "groupements": 15
+    },
+    {
+      "province": "Mongala",
+      "territoire": "Bondanganga",
+      "groupements": 16
+    },
+    {
+      "province": "Mongala",
+      "territoire": "Bumba",
+      "groupements": 22
+    },
+    {
+      "province": "Mongala",
+      "territoire": "Lisala",
+      "groupements": 9
+    },
+    {
+      "province": "NON_DETERMINEE",
+      "territoire": "Kongolo",
+      "groupements": 1
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Lubero",
+      "groupements": 14
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Masisi",
+      "groupements": 13
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Oicha",
+      "groupements": 16
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Rutshuru",
+      "groupements": 7
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Walikale",
+      "groupements": 13
+    },
+    {
+      "province": "Nord-Ubangi",
+      "territoire": "Basobolo",
+      "groupements": 13
+    },
+    {
+      "province": "Nord-Ubangi",
+      "territoire": "Businga",
+      "groupements": 20
+    },
+    {
+      "province": "Nord-Ubangi",
+      "territoire": "Yakoma",
+      "groupements": 11
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Kole",
+      "groupements": 19
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lodja",
+      "groupements": 19
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lomela",
+      "groupements": 12
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lubefu",
+      "groupements": 15
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lusambo",
+      "groupements": 12
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Fizi",
+      "groupements": 18
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Idjwi",
+      "groupements": 6
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Kabare",
+      "groupements": 17
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Kalehe",
+      "groupements": 15
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Mwenga",
+      "groupements": 57
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Shabunda",
+      "groupements": 11
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Uvira",
+      "groupements": 16
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Walungu",
+      "groupements": 19
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Budjala",
+      "groupements": 24
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Gemena",
+      "groupements": 18
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Kungu",
+      "groupements": 18
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Libenge",
+      "groupements": 24
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Kabalo",
+      "groupements": 8
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Kalemie",
+      "groupements": 9
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Kongolo",
+      "groupements": 14
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Manono",
+      "groupements": 12
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Moba",
+      "groupements": 29
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Nyunzu",
+      "groupements": 8
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Bafwasende",
+      "groupements": 20
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Banalia",
+      "groupements": 10
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Basoko",
+      "groupements": 19
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Isangi",
+      "groupements": 21
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Opala",
+      "groupements": 17
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Ubundu",
+      "groupements": 15
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Yahuma",
+      "groupements": 14
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Befale",
+      "groupements": 16
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Boende",
+      "groupements": 28
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Bokungu",
+      "groupements": 22
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Djolu",
+      "groupements": 18
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Ikela",
+      "groupements": 16
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Monkoto",
+      "groupements": 13
+    }
+  ],
+  "distribution_by_collectivity": [
+    {
+      "province": "Bas-Uele",
+      "territoire": "Aketi",
+      "collectivite": "Avuru-Gatanga",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503202",
+      "groupements": 2
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Aketi",
+      "collectivite": "Bondongola",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503207",
+      "groupements": 1
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Aketi",
+      "collectivite": "Gbandi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "503206",
+      "groupements": 1
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Aketi",
+      "collectivite": "Mongwandi",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503204",
+      "groupements": 1
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Aketi",
+      "collectivite": "Yoko",
+      "type_collectivite": "Secteur",
+      "code_officiel": "503208",
+      "groupements": 1
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Ango",
+      "collectivite": "Ezo",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503401",
+      "groupements": 4
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Ango",
+      "collectivite": "Mopoy",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503403",
+      "groupements": 2
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Ango",
+      "collectivite": "Ngindo",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503402",
+      "groupements": 2
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Ango",
+      "collectivite": "Sasa",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503404",
+      "groupements": 2
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Bambesa",
+      "collectivite": "Bulungwa",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503504",
+      "groupements": 1
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Bambesa",
+      "collectivite": "Mange",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503508",
+      "groupements": 1
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Bondo",
+      "collectivite": "Boso",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503302",
+      "groupements": 1
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Bondo",
+      "collectivite": "Deni",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503303",
+      "groupements": 1
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Bondo",
+      "collectivite": "Duaru",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503304",
+      "groupements": 2
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Bondo",
+      "collectivite": "Goa",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503307",
+      "groupements": 1
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Bondo",
+      "collectivite": "Kasa",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503308",
+      "groupements": 3
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Bondo",
+      "collectivite": "Soa",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503310",
+      "groupements": 2
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Buta",
+      "collectivite": "Bayeu-Bogongia",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503103",
+      "groupements": 1
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Poko",
+      "collectivite": "Bakengaie-Avuru",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503602",
+      "groupements": 1
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Poko",
+      "collectivite": "Gamu",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503603",
+      "groupements": 1
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Poko",
+      "collectivite": "Kembisa",
+      "type_collectivite": "Secteur",
+      "code_officiel": "503613",
+      "groupements": 1
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Poko",
+      "collectivite": "Kipate",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503604",
+      "groupements": 2
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Poko",
+      "collectivite": "Ngbaradi",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503609",
+      "groupements": 2
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Poko",
+      "collectivite": "Soronga",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503610",
+      "groupements": 1
+    },
+    {
+      "province": "Bas-Uele",
+      "territoire": "Poko",
+      "collectivite": "Zune",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "503611",
+      "groupements": 2
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Basankusu",
+      "collectivite": "Basankusu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402101",
+      "groupements": 5
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Basankusu",
+      "collectivite": "Gombalo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402103",
+      "groupements": 4
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Basankusu",
+      "collectivite": "Waka-Bokeka",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402102",
+      "groupements": 7
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Bikoro",
+      "collectivite": "Ekonda",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402402",
+      "groupements": 6
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Bikoro",
+      "collectivite": "Elanga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402403",
+      "groupements": 2
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Bikoro",
+      "collectivite": "Lac Ntomba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402401",
+      "groupements": 7
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Bolomba",
+      "collectivite": "Bolomba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402204",
+      "groupements": 3
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Bolomba",
+      "collectivite": "Busira",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402205",
+      "groupements": 5
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Bolomba",
+      "collectivite": "Dianga",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "402203",
+      "groupements": 4
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Bolomba",
+      "collectivite": "Lusanganya",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402201",
+      "groupements": 4
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Bolomba",
+      "collectivite": "Mampoko",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402202",
+      "groupements": 1
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Bomongo",
+      "collectivite": "Djamba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402701",
+      "groupements": 9
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Bomongo",
+      "collectivite": "Ngiri",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402702",
+      "groupements": 7
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Ingende",
+      "collectivite": "Bokatola",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402301",
+      "groupements": 6
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Ingende",
+      "collectivite": "Duali",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402302",
+      "groupements": 5
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Ingende",
+      "collectivite": "Eungu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402303",
+      "groupements": 1
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Lukolela",
+      "collectivite": "Banunu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402501",
+      "groupements": 2
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Lukolela",
+      "collectivite": "Lusakani",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402502",
+      "groupements": 2
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Mankanza",
+      "collectivite": "Bangala",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402601",
+      "groupements": 1
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Mankanza",
+      "collectivite": "Mweko",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402602",
+      "groupements": 1
+    },
+    {
+      "province": "Equateur",
+      "territoire": "Mankanza",
+      "collectivite": "Ndobo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "402603",
+      "groupements": 2
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Kambove",
+      "collectivite": "Basanga",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "707602",
+      "groupements": 1
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Kambove",
+      "collectivite": "Lufira",
+      "type_collectivite": "Secteur",
+      "code_officiel": "707603",
+      "groupements": 7
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Kambove",
+      "collectivite": "Sources du fleuve Congo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "707604",
+      "groupements": 2
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Kasenga",
+      "collectivite": "Bakunda",
+      "type_collectivite": "Secteur",
+      "code_officiel": "707302",
+      "groupements": 3
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Kasenga",
+      "collectivite": "Kafira",
+      "type_collectivite": "Secteur",
+      "code_officiel": "707303",
+      "groupements": 6
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Kasenga",
+      "collectivite": "Kisamamba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "707304",
+      "groupements": 2
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Kasenga",
+      "collectivite": "Luapula",
+      "type_collectivite": "Secteur",
+      "code_officiel": "707305",
+      "groupements": 2
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Kipushi",
+      "collectivite": "Bukanda",
+      "type_collectivite": "Secteur",
+      "code_officiel": "707102",
+      "groupements": 1
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Kipushi",
+      "collectivite": "Kaponda",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "707103",
+      "groupements": 2
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Kipushi",
+      "collectivite": "Kinyama",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "707104",
+      "groupements": 2
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Mitwaba",
+      "collectivite": "Balomotwa",
+      "type_collectivite": "Secteur",
+      "code_officiel": "707403",
+      "groupements": 5
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Mitwaba",
+      "collectivite": "Banweshi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "707404",
+      "groupements": 4
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Mitwaba",
+      "collectivite": "Kiona-Ngoie",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "707402",
+      "groupements": 3
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Pweto",
+      "collectivite": "Kiona-Nzini",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "707502",
+      "groupements": 2
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Pweto",
+      "collectivite": "Moero",
+      "type_collectivite": "Secteur",
+      "code_officiel": "707501",
+      "groupements": 5
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Pweto",
+      "collectivite": "Mwenge",
+      "type_collectivite": "Secteur",
+      "code_officiel": "707503",
+      "groupements": 2
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Pweto",
+      "collectivite": "Pweto",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "707504",
+      "groupements": 4
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Sakania",
+      "collectivite": "Balala",
+      "type_collectivite": "Secteur",
+      "code_officiel": "707201",
+      "groupements": 2
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Sakania",
+      "collectivite": "Balamba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "707202",
+      "groupements": 3
+    },
+    {
+      "province": "Haut-Katanga",
+      "territoire": "Sakania",
+      "collectivite": "Baushi-Mwenda",
+      "type_collectivite": "Secteur",
+      "code_officiel": "707203",
+      "groupements": 2
+    },
+    {
+      "province": "Haut-Lomami",
+      "territoire": "Bukama",
+      "collectivite": "Butumba",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "705501",
+      "groupements": 3
+    },
+    {
+      "province": "Haut-Lomami",
+      "territoire": "Bukama",
+      "collectivite": "Kabondo Dianda",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "705502",
+      "groupements": 2
+    },
+    {
+      "province": "Haut-Lomami",
+      "territoire": "Bukama",
+      "collectivite": "Kapamayi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "705505",
+      "groupements": 2
+    },
+    {
+      "province": "Haut-Lomami",
+      "territoire": "Bukama",
+      "collectivite": "Kibanda",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "705503",
+      "groupements": 2
+    },
+    {
+      "province": "Haut-Lomami",
+      "territoire": "Bukama",
+      "collectivite": "Kinkondja",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "705504",
+      "groupements": 3
+    },
+    {
+      "province": "Haut-Lomami",
+      "territoire": "Bukama",
+      "collectivite": "Lualaba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "705506",
+      "groupements": 1
+    },
+    {
+      "province": "Haut-Lomami",
+      "territoire": "Kabongo",
+      "collectivite": "Kabongo",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "705302",
+      "groupements": 13
+    },
+    {
+      "province": "Haut-Lomami",
+      "territoire": "Kabongo",
+      "collectivite": "Nord-Baluba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "705304",
+      "groupements": 6
+    },
+    {
+      "province": "Haut-Lomami",
+      "territoire": "Kamina",
+      "collectivite": "Kasongo Nyembo",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "705101",
+      "groupements": 16
+    },
+    {
+      "province": "Haut-Lomami",
+      "territoire": "Kamina",
+      "collectivite": "Kinda",
+      "type_collectivite": "Secteur",
+      "code_officiel": "705102",
+      "groupements": 5
+    },
+    {
+      "province": "Haut-Lomami",
+      "territoire": "Kaniama",
+      "collectivite": "Mutombo-Mukulu",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "705201",
+      "groupements": 12
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Dungu",
+      "collectivite": "Wando",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504303",
+      "groupements": 5
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Faradje",
+      "collectivite": "Kakwa",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504409",
+      "groupements": 1
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Faradje",
+      "collectivite": "Logo-Bagela",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504408",
+      "groupements": 1
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Faradje",
+      "collectivite": "Logo-Doka",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504405",
+      "groupements": 4
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Faradje",
+      "collectivite": "Logo-Lolia",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504403",
+      "groupements": 1
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Faradje",
+      "collectivite": "Logo-Obeleba",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504406",
+      "groupements": 3
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Faradje",
+      "collectivite": "Logo-Ogambi",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504401",
+      "groupements": 5
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Faradje",
+      "collectivite": "Mondo",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504407",
+      "groupements": 1
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Niangara",
+      "collectivite": "Kereboro",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504202",
+      "groupements": 4
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Niangara",
+      "collectivite": "Mangbetu-Mabisanga",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504205",
+      "groupements": 1
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Niangara",
+      "collectivite": "Manziga",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504206",
+      "groupements": 1
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Niangara",
+      "collectivite": "Okondo",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504207",
+      "groupements": 4
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Rungu",
+      "collectivite": "Azanga",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504101",
+      "groupements": 1
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Rungu",
+      "collectivite": "Mayogo-Mabozo",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504103",
+      "groupements": 2
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Rungu",
+      "collectivite": "Mayogo-Magbaie",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504104",
+      "groupements": 2
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Rungu",
+      "collectivite": "Mboli",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504105",
+      "groupements": 1
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Wamba",
+      "collectivite": "Bafwagada",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504601",
+      "groupements": 1
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Wamba",
+      "collectivite": "Balika-Toriko",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504607",
+      "groupements": 1
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Wamba",
+      "collectivite": "Makoda",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504604",
+      "groupements": 1
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Wamba",
+      "collectivite": "Timoniko",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "504611",
+      "groupements": 1
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Aru",
+      "collectivite": "Aluru",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505502",
+      "groupements": 1
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Aru",
+      "collectivite": "Kakwa",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505503",
+      "groupements": 1
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Aru",
+      "collectivite": "Kaliko-Omi",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505504",
+      "groupements": 1
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Aru",
+      "collectivite": "Nio-Kamule",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505507",
+      "groupements": 2
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Aru",
+      "collectivite": "Otso",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505508",
+      "groupements": 1
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Aru",
+      "collectivite": "Zaki",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505509",
+      "groupements": 1
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Djugu",
+      "collectivite": "Bahema Nord",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505304",
+      "groupements": 1
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Djugu",
+      "collectivite": "Bahema-Badjere",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505311",
+      "groupements": 1
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Djugu",
+      "collectivite": "Bahema-Banywagi",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505305",
+      "groupements": 1
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Djugu",
+      "collectivite": "Baniari de Kilo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "505301",
+      "groupements": 2
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Djugu",
+      "collectivite": "Mabendi",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505309",
+      "groupements": 7
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Djugu",
+      "collectivite": "Mambisa",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505303",
+      "groupements": 3
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Djugu",
+      "collectivite": "Ndo-Okebo",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505310",
+      "groupements": 4
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Djugu",
+      "collectivite": "Walendu -Pitsi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "505306",
+      "groupements": 1
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Djugu",
+      "collectivite": "Walendu-Tatsi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "505308",
+      "groupements": 6
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Irumu",
+      "collectivite": "Babelebe",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505102",
+      "groupements": 2
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Irumu",
+      "collectivite": "Baboa-Bakoe",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505103",
+      "groupements": 1
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Irumu",
+      "collectivite": "Bahema Sud",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505106",
+      "groupements": 2
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Irumu",
+      "collectivite": "Walendu Bindi",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505105",
+      "groupements": 3
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Mahagi",
+      "collectivite": "Alur-Djuganda",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505401",
+      "groupements": 3
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Mahagi",
+      "collectivite": "Anghal 1 & 2",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505402",
+      "groupements": 2
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Mahagi",
+      "collectivite": "Djukoth 1 & 2",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505403",
+      "groupements": 2
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Mahagi",
+      "collectivite": "Mokambo",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505404",
+      "groupements": 2
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Mahagi",
+      "collectivite": "Pandoro",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505405",
+      "groupements": 2
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Mahagi",
+      "collectivite": "War-Palara",
+      "type_collectivite": "Secteur",
+      "code_officiel": "505408",
+      "groupements": 2
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Mambasa",
+      "collectivite": "Babila-Babombi",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505201",
+      "groupements": 2
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Mambasa",
+      "collectivite": "Bakwanza",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505202",
+      "groupements": 1
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Mambasa",
+      "collectivite": "Bandaka",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505204",
+      "groupements": 1
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Mambasa",
+      "collectivite": "Bombo",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505203",
+      "groupements": 1
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Mambasa",
+      "collectivite": "Mambasa",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505205",
+      "groupements": 1
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Mambasa",
+      "collectivite": "Walese-Dese",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505206",
+      "groupements": 1
+    },
+    {
+      "province": "Ituri",
+      "territoire": "Mambasa",
+      "collectivite": "Walese-Karo",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "505207",
+      "groupements": 3
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Dekese",
+      "collectivite": "Ndengese-Ikolombe",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "903501",
+      "groupements": 10
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Dekese",
+      "collectivite": "Yaelima",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "903502",
+      "groupements": 2
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Ilebo",
+      "collectivite": "Basongo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "903301",
+      "groupements": 3
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Ilebo",
+      "collectivite": "Mapangu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "903303",
+      "groupements": 1
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Ilebo",
+      "collectivite": "Sud-Banga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "903304",
+      "groupements": 3
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Kamonia",
+      "collectivite": "Bapende",
+      "type_collectivite": "Secteur",
+      "code_officiel": "903209",
+      "groupements": 5
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Kamonia",
+      "collectivite": "Kasai Lunyeka",
+      "type_collectivite": "Secteur",
+      "code_officiel": "903205",
+      "groupements": 1
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Kamonia",
+      "collectivite": "Kasai-Kabambaie",
+      "type_collectivite": "Secteur",
+      "code_officiel": "903203",
+      "groupements": 2
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Kamonia",
+      "collectivite": "Kasai-Longatshimo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "903206",
+      "groupements": 1
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Kamonia",
+      "collectivite": "Lovua-Longatshimo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "903207",
+      "groupements": 2
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Kamonia",
+      "collectivite": "Lovua-Lushiku",
+      "type_collectivite": "Secteur",
+      "code_officiel": "903208",
+      "groupements": 6
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Luebo",
+      "collectivite": "Luebo-Kabambaie",
+      "type_collectivite": "Secteur",
+      "code_officiel": "903103",
+      "groupements": 4
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Luebo",
+      "collectivite": "Luebo-Lulengele",
+      "type_collectivite": "Secteur",
+      "code_officiel": "903101",
+      "groupements": 1
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Luebo",
+      "collectivite": "Luebo-Wedi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "903102",
+      "groupements": 2
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Luebo",
+      "collectivite": "Ndjoko-Punda",
+      "type_collectivite": "Secteur",
+      "code_officiel": "903104",
+      "groupements": 3
+    },
+    {
+      "province": "Kasai",
+      "territoire": "Mweka",
+      "collectivite": "Bakuba",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "903401",
+      "groupements": 7
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Demba",
+      "collectivite": "Bena-Mamba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902404",
+      "groupements": 1
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Demba",
+      "collectivite": "Lusonge",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902403",
+      "groupements": 1
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Demba",
+      "collectivite": "Tshibote",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902406",
+      "groupements": 1
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Demba",
+      "collectivite": "Tshibungu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902407",
+      "groupements": 3
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Dibaya",
+      "collectivite": "Dibanda",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902101",
+      "groupements": 2
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Dibaya",
+      "collectivite": "Dibataie",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902102",
+      "groupements": 5
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Dibaya",
+      "collectivite": "Kamwandu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902103",
+      "groupements": 3
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Dibaya",
+      "collectivite": "Kasangidi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902104",
+      "groupements": 2
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Dibaya",
+      "collectivite": "Tshishilu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902105",
+      "groupements": 1
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Kazumba",
+      "collectivite": "Bashi-Mboie",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902308",
+      "groupements": 4
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Kazumba",
+      "collectivite": "Bulungu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902301",
+      "groupements": 2
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Kazumba",
+      "collectivite": "Kafuba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902306",
+      "groupements": 3
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Kazumba",
+      "collectivite": "Kavula",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902302",
+      "groupements": 3
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Kazumba",
+      "collectivite": "Matamba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902305",
+      "groupements": 2
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Kazumba",
+      "collectivite": "Miao",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902303",
+      "groupements": 2
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Kazumba",
+      "collectivite": "Muswaswa",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902304",
+      "groupements": 1
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Kazumba",
+      "collectivite": "Tshitadi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902307",
+      "groupements": 3
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Luiza",
+      "collectivite": "Bambaie",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902201",
+      "groupements": 5
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Luiza",
+      "collectivite": "Bushimaie",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902203",
+      "groupements": 3
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Luiza",
+      "collectivite": "Kabalekese",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902202",
+      "groupements": 4
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Luiza",
+      "collectivite": "Loatshi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902207",
+      "groupements": 3
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Luiza",
+      "collectivite": "Lusanza",
+      "type_collectivite": "Secteur",
+      "code_officiel": "902206",
+      "groupements": 1
+    },
+    {
+      "province": "Kasai Oriental",
+      "territoire": "Katanda",
+      "collectivite": "Nsangu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "802406",
+      "groupements": 1
+    },
+    {
+      "province": "Kasai Oriental",
+      "territoire": "Miabi",
+      "collectivite": "Movo-Nkatshia",
+      "type_collectivite": "Secteur",
+      "code_officiel": "802105",
+      "groupements": 1
+    },
+    {
+      "province": "Kasai Oriental",
+      "territoire": "Tshilenge",
+      "collectivite": "Kalondji-Sud",
+      "type_collectivite": "Secteur",
+      "code_officiel": "802505",
+      "groupements": 1
+    },
+    {
+      "province": "Kasai Oriental",
+      "territoire": "Tshilenge",
+      "collectivite": "Lukalaba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "802502",
+      "groupements": 1
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Kasangulu",
+      "collectivite": "Kasangulu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "205202",
+      "groupements": 4
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Kasangulu",
+      "collectivite": "Luila",
+      "type_collectivite": "Secteur",
+      "code_officiel": "205203",
+      "groupements": 8
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Kasangulu",
+      "collectivite": "Lukunga-Mputu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "205204",
+      "groupements": 5
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Kimvula",
+      "collectivite": "Benga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "205301",
+      "groupements": 4
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Kimvula",
+      "collectivite": "Lubisi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "205302",
+      "groupements": 1
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Kimvula",
+      "collectivite": "Lula-Lumene",
+      "type_collectivite": "Secteur",
+      "code_officiel": "205303",
+      "groupements": 1
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Lukula",
+      "collectivite": "Fubu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "203302",
+      "groupements": 2
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Lukula",
+      "collectivite": "Kakongo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "203303",
+      "groupements": 4
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Lukula",
+      "collectivite": "Patu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "203304",
+      "groupements": 1
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Lukula",
+      "collectivite": "Tsanga-Sud",
+      "type_collectivite": "Secteur",
+      "code_officiel": "203305",
+      "groupements": 1
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Lukula",
+      "collectivite": "Tsundi-Sud",
+      "type_collectivite": "Secteur",
+      "code_officiel": "203307",
+      "groupements": 2
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Luozi",
+      "collectivite": "Balari",
+      "type_collectivite": "Secteur",
+      "code_officiel": "204301",
+      "groupements": 4
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Luozi",
+      "collectivite": "Kenge",
+      "type_collectivite": "Secteur",
+      "code_officiel": "204302",
+      "groupements": 2
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Luozi",
+      "collectivite": "Kimbanza",
+      "type_collectivite": "Secteur",
+      "code_officiel": "204303",
+      "groupements": 3
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Luozi",
+      "collectivite": "Kimumba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "204304",
+      "groupements": 1
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Luozi",
+      "collectivite": "Kinkenge",
+      "type_collectivite": "Secteur",
+      "code_officiel": "204305",
+      "groupements": 2
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Luozi",
+      "collectivite": "Kivunda",
+      "type_collectivite": "Secteur",
+      "code_officiel": "204306",
+      "groupements": 2
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Luozi",
+      "collectivite": "Mbanza Mona",
+      "type_collectivite": "Secteur",
+      "code_officiel": "204307",
+      "groupements": 2
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Luozi",
+      "collectivite": "Mbanza Ngoyo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "204309",
+      "groupements": 4
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Luozi",
+      "collectivite": "Mbanza-Mwembe",
+      "type_collectivite": "Secteur",
+      "code_officiel": "204308",
+      "groupements": 3
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Luozi",
+      "collectivite": "Mongo Luala",
+      "type_collectivite": "Secteur",
+      "code_officiel": "204310",
+      "groupements": 3
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Madimba",
+      "collectivite": "Mfuma Kibambi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "205103",
+      "groupements": 7
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Madimba",
+      "collectivite": "Ngeba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "205104",
+      "groupements": 4
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Madimba",
+      "collectivite": "Ngufu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "205105",
+      "groupements": 3
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Madimba",
+      "collectivite": "Wungu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "205106",
+      "groupements": 2
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Songololo",
+      "collectivite": "Bamboma",
+      "type_collectivite": "Secteur",
+      "code_officiel": "204201",
+      "groupements": 2
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Songololo",
+      "collectivite": "Kimpese",
+      "type_collectivite": "Secteur",
+      "code_officiel": "204207",
+      "groupements": 2
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Songololo",
+      "collectivite": "Luima",
+      "type_collectivite": "Secteur",
+      "code_officiel": "204203",
+      "groupements": 2
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Songololo",
+      "collectivite": "Wombo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "204205",
+      "groupements": 3
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Tshela",
+      "collectivite": "Loango",
+      "type_collectivite": "Secteur",
+      "code_officiel": "203103",
+      "groupements": 2
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Tshela",
+      "collectivite": "Maduda",
+      "type_collectivite": "Secteur",
+      "code_officiel": "203109",
+      "groupements": 1
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Tshela",
+      "collectivite": "Nzobe-Luzi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "203105",
+      "groupements": 1
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Tshela",
+      "collectivite": "Tshela-Banga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "203102",
+      "groupements": 2
+    },
+    {
+      "province": "Kwango",
+      "territoire": "Kenge",
+      "collectivite": "Palende-Nord",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "305101",
+      "groupements": 1
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Bulungu",
+      "collectivite": "Kilunda",
+      "type_collectivite": "Secteur",
+      "code_officiel": "303104",
+      "groupements": 1
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Bulungu",
+      "collectivite": "Niadi Nkara",
+      "type_collectivite": "Secteur",
+      "code_officiel": "303110",
+      "groupements": 1
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Idiofa",
+      "collectivite": "Bulwem",
+      "type_collectivite": "Secteur",
+      "code_officiel": "303403",
+      "groupements": 8
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Idiofa",
+      "collectivite": "Kalanganda",
+      "type_collectivite": "Secteur",
+      "code_officiel": "303405",
+      "groupements": 4
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Idiofa",
+      "collectivite": "Kanga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "303406",
+      "groupements": 1
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Idiofa",
+      "collectivite": "Kapia",
+      "type_collectivite": "Secteur",
+      "code_officiel": "303407",
+      "groupements": 3
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Idiofa",
+      "collectivite": "Kipuku",
+      "type_collectivite": "Secteur",
+      "code_officiel": "303408",
+      "groupements": 2
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Idiofa",
+      "collectivite": "Mateko",
+      "type_collectivite": "Secteur",
+      "code_officiel": "303410",
+      "groupements": 9
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Idiofa",
+      "collectivite": "Sedzo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "303411",
+      "groupements": 6
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Masi-Manimba",
+      "collectivite": "Kinzenga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "303202",
+      "groupements": 8
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Masi-Manimba",
+      "collectivite": "Kinzenzengo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "303203",
+      "groupements": 1
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Masi-Manimba",
+      "collectivite": "Kitoy",
+      "type_collectivite": "Secteur",
+      "code_officiel": "303205",
+      "groupements": 8
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Masi-Manimba",
+      "collectivite": "Masi-Manimba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "303206",
+      "groupements": 9
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Masi-Manimba",
+      "collectivite": "Mokamo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "303208",
+      "groupements": 13
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Masi-Manimba",
+      "collectivite": "Mosango",
+      "type_collectivite": "Secteur",
+      "code_officiel": "303209",
+      "groupements": 2
+    },
+    {
+      "province": "Lomami",
+      "territoire": "Kabinda",
+      "collectivite": "Baluba-Lubangule",
+      "type_collectivite": "Secteur",
+      "code_officiel": "804406",
+      "groupements": 5
+    },
+    {
+      "province": "Lomami",
+      "territoire": "Kabinda",
+      "collectivite": "Kabinda",
+      "type_collectivite": "Secteur",
+      "code_officiel": "804402",
+      "groupements": 1
+    },
+    {
+      "province": "Lomami",
+      "territoire": "Kabinda",
+      "collectivite": "Ludimbi-Lukula",
+      "type_collectivite": "Secteur",
+      "code_officiel": "804403",
+      "groupements": 3
+    },
+    {
+      "province": "Lomami",
+      "territoire": "Kabinda",
+      "collectivite": "Lufubu-Lomami",
+      "type_collectivite": "Secteur",
+      "code_officiel": "804404",
+      "groupements": 4
+    },
+    {
+      "province": "Lomami",
+      "territoire": "Kabinda",
+      "collectivite": "Lukashi-Lualu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "804405",
+      "groupements": 4
+    },
+    {
+      "province": "Lomami",
+      "territoire": "Kabinda",
+      "collectivite": "Vunayi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "804407",
+      "groupements": 3
+    },
+    {
+      "province": "Lomami",
+      "territoire": "Lubao",
+      "collectivite": "Bekalebwe",
+      "type_collectivite": "Secteur",
+      "code_officiel": "804502",
+      "groupements": 3
+    },
+    {
+      "province": "Lomami",
+      "territoire": "Lubao",
+      "collectivite": "Kisengwa",
+      "type_collectivite": "Secteur",
+      "code_officiel": "804503",
+      "groupements": 4
+    },
+    {
+      "province": "Lomami",
+      "territoire": "Lubao",
+      "collectivite": "Lubao",
+      "type_collectivite": "Secteur",
+      "code_officiel": "804504",
+      "groupements": 11
+    },
+    {
+      "province": "Lomami",
+      "territoire": "Lubao",
+      "collectivite": "Tshofa",
+      "type_collectivite": "Secteur",
+      "code_officiel": "804505",
+      "groupements": 6
+    },
+    {
+      "province": "Lomami",
+      "territoire": "Ngandajika",
+      "collectivite": "Baluba-Shankadi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "804304",
+      "groupements": 10
+    },
+    {
+      "province": "Lomami",
+      "territoire": "Ngandajika",
+      "collectivite": "Tshiyamba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "804303",
+      "groupements": 1
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Dilolo",
+      "collectivite": "Luena",
+      "type_collectivite": "Secteur",
+      "code_officiel": "704106",
+      "groupements": 3
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Dilolo",
+      "collectivite": "Lulua-Lukoshi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "704109",
+      "groupements": 3
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Dilolo",
+      "collectivite": "Mutanda",
+      "type_collectivite": "Secteur",
+      "code_officiel": "704107",
+      "groupements": 1
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Dilolo",
+      "collectivite": "Muyeye",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "704101",
+      "groupements": 4
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Dilolo",
+      "collectivite": "Mwandakala",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "704102",
+      "groupements": 1
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Dilolo",
+      "collectivite": "Mwatshisenge",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "704103",
+      "groupements": 3
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Dilolo",
+      "collectivite": "Ndumba",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "704111",
+      "groupements": 3
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Dilolo",
+      "collectivite": "Tshisangana",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "704105",
+      "groupements": 5
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Kapanga",
+      "collectivite": "Mwant-Yav",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "704301",
+      "groupements": 11
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Lubudi",
+      "collectivite": "Bayeke",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "703401",
+      "groupements": 5
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Lubudi",
+      "collectivite": "Mazangule",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "703402",
+      "groupements": 1
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Lubudi",
+      "collectivite": "Mulumbu",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "703403",
+      "groupements": 1
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Lubudi",
+      "collectivite": "Mwana-Muadi",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "703404",
+      "groupements": 2
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Mutshatsha",
+      "collectivite": "Lufupa",
+      "type_collectivite": "Secteur",
+      "code_officiel": "703301",
+      "groupements": 2
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Mutshatsha",
+      "collectivite": "Luilu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "703302",
+      "groupements": 4
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Mutshatsha",
+      "collectivite": "Mukuleshi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "703303",
+      "groupements": 1
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Sandoa",
+      "collectivite": "Kayembe-Mukulu",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "704201",
+      "groupements": 5
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Sandoa",
+      "collectivite": "Lumanga",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "704208",
+      "groupements": 7
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Sandoa",
+      "collectivite": "Mbako",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "704209",
+      "groupements": 6
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Sandoa",
+      "collectivite": "Muteba",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "704206",
+      "groupements": 3
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Sandoa",
+      "collectivite": "Sakundundu",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "704207",
+      "groupements": 2
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Sandoa",
+      "collectivite": "Samutoma",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "704202",
+      "groupements": 3
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Sandoa",
+      "collectivite": "Tshibamba",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "704203",
+      "groupements": 2
+    },
+    {
+      "province": "Lualaba",
+      "territoire": "Sandoa",
+      "collectivite": "Tshipao",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "704204",
+      "groupements": 4
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kabambare",
+      "collectivite": "Babuyu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "632101",
+      "groupements": 5
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kabambare",
+      "collectivite": "Bahombo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "632103",
+      "groupements": 4
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kabambare",
+      "collectivite": "Lulindi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "632104",
+      "groupements": 3
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kabambare",
+      "collectivite": "Saramabila",
+      "type_collectivite": "Secteur",
+      "code_officiel": "632105",
+      "groupements": 2
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kabambare",
+      "collectivite": "Wamasa",
+      "type_collectivite": "Secteur",
+      "code_officiel": "632106",
+      "groupements": 3
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kailo",
+      "collectivite": "Ambwe",
+      "type_collectivite": "Secteur",
+      "code_officiel": "632601",
+      "groupements": 7
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kailo",
+      "collectivite": "Balanga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "632602",
+      "groupements": 5
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kailo",
+      "collectivite": "Bangengele",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "632603",
+      "groupements": 3
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kasongo",
+      "collectivite": "Basonge 1",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "632503",
+      "groupements": 3
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kasongo",
+      "collectivite": "Benia-Samba",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "632505",
+      "groupements": 2
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kasongo",
+      "collectivite": "Mamba-Kasenga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "632508",
+      "groupements": 2
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kasongo",
+      "collectivite": "Wazimba wa Mulu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "632511",
+      "groupements": 6
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kasongo",
+      "collectivite": "Wazimba-Maringa",
+      "type_collectivite": "Secteur",
+      "code_officiel": "632510",
+      "groupements": 8
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kasongo",
+      "collectivite": "Wazula",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "632507",
+      "groupements": 2
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kibombo",
+      "collectivite": "Aluba",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "632201",
+      "groupements": 4
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kibombo",
+      "collectivite": "Ankutshu",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "632202",
+      "groupements": 5
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kibombo",
+      "collectivite": "Bahina",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "632203",
+      "groupements": 4
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kibombo",
+      "collectivite": "Bakongola",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "632204",
+      "groupements": 3
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Kibombo",
+      "collectivite": "Matapa",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "632205",
+      "groupements": 6
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Lubutu",
+      "collectivite": "Bitule",
+      "type_collectivite": "Secteur",
+      "code_officiel": "632302",
+      "groupements": 4
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Lubutu",
+      "collectivite": "Obokole",
+      "type_collectivite": "Secteur",
+      "code_officiel": "632303",
+      "groupements": 3
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Pangi",
+      "collectivite": "Babene",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "632401",
+      "groupements": 7
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Pangi",
+      "collectivite": "Beia",
+      "type_collectivite": "Secteur",
+      "code_officiel": "632402",
+      "groupements": 10
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Pangi",
+      "collectivite": "Ikama",
+      "type_collectivite": "Secteur",
+      "code_officiel": "632403",
+      "groupements": 7
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Pangi",
+      "collectivite": "Wakabango",
+      "type_collectivite": "Secteur",
+      "code_officiel": "632404",
+      "groupements": 5
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Punia",
+      "collectivite": "Babira Bakwame",
+      "type_collectivite": "Secteur",
+      "code_officiel": "632701",
+      "groupements": 6
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Punia",
+      "collectivite": "Baleka",
+      "type_collectivite": "Secteur",
+      "code_officiel": "632702",
+      "groupements": 3
+    },
+    {
+      "province": "Maniema",
+      "territoire": "Punia",
+      "collectivite": "Ulindi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "632703",
+      "groupements": 6
+    },
+    {
+      "province": "Mongala",
+      "territoire": "Bondanganga",
+      "collectivite": "Bongandanga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "406301",
+      "groupements": 5
+    },
+    {
+      "province": "Mongala",
+      "territoire": "Bondanganga",
+      "collectivite": "Boso-Djanoa",
+      "type_collectivite": "Secteur",
+      "code_officiel": "406303",
+      "groupements": 4
+    },
+    {
+      "province": "Mongala",
+      "territoire": "Bondanganga",
+      "collectivite": "Boso-Melo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "406302",
+      "groupements": 1
+    },
+    {
+      "province": "Mongala",
+      "territoire": "Bondanganga",
+      "collectivite": "Boso-Simba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "406304",
+      "groupements": 6
+    },
+    {
+      "province": "Mongala",
+      "territoire": "Bumba",
+      "collectivite": "Banda-Yowa",
+      "type_collectivite": "Secteur",
+      "code_officiel": "406207",
+      "groupements": 5
+    },
+    {
+      "province": "Mongala",
+      "territoire": "Bumba",
+      "collectivite": "Itimbiri",
+      "type_collectivite": "Secteur",
+      "code_officiel": "406202",
+      "groupements": 6
+    },
+    {
+      "province": "Mongala",
+      "territoire": "Bumba",
+      "collectivite": "Molua",
+      "type_collectivite": "Secteur",
+      "code_officiel": "406204",
+      "groupements": 3
+    },
+    {
+      "province": "Mongala",
+      "territoire": "Bumba",
+      "collectivite": "Monzamboli",
+      "type_collectivite": "Secteur",
+      "code_officiel": "406206",
+      "groupements": 3
+    },
+    {
+      "province": "Mongala",
+      "territoire": "Bumba",
+      "collectivite": "Yandongi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "406203",
+      "groupements": 5
+    },
+    {
+      "province": "Mongala",
+      "territoire": "Lisala",
+      "collectivite": "Ngombe-Doko",
+      "type_collectivite": "Secteur",
+      "code_officiel": "406102",
+      "groupements": 6
+    },
+    {
+      "province": "Mongala",
+      "territoire": "Lisala",
+      "collectivite": "Ngombe-Mobangi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "406103",
+      "groupements": 3
+    },
+    {
+      "province": "NON_DETERMINEE",
+      "territoire": "Kongolo",
+      "collectivite": "NON_DETERMINEE",
+      "type_collectivite": "",
+      "code_officiel": null,
+      "groupements": 1
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Lubero",
+      "collectivite": "Bamate",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "612301",
+      "groupements": 3
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Lubero",
+      "collectivite": "Bapere",
+      "type_collectivite": "Secteur",
+      "code_officiel": "612302",
+      "groupements": 3
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Lubero",
+      "collectivite": "Baswaga",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "612303",
+      "groupements": 6
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Lubero",
+      "collectivite": "Batangi",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "612304",
+      "groupements": 2
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Masisi",
+      "collectivite": "Bahunde",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "612601",
+      "groupements": 4
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Masisi",
+      "collectivite": "Bashali",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "612602",
+      "groupements": 2
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Masisi",
+      "collectivite": "Katoyi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "612604",
+      "groupements": 2
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Masisi",
+      "collectivite": "Osso",
+      "type_collectivite": "Secteur",
+      "code_officiel": "612603",
+      "groupements": 5
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Oicha",
+      "collectivite": "Bashu",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "612401",
+      "groupements": 5
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Oicha",
+      "collectivite": "Beni",
+      "type_collectivite": "Secteur",
+      "code_officiel": "612402",
+      "groupements": 4
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Oicha",
+      "collectivite": "Ruwenzori",
+      "type_collectivite": "Secteur",
+      "code_officiel": "612403",
+      "groupements": 5
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Oicha",
+      "collectivite": "Watalinga",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "612404",
+      "groupements": 2
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Rutshuru",
+      "collectivite": "Bwisha",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "612501",
+      "groupements": 3
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Rutshuru",
+      "collectivite": "Bwito",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "612502",
+      "groupements": 4
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Walikale",
+      "collectivite": "Bakano",
+      "type_collectivite": "Secteur",
+      "code_officiel": "612202",
+      "groupements": 2
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Walikale",
+      "collectivite": "Wanianga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "612201",
+      "groupements": 11
+    },
+    {
+      "province": "Nord-Ubangi",
+      "territoire": "Basobolo",
+      "collectivite": "Bandas",
+      "type_collectivite": "Secteur",
+      "code_officiel": "405403",
+      "groupements": 3
+    },
+    {
+      "province": "Nord-Ubangi",
+      "territoire": "Basobolo",
+      "collectivite": "Bili",
+      "type_collectivite": "Secteur",
+      "code_officiel": "405402",
+      "groupements": 5
+    },
+    {
+      "province": "Nord-Ubangi",
+      "territoire": "Basobolo",
+      "collectivite": "Bosobolo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "405401",
+      "groupements": 5
+    },
+    {
+      "province": "Nord-Ubangi",
+      "territoire": "Businga",
+      "collectivite": "Bodangabo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "405302",
+      "groupements": 5
+    },
+    {
+      "province": "Nord-Ubangi",
+      "territoire": "Businga",
+      "collectivite": "Businga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "405303",
+      "groupements": 9
+    },
+    {
+      "province": "Nord-Ubangi",
+      "territoire": "Businga",
+      "collectivite": "Karawa",
+      "type_collectivite": "Secteur",
+      "code_officiel": "405304",
+      "groupements": 6
+    },
+    {
+      "province": "Nord-Ubangi",
+      "territoire": "Yakoma",
+      "collectivite": "Abumombazi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "405201",
+      "groupements": 7
+    },
+    {
+      "province": "Nord-Ubangi",
+      "territoire": "Yakoma",
+      "collectivite": "Wapinda",
+      "type_collectivite": "Secteur",
+      "code_officiel": "405202",
+      "groupements": 1
+    },
+    {
+      "province": "Nord-Ubangi",
+      "territoire": "Yakoma",
+      "collectivite": "Yakoma",
+      "type_collectivite": "Secteur",
+      "code_officiel": "405203",
+      "groupements": 3
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Kole",
+      "collectivite": "Atshuru",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803204",
+      "groupements": 7
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Kole",
+      "collectivite": "Bankutshu-Dibele",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803202",
+      "groupements": 1
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Kole",
+      "collectivite": "Bankutshu-Lukenie",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803201",
+      "groupements": 4
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Kole",
+      "collectivite": "Basho",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803206",
+      "groupements": 5
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Kole",
+      "collectivite": "Ohindo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803205",
+      "groupements": 2
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lodja",
+      "collectivite": "Ahamba-Mange",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803603",
+      "groupements": 2
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lodja",
+      "collectivite": "Kondo-Tshumbe",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803607",
+      "groupements": 5
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lodja",
+      "collectivite": "Lutshimba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803605",
+      "groupements": 1
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lodja",
+      "collectivite": "Nambelu-Luhembe",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803606",
+      "groupements": 4
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lodja",
+      "collectivite": "Olemba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803604",
+      "groupements": 2
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lodja",
+      "collectivite": "Watambulu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803609",
+      "groupements": 5
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lomela",
+      "collectivite": "Bahamba II",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803301",
+      "groupements": 1
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lomela",
+      "collectivite": "Bakela",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803303",
+      "groupements": 6
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lomela",
+      "collectivite": "Batetela-Lomela",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803305",
+      "groupements": 2
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lomela",
+      "collectivite": "Djonga",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "803306",
+      "groupements": 1
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lomela",
+      "collectivite": "Okutu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803304",
+      "groupements": 2
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lubefu",
+      "collectivite": "Basonge",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803502",
+      "groupements": 6
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lubefu",
+      "collectivite": "Mondja-Ngandu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803503",
+      "groupements": 5
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lubefu",
+      "collectivite": "Ngandu-Wuna",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803501",
+      "groupements": 4
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lusambo",
+      "collectivite": "Batetela",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803101",
+      "groupements": 1
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lusambo",
+      "collectivite": "Entre Kunduye Mal",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803104",
+      "groupements": 2
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lusambo",
+      "collectivite": "Entre Lubi Kunduye",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803103",
+      "groupements": 2
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lusambo",
+      "collectivite": "Kashindi",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803108",
+      "groupements": 2
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lusambo",
+      "collectivite": "Pania-Mutombo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803107",
+      "groupements": 3
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Lusambo",
+      "collectivite": "Sankuru",
+      "type_collectivite": "Secteur",
+      "code_officiel": "803106",
+      "groupements": 2
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Fizi",
+      "collectivite": "Lulenge",
+      "type_collectivite": "Secteur",
+      "code_officiel": "622301",
+      "groupements": 5
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Fizi",
+      "collectivite": "Mutambala",
+      "type_collectivite": "Secteur",
+      "code_officiel": "622303",
+      "groupements": 5
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Fizi",
+      "collectivite": "Ngandja",
+      "type_collectivite": "Secteur",
+      "code_officiel": "622302",
+      "groupements": 3
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Fizi",
+      "collectivite": "Tanganyika",
+      "type_collectivite": "Secteur",
+      "code_officiel": "622304",
+      "groupements": 5
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Idjwi",
+      "collectivite": "Ntambuka",
+      "type_collectivite": "Secteur",
+      "code_officiel": "622701",
+      "groupements": 3
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Idjwi",
+      "collectivite": "Rubenga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "622702",
+      "groupements": 3
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Kabare",
+      "collectivite": "Kabare",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "622801",
+      "groupements": 14
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Kabare",
+      "collectivite": "Nindja",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "622802",
+      "groupements": 3
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Kalehe",
+      "collectivite": "Buhavu",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "622601",
+      "groupements": 7
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Kalehe",
+      "collectivite": "Buloho",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "622602",
+      "groupements": 8
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Mwenga",
+      "collectivite": "Basile",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "622401",
+      "groupements": 10
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Mwenga",
+      "collectivite": "Burhinyi",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "622402",
+      "groupements": 14
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Mwenga",
+      "collectivite": "Itombwe",
+      "type_collectivite": "Secteur",
+      "code_officiel": "622403",
+      "groupements": 6
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Mwenga",
+      "collectivite": "Luindi",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "622405",
+      "groupements": 6
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Mwenga",
+      "collectivite": "Luwindja",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "622404",
+      "groupements": 2
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Mwenga",
+      "collectivite": "Wamuzima",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "622406",
+      "groupements": 19
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Shabunda",
+      "collectivite": "Bakisi",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "622501",
+      "groupements": 7
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Shabunda",
+      "collectivite": "Wakabango",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "622502",
+      "groupements": 4
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Uvira",
+      "collectivite": "Bafulero",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "622202",
+      "groupements": 5
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Uvira",
+      "collectivite": "Bavira",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "622201",
+      "groupements": 7
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Uvira",
+      "collectivite": "Plaine de la Ruzizi",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "622203",
+      "groupements": 4
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Walungu",
+      "collectivite": "Kaziba",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "622102",
+      "groupements": 3
+    },
+    {
+      "province": "Sud-Kivu",
+      "territoire": "Walungu",
+      "collectivite": "Ngweshe",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "622101",
+      "groupements": 16
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Budjala",
+      "collectivite": "Banza",
+      "type_collectivite": "Secteur",
+      "code_officiel": "403201",
+      "groupements": 8
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Budjala",
+      "collectivite": "Bolingo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "403202",
+      "groupements": 8
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Budjala",
+      "collectivite": "Mongala-Molima",
+      "type_collectivite": "Secteur",
+      "code_officiel": "403203",
+      "groupements": 6
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Budjala",
+      "collectivite": "Ndolo-Liboko",
+      "type_collectivite": "Secteur",
+      "code_officiel": "403205",
+      "groupements": 2
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Gemena",
+      "collectivite": "Banga-Kungu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "403101",
+      "groupements": 5
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Gemena",
+      "collectivite": "Bowase",
+      "type_collectivite": "Secteur",
+      "code_officiel": "403102",
+      "groupements": 5
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Gemena",
+      "collectivite": "Mbari",
+      "type_collectivite": "Secteur",
+      "code_officiel": "403104",
+      "groupements": 3
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Gemena",
+      "collectivite": "Nguya",
+      "type_collectivite": "Secteur",
+      "code_officiel": "403103",
+      "groupements": 5
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Kungu",
+      "collectivite": "Bomboma",
+      "type_collectivite": "Secteur",
+      "code_officiel": "403301",
+      "groupements": 4
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Kungu",
+      "collectivite": "Dongo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "403302",
+      "groupements": 6
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Kungu",
+      "collectivite": "Lua",
+      "type_collectivite": "Secteur",
+      "code_officiel": "403303",
+      "groupements": 3
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Kungu",
+      "collectivite": "Mwanda",
+      "type_collectivite": "Secteur",
+      "code_officiel": "403304",
+      "groupements": 2
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Kungu",
+      "collectivite": "Songo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "403305",
+      "groupements": 3
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Libenge",
+      "collectivite": "Libenge-Centre",
+      "type_collectivite": "Secteur",
+      "code_officiel": "403402",
+      "groupements": 10
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Libenge",
+      "collectivite": "Libenge-Nord",
+      "type_collectivite": "Secteur",
+      "code_officiel": "403401",
+      "groupements": 6
+    },
+    {
+      "province": "Sud-Ubangi",
+      "territoire": "Libenge",
+      "collectivite": "Libenge-Sud",
+      "type_collectivite": "Secteur",
+      "code_officiel": "403403",
+      "groupements": 8
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Kabalo",
+      "collectivite": "Luela-Luvunguye",
+      "type_collectivite": "Secteur",
+      "code_officiel": "706401",
+      "groupements": 4
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Kabalo",
+      "collectivite": "Lukuswa",
+      "type_collectivite": "Secteur",
+      "code_officiel": "706402",
+      "groupements": 4
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Kalemie",
+      "collectivite": "Benze",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "706102",
+      "groupements": 2
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Kalemie",
+      "collectivite": "Tumbwe",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "706101",
+      "groupements": 7
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Kongolo",
+      "collectivite": "Baluba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "706501",
+      "groupements": 3
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Kongolo",
+      "collectivite": "Basonge",
+      "type_collectivite": "Secteur",
+      "code_officiel": "706503",
+      "groupements": 5
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Kongolo",
+      "collectivite": "Bayashi",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "706502",
+      "groupements": 1
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Kongolo",
+      "collectivite": "Mambwe",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "706510",
+      "groupements": 1
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Kongolo",
+      "collectivite": "Munono",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "706505",
+      "groupements": 2
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Kongolo",
+      "collectivite": "Nkuvu",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "706506",
+      "groupements": 1
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Kongolo",
+      "collectivite": "Yambula",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "706507",
+      "groupements": 1
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Manono",
+      "collectivite": "Kamalondo",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "706302",
+      "groupements": 4
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Manono",
+      "collectivite": "Kyofwe",
+      "type_collectivite": "Secteur",
+      "code_officiel": "706303",
+      "groupements": 3
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Manono",
+      "collectivite": "Luvua",
+      "type_collectivite": "Secteur",
+      "code_officiel": "706305",
+      "groupements": 3
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Manono",
+      "collectivite": "Niemba",
+      "type_collectivite": "Secteur",
+      "code_officiel": "706306",
+      "groupements": 2
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Moba",
+      "collectivite": "Bena-Kamanya",
+      "type_collectivite": "Secteur",
+      "code_officiel": "706206",
+      "groupements": 2
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Moba",
+      "collectivite": "Bena-Tanga",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "706205",
+      "groupements": 3
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Moba",
+      "collectivite": "Kansabala",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "706202",
+      "groupements": 7
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Moba",
+      "collectivite": "Kayabala",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "706204",
+      "groupements": 5
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Moba",
+      "collectivite": "Manda",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "706203",
+      "groupements": 8
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Moba",
+      "collectivite": "Nganye",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "706201",
+      "groupements": 4
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Nyunzu",
+      "collectivite": "Nord-Lukuga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "706602",
+      "groupements": 4
+    },
+    {
+      "province": "Tanganyika",
+      "territoire": "Nyunzu",
+      "collectivite": "Sud-Lukuga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "706601",
+      "groupements": 4
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Bafwasende",
+      "collectivite": "Bafwandaka",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502201",
+      "groupements": 5
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Bafwasende",
+      "collectivite": "Bakumu d'Angumu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502202",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Bafwasende",
+      "collectivite": "Bakundumu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502203",
+      "groupements": 4
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Bafwasende",
+      "collectivite": "Barumbi-Opienge",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502204",
+      "groupements": 2
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Bafwasende",
+      "collectivite": "Bekeni-Kondolole",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502205",
+      "groupements": 4
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Bafwasende",
+      "collectivite": "Bemili",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502206",
+      "groupements": 4
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Banalia",
+      "collectivite": "Baboa de Kole",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502102",
+      "groupements": 2
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Banalia",
+      "collectivite": "Baboro",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502101",
+      "groupements": 3
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Banalia",
+      "collectivite": "Bamanga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502103",
+      "groupements": 4
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Banalia",
+      "collectivite": "Popoy",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502105",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Basoko",
+      "collectivite": "Bangelema",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502703",
+      "groupements": 4
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Basoko",
+      "collectivite": "Bomenge",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502704",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Basoko",
+      "collectivite": "Mobango Itimbiri",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502706",
+      "groupements": 3
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Basoko",
+      "collectivite": "Wahanga",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "502710",
+      "groupements": 4
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Basoko",
+      "collectivite": "Yaliwasa",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "502708",
+      "groupements": 4
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Basoko",
+      "collectivite": "Yamandundu",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "502709",
+      "groupements": 3
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Isangi",
+      "collectivite": "Baluolambila",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "502506",
+      "groupements": 3
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Isangi",
+      "collectivite": "Bambelota",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502505",
+      "groupements": 2
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Isangi",
+      "collectivite": "Bolomboki",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "502502",
+      "groupements": 2
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Isangi",
+      "collectivite": "Kombe",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "502503",
+      "groupements": 2
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Isangi",
+      "collectivite": "Liutua",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502513",
+      "groupements": 2
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Isangi",
+      "collectivite": "Lokombe",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502501",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Isangi",
+      "collectivite": "Lueta",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502504",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Isangi",
+      "collectivite": "Turumbu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502507",
+      "groupements": 2
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Isangi",
+      "collectivite": "Yalihila",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "502517",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Isangi",
+      "collectivite": "Yalikandja-Yanongo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502514",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Isangi",
+      "collectivite": "Yaokandja",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502518",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Isangi",
+      "collectivite": "Yawembe-Basoa",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502512",
+      "groupements": 3
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Opala",
+      "collectivite": "Balinga-Lindja",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502401",
+      "groupements": 3
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Opala",
+      "collectivite": "Iye",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502405",
+      "groupements": 2
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Opala",
+      "collectivite": "Kembe",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "502409",
+      "groupements": 2
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Opala",
+      "collectivite": "Mongo",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "502408",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Opala",
+      "collectivite": "Tooli",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502410",
+      "groupements": 3
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Opala",
+      "collectivite": "Yalingo",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "502406",
+      "groupements": 2
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Opala",
+      "collectivite": "Yapandu",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "502407",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Opala",
+      "collectivite": "Yawende-Loolo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502403",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Opala",
+      "collectivite": "Yeyango",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "502404",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Opala",
+      "collectivite": "Yomale",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "502402",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Ubundu",
+      "collectivite": "Bakumu-Kilinga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502305",
+      "groupements": 2
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Ubundu",
+      "collectivite": "Bakumu-Mandombe",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502303",
+      "groupements": 2
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Ubundu",
+      "collectivite": "Bakumu-Mangongo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502302",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Ubundu",
+      "collectivite": "Bakumu-d'Obiatuku",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502304",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Ubundu",
+      "collectivite": "Kirundu",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "502308",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Ubundu",
+      "collectivite": "Mituku-Bamoya",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502309",
+      "groupements": 2
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Ubundu",
+      "collectivite": "Walengola Lilo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502306",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Ubundu",
+      "collectivite": "Walengola Lowa",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502307",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Ubundu",
+      "collectivite": "Walengola-Babira",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502311",
+      "groupements": 3
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Ubundu",
+      "collectivite": "Walengola-Baleka",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502301",
+      "groupements": 1
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Yahuma",
+      "collectivite": "Bolinga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502601",
+      "groupements": 4
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Yahuma",
+      "collectivite": "Bosoku",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502602",
+      "groupements": 3
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Yahuma",
+      "collectivite": "Buma",
+      "type_collectivite": "Secteur",
+      "code_officiel": "502603",
+      "groupements": 3
+    },
+    {
+      "province": "Tshopo",
+      "territoire": "Yahuma",
+      "collectivite": "Mombesa",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "502604",
+      "groupements": 4
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Befale",
+      "collectivite": "Befumbo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407201",
+      "groupements": 8
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Befale",
+      "collectivite": "Duale",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407202",
+      "groupements": 5
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Befale",
+      "collectivite": "Lomako",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407203",
+      "groupements": 3
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Boende",
+      "collectivite": "Bolua",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407103",
+      "groupements": 4
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Boende",
+      "collectivite": "Djera",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407101",
+      "groupements": 10
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Boende",
+      "collectivite": "Lofoy",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407102",
+      "groupements": 8
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Boende",
+      "collectivite": "Wini",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407104",
+      "groupements": 6
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Bokungu",
+      "collectivite": "Lolaka",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407501",
+      "groupements": 5
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Bokungu",
+      "collectivite": "Loombo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407505",
+      "groupements": 4
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Bokungu",
+      "collectivite": "Luando",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407504",
+      "groupements": 3
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Bokungu",
+      "collectivite": "Luay",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407502",
+      "groupements": 6
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Bokungu",
+      "collectivite": "Nkole",
+      "type_collectivite": "Chefferie",
+      "code_officiel": "407503",
+      "groupements": 4
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Djolu",
+      "collectivite": "Djolu",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407301",
+      "groupements": 4
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Djolu",
+      "collectivite": "Lingomo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407302",
+      "groupements": 2
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Djolu",
+      "collectivite": "Luo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407303",
+      "groupements": 5
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Djolu",
+      "collectivite": "Yala",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407304",
+      "groupements": 7
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Ikela",
+      "collectivite": "Lofome",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407404",
+      "groupements": 2
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Ikela",
+      "collectivite": "Loile",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407401",
+      "groupements": 3
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Ikela",
+      "collectivite": "Lokina",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407402",
+      "groupements": 2
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Ikela",
+      "collectivite": "Tshuapa",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407403",
+      "groupements": 7
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Ikela",
+      "collectivite": "Tumbenga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407406",
+      "groupements": 2
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Monkoto",
+      "collectivite": "Bianga",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407602",
+      "groupements": 4
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Monkoto",
+      "collectivite": "Monkoto",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407601",
+      "groupements": 6
+    },
+    {
+      "province": "Tshuapa",
+      "territoire": "Monkoto",
+      "collectivite": "Nongo",
+      "type_collectivite": "Secteur",
+      "code_officiel": "407603",
+      "groupements": 3
+    }
+  ],
+  "territories_without_groupement": [
+    {
+      "province": "Haut-Lomami",
+      "territoire": "Malemba-Nkulu",
+      "zone_fdsu": "SD",
+      "nombre_collectivites": 6
+    },
+    {
+      "province": "Haut-Uele",
+      "territoire": "Watsa",
+      "zone_fdsu": "ND",
+      "nombre_collectivites": 9
+    },
+    {
+      "province": "Kasai Central",
+      "territoire": "Dimbelenge",
+      "zone_fdsu": "CE",
+      "nombre_collectivites": 5
+    },
+    {
+      "province": "Kasai Oriental",
+      "territoire": "Kabeya-Kamwanga",
+      "zone_fdsu": "CE",
+      "nombre_collectivites": 4
+    },
+    {
+      "province": "Kasai Oriental",
+      "territoire": "Lupatapata",
+      "zone_fdsu": "CE",
+      "nombre_collectivites": 4
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Mbanza-Ngungu",
+      "zone_fdsu": "OT",
+      "nombre_collectivites": 7
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Moanda",
+      "zone_fdsu": "OT",
+      "nombre_collectivites": 3
+    },
+    {
+      "province": "Kongo Central",
+      "territoire": "Seke-Banza",
+      "zone_fdsu": "OT",
+      "nombre_collectivites": 5
+    },
+    {
+      "province": "Kwango",
+      "territoire": "Feshi",
+      "zone_fdsu": "OT",
+      "nombre_collectivites": 4
+    },
+    {
+      "province": "Kwango",
+      "territoire": "Kahemba",
+      "zone_fdsu": "OT",
+      "nombre_collectivites": 6
+    },
+    {
+      "province": "Kwango",
+      "territoire": "Kasongo-Lunda",
+      "zone_fdsu": "OT",
+      "nombre_collectivites": 8
+    },
+    {
+      "province": "Kwango",
+      "territoire": "Popokabaka",
+      "zone_fdsu": "OT",
+      "nombre_collectivites": 3
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Bagata",
+      "zone_fdsu": "OT",
+      "nombre_collectivites": 5
+    },
+    {
+      "province": "Kwilu",
+      "territoire": "Gungu",
+      "zone_fdsu": "OT",
+      "nombre_collectivites": 12
+    },
+    {
+      "province": "Lomami",
+      "territoire": "Kamiji",
+      "zone_fdsu": "CE",
+      "nombre_collectivites": 2
+    },
+    {
+      "province": "Lomami",
+      "territoire": "Luilu",
+      "zone_fdsu": "CE",
+      "nombre_collectivites": 4
+    },
+    {
+      "province": "Maindombe",
+      "territoire": "Bolobo",
+      "zone_fdsu": "OT",
+      "nombre_collectivites": 1
+    },
+    {
+      "province": "Maindombe",
+      "territoire": "Inongo",
+      "zone_fdsu": "OT",
+      "nombre_collectivites": 3
+    },
+    {
+      "province": "Maindombe",
+      "territoire": "Kiri",
+      "zone_fdsu": "OT",
+      "nombre_collectivites": 3
+    },
+    {
+      "province": "Maindombe",
+      "territoire": "Kutu",
+      "zone_fdsu": "OT",
+      "nombre_collectivites": 5
+    },
+    {
+      "province": "Maindombe",
+      "territoire": "Kwamouth",
+      "zone_fdsu": "OT",
+      "nombre_collectivites": 1
+    },
+    {
+      "province": "Maindombe",
+      "territoire": "Mushie",
+      "zone_fdsu": "OT",
+      "nombre_collectivites": 1
+    },
+    {
+      "province": "Maindombe",
+      "territoire": "Oshwe",
+      "zone_fdsu": "OT",
+      "nombre_collectivites": 4
+    },
+    {
+      "province": "Maindombe",
+      "territoire": "Yumbi",
+      "zone_fdsu": "OT",
+      "nombre_collectivites": 1
+    },
+    {
+      "province": "Nord-Kivu",
+      "territoire": "Nyiragongo",
+      "zone_fdsu": "ET",
+      "nombre_collectivites": 1
+    },
+    {
+      "province": "Nord-Ubangi",
+      "territoire": "Mobayi-Mbongo",
+      "zone_fdsu": "ND",
+      "nombre_collectivites": 2
+    },
+    {
+      "province": "Sankuru",
+      "territoire": "Katako-Kombe",
+      "zone_fdsu": "CE",
+      "nombre_collectivites": 5
+    }
+  ],
+  "collectivities_without_groupement": [
+    {
+      "nom": "Avuru-Duma",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Aketi",
+      "zone_fdsu": "ND",
+      "code_officiel": "503203"
+    },
+    {
+      "nom": "Mabinza",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Aketi",
+      "zone_fdsu": "ND",
+      "code_officiel": "503205"
+    },
+    {
+      "nom": "Mobati-Boyele",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Aketi",
+      "zone_fdsu": "ND",
+      "code_officiel": "503209"
+    },
+    {
+      "nom": "Bakere Bakete",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Bambesa",
+      "zone_fdsu": "ND",
+      "code_officiel": "503507"
+    },
+    {
+      "nom": "Bakete",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Bambesa",
+      "zone_fdsu": "ND",
+      "code_officiel": "503501"
+    },
+    {
+      "nom": "Bokapo",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Bambesa",
+      "zone_fdsu": "ND",
+      "code_officiel": "503502"
+    },
+    {
+      "nom": "Bokiba",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Bambesa",
+      "zone_fdsu": "ND",
+      "code_officiel": "503503"
+    },
+    {
+      "nom": "Makere I",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Bambesa",
+      "zone_fdsu": "ND",
+      "code_officiel": "503505"
+    },
+    {
+      "nom": "Makere II",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Bambesa",
+      "zone_fdsu": "ND",
+      "code_officiel": "503506"
+    },
+    {
+      "nom": "Mondwangali",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Bambesa",
+      "zone_fdsu": "ND",
+      "code_officiel": "503509"
+    },
+    {
+      "nom": "Biamange",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Bondo",
+      "zone_fdsu": "ND",
+      "code_officiel": "503301"
+    },
+    {
+      "nom": "Gama",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Bondo",
+      "zone_fdsu": "ND",
+      "code_officiel": "503305"
+    },
+    {
+      "nom": "Gaya",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Bondo",
+      "zone_fdsu": "ND",
+      "code_officiel": "503306"
+    },
+    {
+      "nom": "Mobenge-Mondila",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Bondo",
+      "zone_fdsu": "ND",
+      "code_officiel": "503309"
+    },
+    {
+      "nom": "Barisi-Mongingita",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Buta",
+      "zone_fdsu": "ND",
+      "code_officiel": "503101"
+    },
+    {
+      "nom": "Bayeu-Bogbama",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Buta",
+      "zone_fdsu": "ND",
+      "code_officiel": "503102"
+    },
+    {
+      "nom": "Mobati",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Buta",
+      "zone_fdsu": "ND",
+      "code_officiel": "503104"
+    },
+    {
+      "nom": "Monganzolo",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Buta",
+      "zone_fdsu": "ND",
+      "code_officiel": "503105"
+    },
+    {
+      "nom": "Nguru",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Buta",
+      "zone_fdsu": "ND",
+      "code_officiel": "503106"
+    },
+    {
+      "nom": "Abarambo",
+      "type_collectivite": "Secteur",
+      "province": "Bas-Uele",
+      "territoire": "Poko",
+      "zone_fdsu": "ND",
+      "code_officiel": "503612"
+    },
+    {
+      "nom": "Babena",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Poko",
+      "zone_fdsu": "ND",
+      "code_officiel": "503601"
+    },
+    {
+      "nom": "Komendeni",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Poko",
+      "zone_fdsu": "ND",
+      "code_officiel": "503605"
+    },
+    {
+      "nom": "Mabanga",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Poko",
+      "zone_fdsu": "ND",
+      "code_officiel": "503606"
+    },
+    {
+      "nom": "Madi",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Poko",
+      "zone_fdsu": "ND",
+      "code_officiel": "503607"
+    },
+    {
+      "nom": "Malele",
+      "type_collectivite": "Chefferie",
+      "province": "Bas-Uele",
+      "territoire": "Poko",
+      "zone_fdsu": "ND",
+      "code_officiel": "503608"
+    },
+    {
+      "nom": "Mpama",
+      "type_collectivite": "Secteur",
+      "province": "Equateur",
+      "territoire": "Lukolela",
+      "zone_fdsu": "ND",
+      "code_officiel": "402503"
+    },
+    {
+      "nom": "Kayamba",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Lomami",
+      "territoire": "Kabongo",
+      "zone_fdsu": "SD",
+      "code_officiel": "705303"
+    },
+    {
+      "nom": "Badia",
+      "type_collectivite": "Secteur",
+      "province": "Haut-Lomami",
+      "territoire": "Malemba-Nkulu",
+      "zone_fdsu": "SD",
+      "code_officiel": "705405"
+    },
+    {
+      "nom": "Kayumba",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Lomami",
+      "territoire": "Malemba-Nkulu",
+      "zone_fdsu": "SD",
+      "code_officiel": "705401"
+    },
+    {
+      "nom": "Mulongo",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Lomami",
+      "territoire": "Malemba-Nkulu",
+      "zone_fdsu": "SD",
+      "code_officiel": "705402"
+    },
+    {
+      "nom": "Museka",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Lomami",
+      "territoire": "Malemba-Nkulu",
+      "zone_fdsu": "SD",
+      "code_officiel": "705403"
+    },
+    {
+      "nom": "Mwanza",
+      "type_collectivite": "Secteur",
+      "province": "Haut-Lomami",
+      "territoire": "Malemba-Nkulu",
+      "zone_fdsu": "SD",
+      "code_officiel": "705406"
+    },
+    {
+      "nom": "Nkulu",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Lomami",
+      "territoire": "Malemba-Nkulu",
+      "zone_fdsu": "SD",
+      "code_officiel": "705404"
+    },
+    {
+      "nom": "Malingindu",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Dungu",
+      "zone_fdsu": "ND",
+      "code_officiel": "504301"
+    },
+    {
+      "nom": "Ndolomo",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Dungu",
+      "zone_fdsu": "ND",
+      "code_officiel": "504302"
+    },
+    {
+      "nom": "Dongo",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Faradje",
+      "zone_fdsu": "ND",
+      "code_officiel": "504404"
+    },
+    {
+      "nom": "Boemi",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Niangara",
+      "zone_fdsu": "ND",
+      "code_officiel": "504201"
+    },
+    {
+      "nom": "Kopa",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Niangara",
+      "zone_fdsu": "ND",
+      "code_officiel": "504203"
+    },
+    {
+      "nom": "Mangbele",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Niangara",
+      "zone_fdsu": "ND",
+      "code_officiel": "504204"
+    },
+    {
+      "nom": "Medje-Mango",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Rungu",
+      "zone_fdsu": "ND",
+      "code_officiel": "504106"
+    },
+    {
+      "nom": "Mongo-Masi",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Rungu",
+      "zone_fdsu": "ND",
+      "code_officiel": "504107"
+    },
+    {
+      "nom": "Ndey",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Rungu",
+      "zone_fdsu": "ND",
+      "code_officiel": "504108"
+    },
+    {
+      "nom": "Bafwakoy",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Wamba",
+      "zone_fdsu": "ND",
+      "code_officiel": "504606"
+    },
+    {
+      "nom": "Mabudu-Malika-Baberu",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Wamba",
+      "zone_fdsu": "ND",
+      "code_officiel": "504602"
+    },
+    {
+      "nom": "Maha",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Wamba",
+      "zone_fdsu": "ND",
+      "code_officiel": "504603"
+    },
+    {
+      "nom": "Malamba",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Wamba",
+      "zone_fdsu": "ND",
+      "code_officiel": "504605"
+    },
+    {
+      "nom": "Malika",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Wamba",
+      "zone_fdsu": "ND",
+      "code_officiel": "504609"
+    },
+    {
+      "nom": "Mangbele",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Wamba",
+      "zone_fdsu": "ND",
+      "code_officiel": "504610"
+    },
+    {
+      "nom": "Wadimbisa-Mabudu",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Wamba",
+      "zone_fdsu": "ND",
+      "code_officiel": "504612"
+    },
+    {
+      "nom": "Andikofa",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Watsa",
+      "zone_fdsu": "ND",
+      "code_officiel": "504501"
+    },
+    {
+      "nom": "Andobi",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Watsa",
+      "zone_fdsu": "ND",
+      "code_officiel": "504502"
+    },
+    {
+      "nom": "Ateru",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Watsa",
+      "zone_fdsu": "ND",
+      "code_officiel": "504503"
+    },
+    {
+      "nom": "Gombari",
+      "type_collectivite": "Secteur",
+      "province": "Haut-Uele",
+      "territoire": "Watsa",
+      "zone_fdsu": "ND",
+      "code_officiel": "504505"
+    },
+    {
+      "nom": "Kebo",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Watsa",
+      "zone_fdsu": "ND",
+      "code_officiel": "504506"
+    },
+    {
+      "nom": "Kibali",
+      "type_collectivite": "Secteur",
+      "province": "Haut-Uele",
+      "territoire": "Watsa",
+      "zone_fdsu": "ND",
+      "code_officiel": "504507"
+    },
+    {
+      "nom": "Mangbutu",
+      "type_collectivite": "Secteur",
+      "province": "Haut-Uele",
+      "territoire": "Watsa",
+      "zone_fdsu": "ND",
+      "code_officiel": "504508"
+    },
+    {
+      "nom": "Mari-Minza",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Watsa",
+      "zone_fdsu": "ND",
+      "code_officiel": "504510"
+    },
+    {
+      "nom": "Walese",
+      "type_collectivite": "Chefferie",
+      "province": "Haut-Uele",
+      "territoire": "Watsa",
+      "zone_fdsu": "ND",
+      "code_officiel": "504509"
+    },
+    {
+      "nom": "Bahema",
+      "type_collectivite": "Chefferie",
+      "province": "Ituri",
+      "territoire": "",
+      "zone_fdsu": "ET",
+      "code_officiel": "10"
+    },
+    {
+      "nom": "Lu",
+      "type_collectivite": "Chefferie",
+      "province": "Ituri",
+      "territoire": "Aru",
+      "zone_fdsu": "ET",
+      "code_officiel": "505505"
+    },
+    {
+      "nom": "Ndo-Okebo",
+      "type_collectivite": "Chefferie",
+      "province": "Ituri",
+      "territoire": "Aru",
+      "zone_fdsu": "ET",
+      "code_officiel": "505506"
+    },
+    {
+      "nom": "Walendu-Djatsi",
+      "type_collectivite": "Secteur",
+      "province": "Ituri",
+      "territoire": "Djugu",
+      "zone_fdsu": "ET",
+      "code_officiel": "505307"
+    },
+    {
+      "nom": "Andisoma",
+      "type_collectivite": "Chefferie",
+      "province": "Ituri",
+      "territoire": "Irumu",
+      "zone_fdsu": "ET",
+      "code_officiel": "505101"
+    },
+    {
+      "nom": "Bahema Mitego",
+      "type_collectivite": "Chefferie",
+      "province": "Ituri",
+      "territoire": "Irumu",
+      "zone_fdsu": "ET",
+      "code_officiel": "505109"
+    },
+    {
+      "nom": "Bahema d'Irumu",
+      "type_collectivite": "Chefferie",
+      "province": "Ituri",
+      "territoire": "Irumu",
+      "zone_fdsu": "ET",
+      "code_officiel": "505108"
+    },
+    {
+      "nom": "Bahema-Boga",
+      "type_collectivite": "Chefferie",
+      "province": "Ituri",
+      "territoire": "Irumu",
+      "zone_fdsu": "ET",
+      "code_officiel": "505107"
+    },
+    {
+      "nom": "Baniari-Tchabi",
+      "type_collectivite": "Secteur",
+      "province": "Ituri",
+      "territoire": "Irumu",
+      "zone_fdsu": "ET",
+      "code_officiel": "505110"
+    },
+    {
+      "nom": "Basili",
+      "type_collectivite": "Chefferie",
+      "province": "Ituri",
+      "territoire": "Irumu",
+      "zone_fdsu": "ET",
+      "code_officiel": "505104"
+    },
+    {
+      "nom": "Mobala",
+      "type_collectivite": "Chefferie",
+      "province": "Ituri",
+      "territoire": "Irumu",
+      "zone_fdsu": "ET",
+      "code_officiel": "505112"
+    },
+    {
+      "nom": "Walese Vonkutu",
+      "type_collectivite": "Chefferie",
+      "province": "Ituri",
+      "territoire": "Irumu",
+      "zone_fdsu": "ET",
+      "code_officiel": "505113"
+    },
+    {
+      "nom": "Walendu Watsi",
+      "type_collectivite": "Chefferie",
+      "province": "Ituri",
+      "territoire": "Mahagi",
+      "zone_fdsu": "ET",
+      "code_officiel": "505407"
+    },
+    {
+      "nom": "Wangongo",
+      "type_collectivite": "Chefferie",
+      "province": "Ituri",
+      "territoire": "Mahagi",
+      "zone_fdsu": "ET",
+      "code_officiel": "505406"
+    },
+    {
+      "nom": "Malu-Malu",
+      "type_collectivite": "Secteur",
+      "province": "Kasai",
+      "territoire": "Ilebo",
+      "zone_fdsu": "CE",
+      "code_officiel": "903302"
+    },
+    {
+      "nom": "Bakwa Nyambi",
+      "type_collectivite": "Secteur",
+      "province": "Kasai",
+      "territoire": "Kamonia",
+      "zone_fdsu": "CE",
+      "code_officiel": "903202"
+    },
+    {
+      "nom": "Kasadi-Sadi",
+      "type_collectivite": "Secteur",
+      "province": "Kasai",
+      "territoire": "Kamonia",
+      "zone_fdsu": "CE",
+      "code_officiel": "903201"
+    },
+    {
+      "nom": "Tshikapa",
+      "type_collectivite": "Secteur",
+      "province": "Kasai",
+      "territoire": "Kamonia",
+      "zone_fdsu": "CE",
+      "code_officiel": "903204"
+    },
+    {
+      "nom": "Diofwa",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Central",
+      "territoire": "Demba",
+      "zone_fdsu": "CE",
+      "code_officiel": "902401"
+    },
+    {
+      "nom": "Lombelo",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Central",
+      "territoire": "Demba",
+      "zone_fdsu": "CE",
+      "code_officiel": "902402"
+    },
+    {
+      "nom": "Muanza-Ngoma",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Central",
+      "territoire": "Demba",
+      "zone_fdsu": "CE",
+      "code_officiel": "902405"
+    },
+    {
+      "nom": "Kunduyi",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Central",
+      "territoire": "Dimbelenge",
+      "zone_fdsu": "CE",
+      "code_officiel": "902503"
+    },
+    {
+      "nom": "Lubi",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Central",
+      "territoire": "Dimbelenge",
+      "zone_fdsu": "CE",
+      "code_officiel": "902501"
+    },
+    {
+      "nom": "Lubudi",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Central",
+      "territoire": "Dimbelenge",
+      "zone_fdsu": "CE",
+      "code_officiel": "902502"
+    },
+    {
+      "nom": "Lukibu",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Central",
+      "territoire": "Dimbelenge",
+      "zone_fdsu": "CE",
+      "code_officiel": "902505"
+    },
+    {
+      "nom": "Mashala",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Central",
+      "territoire": "Dimbelenge",
+      "zone_fdsu": "CE",
+      "code_officiel": "902504"
+    },
+    {
+      "nom": "Bena-Ngoshi",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Central",
+      "territoire": "Kazumba",
+      "zone_fdsu": "CE",
+      "code_officiel": "902309"
+    },
+    {
+      "nom": "Kalunga",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Central",
+      "territoire": "Luiza",
+      "zone_fdsu": "CE",
+      "code_officiel": "902204"
+    },
+    {
+      "nom": "Lueta",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Central",
+      "territoire": "Luiza",
+      "zone_fdsu": "CE",
+      "code_officiel": "902205"
+    },
+    {
+      "nom": "Kalela",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Oriental",
+      "territoire": "Kabeya-Kamwanga",
+      "zone_fdsu": "CE",
+      "code_officiel": "802203"
+    },
+    {
+      "nom": "Lac Munkamba",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Oriental",
+      "territoire": "Kabeya-Kamwanga",
+      "zone_fdsu": "CE",
+      "code_officiel": "802201"
+    },
+    {
+      "nom": "Mpemba",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Oriental",
+      "territoire": "Kabeya-Kamwanga",
+      "zone_fdsu": "CE",
+      "code_officiel": "802204"
+    },
+    {
+      "nom": "Ndomba",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Oriental",
+      "territoire": "Kabeya-Kamwanga",
+      "zone_fdsu": "CE",
+      "code_officiel": "802202"
+    },
+    {
+      "nom": "Baluba-Lubilanji",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Oriental",
+      "territoire": "Katanda",
+      "zone_fdsu": "CE",
+      "code_officiel": "802402"
+    },
+    {
+      "nom": "Mutuayi",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Oriental",
+      "territoire": "Katanda",
+      "zone_fdsu": "CE",
+      "code_officiel": "802403"
+    },
+    {
+      "nom": "Tshitolo",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Oriental",
+      "territoire": "Katanda",
+      "zone_fdsu": "CE",
+      "code_officiel": "802404"
+    },
+    {
+      "nom": "Kabala",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Oriental",
+      "territoire": "Lupatapata",
+      "zone_fdsu": "CE",
+      "code_officiel": "802301"
+    },
+    {
+      "nom": "Mudiba",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Oriental",
+      "territoire": "Lupatapata",
+      "zone_fdsu": "CE",
+      "code_officiel": "802302"
+    },
+    {
+      "nom": "Mukumbi",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Oriental",
+      "territoire": "Lupatapata",
+      "zone_fdsu": "CE",
+      "code_officiel": "802303"
+    },
+    {
+      "nom": "Mulenda",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Oriental",
+      "territoire": "Lupatapata",
+      "zone_fdsu": "CE",
+      "code_officiel": "802304"
+    },
+    {
+      "nom": "Kakangayi",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Oriental",
+      "territoire": "Miabi",
+      "zone_fdsu": "CE",
+      "code_officiel": "802102"
+    },
+    {
+      "nom": "Tshijiba",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Oriental",
+      "territoire": "Miabi",
+      "zone_fdsu": "CE",
+      "code_officiel": "802104"
+    },
+    {
+      "nom": "Tshilundu",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Oriental",
+      "territoire": "Miabi",
+      "zone_fdsu": "CE",
+      "code_officiel": "802103"
+    },
+    {
+      "nom": "Kalelu",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Oriental",
+      "territoire": "Tshilenge",
+      "zone_fdsu": "CE",
+      "code_officiel": "802507"
+    },
+    {
+      "nom": "Kampatshi",
+      "type_collectivite": "Chefferie",
+      "province": "Kasai Oriental",
+      "territoire": "Tshilenge",
+      "zone_fdsu": "CE",
+      "code_officiel": "802504"
+    },
+    {
+      "nom": "Tshipuka",
+      "type_collectivite": "Secteur",
+      "province": "Kasai Oriental",
+      "territoire": "Tshilenge",
+      "zone_fdsu": "CE",
+      "code_officiel": "802503"
+    },
+    {
+      "nom": "Luidi",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Madimba",
+      "zone_fdsu": "OT",
+      "code_officiel": "205101"
+    },
+    {
+      "nom": "Mfidi Malele",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Madimba",
+      "zone_fdsu": "OT",
+      "code_officiel": "205102"
+    },
+    {
+      "nom": "Boko",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Mbanza-Ngungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "204101"
+    },
+    {
+      "nom": "Gombe Matadi",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Mbanza-Ngungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "204102"
+    },
+    {
+      "nom": "Gombe-Sud",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Mbanza-Ngungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "204106"
+    },
+    {
+      "nom": "Kivulu",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Mbanza-Ngungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "204107"
+    },
+    {
+      "nom": "Kwilu-Ngongo",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Mbanza-Ngungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "204108"
+    },
+    {
+      "nom": "Lunzadi",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Mbanza-Ngungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "204104"
+    },
+    {
+      "nom": "Ntimansi",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Mbanza-Ngungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "204109"
+    },
+    {
+      "nom": "Assolongo",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Moanda",
+      "zone_fdsu": "OT",
+      "code_officiel": "202402"
+    },
+    {
+      "nom": "Boma-Bungu",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Moanda",
+      "zone_fdsu": "OT",
+      "code_officiel": "202403"
+    },
+    {
+      "nom": "La Mer",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Moanda",
+      "zone_fdsu": "OT",
+      "code_officiel": "202404"
+    },
+    {
+      "nom": "Bundi",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Seke-Banza",
+      "zone_fdsu": "OT",
+      "code_officiel": "203202"
+    },
+    {
+      "nom": "Isangila",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Seke-Banza",
+      "zone_fdsu": "OT",
+      "code_officiel": "203205"
+    },
+    {
+      "nom": "Lufu",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Seke-Banza",
+      "zone_fdsu": "OT",
+      "code_officiel": "203203"
+    },
+    {
+      "nom": "Mbavu",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Seke-Banza",
+      "zone_fdsu": "OT",
+      "code_officiel": "203206"
+    },
+    {
+      "nom": "Sumbi",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Seke-Banza",
+      "zone_fdsu": "OT",
+      "code_officiel": "203204"
+    },
+    {
+      "nom": "Palabala",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Songololo",
+      "zone_fdsu": "OT",
+      "code_officiel": "204204"
+    },
+    {
+      "nom": "Bula-Naku",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Tshela",
+      "zone_fdsu": "OT",
+      "code_officiel": "203106"
+    },
+    {
+      "nom": "Lubolo",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Tshela",
+      "zone_fdsu": "OT",
+      "code_officiel": "203104"
+    },
+    {
+      "nom": "Lubuzi",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Tshela",
+      "zone_fdsu": "OT",
+      "code_officiel": "203108"
+    },
+    {
+      "nom": "Nganda Sundi",
+      "type_collectivite": "Secteur",
+      "province": "Kongo Central",
+      "territoire": "Tshela",
+      "zone_fdsu": "OT",
+      "code_officiel": "203107"
+    },
+    {
+      "nom": "Feshi",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Feshi",
+      "zone_fdsu": "OT",
+      "code_officiel": "305205"
+    },
+    {
+      "nom": "Ganeketi",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Feshi",
+      "zone_fdsu": "OT",
+      "code_officiel": "305202"
+    },
+    {
+      "nom": "Lobo",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Feshi",
+      "zone_fdsu": "OT",
+      "code_officiel": "305203"
+    },
+    {
+      "nom": "Mukoso",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Feshi",
+      "zone_fdsu": "OT",
+      "code_officiel": "305204"
+    },
+    {
+      "nom": "Bangu",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Kahemba",
+      "zone_fdsu": "OT",
+      "code_officiel": "305301"
+    },
+    {
+      "nom": "Bindu",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Kahemba",
+      "zone_fdsu": "OT",
+      "code_officiel": "305302"
+    },
+    {
+      "nom": "Kulindji",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Kahemba",
+      "zone_fdsu": "OT",
+      "code_officiel": "305307"
+    },
+    {
+      "nom": "Muloshi",
+      "type_collectivite": "Chefferie",
+      "province": "Kwango",
+      "territoire": "Kahemba",
+      "zone_fdsu": "OT",
+      "code_officiel": "305303"
+    },
+    {
+      "nom": "Mwamushiko",
+      "type_collectivite": "Chefferie",
+      "province": "Kwango",
+      "territoire": "Kahemba",
+      "zone_fdsu": "OT",
+      "code_officiel": "305304"
+    },
+    {
+      "nom": "Mwendjila",
+      "type_collectivite": "Chefferie",
+      "province": "Kwango",
+      "territoire": "Kahemba",
+      "zone_fdsu": "OT",
+      "code_officiel": "305305"
+    },
+    {
+      "nom": "Kasa",
+      "type_collectivite": "Chefferie",
+      "province": "Kwango",
+      "territoire": "Kasongo-Lunda",
+      "zone_fdsu": "OT",
+      "code_officiel": "305403"
+    },
+    {
+      "nom": "Kasongo-Lunda",
+      "type_collectivite": "Chefferie",
+      "province": "Kwango",
+      "territoire": "Kasongo-Lunda",
+      "zone_fdsu": "OT",
+      "code_officiel": "305402"
+    },
+    {
+      "nom": "Kibunda",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Kasongo-Lunda",
+      "zone_fdsu": "OT",
+      "code_officiel": "305404"
+    },
+    {
+      "nom": "Kingulu",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Kasongo-Lunda",
+      "zone_fdsu": "OT",
+      "code_officiel": "305405"
+    },
+    {
+      "nom": "Kizamba",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Kasongo-Lunda",
+      "zone_fdsu": "OT",
+      "code_officiel": "305406"
+    },
+    {
+      "nom": "Mawanga",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Kasongo-Lunda",
+      "zone_fdsu": "OT",
+      "code_officiel": "305407"
+    },
+    {
+      "nom": "Panzi",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Kasongo-Lunda",
+      "zone_fdsu": "OT",
+      "code_officiel": "305408"
+    },
+    {
+      "nom": "Swa Tenda",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Kasongo-Lunda",
+      "zone_fdsu": "OT",
+      "code_officiel": "305409"
+    },
+    {
+      "nom": "Bukanga-Lonzo",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Kenge",
+      "zone_fdsu": "OT",
+      "code_officiel": "305102"
+    },
+    {
+      "nom": "Dinga",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Kenge",
+      "zone_fdsu": "OT",
+      "code_officiel": "305106"
+    },
+    {
+      "nom": "Kolokoso",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Kenge",
+      "zone_fdsu": "OT",
+      "code_officiel": "305105"
+    },
+    {
+      "nom": "Mosamba",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Kenge",
+      "zone_fdsu": "OT",
+      "code_officiel": "305103"
+    },
+    {
+      "nom": "Lufuna",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Popokabaka",
+      "zone_fdsu": "OT",
+      "code_officiel": "305501"
+    },
+    {
+      "nom": "Popokabaka",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Popokabaka",
+      "zone_fdsu": "OT",
+      "code_officiel": "305504"
+    },
+    {
+      "nom": "Yonso",
+      "type_collectivite": "Secteur",
+      "province": "Kwango",
+      "territoire": "Popokabaka",
+      "zone_fdsu": "OT",
+      "code_officiel": "305503"
+    },
+    {
+      "nom": "Kidzweme",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Bagata",
+      "zone_fdsu": "OT",
+      "code_officiel": "303301"
+    },
+    {
+      "nom": "Kwango-Kasai",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Bagata",
+      "zone_fdsu": "OT",
+      "code_officiel": "303302"
+    },
+    {
+      "nom": "Kwilu-Ntobere",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Bagata",
+      "zone_fdsu": "OT",
+      "code_officiel": "303303"
+    },
+    {
+      "nom": "Manzasay",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Bagata",
+      "zone_fdsu": "OT",
+      "code_officiel": "303304"
+    },
+    {
+      "nom": "Wamba-Fatundu",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Bagata",
+      "zone_fdsu": "OT",
+      "code_officiel": "303305"
+    },
+    {
+      "nom": "Dwe",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Bulungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303102"
+    },
+    {
+      "nom": "Imbongo",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Bulungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303103"
+    },
+    {
+      "nom": "Kipuka",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Bulungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303105"
+    },
+    {
+      "nom": "Kwenge",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Bulungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303106"
+    },
+    {
+      "nom": "Kwilu-Kimbata",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Bulungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303107"
+    },
+    {
+      "nom": "Luniungu",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Bulungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303108"
+    },
+    {
+      "nom": "Mikwi",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Bulungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303109"
+    },
+    {
+      "nom": "Nko",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Bulungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303111"
+    },
+    {
+      "nom": "Gungu",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Gungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303512"
+    },
+    {
+      "nom": "Kandale",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Gungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303502"
+    },
+    {
+      "nom": "Kilamba",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Gungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303503"
+    },
+    {
+      "nom": "Kilemba",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Gungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303504"
+    },
+    {
+      "nom": "Kisunzu",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Gungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303505"
+    },
+    {
+      "nom": "Kobo",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Gungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303507"
+    },
+    {
+      "nom": "Kondo",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Gungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303506"
+    },
+    {
+      "nom": "Lozo",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Gungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303508"
+    },
+    {
+      "nom": "Lukamba",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Gungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303509"
+    },
+    {
+      "nom": "Mudikalunga",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Gungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303510"
+    },
+    {
+      "nom": "Mungindu",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Gungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303511"
+    },
+    {
+      "nom": "Ngudi",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Gungu",
+      "zone_fdsu": "OT",
+      "code_officiel": "303513"
+    },
+    {
+      "nom": "Banga",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Idiofa",
+      "zone_fdsu": "OT",
+      "code_officiel": "303401"
+    },
+    {
+      "nom": "Belo",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Idiofa",
+      "zone_fdsu": "OT",
+      "code_officiel": "303402"
+    },
+    {
+      "nom": "Madimbi",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Idiofa",
+      "zone_fdsu": "OT",
+      "code_officiel": "303409"
+    },
+    {
+      "nom": "Musanga-Idiofa",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Idiofa",
+      "zone_fdsu": "OT",
+      "code_officiel": "303404"
+    },
+    {
+      "nom": "Yasa-Lokwa",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Idiofa",
+      "zone_fdsu": "OT",
+      "code_officiel": "303412"
+    },
+    {
+      "nom": "Bindungi",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Masi-Manimba",
+      "zone_fdsu": "OT",
+      "code_officiel": "303201"
+    },
+    {
+      "nom": "Kibolo",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Masi-Manimba",
+      "zone_fdsu": "OT",
+      "code_officiel": "303204"
+    },
+    {
+      "nom": "Pay-Kongila",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Masi-Manimba",
+      "zone_fdsu": "OT",
+      "code_officiel": "303207"
+    },
+    {
+      "nom": "Sungu",
+      "type_collectivite": "Secteur",
+      "province": "Kwilu",
+      "territoire": "Masi-Manimba",
+      "zone_fdsu": "OT",
+      "code_officiel": "303210"
+    },
+    {
+      "nom": "Kamiji",
+      "type_collectivite": "Secteur",
+      "province": "Lomami",
+      "territoire": "Kamiji",
+      "zone_fdsu": "CE",
+      "code_officiel": "804201"
+    },
+    {
+      "nom": "Luekeshi",
+      "type_collectivite": "Secteur",
+      "province": "Lomami",
+      "territoire": "Kamiji",
+      "zone_fdsu": "CE",
+      "code_officiel": "804202"
+    },
+    {
+      "nom": "Kanda-Kanda",
+      "type_collectivite": "Secteur",
+      "province": "Lomami",
+      "territoire": "Luilu",
+      "zone_fdsu": "CE",
+      "code_officiel": "804103"
+    },
+    {
+      "nom": "Kanutshina",
+      "type_collectivite": "Chefferie",
+      "province": "Lomami",
+      "territoire": "Luilu",
+      "zone_fdsu": "CE",
+      "code_officiel": "804101"
+    },
+    {
+      "nom": "Katshisungu",
+      "type_collectivite": "Chefferie",
+      "province": "Lomami",
+      "territoire": "Luilu",
+      "zone_fdsu": "CE",
+      "code_officiel": "804104"
+    },
+    {
+      "nom": "Mulundu",
+      "type_collectivite": "Chefferie",
+      "province": "Lomami",
+      "territoire": "Luilu",
+      "zone_fdsu": "CE",
+      "code_officiel": "804102"
+    },
+    {
+      "nom": "Bakwa-Mulumba",
+      "type_collectivite": "Chefferie",
+      "province": "Lomami",
+      "territoire": "Ngandajika",
+      "zone_fdsu": "CE",
+      "code_officiel": "804305"
+    },
+    {
+      "nom": "Gandajika",
+      "type_collectivite": "Secteur",
+      "province": "Lomami",
+      "territoire": "Ngandajika",
+      "zone_fdsu": "CE",
+      "code_officiel": "804302"
+    },
+    {
+      "nom": "Kalambayi",
+      "type_collectivite": "Chefferie",
+      "province": "Lomami",
+      "territoire": "Ngandajika",
+      "zone_fdsu": "CE",
+      "code_officiel": "804306"
+    },
+    {
+      "nom": "Saluseke",
+      "type_collectivite": "Chefferie",
+      "province": "Lualaba",
+      "territoire": "Dilolo",
+      "zone_fdsu": "SD",
+      "code_officiel": "704104"
+    },
+    {
+      "nom": "Bateke-Nord",
+      "type_collectivite": "Chefferie",
+      "province": "Maindombe",
+      "territoire": "Bolobo",
+      "zone_fdsu": "OT",
+      "code_officiel": "306102"
+    },
+    {
+      "nom": "Basengele",
+      "type_collectivite": "Secteur",
+      "province": "Maindombe",
+      "territoire": "Inongo",
+      "zone_fdsu": "OT",
+      "code_officiel": "302101"
+    },
+    {
+      "nom": "Bolia",
+      "type_collectivite": "Secteur",
+      "province": "Maindombe",
+      "territoire": "Inongo",
+      "zone_fdsu": "OT",
+      "code_officiel": "302102"
+    },
+    {
+      "nom": "Inongo",
+      "type_collectivite": "Secteur",
+      "province": "Maindombe",
+      "territoire": "Inongo",
+      "zone_fdsu": "OT",
+      "code_officiel": "302103"
+    },
+    {
+      "nom": "Beronge",
+      "type_collectivite": "Secteur",
+      "province": "Maindombe",
+      "territoire": "Kiri",
+      "zone_fdsu": "OT",
+      "code_officiel": "302201"
+    },
+    {
+      "nom": "Lutoy",
+      "type_collectivite": "Secteur",
+      "province": "Maindombe",
+      "territoire": "Kiri",
+      "zone_fdsu": "OT",
+      "code_officiel": "302202"
+    },
+    {
+      "nom": "Pendjwa",
+      "type_collectivite": "Secteur",
+      "province": "Maindombe",
+      "territoire": "Kiri",
+      "zone_fdsu": "OT",
+      "code_officiel": "302203"
+    },
+    {
+      "nom": "Badia",
+      "type_collectivite": "Chefferie",
+      "province": "Maindombe",
+      "territoire": "Kutu",
+      "zone_fdsu": "OT",
+      "code_officiel": "302401"
+    },
+    {
+      "nom": "Batere",
+      "type_collectivite": "Chefferie",
+      "province": "Maindombe",
+      "territoire": "Kutu",
+      "zone_fdsu": "OT",
+      "code_officiel": "302402"
+    },
+    {
+      "nom": "Kemba",
+      "type_collectivite": "Secteur",
+      "province": "Maindombe",
+      "territoire": "Kutu",
+      "zone_fdsu": "OT",
+      "code_officiel": "302403"
+    },
+    {
+      "nom": "Luabu",
+      "type_collectivite": "Secteur",
+      "province": "Maindombe",
+      "territoire": "Kutu",
+      "zone_fdsu": "OT",
+      "code_officiel": "302404"
+    },
+    {
+      "nom": "Mfimi",
+      "type_collectivite": "Secteur",
+      "province": "Maindombe",
+      "territoire": "Kutu",
+      "zone_fdsu": "OT",
+      "code_officiel": "302405"
+    },
+    {
+      "nom": "Bateke-Sud/TWA",
+      "type_collectivite": "Secteur",
+      "province": "Maindombe",
+      "territoire": "Kwamouth",
+      "zone_fdsu": "OT",
+      "code_officiel": "306201"
+    },
+    {
+      "nom": "Baboma-Nord",
+      "type_collectivite": "Chefferie",
+      "province": "Maindombe",
+      "territoire": "Mushie",
+      "zone_fdsu": "OT",
+      "code_officiel": "306301"
+    },
+    {
+      "nom": "Entre Lukenie-Lokoro Nkaw",
+      "type_collectivite": "Secteur",
+      "province": "Maindombe",
+      "territoire": "Oshwe",
+      "zone_fdsu": "OT",
+      "code_officiel": "302301"
+    },
+    {
+      "nom": "Kangara",
+      "type_collectivite": "Secteur",
+      "province": "Maindombe",
+      "territoire": "Oshwe",
+      "zone_fdsu": "OT",
+      "code_officiel": "302302"
+    },
+    {
+      "nom": "Lokolama",
+      "type_collectivite": "Secteur",
+      "province": "Maindombe",
+      "territoire": "Oshwe",
+      "zone_fdsu": "OT",
+      "code_officiel": "302303"
+    },
+    {
+      "nom": "Lukenie",
+      "type_collectivite": "Secteur",
+      "province": "Maindombe",
+      "territoire": "Oshwe",
+      "zone_fdsu": "OT",
+      "code_officiel": "302304"
+    },
+    {
+      "nom": "Mongama",
+      "type_collectivite": "Secteur",
+      "province": "Maindombe",
+      "territoire": "Yumbi",
+      "zone_fdsu": "OT",
+      "code_officiel": "306402"
+    },
+    {
+      "nom": "Bahemba",
+      "type_collectivite": "Secteur",
+      "province": "Maniema",
+      "territoire": "Kabambare",
+      "zone_fdsu": "ET",
+      "code_officiel": "632102"
+    },
+    {
+      "nom": "Wasongola",
+      "type_collectivite": "Secteur",
+      "province": "Maniema",
+      "territoire": "Kailo",
+      "zone_fdsu": "ET",
+      "code_officiel": "632605"
+    },
+    {
+      "nom": "Bakwange",
+      "type_collectivite": "Chefferie",
+      "province": "Maniema",
+      "territoire": "Kasongo",
+      "zone_fdsu": "ET",
+      "code_officiel": "632502"
+    },
+    {
+      "nom": "Basonge 2 Mweho",
+      "type_collectivite": "Secteur",
+      "province": "Maniema",
+      "territoire": "Kasongo",
+      "zone_fdsu": "ET",
+      "code_officiel": "632504"
+    },
+    {
+      "nom": "Nonda",
+      "type_collectivite": "Chefferie",
+      "province": "Maniema",
+      "territoire": "Kasongo",
+      "zone_fdsu": "ET",
+      "code_officiel": "632509"
+    },
+    {
+      "nom": "Wagenia",
+      "type_collectivite": "Chefferie",
+      "province": "Maniema",
+      "territoire": "Kasongo",
+      "zone_fdsu": "ET",
+      "code_officiel": "632506"
+    },
+    {
+      "nom": "Loeka",
+      "type_collectivite": "Secteur",
+      "province": "Mongala",
+      "territoire": "Bumba",
+      "zone_fdsu": "ND",
+      "code_officiel": "406205"
+    },
+    {
+      "nom": "Mongala-Motima",
+      "type_collectivite": "Secteur",
+      "province": "Mongala",
+      "territoire": "Lisala",
+      "zone_fdsu": "ND",
+      "code_officiel": "406104"
+    },
+    {
+      "nom": "Bukumu",
+      "type_collectivite": "Chefferie",
+      "province": "Nord-Kivu",
+      "territoire": "Nyiragongo",
+      "zone_fdsu": "ET",
+      "code_officiel": "612101"
+    },
+    {
+      "nom": "Mobayi-Mbongo",
+      "type_collectivite": "Secteur",
+      "province": "Nord-Ubangi",
+      "territoire": "Mobayi-Mbongo",
+      "zone_fdsu": "ND",
+      "code_officiel": "405102"
+    },
+    {
+      "nom": "Otto-Banza",
+      "type_collectivite": "Secteur",
+      "province": "Nord-Ubangi",
+      "territoire": "Mobayi-Mbongo",
+      "zone_fdsu": "ND",
+      "code_officiel": "405101"
+    },
+    {
+      "nom": "Lukembe",
+      "type_collectivite": "Secteur",
+      "province": "Sankuru",
+      "territoire": "Katako-Kombe",
+      "zone_fdsu": "CE",
+      "code_officiel": "803405"
+    },
+    {
+      "nom": "Ngandu",
+      "type_collectivite": "Secteur",
+      "province": "Sankuru",
+      "territoire": "Katako-Kombe",
+      "zone_fdsu": "CE",
+      "code_officiel": "803402"
+    },
+    {
+      "nom": "Ukulungu",
+      "type_collectivite": "Secteur",
+      "province": "Sankuru",
+      "territoire": "Katako-Kombe",
+      "zone_fdsu": "CE",
+      "code_officiel": "803407"
+    },
+    {
+      "nom": "Watambulu-Nord",
+      "type_collectivite": "Secteur",
+      "province": "Sankuru",
+      "territoire": "Katako-Kombe",
+      "zone_fdsu": "CE",
+      "code_officiel": "803406"
+    },
+    {
+      "nom": "Watambulu-Sud",
+      "type_collectivite": "Secteur",
+      "province": "Sankuru",
+      "territoire": "Katako-Kombe",
+      "zone_fdsu": "CE",
+      "code_officiel": "803409"
+    },
+    {
+      "nom": "Batetela-Dibele",
+      "type_collectivite": "Secteur",
+      "province": "Sankuru",
+      "territoire": "Kole",
+      "zone_fdsu": "CE",
+      "code_officiel": "803203"
+    },
+    {
+      "nom": "Batetela Lukenie",
+      "type_collectivite": "Secteur",
+      "province": "Sankuru",
+      "territoire": "Lodja",
+      "zone_fdsu": "CE",
+      "code_officiel": "803601"
+    },
+    {
+      "nom": "Lufungu",
+      "type_collectivite": "Secteur",
+      "province": "Sankuru",
+      "territoire": "Lodja",
+      "zone_fdsu": "CE",
+      "code_officiel": "803602"
+    },
+    {
+      "nom": "Vungi",
+      "type_collectivite": "Secteur",
+      "province": "Sankuru",
+      "territoire": "Lodja",
+      "zone_fdsu": "CE",
+      "code_officiel": "803608"
+    },
+    {
+      "nom": "Bahamba I",
+      "type_collectivite": "Secteur",
+      "province": "Sankuru",
+      "territoire": "Lomela",
+      "zone_fdsu": "CE",
+      "code_officiel": "803302"
+    },
+    {
+      "nom": "Ndjovu",
+      "type_collectivite": "Secteur",
+      "province": "Sankuru",
+      "territoire": "Lubefu",
+      "zone_fdsu": "CE",
+      "code_officiel": "803504"
+    },
+    {
+      "nom": "Basonge",
+      "type_collectivite": "Secteur",
+      "province": "Sankuru",
+      "territoire": "Lusambo",
+      "zone_fdsu": "CE",
+      "code_officiel": "803102"
+    },
+    {
+      "nom": "Lubi",
+      "type_collectivite": "Secteur",
+      "province": "Sankuru",
+      "territoire": "Lusambo",
+      "zone_fdsu": "CE",
+      "code_officiel": "803105"
+    },
+    {
+      "nom": "Ngombe-Doko de Lekimi",
+      "type_collectivite": "Secteur",
+      "province": "Sud-Ubangi",
+      "territoire": "Budjala",
+      "zone_fdsu": "ND",
+      "code_officiel": "403204"
+    },
+    {
+      "nom": "Rutuku",
+      "type_collectivite": "Chefferie",
+      "province": "Tanganyika",
+      "territoire": "Kalemie",
+      "zone_fdsu": "SD",
+      "code_officiel": "706103"
+    },
+    {
+      "nom": "Bena-Nyembo",
+      "type_collectivite": "Chefferie",
+      "province": "Tanganyika",
+      "territoire": "Kongolo",
+      "zone_fdsu": "SD",
+      "code_officiel": "706509"
+    },
+    {
+      "nom": "Lubunda",
+      "type_collectivite": "Chefferie",
+      "province": "Tanganyika",
+      "territoire": "Kongolo",
+      "zone_fdsu": "SD",
+      "code_officiel": "706504"
+    },
+    {
+      "nom": "Bakongolo",
+      "type_collectivite": "Chefferie",
+      "province": "Tanganyika",
+      "territoire": "Manono",
+      "zone_fdsu": "SD",
+      "code_officiel": "706304"
+    },
+    {
+      "nom": "Kiluba",
+      "type_collectivite": "Chefferie",
+      "province": "Tanganyika",
+      "territoire": "Manono",
+      "zone_fdsu": "SD",
+      "code_officiel": "706301"
+    },
+    {
+      "nom": "Banalia Bangba",
+      "type_collectivite": "Secteur",
+      "province": "Tshopo",
+      "territoire": "Banalia",
+      "zone_fdsu": "ND",
+      "code_officiel": "502104"
+    },
+    {
+      "nom": "Lukutu",
+      "type_collectivite": "Secteur",
+      "province": "Tshopo",
+      "territoire": "Basoko",
+      "zone_fdsu": "ND",
+      "code_officiel": "502705"
+    },
+    {
+      "nom": "Turumbu",
+      "type_collectivite": "Secteur",
+      "province": "Tshopo",
+      "territoire": "Basoko",
+      "zone_fdsu": "ND",
+      "code_officiel": "502707"
+    },
+    {
+      "nom": "Yalikoka-Mboso",
+      "type_collectivite": "Chefferie",
+      "province": "Tshopo",
+      "territoire": "Isangi",
+      "zone_fdsu": "ND",
+      "code_officiel": "502511"
+    },
+    {
+      "nom": "Lobaie",
+      "type_collectivite": "Secteur",
+      "province": "Tshopo",
+      "territoire": "Opala",
+      "zone_fdsu": "ND",
+      "code_officiel": "502411"
+    },
+    {
+      "nom": "Mituku-Basikate",
+      "type_collectivite": "Secteur",
+      "province": "Tshopo",
+      "territoire": "Ubundu",
+      "zone_fdsu": "ND",
+      "code_officiel": "502310"
+    }
+  ],
+  "orphan_groupement": {
+    "nom": "Bena muhona",
+    "code_officiel": "70650801",
+    "source_collectivite": "Muhona",
+    "source_territoire": "Kongolo",
+    "attributes": {
+      "SCE_SEM": "UNDP",
+      "SCE_GEO": "MONUC / GNS",
+      "MODIF": "2009/09/01",
+      "ORIGINE": "Ancienne base",
+      "PCODE": "70650116",
+      "TERRITOIRE": "Kongolo",
+      "COLLECTIV": "Muhona",
+      "GENRE": "localite centrale GRPT",
+      "NOM_BD": "Bena muhona",
+      "NOM_RGC": "Bena Muhona",
+      "CODE_GRPT": "70650801"
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        27.21666708,
+        -5.23333306806844,
+        0.0
+      ]
+    },
+    "cause_probable": "Le préfixe de CODE_GRPT ne correspond à aucune collectivité officielle générée, et le couple COLLECTIV/TERRITOIRE source ne permet pas de rattachement fiable."
+  },
+  "attribute_inconsistency_summary": {
+    "total": 176,
+    "by_field": {
+      "COLLECTIV": 137,
+      "TERRITOIRE": 39
+    },
+    "top_mismatch_pairs": [
+      {
+        "mismatch": "TERRITOIRE: Bongandanga -> Bondanganga",
+        "count": 16
+      },
+      {
+        "mismatch": "TERRITOIRE: Bosobolo -> Basobolo",
+        "count": 13
+      },
+      {
+        "mismatch": "COLLECTIV: Abumobanzi -> Abumombazi",
+        "count": 7
+      },
+      {
+        "mismatch": "COLLECTIV: Ngombe-Doko de Lekimi -> Ngombe-Doko",
+        "count": 6
+      },
+      {
+        "mismatch": "COLLECTIV: Mongala-Motima -> Mongala-Molima",
+        "count": 6
+      },
+      {
+        "mismatch": "COLLECTIV: Ludimbi-Lukula -> Luila",
+        "count": 5
+      },
+      {
+        "mismatch": "COLLECTIV: Babila-Babombi -> Bayeke",
+        "count": 5
+      },
+      {
+        "mismatch": "COLLECTIV: Bena-Nyembo -> Matapa",
+        "count": 4
+      },
+      {
+        "mismatch": "COLLECTIV: Batetela-Lomela -> Ulindi",
+        "count": 4
+      },
+      {
+        "mismatch": "TERRITOIRE: Makanza -> Mankanza",
+        "count": 4
+      },
+      {
+        "mismatch": "COLLECTIV: Bemile -> Bemili",
+        "count": 4
+      },
+      {
+        "mismatch": "COLLECTIV: Sakundundu -> Tshipao",
+        "count": 4
+      },
+      {
+        "mismatch": "COLLECTIV: Batetela-Lomela -> Vunayi",
+        "count": 3
+      },
+      {
+        "mismatch": "COLLECTIV: Wamaza -> Wamasa",
+        "count": 3
+      },
+      {
+        "mismatch": "COLLECTIV: Basonge I -> Basonge 1",
+        "count": 3
+      },
+      {
+        "mismatch": "COLLECTIV: Baswaga -> Wazimba wa Mulu",
+        "count": 3
+      },
+      {
+        "mismatch": "COLLECTIV: Obokote -> Obokole",
+        "count": 3
+      },
+      {
+        "mismatch": "COLLECTIV: Ngombe-Mombangi -> Ngombe-Mobangi",
+        "count": 3
+      },
+      {
+        "mismatch": "COLLECTIV: Banda -> Bandas",
+        "count": 3
+      },
+      {
+        "mismatch": "COLLECTIV: Ngandu Wuma -> Ngandu-Wuna",
+        "count": 2
+      },
+      {
+        "mismatch": "COLLECTIV: Anghal I & II -> Anghal 1 & 2",
+        "count": 2
+      },
+      {
+        "mismatch": "COLLECTIV: Djukoth I - II -> Djukoth 1 & 2",
+        "count": 2
+      },
+      {
+        "mismatch": "COLLECTIV: Sarambila -> Saramabila",
+        "count": 2
+      },
+      {
+        "mismatch": "COLLECTIV: Baswagha -> Baswaga",
+        "count": 2
+      },
+      {
+        "mismatch": "COLLECTIV: Bahavu -> Buhavu",
+        "count": 2
+      }
+    ],
+    "examples": [
+      {
+        "entite": "Bakua-Ndaye",
+        "type": "Groupement",
+        "code": "90320301",
+        "province": "Kasai",
+        "territoire": "Kamonia",
+        "collectivite_parent": "Kasai-Kabambaie",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Kasai Kabambayi' different de la collectivite rattachee 'Kasai-Kabambaie'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Kamba lemba",
+        "type": "Groupement",
+        "code": "90320608",
+        "province": "Kasai",
+        "territoire": "Kamonia",
+        "collectivite_parent": "Kasai-Longatshimo",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Lovua-Lushiku' different de la collectivite rattachee 'Kasai-Longatshimo'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Bakwa-Dishi",
+        "type": "Groupement",
+        "code": "90310204",
+        "province": "Kasai",
+        "territoire": "Luebo",
+        "collectivite_parent": "Luebo-Wedi",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Luebo' different de la collectivite rattachee 'Luebo-Wedi'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Bakua-Kalonji tshimanga",
+        "type": "Groupement",
+        "code": "90310403",
+        "province": "Kasai",
+        "territoire": "Luebo",
+        "collectivite_parent": "Ndjoko-Punda",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Djoko Punda' different de la collectivite rattachee 'Ndjoko-Punda'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Ejiba",
+        "type": "Groupement",
+        "code": "80440601",
+        "province": "Lomami",
+        "territoire": "Kabinda",
+        "collectivite_parent": "Baluba-Lubangule",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Lubangule' different de la collectivite rattachee 'Baluba-Lubangule'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Bakoji-Nntanda (bakoji)",
+        "type": "Groupement",
+        "code": "80440702",
+        "province": "Lomami",
+        "territoire": "Kabinda",
+        "collectivite_parent": "Vunayi",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Batetela-Lomela' different de la collectivite rattachee 'Vunayi'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Belande -Nngoya",
+        "type": "Groupement",
+        "code": "80440706",
+        "province": "Lomami",
+        "territoire": "Kabinda",
+        "collectivite_parent": "Vunayi",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Batetela-Lomela' different de la collectivite rattachee 'Vunayi'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Majiba(bena-Majiba)",
+        "type": "Groupement",
+        "code": "80440709",
+        "province": "Lomami",
+        "territoire": "Kabinda",
+        "collectivite_parent": "Vunayi",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Batetela-Lomela' different de la collectivite rattachee 'Vunayi'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Lutobo",
+        "type": "Groupement",
+        "code": "80450510",
+        "province": "Lomami",
+        "territoire": "Lubao",
+        "collectivite_parent": "Tshofa",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Batetela-Lomela' different de la collectivite rattachee 'Tshofa'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Bankutshu",
+        "type": "Groupement",
+        "code": "80360902",
+        "province": "Sankuru",
+        "territoire": "Lodja",
+        "collectivite_parent": "Watambulu",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Baswaga' different de la collectivite rattachee 'Watambulu'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Biari",
+        "type": "Groupement",
+        "code": "80350102",
+        "province": "Sankuru",
+        "territoire": "Lubefu",
+        "collectivite_parent": "Ngandu-Wuna",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Ngandu Wuma' different de la collectivite rattachee 'Ngandu-Wuna'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Nsenga",
+        "type": "Groupement",
+        "code": "80350114",
+        "province": "Sankuru",
+        "territoire": "Lubefu",
+        "collectivite_parent": "Ngandu-Wuna",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Ngandu Wuma' different de la collectivite rattachee 'Ngandu-Wuna'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Baluba",
+        "type": "Groupement",
+        "code": "80310602",
+        "province": "Sankuru",
+        "territoire": "Lusambo",
+        "collectivite_parent": "Sankuru",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Kashindi' different de la collectivite rattachee 'Sankuru'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Fataki",
+        "type": "Groupement",
+        "code": "50530906",
+        "province": "Ituri",
+        "territoire": "Djugu",
+        "collectivite_parent": "Mabendi",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Walendu-Djatsi' different de la collectivite rattachee 'Mabendi'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Abira",
+        "type": "Groupement",
+        "code": "50540201",
+        "province": "Ituri",
+        "territoire": "Mahagi",
+        "collectivite_parent": "Anghal 1 & 2",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Anghal I & II' different de la collectivite rattachee 'Anghal 1 & 2'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Paramvor",
+        "type": "Groupement",
+        "code": "50540209",
+        "province": "Ituri",
+        "territoire": "Mahagi",
+        "collectivite_parent": "Anghal 1 & 2",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Anghal I & II' different de la collectivite rattachee 'Anghal 1 & 2'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Berunda",
+        "type": "Groupement",
+        "code": "50540301",
+        "province": "Ituri",
+        "territoire": "Mahagi",
+        "collectivite_parent": "Djukoth 1 & 2",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Djukoth I - II' different de la collectivite rattachee 'Djukoth 1 & 2'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Djupawalu",
+        "type": "Groupement",
+        "code": "50540303",
+        "province": "Ituri",
+        "territoire": "Mahagi",
+        "collectivite_parent": "Djukoth 1 & 2",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Djukoth I - II' different de la collectivite rattachee 'Djukoth 1 & 2'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Kitababeya",
+        "type": "Groupement",
+        "code": "63210501",
+        "province": "Maniema",
+        "territoire": "Kabambare",
+        "collectivite_parent": "Saramabila",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Sarambila' different de la collectivite rattachee 'Saramabila'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      },
+      {
+        "entite": "Muhiya I",
+        "type": "Groupement",
+        "code": "63210502",
+        "province": "Maniema",
+        "territoire": "Kabambare",
+        "collectivite_parent": "Saramabila",
+        "probleme": "incoherence attributaire",
+        "cause": "COLLECTIV='Sarambila' different de la collectivite rattachee 'Saramabila'",
+        "statut": "À valider manuellement",
+        "suggestion": "Verifier les attributs COLLECTIV/TERRITOIRE face au parent rattache."
+      }
+    ]
+  },
+  "conclusion": {
+    "coverage_status": "partiel",
+    "validation_recommendation": "marquer comme partiel, ne pas valider provisoirement comme référentiel national complet",
+    "reason": "Le fichier couvre 27.77% de la référence nationale officielle (1681/6053); l'écart est de 4372 groupements.",
+    "well_covered_provinces": [
+      "Sud-Kivu",
+      "Maniema",
+      "Tshopo",
+      "Tshuapa",
+      "Equateur",
+      "Sud-Ubangi",
+      "Lualaba",
+      "Tanganyika",
+      "Nord-Kivu",
+      "Haut-Katanga",
+      "Kasai"
+    ],
+    "absent_provinces": [
+      "Kinshasa",
+      "Mai-ndombe"
+    ],
+    "weak_provinces": [
+      "Kwilu",
+      "Haut-Uele",
+      "Kasai Oriental",
+      "Kwango"
+    ]
+  }
+}

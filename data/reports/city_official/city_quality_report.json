@@ -1,0 +1,13 @@
+{
+  "source_file": "zones_fdsu.kmz",
+  "generated_at": "2026-07-03T12:28:54+00:00",
+  "city_count": 11,
+  "orphan_city_count": 0,
+  "multi_province_conflicts": 0,
+  "multi_zone_conflicts": 0,
+  "empty_geometry_count": 0,
+  "duplicate_count": 0,
+  "duplicate_names": [],
+  "anomalies": [],
+  "global_score": 100.0
+}
