@@ -1,0 +1,71 @@
+{
+  "id": "f7400a098d6244f495f14f073accaa12",
+  "owner": "Papy@Afusuy",
+  "ownerId": "51dd77dfd8804c5e84777608be3ca43a",
+  "orgId": "SKPcE2GkY41yvJAy",
+  "created": 1697720679000,
+  "modified": 1698599567000,
+  "guid": null,
+  "name": null,
+  "title": "Atlas Electoral 2023",
+  "type": "Web Map",
+  "typeKeywords": [
+    "ArcGIS API for JavaScript",
+    "ArcGIS Online",
+    "Explorer Web Map",
+    "Map",
+    "Online Map",
+    "Web Map"
+  ],
+  "description": "",
+  "tags": [
+    "Atlas",
+    "électoral",
+    "cartographie",
+    "République Démocratique du Congo",
+    "Ceni"
+  ],
+  "snippet": "L\u2019Atlas électoral présente la cartographie dynamique et interactive des entités électorales de la République Démocratique du Congo.",
+  "thumbnail": "thumbnail/_7BB8FCF168-081C-4902-83F3-011B8A2394A3_7D.png",
+  "documentation": null,
+  "extent": [
+    [
+      20.88590183288797,
+      -0.1582174768008462
+    ],
+    [
+      20.976367378542143,
+      -0.07719348460535662
+    ]
+  ],
+  "categories": [],
+  "spatialReference": "",
+  "accessInformation": "",
+  "classification": null,
+  "licenseInfo": "",
+  "culture": "english (united states)",
+  "properties": null,
+  "advancedSettings": null,
+  "url": "",
+  "proxyFilter": null,
+  "access": "public",
+  "size": 181503,
+  "subInfo": 0,
+  "appCategories": [],
+  "industries": [],
+  "languages": [],
+  "largeThumbnail": null,
+  "banner": null,
+  "screenshots": [],
+  "listed": false,
+  "commentsEnabled": true,
+  "numComments": 0,
+  "numRatings": 0,
+  "avgRating": 0,
+  "numViews": 41611,
+  "scoreCompleteness": 66,
+  "groupDesignations": null,
+  "apiToken1ExpirationDate": -1,
+  "apiToken2ExpirationDate": -1,
+  "lastViewed": 1727877600000
+}

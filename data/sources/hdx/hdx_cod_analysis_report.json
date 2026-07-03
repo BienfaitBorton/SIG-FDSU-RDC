@@ -1,0 +1,912 @@
+{
+  "dataset": "cod-ab-cod",
+  "resources": {
+    "shapefile_zip": {
+      "files": [
+        "cod_admin0.shp",
+        "cod_admin0.cpg",
+        "cod_admin0.dbf",
+        "cod_admin0.prj",
+        "cod_admin0.shx",
+        "cod_admin0_em.shp",
+        "cod_admin0_em.cpg",
+        "cod_admin0_em.dbf",
+        "cod_admin0_em.prj",
+        "cod_admin0_em.shx",
+        "cod_admin1.shp",
+        "cod_admin1.cpg",
+        "cod_admin1.dbf",
+        "cod_admin1.prj",
+        "cod_admin1.shx",
+        "cod_admin1_em.shp",
+        "cod_admin1_em.cpg",
+        "cod_admin1_em.dbf",
+        "cod_admin1_em.prj",
+        "cod_admin1_em.shx",
+        "cod_admin2.shp",
+        "cod_admin2.cpg",
+        "cod_admin2.dbf",
+        "cod_admin2.prj",
+        "cod_admin2.shx",
+        "cod_admin2_em.shp",
+        "cod_admin2_em.cpg",
+        "cod_admin2_em.dbf",
+        "cod_admin2_em.prj",
+        "cod_admin2_em.shx",
+        "cod_admin3.shp",
+        "cod_admin3.cpg",
+        "cod_admin3.dbf",
+        "cod_admin3.prj",
+        "cod_admin3.shx",
+        "cod_admin3_em.shp",
+        "cod_admin3_em.cpg",
+        "cod_admin3_em.dbf",
+        "cod_admin3_em.prj",
+        "cod_admin3_em.shx",
+        "cod_admincapitals.shp",
+        "cod_admincapitals.cpg",
+        "cod_admincapitals.dbf",
+        "cod_admincapitals.prj",
+        "cod_admincapitals.shx",
+        "cod_adminlines.shp",
+        "cod_adminlines.cpg",
+        "cod_adminlines.dbf",
+        "cod_adminlines.prj",
+        "cod_adminlines.shx",
+        "cod_adminpoints.shp",
+        "cod_adminpoints.cpg",
+        "cod_adminpoints.dbf",
+        "cod_adminpoints.prj",
+        "cod_adminpoints.shx"
+      ]
+    },
+    "geojson_zip": {
+      "files": [
+        "cod_admincapitals.geojson",
+        "cod_adminlines.geojson",
+        "cod_adminpoints.geojson",
+        "cod_admin1_em.geojson",
+        "cod_admin3_em.geojson",
+        "cod_admin1.geojson",
+        "cod_admin0_em.geojson",
+        "cod_admin0.geojson",
+        "cod_admin2_em.geojson",
+        "cod_admin2.geojson",
+        "cod_admin3.geojson"
+      ],
+      "geojson_members": [
+        "cod_admincapitals.geojson",
+        "cod_adminlines.geojson",
+        "cod_adminpoints.geojson",
+        "cod_admin1_em.geojson",
+        "cod_admin3_em.geojson",
+        "cod_admin1.geojson",
+        "cod_admin0_em.geojson",
+        "cod_admin0.geojson",
+        "cod_admin2_em.geojson",
+        "cod_admin2.geojson",
+        "cod_admin3.geojson"
+      ]
+    }
+  },
+  "levels": {
+    "cod_admincapitals": {
+      "feature_count": 42,
+      "fields": [
+        "adm0_name",
+        "adm0_name1",
+        "adm0_name2",
+        "adm0_name3",
+        "adm0_pcode",
+        "adm1_name",
+        "adm1_name1",
+        "adm1_name2",
+        "adm1_name3",
+        "adm1_pcode",
+        "adm2_name",
+        "adm2_name1",
+        "adm2_name2",
+        "adm2_name3",
+        "adm2_pcode",
+        "adm3_name",
+        "adm3_name1",
+        "adm3_name2",
+        "adm3_name3",
+        "adm3_pcode",
+        "adm_p_lvl",
+        "loc_pcode",
+        "name",
+        "name_1",
+        "name_2",
+        "name_3",
+        "name_lng",
+        "name_lng1",
+        "name_lng2",
+        "name_lng3",
+        "valid_on",
+        "valid_to",
+        "version",
+        "x_coord",
+        "y_coord"
+      ],
+      "pcode_fields": [
+        "adm0_pcode",
+        "adm1_pcode",
+        "adm2_pcode",
+        "adm3_pcode",
+        "loc_pcode"
+      ],
+      "geometry_types": {
+        "Point": 42
+      },
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      },
+      "unique_names": 69
+    },
+    "cod_adminlines": {
+      "feature_count": 515,
+      "fields": [
+        "adm_level",
+        "left_pcod",
+        "name",
+        "right_pcod",
+        "valid_on",
+        "valid_to",
+        "version"
+      ],
+      "pcode_fields": [],
+      "geometry_types": {
+        "LineString": 515
+      },
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      },
+      "unique_names": 0
+    },
+    "cod_adminpoints": {
+      "feature_count": 735,
+      "fields": [
+        "adm0_name",
+        "adm0_name1",
+        "adm0_name2",
+        "adm0_name3",
+        "adm0_pcode",
+        "adm1_name",
+        "adm1_name1",
+        "adm1_name2",
+        "adm1_name3",
+        "adm1_pcode",
+        "adm2_name",
+        "adm2_name1",
+        "adm2_name2",
+        "adm2_name3",
+        "adm2_pcode",
+        "adm3_name",
+        "adm3_name1",
+        "adm3_name2",
+        "adm3_name3",
+        "adm3_pcode",
+        "adm4_name",
+        "adm4_name1",
+        "adm4_name2",
+        "adm4_name3",
+        "adm4_pcode",
+        "admin_level",
+        "lang",
+        "lang1",
+        "lang2",
+        "lang3",
+        "name",
+        "name1",
+        "name2",
+        "name3",
+        "valid_on",
+        "valid_to",
+        "version",
+        "x_coord",
+        "y_coord"
+      ],
+      "pcode_fields": [
+        "adm0_pcode",
+        "adm1_pcode",
+        "adm2_pcode",
+        "adm3_pcode",
+        "adm4_pcode"
+      ],
+      "geometry_types": {
+        "Point": 735
+      },
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      },
+      "unique_names": 573
+    },
+    "cod_admin1_em": {
+      "feature_count": 26,
+      "fields": [
+        "adm0_name",
+        "adm0_name1",
+        "adm0_name2",
+        "adm0_name3",
+        "adm0_pcode",
+        "adm1_name",
+        "adm1_name1",
+        "adm1_name2",
+        "adm1_name3",
+        "adm1_pcode",
+        "area_sqkm",
+        "lang",
+        "lang1",
+        "lang2",
+        "lang3",
+        "valid_on",
+        "valid_to",
+        "version"
+      ],
+      "pcode_fields": [
+        "adm0_pcode",
+        "adm1_pcode"
+      ],
+      "geometry_types": {
+        "Polygon": 18,
+        "MultiPolygon": 8
+      },
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      },
+      "unique_names": 27
+    },
+    "cod_admin3_em": {
+      "feature_count": 519,
+      "fields": [
+        "adm0_name",
+        "adm0_name1",
+        "adm0_name2",
+        "adm0_name3",
+        "adm0_pcode",
+        "adm1_name",
+        "adm1_name1",
+        "adm1_name2",
+        "adm1_name3",
+        "adm1_pcode",
+        "adm2_name",
+        "adm2_name1",
+        "adm2_name2",
+        "adm2_name3",
+        "adm2_pcode",
+        "adm3_name",
+        "adm3_name1",
+        "adm3_name2",
+        "adm3_name3",
+        "adm3_pcode",
+        "area_sqkm",
+        "lang",
+        "lang1",
+        "lang2",
+        "lang3",
+        "valid_on",
+        "valid_to",
+        "version"
+      ],
+      "pcode_fields": [
+        "adm0_pcode",
+        "adm1_pcode",
+        "adm2_pcode",
+        "adm3_pcode"
+      ],
+      "geometry_types": {
+        "Polygon": 491,
+        "MultiPolygon": 28
+      },
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      },
+      "unique_names": 559
+    },
+    "cod_admin1": {
+      "feature_count": 26,
+      "fields": [
+        "adm0_name",
+        "adm0_name1",
+        "adm0_name2",
+        "adm0_name3",
+        "adm0_pcode",
+        "adm1_name",
+        "adm1_name1",
+        "adm1_name2",
+        "adm1_name3",
+        "adm1_pcode",
+        "area_sqkm",
+        "lang",
+        "lang1",
+        "lang2",
+        "lang3",
+        "valid_on",
+        "valid_to",
+        "version"
+      ],
+      "pcode_fields": [
+        "adm0_pcode",
+        "adm1_pcode"
+      ],
+      "geometry_types": {
+        "Polygon": 19,
+        "MultiPolygon": 7
+      },
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      },
+      "unique_names": 27
+    },
+    "cod_admin0_em": {
+      "feature_count": 1,
+      "fields": [
+        "adm0_name",
+        "adm0_name1",
+        "adm0_name2",
+        "adm0_name3",
+        "adm0_pcode",
+        "area_sqkm",
+        "iso2",
+        "iso3",
+        "lang",
+        "lang1",
+        "lang2",
+        "lang3",
+        "valid_on",
+        "valid_to",
+        "version"
+      ],
+      "pcode_fields": [
+        "adm0_pcode"
+      ],
+      "geometry_types": {
+        "MultiPolygon": 1
+      },
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      },
+      "unique_names": 1
+    },
+    "cod_admin0": {
+      "feature_count": 1,
+      "fields": [
+        "adm0_name",
+        "adm0_name1",
+        "adm0_name2",
+        "adm0_name3",
+        "adm0_pcode",
+        "area_sqkm",
+        "iso2",
+        "iso3",
+        "lang",
+        "lang1",
+        "lang2",
+        "lang3",
+        "valid_on",
+        "valid_to",
+        "version"
+      ],
+      "pcode_fields": [
+        "adm0_pcode"
+      ],
+      "geometry_types": {
+        "Polygon": 1
+      },
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      },
+      "unique_names": 1
+    },
+    "cod_admin2_em": {
+      "feature_count": 164,
+      "fields": [
+        "adm0_name",
+        "adm0_name1",
+        "adm0_name2",
+        "adm0_name3",
+        "adm0_pcode",
+        "adm1_name",
+        "adm1_name1",
+        "adm1_name2",
+        "adm1_name3",
+        "adm1_pcode",
+        "adm2_name",
+        "adm2_name1",
+        "adm2_name2",
+        "adm2_name3",
+        "adm2_pcode",
+        "area_sqkm",
+        "lang",
+        "lang1",
+        "lang2",
+        "lang3",
+        "valid_on",
+        "valid_to",
+        "version"
+      ],
+      "pcode_fields": [
+        "adm0_pcode",
+        "adm1_pcode",
+        "adm2_pcode"
+      ],
+      "geometry_types": {
+        "Polygon": 150,
+        "MultiPolygon": 14
+      },
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      },
+      "unique_names": 190
+    },
+    "cod_admin2": {
+      "feature_count": 164,
+      "fields": [
+        "adm0_name",
+        "adm0_name1",
+        "adm0_name2",
+        "adm0_name3",
+        "adm0_pcode",
+        "adm1_name",
+        "adm1_name1",
+        "adm1_name2",
+        "adm1_name3",
+        "adm1_pcode",
+        "adm2_name",
+        "adm2_name1",
+        "adm2_name2",
+        "adm2_name3",
+        "adm2_pcode",
+        "area_sqkm",
+        "lang",
+        "lang1",
+        "lang2",
+        "lang3",
+        "valid_on",
+        "valid_to",
+        "version"
+      ],
+      "pcode_fields": [
+        "adm0_pcode",
+        "adm1_pcode",
+        "adm2_pcode"
+      ],
+      "geometry_types": {
+        "Polygon": 152,
+        "MultiPolygon": 12
+      },
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      },
+      "unique_names": 190
+    },
+    "cod_admin3": {
+      "feature_count": 519,
+      "fields": [
+        "adm0_name",
+        "adm0_name1",
+        "adm0_name2",
+        "adm0_name3",
+        "adm0_pcode",
+        "adm1_name",
+        "adm1_name1",
+        "adm1_name2",
+        "adm1_name3",
+        "adm1_pcode",
+        "adm2_name",
+        "adm2_name1",
+        "adm2_name2",
+        "adm2_name3",
+        "adm2_pcode",
+        "adm3_name",
+        "adm3_name1",
+        "adm3_name2",
+        "adm3_name3",
+        "adm3_pcode",
+        "area_sqkm",
+        "lang",
+        "lang1",
+        "lang2",
+        "lang3",
+        "valid_on",
+        "valid_to",
+        "version"
+      ],
+      "pcode_fields": [
+        "adm0_pcode",
+        "adm1_pcode",
+        "adm2_pcode",
+        "adm3_pcode"
+      ],
+      "geometry_types": {
+        "Polygon": 496,
+        "MultiPolygon": 23
+      },
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      },
+      "unique_names": 559
+    }
+  },
+  "tabular": {
+    "sheets": [
+      {
+        "name": "cod_admin0",
+        "header": [
+          "iso2",
+          "iso3",
+          "adm0_name",
+          "adm0_name1",
+          "adm0_name2",
+          "adm0_name3",
+          "adm0_pcode",
+          "valid_on",
+          "valid_to",
+          "version",
+          "area_sqkm",
+          "lang",
+          "lang1",
+          "lang2",
+          "lang3"
+        ]
+      },
+      {
+        "name": "cod_admin0_em",
+        "header": [
+          "iso2",
+          "iso3",
+          "adm0_name",
+          "adm0_name1",
+          "adm0_name2",
+          "adm0_name3",
+          "adm0_pcode",
+          "valid_on",
+          "valid_to",
+          "area_sqkm",
+          "version",
+          "lang",
+          "lang1",
+          "lang2",
+          "lang3"
+        ]
+      },
+      {
+        "name": "cod_admin1",
+        "header": [
+          "adm1_name",
+          "adm1_name1",
+          "adm1_name2",
+          "adm1_name3",
+          "adm1_pcode",
+          "adm0_name",
+          "adm0_name1",
+          "adm0_name2",
+          "adm0_name3",
+          "adm0_pcode",
+          "valid_on",
+          "valid_to",
+          "area_sqkm",
+          "version",
+          "lang",
+          "lang1",
+          "lang2",
+          "lang3"
+        ]
+      },
+      {
+        "name": "cod_admin1_em",
+        "header": [
+          "adm1_name",
+          "adm1_name1",
+          "adm1_name2",
+          "adm1_name3",
+          "adm1_pcode",
+          "adm0_name",
+          "adm0_name1",
+          "adm0_name2",
+          "adm0_name3",
+          "adm0_pcode",
+          "valid_on",
+          "valid_to",
+          "area_sqkm",
+          "version",
+          "lang",
+          "lang1",
+          "lang2",
+          "lang3"
+        ]
+      },
+      {
+        "name": "cod_admin2",
+        "header": [
+          "adm2_name",
+          "adm2_name1",
+          "adm2_name2",
+          "adm2_name3",
+          "adm2_pcode",
+          "adm1_name",
+          "adm1_name1",
+          "adm1_name2",
+          "adm1_name3",
+          "adm1_pcode",
+          "adm0_name",
+          "adm0_name1",
+          "adm0_name2",
+          "adm0_name3",
+          "adm0_pcode",
+          "valid_on",
+          "valid_to",
+          "area_sqkm",
+          "version",
+          "lang",
+          "lang1",
+          "lang2",
+          "lang3"
+        ]
+      },
+      {
+        "name": "cod_admin2_em",
+        "header": [
+          "adm2_name",
+          "adm2_name1",
+          "adm2_name2",
+          "adm2_name3",
+          "adm2_pcode",
+          "adm1_name",
+          "adm1_name1",
+          "adm1_name2",
+          "adm1_name3",
+          "adm1_pcode",
+          "adm0_name",
+          "adm0_name1",
+          "adm0_name2",
+          "adm0_name3",
+          "adm0_pcode",
+          "valid_on",
+          "valid_to",
+          "area_sqkm",
+          "version",
+          "lang",
+          "lang1",
+          "lang2",
+          "lang3"
+        ]
+      },
+      {
+        "name": "cod_admin3",
+        "header": [
+          "adm3_name",
+          "adm3_name1",
+          "adm3_name2",
+          "adm3_name3",
+          "adm3_pcode",
+          "adm2_name",
+          "adm2_name1",
+          "adm2_name2",
+          "adm2_name3",
+          "adm2_pcode",
+          "adm1_name",
+          "adm1_name1",
+          "adm1_name2",
+          "adm1_name3",
+          "adm1_pcode",
+          "adm0_name",
+          "adm0_name1",
+          "adm0_name2",
+          "adm0_name3",
+          "adm0_pcode",
+          "valid_on",
+          "valid_to",
+          "area_sqkm",
+          "version",
+          "lang",
+          "lang1",
+          "lang2",
+          "lang3"
+        ]
+      },
+      {
+        "name": "cod_admin3_em",
+        "header": [
+          "adm3_name",
+          "adm3_name1",
+          "adm3_name2",
+          "adm3_name3",
+          "adm3_pcode",
+          "adm2_name",
+          "adm2_name1",
+          "adm2_name2",
+          "adm2_name3",
+          "adm2_pcode",
+          "adm1_name",
+          "adm1_name1",
+          "adm1_name2",
+          "adm1_name3",
+          "adm1_pcode",
+          "adm0_name",
+          "adm0_name1",
+          "adm0_name2",
+          "adm0_name3",
+          "adm0_pcode",
+          "valid_on",
+          "valid_to",
+          "area_sqkm",
+          "version",
+          "lang",
+          "lang1",
+          "lang2",
+          "lang3"
+        ]
+      },
+      {
+        "name": "cod_admincapitals",
+        "header": [
+          "adm_p_lvl",
+          "name",
+          "name_1",
+          "name_2",
+          "name_3",
+          "loc_pcode",
+          "x_coord",
+          "y_coord",
+          "adm3_name",
+          "adm3_name1",
+          "adm3_name2",
+          "adm3_name3",
+          "adm3_pcode",
+          "adm2_name",
+          "adm2_name1",
+          "adm2_name2",
+          "adm2_name3",
+          "adm2_pcode",
+          "adm1_name",
+          "adm1_name1",
+          "adm1_name2",
+          "adm1_name3",
+          "adm1_pcode",
+          "adm0_name",
+          "adm0_name1",
+          "adm0_name2",
+          "adm0_name3",
+          "adm0_pcode",
+          "valid_on",
+          "valid_to",
+          "version",
+          "name_lng",
+          "name_lng1",
+          "name_lng2",
+          "name_lng3"
+        ]
+      },
+      {
+        "name": "cod_adminlines",
+        "header": [
+          "adm_level",
+          "name",
+          "valid_on",
+          "valid_to",
+          "version",
+          "right_pcod",
+          "left_pcod"
+        ]
+      },
+      {
+        "name": "cod_adminpoints",
+        "header": [
+          "admin_level",
+          "name",
+          "name1",
+          "name2",
+          "name3",
+          "x_coord",
+          "y_coord",
+          "adm4_name",
+          "adm4_name1",
+          "adm4_name2",
+          "adm4_name3",
+          "adm4_pcode",
+          "adm3_name",
+          "adm3_name1",
+          "adm3_name2",
+          "adm3_name3",
+          "adm3_pcode",
+          "adm2_name",
+          "adm2_name1",
+          "adm2_name2",
+          "adm2_name3",
+          "adm2_pcode",
+          "adm1_name",
+          "adm1_name1",
+          "adm1_name2",
+          "adm1_name3",
+          "adm1_pcode",
+          "adm0_name",
+          "adm0_name1",
+          "adm0_name2",
+          "adm0_name3",
+          "adm0_pcode",
+          "valid_on",
+          "valid_to",
+          "version",
+          "lang",
+          "lang1",
+          "lang2",
+          "lang3"
+        ]
+      }
+    ]
+  },
+  "comparison": {
+    "fdsu_province_matches": 26,
+    "fdsu_province_missing_in_hdx": [
+      "FUNA",
+      "LUBUMBASHI",
+      "LUKUNGA",
+      "MONT AMBA",
+      "TSHANGU"
+    ],
+    "hdx_province_missing_in_fdsu": [
+      "REPUBLIQUE DEMOCRATIQUE DU CONGO"
+    ],
+    "fdsu_local_matches_admin2_or_admin3": 175,
+    "kmz_zone_matches": 196,
+    "kmz_collectivites_matches": 87,
+    "hdx_unique_names": 575,
+    "hdx_unique_pcodes": 1256,
+    "fdsu_provinces": 31,
+    "fdsu_local": 233,
+    "kmz_zones": 205,
+    "kmz_collectivites": 749,
+    "sample_hdx_provinces": [
+      "BAS UELE",
+      "EQUATEUR",
+      "HAUT KATANGA",
+      "HAUT LOMAMI",
+      "HAUT UELE",
+      "ITURI",
+      "KASAI",
+      "KASAI CENTRAL",
+      "KASAI ORIENTAL",
+      "KINSHASA",
+      "KONGO CENTRAL",
+      "KWANGO",
+      "KWILU",
+      "LOMAMI",
+      "LUALABA"
+    ]
+  }
+}

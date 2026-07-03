@@ -1,5 +1,8 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.exc import IntegrityError
 
 from api.middlewares.exceptions import (
@@ -39,6 +42,9 @@ app.add_middleware(
 
 app.add_exception_handler(IntegrityError, sqlalchemy_integrity_error_handler)
 app.add_exception_handler(ValueError, value_error_handler)
+
+geodata_dir = Path(__file__).resolve().parent.parent / "data" / "generated"
+app.mount("/geodata", StaticFiles(directory=geodata_dir), name="geodata")
 
 app.include_router(provinces.router, prefix="/provinces", tags=["Provinces"])
 app.include_router(territoires.router, prefix="/territoires", tags=["Territoires"])

@@ -1,0 +1,3818 @@
+{
+  "source_file": "data\\raw\\collectivites.kmz",
+  "kml_document": "doc.kml",
+  "feature_count": 761,
+  "classified_counts": {
+    "Province": 761
+  },
+  "missing_geometries": 0,
+  "parsed_descriptions": 737,
+  "warnings": [],
+  "details": [
+    {
+      "name": "Ngiri",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Banga-Kungu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Basankusu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Waka-Bokeka",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Gombalo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lusanganya",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mampoko",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Dianga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bolomba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Busira",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bokatola",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Duali",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Eungu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lac Ntomba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ekonda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Elanga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Banunu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lusakani",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mpama",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bangala",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mweko",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ndobo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Djamba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bowase",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Nguya",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mbari",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Banza",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bolingo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mongala-Molima",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ngombe-Doko de Lekimi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ndolo-Liboko",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bomboma",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Dongo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lua",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mwanda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Songo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Libenge-Nord",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Libenge-Centre",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Libenge-Sud",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Otto-Banza",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mobayi-Mbongo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Abumombazi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wapinda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yakoma",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bodangabo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Businga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Karawa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bosobolo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bili",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bandas",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ngombe-Doko",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ngombe-Mobangi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mongala-Motima",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Itimbiri",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yandongi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Molua",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Loeka",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Monzamboli",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Banda-Yowa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bongandanga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Boso-Melo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Boso-Djanoa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Boso-Simba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wini",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Befumbo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Duale",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lomako",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Djolu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lingomo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yala",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Loile",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lokina",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tshuapa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lofome",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tumbenga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lolaka",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luay",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Nkole",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luando",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Loombo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Monkoto",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bianga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Nongo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Djera",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lofoy",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bolua",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bangelema",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bomenge",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lukutu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mobango Itimbiri",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Turumbu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yaliwasa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yamandundu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wahanga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Baboro",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Baboa de Kole",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bamanga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Banalia Bangba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Popoy",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bafwandaka",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakumu d'Angumu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakundumu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Barumbi-Opienge",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bekeni-Kondolole",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bemili",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Walengola-Baleka",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakumu-Mangongo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakumu-Mandombe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakumu-d'Obiatuku",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakumu-Kilinga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Walengola Lilo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Walengola Lowa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kirundu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mituku-Bamoya",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mituku-Basikate",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Walengola-Babira",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Balinga-Lindja",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yomale",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yawende-Loolo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yeyango",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Iye",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yalingo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yapandu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mongo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kembe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tooli",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lobaie",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lokombe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bolomboki",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kombe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lueta",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bambelota",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Baluolambila",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Turumbu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yalikoka-Mboso",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yawembe-Basoa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Liutua",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yalikandja-Yanongo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bolinga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bosoku",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Buma",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mombesa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yalihila",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yaokandja",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Barisi-Mongingita",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bayeu-Bogbama",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bayeu-Bogongia",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mobati",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Monganzolo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Nguru",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Avuru-Gatanga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Avuru-Duma",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mongwandi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mabinza",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Gbandi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bondongola",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yoko",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mobati-Boyele",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Biamange",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Boso",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Deni",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Duaru",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Gama",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Gaya",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Goa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kasa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mobenge-Mondila",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Soa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ezo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ngindo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mopoy",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Sasa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakete",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bokapo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bokiba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bulungwa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Makere I",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Makere II",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakere Bakete",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mange",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mondwangali",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Babena",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakengaie-Avuru",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Gamu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kipate",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Komendeni",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mabanga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Madi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Malele",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ngbaradi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Soronga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Zune",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Abarambo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kembisa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Azanga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mayogo-Mabozo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mayogo-Magbaie",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mboli",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Medje-Mango",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mongo-Masi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ndey",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Boemi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kereboro",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kopa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mangbele",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mangbetu-Mabisanga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Manziga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Okondo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Niangara",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Malingindu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ndolomo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wando",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Logo-Ogambi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Logo-Lolia",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Dongo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Logo-Doka",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Logo-Obeleba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mondo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Logo-Bagela",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kakwa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Andikofa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Andobi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ateru",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Gombari",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kebo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kibali",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mangbutu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Walese",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mari-Minza",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bafwagada",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mabudu-Malika-Baberu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Maha",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Makoda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Malamba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bafwakoy",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Balika-Toriko",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Malika",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mangbele",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Timoniko",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wadimbisa-Mabudu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mongama",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kangara",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bateke-Nord",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bateke-Sud/TWA",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Baboma-Nord",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lokolama",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lukenie",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Badia",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Batere",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kemba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luabu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mfimi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lutoy",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Basengele",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bolia",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Inongo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Beronge",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Pendjwa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Entre Lukenie-Lokoro Nkaw",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Benga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lubisi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Assolongo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lula-Lumene",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Boma-Bungu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "La Mer",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tshela-Banga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Loango",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lubolo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Nzobe-Luzi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bula-Naku",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Nganda Sundi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lubuzi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Maduda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bundi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lufu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Sumbi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Isangila",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mbavu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Fubu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kakongo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Patu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tsanga-Sud",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tsundi-Sud",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Boko",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Gombe Matadi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lunzadi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Gombe-Sud",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kivulu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kwilu-Ngongo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ntimansi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bamboma",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luima",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Palabala",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wombo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kimpese",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Balari",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kenge",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kimbanza",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kimumba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kinkenge",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kivunda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mbanza Mona",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mbanza-Mwembe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mbanza Ngoyo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mongo Luala",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luidi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mfidi Malele",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mfuma Kibambi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ngeba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ngufu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wungu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kasangulu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luila",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lukunga-Mputu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Dwe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bindungi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kilemba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kisunzu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kondo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kobo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lozo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lukamba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mudikalunga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mungindu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Gungu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ngudi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Musanga-Idiofa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kalanganda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kanga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kapia",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kipuku",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Madimbi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mateko",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Sedzo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yasa-Lokwa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kandale",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kilamba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kinzenga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kinzenzengo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kibolo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kitoy",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Masi-Manimba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Pay-Kongila",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mokamo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mosango",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Sungu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kidzweme",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kwango-Kasai",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kwilu-Ntobere",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Banga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Belo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bulwem",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Manzasay",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wamba-Fatundu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Imbongo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kilunda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kipuka",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kwenge",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kwilu-Kimbata",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luniungu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mikwi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Niadi Nkara",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Nko",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ganeketi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lobo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mukoso",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Feshi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bangu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bindu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Muloshi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mwamushiko",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mwendjila",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kulindji",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kasongo-Lunda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kasa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kibunda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kingulu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kizamba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mawanga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Panzi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Swa Tenda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lufuna",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yonso",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Popokabaka",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kolokoso",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Dinga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Palende-Nord",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bukanga-Lonzo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mosamba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mont Ngafula",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kimbaseke",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Nsele",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Maluku",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kisenso",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ndjili",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Matete",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lemba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ngaba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Makala",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bumbu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Selembao",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ngiri-Ngiri",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kasa Vubu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kalamu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kintambo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bandalungwa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Masina",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Limete",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ngaliema",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lingwala",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kinshasa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Barumbu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Gombe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mwant-Yav",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mbako",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lumanga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Sakundundu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Muteba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tshipao",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tshibamba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Samutoma",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kayembe-Mukulu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ndumba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lulua-Lukoshi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mutanda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luena",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tshisangana",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Saluseke",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mwatshisenge",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mwandakala",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Muyeye",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mwana-Muadi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mulumbu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mazangule",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bayeke",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mukuleshi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luilu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lufupa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lualaba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kapamayi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kinkondja",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kibanda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kabondo Dianda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Butumba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mwanza",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Badia",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Nkulu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Museka",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mulongo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kayumba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Nord-Baluba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kayamba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kabongo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mutombo-Mukulu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kinda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kasongo Nyembo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kayabala",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Manda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Nganye",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kansabala",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Rutuku",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lubunda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Nord-Lukuga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Sud-Lukuga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mambwe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bena-Nyembo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yambula",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Nkuvu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Munono",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Basonge",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bayashi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Baluba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lukuswa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luela-Luvunguye",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Niemba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakongolo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luvua",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kyofwe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kamalondo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kiluba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Benze",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bena-Kamanya",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bena-Tanga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tumbwe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luapula",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Moero",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Pweto",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Sources du fleuve Congo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lufira",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Basanga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mwenge",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kiona-Nzini",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Banweshi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Balomotwa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kiona-Ngoie",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kisamamba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kafira",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakunda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Baushi-Mwenda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Balamba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Balala",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kinyama",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kaponda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bukanda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bahemba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wagenia",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Basonge 2 Mweho",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Basonge 1",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wazula",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bahombo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lulindi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mamba-Kasenga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Benia-Samba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Babuyu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Nonda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Saramabila",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ulindi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Baleka",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Balanga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Obokole",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bitule",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakongola",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bahina",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ankutshu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wamasa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakwange",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Aluba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wazimba wa Mulu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wazimba-Maringa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ikama",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Matapa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Babene",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wakabango",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kailo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wasongola",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bangengele",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ambwe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Babira Bakwame",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Beia",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wakabango",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ngandja",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mutambala",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Rubenga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lulenge",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tanganyika",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bavira",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wamuzima",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Plaine de la Ruzizi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luindi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luwindja",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Burhinyi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Basile",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kaziba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bafulero",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ngweshe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Nindja",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kabare",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakisi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Buloho",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Buhavu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Itombwe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ntambuka",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Osso",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bashali",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bwito",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bwisha",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Watalinga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ruwenzori",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Beni",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bashu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Batangi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Baswaga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bapere",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Katoyi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakano",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bahunde",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wanianga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bamate",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bukumu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Zaki",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Otso",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Nio-Kamule",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ndo-Okebo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kaliko-Omi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kakwa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Aluru",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "War-Palara",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Walendu Watsi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Wangongo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Pandoro",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mokambo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Djukoth 1 & 2",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Anghal 1 & 2",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Alur-Djuganda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bahema-Badjere",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ndo-Okebo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mabendi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Walendu-Tatsi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Walendu-Djatsi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Walendu -Pitsi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bahema-Banywagi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bahema Nord",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mambisa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Baniari de Kilo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Walese-Karo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Walese-Dese",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mambasa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bandaka",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bombo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakwanza",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Babila-Babombi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Walese Vonkutu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mobala",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Baniari-Tchabi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bahema Mitego",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bahema d'Irumu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bahema-Boga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bahema Sud",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Walendu Bindi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Basili",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Baboa-Bakoe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Babelebe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Andisoma",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bahema",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Batetela",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Basonge",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Entre Lubi Kunduye",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Entre Kunduye Mal",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lubi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Sankuru",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Pania-Mutombo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kashindi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bankutshu-Lukenie",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bankutshu-Dibele",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Batetela-Dibele",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Atshuru",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ohindo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Basho",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bahamba II",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bahamba I",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakela",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Okutu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Batetela-Lomela",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Djonga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ngandu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Watambulu-Nord",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lukembe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ukulungu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ngandu-Wuna",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Watambulu-Sud",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Basonge",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mondja-Ngandu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ndjovu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Batetela Lukenie",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lufungu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ahamba-Mange",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lutshimba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Olemba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Nambelu-Luhembe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Vungi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Watambulu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kondo-Tshumbe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kanutshina",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mulundu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kanda-Kanda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Katshisungu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kamiji",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luekeshi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Gandajika",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Baluba-Shankadi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tshiyamba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakwa-Mulumba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kalambayi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kabinda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ludimbi-Lukula",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lufubu-Lomami",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lukashi-Lualu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Baluba-Lubangule",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Vunayi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bekalebwe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kisengwa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lubao",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tshofa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kalelu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kakangayi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tshilundu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tshijiba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Movo-Nkatshia",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lac Munkamba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ndomba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kalela",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mpemba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kabala",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mudiba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mukumbi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mulenda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Baluba-Lubilanji",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mutuayi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tshitolo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Nsangu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lukalaba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tshipuka",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kampatshi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kalondji-Sud",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Dibanda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Dibataie",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kamwandu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kasangidi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tshishilu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bambaie",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bushimaie",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kabalekese",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kalunga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lueta",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lusanza",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Loatshi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bulungu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kavula",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Miao",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Muswaswa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Matamba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kafuba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tshitadi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bashi-Mboie",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bena-Ngoshi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Diofwa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lombelo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lusonge",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bena-Mamba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Muanza-Ngoma",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tshibote",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tshibungu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lubi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lubudi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kunduyi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mashala",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lukibu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luebo-Lulengele",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luebo-Wedi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luebo-Kabambaie",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ndjoko-Punda",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Luebo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kasadi-Sadi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakwa Nyambi",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kasai-Kabambaie",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Tshikapa",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kasai Lunyeka",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kasai-Longatshimo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lovua-Longatshimo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Lovua-Lushiku",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bapende",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Kamonia",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Basongo",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Malu-Malu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Mapangu",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Sud-Banga",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Bakuba",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Ndengese-Ikolombe",
+      "entity_type": "Province",
+      "confidence": 0.55
+    },
+    {
+      "name": "Yaelima",
+      "entity_type": "Province",
+      "confidence": 0.55
+    }
+  ]
+}

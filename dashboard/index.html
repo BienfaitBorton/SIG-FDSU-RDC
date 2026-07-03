@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIG-FDSU RDC - Interface de gestion</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-o9N1j7kGkva0nN1N8px8r+3J6PA6kQY+fgGEA5p6L2E=" crossorigin="" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">FDSU</div>
+        <div>
+          <p class="brand-title">SIG-FDSU RDC</p>
+          <p class="brand-subtitle">Interface de pilotage</p>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-module="dashboard">
+          <span class="nav-icon">🏠</span>
+          <span>Tableau de bord</span>
+        </button>
+        <button class="nav-item" data-module="cartographie">
+          <span class="nav-icon">🗺️</span>
+          <span>Cartographie</span>
+        </button>
+        <button class="nav-item" data-module="referentiel">
+          <span class="nav-icon">🧭</span>
+          <span>Référentiel administratif</span>
+        </button>
+        <button class="nav-item" data-module="gestion_referentiels">
+          <span class="nav-icon">🗂️</span>
+          <span>Gestion des Référentiels</span>
+        </button>
+        <button class="nav-item" data-module="sites">
+          <span class="nav-icon">📍</span>
+          <span>Sites FDSU</span>
+        </button>
+        <button class="nav-item" data-module="import">
+          <span class="nav-icon">⬆️</span>
+          <span>Import</span>
+        </button>
+        <button class="nav-item" data-module="export">
+          <span class="nav-icon">⬇️</span>
+          <span>Export</span>
+        </button>
+        <button class="nav-item" data-module="statistiques">
+          <span class="nav-icon">📊</span>
+          <span>Statistiques</span>
+        </button>
+        <button class="nav-item" data-module="utilisateurs">
+          <span class="nav-icon">👥</span>
+          <span>Utilisateurs</span>
+        </button>
+        <button class="nav-item" data-module="parametres">
+          <span class="nav-icon">⚙️</span>
+          <span>Paramètres</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-status">
+          <span class="status-label">Identité</span>
+          <strong>FDSU RDC</strong>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div>
+            <p class="page-context">SIG-FDSU RDC • Centre opérationnel</p>
+            <h1 class="page-title">Tableau de bord</h1>
+          </div>
+          <span class="topbar-pill">Version 1.0</span>
+        </div>
+
+        <div class="topbar-actions">
+          <div class="search-field">
+            <input type="search" placeholder="Rechercher un module..." aria-label="Recherche" />
+            <span class="search-icon">🔍</span>
+          </div>
+          <button class="notification-button" aria-label="Notifications">🔔</button>
+          <div class="profile-card">
+            <span class="profile-avatar">RD</span>
+            <div>
+              <p>Administrateur</p>
+              <small>En ligne</small>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="content-area">
+        <div class="dashboard-grid" id="dashboard-panel" data-module="dashboard">
+          <div class="dashboard-main">
+            <div class="summary-grid">
+              <article class="summary-card">
+                <p class="summary-label">Provinces</p>
+                <p class="summary-value" id="stat-provinces">—</p>
+              </article>
+              <article class="summary-card">
+                <p class="summary-label">Territoires</p>
+                <p class="summary-value" id="stat-territoires">—</p>
+              </article>
+              <article class="summary-card">
+                <p class="summary-label">Collectivités</p>
+                <p class="summary-value" id="stat-collectivites">—</p>
+              </article>
+              <article class="summary-card">
+                <p class="summary-label">Groupements</p>
+                <p class="summary-value" id="stat-groupements">—</p>
+              </article>
+              <article class="summary-card">
+                <p class="summary-label">Villages</p>
+                <p class="summary-value" id="stat-villages">—</p>
+              </article>
+              <article class="summary-card">
+                <p class="summary-label">Sites FDSU</p>
+                <p class="summary-value" id="stat-sites">—</p>
+              </article>
+              <article class="summary-card">
+                <p class="summary-label">Missions</p>
+                <p class="summary-value" id="stat-missions">—</p>
+              </article>
+              <article class="summary-card">
+                <p class="summary-label">Utilisateurs</p>
+                <p class="summary-value" id="stat-utilisateurs">—</p>
+              </article>
+            </div>
+
+            <article class="map-card">
+              <div class="panel-header">
+                <div>
+                  <p class="panel-label">Cartographie nationale</p>
+                  <h2>Centre de pilotage</h2>
+                </div>
+                <span class="panel-badge">À venir</span>
+              </div>
+              <div class="map-placeholder">
+                <div class="map-hero">Carte nationale</div>
+                <p>Réserve l’espace principal pour la carte nationale, les couches et les alertes géospatiales.</p>
+              </div>
+            </article>
+          </div>
+
+          <aside class="dashboard-right-panel">
+            <div class="status-card">
+              <div class="panel-header">
+                <div>
+                  <p class="panel-label">État global</p>
+                  <h3>Statut API & base</h3>
+                </div>
+              </div>
+              <ul class="status-list">
+                <li><span>API</span><strong id="api-status">Chargement...</strong></li>
+                <li><span>Base de données</span><strong id="db-status">Chargement...</strong></li>
+                <li><span>Dernière synchronisation</span><strong id="db-sync">—</strong></li>
+              </ul>
+            </div>
+
+            <div class="zone-card">
+              <div class="panel-header">
+                <div>
+                  <p class="panel-label">Zones FDSU</p>
+                  <h3>Classification métier</h3>
+                </div>
+              </div>
+              <ul class="zone-list">
+                <li class="zone-item zone-nd"><span>ND</span><strong id="zone-ND">0</strong></li>
+                <li class="zone-item zone-sd"><span>SD</span><strong id="zone-SD">0</strong></li>
+                <li class="zone-item zone-ce"><span>CE</span><strong id="zone-CE">0</strong></li>
+                <li class="zone-item zone-ot"><span>OT</span><strong id="zone-OT">0</strong></li>
+                <li class="zone-item zone-et"><span>ET</span><strong id="zone-ET">0</strong></li>
+              </ul>
+            </div>
+
+            <div class="status-card secondary-card">
+              <div class="panel-header">
+                <div>
+                  <p class="panel-label">Import récent</p>
+                  <h3>Dernier import</h3>
+                </div>
+              </div>
+              <p class="status-card-text" id="last-import">Historique des imports non exposé par l’API.</p>
+            </div>
+            <div class="status-card secondary-card">
+              <div class="panel-header">
+                <div>
+                  <p class="panel-label">KPI</p>
+                  <h3>Performance</h3>
+                </div>
+              </div>
+              <p class="status-card-text" id="kpi-summary">Données KPI non disponibles.</p>
+            </div>
+          </aside>
+        </div>
+
+        <div class="module-panel hidden" id="cartographie-panel" data-module="cartographie">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Cartographie</p>
+              <h2>Module Cartographie</h2>
+            </div>
+            <span class="panel-badge">Architecturé</span>
+          </div>
+
+          <div class="cartography-layout">
+            <section class="cartography-main">
+              <div class="map-toolbar">
+                <div>
+                  <button id="zoom-auto" class="primary-button">Zoom automatique</button>
+                </div>
+                <div class="legend-card">
+                  <p class="legend-title">Légende Zones FDSU</p>
+                  <ul class="legend-list">
+                    <li><span class="legend-swatch legend-nd"></span>ND</li>
+                    <li><span class="legend-swatch legend-ot"></span>OT</li>
+                    <li><span class="legend-swatch legend-ce"></span>CE</li>
+                    <li><span class="legend-swatch legend-sd"></span>SD</li>
+                    <li><span class="legend-swatch legend-et"></span>ET</li>
+                  </ul>
+                </div>
+              </div>
+              <p id="zones-message" class="cartography-note" aria-live="polite"></p>
+              <div id="map" class="map-canvas"></div>
+            </section>
+
+            <aside class="cartography-sidebar">
+              <div class="layers-panel">
+                <div class="panel-header">
+                  <div>
+                    <p class="panel-label">Couches</p>
+                    <h3>Layers</h3>
+                  </div>
+                </div>
+                <ul class="layer-list" id="layer-list">
+                  <li><label><input type="checkbox" data-layer="zones" /> Zones FDSU</label></li>
+                  <li><label><input type="checkbox" data-layer="collectivites" /> Collectivités</label></li>
+                  <li><label><input type="checkbox" data-layer="provinces" /> Provinces</label></li>
+                  <li><label><input type="checkbox" data-layer="territoires" /> Territoires</label></li>
+                  <li><label><input type="checkbox" data-layer="villes" /> Villes</label></li>
+                  <li><label><input type="checkbox" data-layer="communes" /> Communes</label></li>
+                  <li><label><input type="checkbox" data-layer="secteurs" /> Secteurs</label></li>
+                  <li><label><input type="checkbox" data-layer="chefferies" /> Chefferies</label></li>
+                  <li><label><input type="checkbox" data-layer="groupements" /> Groupements</label></li>
+                  <li><label><input type="checkbox" data-layer="villages" /> Villages</label></li>
+                  <li><label><input type="checkbox" data-layer="sites" /> Sites FDSU</label></li>
+                  <li><label><input type="checkbox" data-layer="missions" /> Missions</label></li>
+                </ul>
+              </div>
+
+              <div class="info-panel carto-info-panel">
+                <div class="panel-header">
+                  <div>
+                    <p class="panel-label">Informations</p>
+                    <h3>Objet sélectionné</h3>
+                  </div>
+                </div>
+                <div class="info-body" id="carto-info">
+                  <p>Sélectionnez un objet sur la carte lorsque des données seront disponibles.</p>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <div class="module-panel hidden" id="referentiel-panel" data-module="referentiel">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Référentiel administratif</p>
+              <h2>Provinces</h2>
+            </div>
+            <span class="panel-badge">Module actif</span>
+          </div>
+
+          <div class="referentiel-content">
+            <section class="referentiel-main">
+              <div class="table-toolbar">
+                <div>
+                  <h3>Liste des provinces</h3>
+                  <p class="toolbar-subtitle">Recherche, tri et sélection des provinces du référentiel administratif.</p>
+                </div>
+                <div>
+                  <input id="province-search" type="search" placeholder="Rechercher une province..." aria-label="Recherche de province" />
+                </div>
+              </div>
+
+              <div class="table-frame">
+                <table class="province-table">
+                  <thead>
+                    <tr>
+                      <th><button type="button" data-key="id">ID</button></th>
+                      <th><button type="button" data-key="nom">Nom</button></th>
+                      <th><button type="button" data-key="code">Code</button></th>
+                      <th><button type="button" data-key="zone">Zone</button></th>
+                      <th><button type="button" data-key="chef_lieu">Chef-lieu</button></th>
+                      <th><button type="button" data-key="population">Population</button></th>
+                      <th><button type="button" data-key="superficie">Superficie</button></th>
+                    </tr>
+                  </thead>
+                  <tbody id="province-table-body">
+                    <tr><td colspan="7" class="empty-state">Chargement des provinces...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <aside class="referentiel-detail-panel">
+              <div class="detail-card">
+                <div class="detail-card-header">
+                  <div>
+                    <p class="panel-label">Fiche détaillée</p>
+                    <h3>Province sélectionnée</h3>
+                  </div>
+                </div>
+                <div class="detail-body" id="province-detail">
+                  <div class="empty-detail">Sélectionnez une province pour afficher les détails.</div>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <div class="module-panel hidden" id="gestion-referentiels-panel" data-module="gestion_referentiels">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Gestion des Référentiels</p>
+              <h2>Centre de gouvernance des données</h2>
+            </div>
+            <span class="panel-badge">Architecture prête</span>
+          </div>
+
+          <section class="governance-kpis" id="governance-kpis"></section>
+
+          <section class="normalization-hub">
+            <div class="panel-header normalization-hub-header">
+              <div>
+                <p class="panel-label">Moteur de normalisation</p>
+                <h3>StagingEntity unifie et restitution des analyses</h3>
+              </div>
+              <span class="panel-badge">Sans écriture BD</span>
+            </div>
+
+            <div class="normalization-summary-grid" id="normalization-summary-grid"></div>
+
+            <div class="normalization-hub-layout">
+              <article class="normalization-statistics-card">
+                <div class="panel-header compact-panel-header">
+                  <div>
+                    <p class="panel-label">Statistiques</p>
+                    <h3>Par niveau administratif</h3>
+                  </div>
+                </div>
+                <div id="normalization-level-stats" class="normalization-level-stats"></div>
+              </article>
+
+              <article class="normalization-report-card">
+                <div class="panel-header compact-panel-header">
+                  <div>
+                    <p class="panel-label">Rapport</p>
+                    <h3>Sortie du moteur</h3>
+                  </div>
+                </div>
+                <pre id="normalization-report-preview" class="normalization-report-preview"></pre>
+              </article>
+            </div>
+          </section>
+
+          <section class="governance-shell">
+            <div class="governance-tabs" id="governance-tabs" role="tablist" aria-label="Onglets de gouvernance"></div>
+
+            <div class="governance-main-layout">
+              <section class="governance-main" aria-live="polite">
+                <div class="governance-toolbar">
+                  <div class="governance-search-wrap">
+                    <label for="governance-search" class="visually-hidden">Recherche gouvernance</label>
+                    <input id="governance-search" type="search" placeholder="Rechercher dans l'onglet actif..." />
+                  </div>
+                  <div class="governance-filters">
+                    <label for="governance-status-filter" class="visually-hidden">Filtre statut</label>
+                    <select id="governance-status-filter">
+                      <option value="">Tous les statuts</option>
+                    </select>
+                    <label for="governance-page-size" class="visually-hidden">Taille de page</label>
+                    <select id="governance-page-size">
+                      <option value="10">10 / page</option>
+                      <option value="25">25 / page</option>
+                      <option value="50">50 / page</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="governance-actions" id="governance-actions"></div>
+
+                <div class="governance-state-wrap">
+                  <div class="governance-state hidden" data-state="loading">
+                    <p>Chargement des données du référentiel...</p>
+                  </div>
+                  <div class="governance-state" data-state="empty">
+                    <p>Aucune donnée connectée pour cet onglet.</p>
+                  </div>
+                  <div class="governance-state hidden" data-state="error">
+                    <p>Erreur de connexion à la source de données.</p>
+                  </div>
+                  <div class="governance-state hidden" data-state="success">
+                    <p>Données chargées avec succès.</p>
+                  </div>
+                </div>
+
+                <div class="table-frame governance-table-frame">
+                  <table class="governance-table" id="governance-table">
+                    <thead id="governance-table-head"></thead>
+                    <tbody id="governance-table-body"></tbody>
+                  </table>
+                </div>
+
+                <div class="governance-pagination">
+                  <button type="button" id="governance-prev" disabled>Précédent</button>
+                  <p id="governance-page-info">Page 1 / 1</p>
+                  <button type="button" id="governance-next" disabled>Suivant</button>
+                </div>
+              </section>
+
+              <aside class="governance-detail-panel" id="governance-detail-panel">
+                <div class="detail-card">
+                  <div class="detail-card-header">
+                    <div>
+                      <p class="panel-label">Détails</p>
+                      <h3 id="governance-detail-title">Aucun élément sélectionné</h3>
+                    </div>
+                  </div>
+                  <div class="detail-body" id="governance-detail-body">
+                    <div class="empty-detail">Sélectionnez une ligne pour afficher la fiche détaillée.</div>
+                  </div>
+                </div>
+
+                <div class="detail-card">
+                  <div class="detail-card-header">
+                    <div>
+                      <p class="panel-label">Workflow publication</p>
+                      <h3>Cycle de vie des données</h3>
+                    </div>
+                  </div>
+                  <div class="publication-flow" id="publication-flow"></div>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-panel hidden" id="sites-panel" data-module="sites">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Sites FDSU</p>
+              <h2>Inventaire des sites</h2>
+            </div>
+            <span class="panel-badge">Bientôt</span>
+          </div>
+          <p>Exploration et synthèse des sites FDSU dans le territoire national.</p>
+        </div>
+
+        <div class="module-panel hidden" id="import-panel" data-module="import">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Import</p>
+              <h2>Chargement des données</h2>
+            </div>
+            <span class="panel-badge">Bientôt</span>
+          </div>
+          <p>Processus d’import des fichiers et des référentiels sans connexion directe à la base.</p>
+        </div>
+
+        <div class="module-panel hidden" id="export-panel" data-module="export">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Export</p>
+              <h2>Extraction des rapports</h2>
+            </div>
+            <span class="panel-badge">Bientôt</span>
+          </div>
+          <p>Préparation des exports et des jeux de données pour diffusion.</p>
+        </div>
+
+        <div class="module-panel hidden" id="statistiques-panel" data-module="statistiques">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Statistiques</p>
+              <h2>Analyses & indicateurs</h2>
+            </div>
+            <span class="panel-badge">Bientôt</span>
+          </div>
+          <p>Visualisation des indicateurs de performance et des tendances opérationnelles.</p>
+        </div>
+
+        <div class="module-panel hidden" id="utilisateurs-panel" data-module="utilisateurs">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Utilisateurs</p>
+              <h2>Gestion des accès</h2>
+            </div>
+            <span class="panel-badge">Bientôt</span>
+          </div>
+          <p>Administration des comptes et des profils d’accès.</p>
+        </div>
+
+        <div class="module-panel hidden" id="parametres-panel" data-module="parametres">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Paramètres</p>
+              <h2>Configuration générale</h2>
+            </div>
+            <span class="panel-badge">Bientôt</span>
+          </div>
+          <p>Réglages généraux de l’application et options de personnalisation.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-o3uh3rktTzhA+2nfTmKYpqD4kQxQfGKX/4eRS6n5mZ4=" crossorigin=""></script>
+  <script src="app.js"></script>
+</body>
+</html>
