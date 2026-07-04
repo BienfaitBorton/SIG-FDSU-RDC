@@ -1,0 +1,2117 @@
+{
+  "source": "data/raw/FDSU Structure code Territoire zones(2).xlsx",
+  "codification_format": "FDSU_<CODE_ZONE>_<CODE_PROVINCE>_<CODE_TERRITOIRE>_<CODE_SITE>",
+  "codification_example": "FDSU_ND_05_001_001",
+  "zones": [
+    {
+      "code": "ND",
+      "nom": "Zone Nord",
+      "province_count": 8,
+      "provinces": [
+        "BAS-UELE",
+        "EQUATEUR",
+        "HAUT-UELE",
+        "MONGALA",
+        "NORD-UBANGI",
+        "SUD-UBANGI",
+        "TSHOPO",
+        "TSHUAPA"
+      ]
+    },
+    {
+      "code": "SD",
+      "nom": "Zone Sud",
+      "province_count": 4,
+      "provinces": [
+        "TANGANYIKA",
+        "HAUT-KATANGA",
+        "LUALABA",
+        "HAUT-LOMAMI"
+      ]
+    },
+    {
+      "code": "CE",
+      "nom": "Zone Centre",
+      "province_count": 5,
+      "provinces": [
+        "KASAI",
+        "KASAI CENTRAL",
+        "KASAI-ORIENTAL",
+        "LOMAMI",
+        "SANKURU"
+      ]
+    },
+    {
+      "code": "OT",
+      "nom": "Zone Ouest",
+      "province_count": 5,
+      "provinces": [
+        "KINSHASA",
+        "KONGO CENTRAL",
+        "KWANGO",
+        "KWILU",
+        "MAI-NDOMBE"
+      ]
+    },
+    {
+      "code": "ET",
+      "nom": "Zone Est",
+      "province_count": 4,
+      "provinces": [
+        "ITURI",
+        "NORD-KIVU",
+        "SUD-KIVU",
+        "MANIEMA"
+      ]
+    }
+  ],
+  "provinces": [
+    {
+      "code": "01",
+      "nom": "BAS-UELE",
+      "zone_fdsu": "ND",
+      "zone_nom": "Zone Nord",
+      "nb_sites_reference": 11
+    },
+    {
+      "code": "02",
+      "nom": "EQUATEUR",
+      "zone_fdsu": "ND",
+      "zone_nom": "Zone Nord",
+      "nb_sites_reference": 8
+    },
+    {
+      "code": "05",
+      "nom": "HAUT-UELE",
+      "zone_fdsu": "ND",
+      "zone_nom": "Zone Nord",
+      "nb_sites_reference": 14
+    },
+    {
+      "code": "18",
+      "nom": "MONGALA",
+      "zone_fdsu": "ND",
+      "zone_nom": "Zone Nord",
+      "nb_sites_reference": 10
+    },
+    {
+      "code": "20",
+      "nom": "NORD-UBANGI",
+      "zone_fdsu": "ND",
+      "zone_nom": "Zone Nord",
+      "nb_sites_reference": 11
+    },
+    {
+      "code": "23",
+      "nom": "SUD-UBANGI",
+      "zone_fdsu": "ND",
+      "zone_nom": "Zone Nord",
+      "nb_sites_reference": 10
+    },
+    {
+      "code": "25",
+      "nom": "TSHOPO",
+      "zone_fdsu": "ND",
+      "zone_nom": "Zone Nord",
+      "nb_sites_reference": 20
+    },
+    {
+      "code": "26",
+      "nom": "TSHUAPA",
+      "zone_fdsu": "ND",
+      "zone_nom": "Zone Nord",
+      "nb_sites_reference": 16
+    },
+    {
+      "code": "24",
+      "nom": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "zone_nom": "Zone Sud",
+      "nb_sites_reference": 18
+    },
+    {
+      "code": "03",
+      "nom": "HAUT-KATANGA",
+      "zone_fdsu": "SD",
+      "zone_nom": "Zone Sud"
+    },
+    {
+      "code": "15",
+      "nom": "LUALABA",
+      "zone_fdsu": "SD",
+      "zone_nom": "Zone Sud",
+      "nb_sites_reference": 22
+    },
+    {
+      "code": "04",
+      "nom": "HAUT-LOMAMI",
+      "zone_fdsu": "SD",
+      "zone_nom": "Zone Sud",
+      "nb_sites_reference": 9
+    },
+    {
+      "code": "07",
+      "nom": "KASAI",
+      "zone_fdsu": "CE",
+      "zone_nom": "Zone Centre",
+      "nb_sites_reference": 11
+    },
+    {
+      "code": "08",
+      "nom": "KASAI CENTRAL",
+      "zone_fdsu": "CE",
+      "zone_nom": "Zone Centre",
+      "nb_sites_reference": 10
+    },
+    {
+      "code": "09",
+      "nom": "KASAI-ORIENTAL",
+      "zone_fdsu": "CE",
+      "zone_nom": "Zone Centre",
+      "nb_sites_reference": 11
+    },
+    {
+      "code": "14",
+      "nom": "LOMAMI",
+      "zone_fdsu": "CE",
+      "zone_nom": "Zone Centre",
+      "nb_sites_reference": 13
+    },
+    {
+      "code": "21",
+      "nom": "SANKURU",
+      "zone_fdsu": "CE",
+      "zone_nom": "Zone Centre",
+      "nb_sites_reference": 14
+    },
+    {
+      "code": "10",
+      "nom": "KINSHASA",
+      "zone_fdsu": "OT",
+      "zone_nom": "Zone Ouest",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "11",
+      "nom": "KONGO CENTRAL",
+      "zone_fdsu": "OT",
+      "zone_nom": "Zone Ouest",
+      "nb_sites_reference": 15
+    },
+    {
+      "code": "12",
+      "nom": "KWANGO",
+      "zone_fdsu": "OT",
+      "zone_nom": "Zone Ouest",
+      "nb_sites_reference": 17
+    },
+    {
+      "code": "13",
+      "nom": "KWILU",
+      "zone_fdsu": "OT",
+      "zone_nom": "Zone Ouest",
+      "nb_sites_reference": 17
+    },
+    {
+      "code": "16",
+      "nom": "MAI-NDOMBE",
+      "zone_fdsu": "OT",
+      "zone_nom": "Zone Ouest",
+      "nb_sites_reference": 11
+    },
+    {
+      "code": "06",
+      "nom": "ITURI",
+      "zone_fdsu": "ET",
+      "zone_nom": "Zone Est",
+      "nb_sites_reference": 7
+    },
+    {
+      "code": "19",
+      "nom": "NORD-KIVU",
+      "zone_fdsu": "ET",
+      "zone_nom": "Zone Est",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "22",
+      "nom": "SUD-KIVU",
+      "zone_fdsu": "ET",
+      "zone_nom": "Zone Est",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "17",
+      "nom": "MANIEMA",
+      "zone_fdsu": "ET",
+      "zone_nom": "Zone Est",
+      "nb_sites_reference": 14
+    }
+  ],
+  "territoires": [
+    {
+      "code": "001",
+      "nom": "BUTA VILLE",
+      "province_code": "01",
+      "province": "BAS-UELE",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 3
+    },
+    {
+      "code": "002",
+      "nom": "AKETI",
+      "province_code": "01",
+      "province": "BAS-UELE",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "003",
+      "nom": "ANGO",
+      "province_code": "01",
+      "province": "BAS-UELE",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 3
+    },
+    {
+      "code": "004",
+      "nom": "BAMBESA",
+      "province_code": "01",
+      "province": "BAS-UELE",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "005",
+      "nom": "BONDO",
+      "province_code": "01",
+      "province": "BAS-UELE",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "006",
+      "nom": "BUTA TERRITOIRE",
+      "province_code": "01",
+      "province": "BAS-UELE",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "007",
+      "nom": "POKO",
+      "province_code": "01",
+      "province": "BAS-UELE",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "001",
+      "nom": "MBANDAKA",
+      "province_code": "02",
+      "province": "EQUATEUR",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "002",
+      "nom": "BASANKUSU",
+      "province_code": "02",
+      "province": "EQUATEUR",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "003",
+      "nom": "BIKORO",
+      "province_code": "02",
+      "province": "EQUATEUR",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 3
+    },
+    {
+      "code": "004",
+      "nom": "BOLOMBA",
+      "province_code": "02",
+      "province": "EQUATEUR",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "005",
+      "nom": "BOMONGO",
+      "province_code": "02",
+      "province": "EQUATEUR",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "006",
+      "nom": "INGENDE",
+      "province_code": "02",
+      "province": "EQUATEUR",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "007",
+      "nom": "LUKOLELA",
+      "province_code": "02",
+      "province": "EQUATEUR",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "008",
+      "nom": "MANKANZA",
+      "province_code": "02",
+      "province": "EQUATEUR",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "001",
+      "nom": "ISIRO",
+      "province_code": "05",
+      "province": "HAUT-UELE",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "002",
+      "nom": "DUNGU",
+      "province_code": "05",
+      "province": "HAUT-UELE",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "003",
+      "nom": "FARADJE",
+      "province_code": "05",
+      "province": "HAUT-UELE",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "004",
+      "nom": "NIANGARA",
+      "province_code": "05",
+      "province": "HAUT-UELE",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "005",
+      "nom": "RUNGU",
+      "province_code": "05",
+      "province": "HAUT-UELE",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "006",
+      "nom": "WAMBA",
+      "province_code": "05",
+      "province": "HAUT-UELE",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 5
+    },
+    {
+      "code": "007",
+      "nom": "WATSA",
+      "province_code": "05",
+      "province": "HAUT-UELE",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "001",
+      "nom": "BUMBA",
+      "province_code": "18",
+      "province": "MONGALA",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 6
+    },
+    {
+      "code": "002",
+      "nom": "BONGANDANGA",
+      "province_code": "18",
+      "province": "MONGALA",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "003",
+      "nom": "LISALA TERRITOIRE",
+      "province_code": "18",
+      "province": "MONGALA",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 3
+    },
+    {
+      "code": "004",
+      "nom": "LISALA-VILLE",
+      "province_code": "18",
+      "province": "MONGALA",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "001",
+      "nom": "GBADOLITE VILLE",
+      "province_code": "20",
+      "province": "NORD-UBANGI",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "002",
+      "nom": "BOSOBOLO",
+      "province_code": "20",
+      "province": "NORD-UBANGI",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "003",
+      "nom": "BUSINGA",
+      "province_code": "20",
+      "province": "NORD-UBANGI",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "004",
+      "nom": "MOBAYI-MBONGO",
+      "province_code": "20",
+      "province": "NORD-UBANGI",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "005",
+      "nom": "YAKOMA",
+      "province_code": "20",
+      "province": "NORD-UBANGI",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "006",
+      "nom": "KARAWA",
+      "province_code": "20",
+      "province": "NORD-UBANGI",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "001",
+      "nom": "BUDJALA",
+      "province_code": "23",
+      "province": "SUD-UBANGI",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "002",
+      "nom": "GEMENA TERRITOIRE",
+      "province_code": "23",
+      "province": "SUD-UBANGI",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 3
+    },
+    {
+      "code": "003",
+      "nom": "GEMENA VILLE",
+      "province_code": "23",
+      "province": "SUD-UBANGI",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "004",
+      "nom": "KUNGU",
+      "province_code": "23",
+      "province": "SUD-UBANGI",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "005",
+      "nom": "LIBENGE",
+      "province_code": "23",
+      "province": "SUD-UBANGI",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "006",
+      "nom": "ZONGO",
+      "province_code": "23",
+      "province": "SUD-UBANGI",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "001",
+      "nom": "KISANGANI (KISANGANI)",
+      "province_code": "25",
+      "province": "TSHOPO",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "002",
+      "nom": "KABONDO (KISANGANI)",
+      "province_code": "25",
+      "province": "TSHOPO",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "003",
+      "nom": "LUBUNGA  (KISANGANI)",
+      "province_code": "25",
+      "province": "TSHOPO",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "004",
+      "nom": "MAKISO (KISANGANI)",
+      "province_code": "25",
+      "province": "TSHOPO",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "005",
+      "nom": "MANGOBO (KISANGANI)",
+      "province_code": "25",
+      "province": "TSHOPO",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "006",
+      "nom": "TSHOPO (KISANGANI)",
+      "province_code": "25",
+      "province": "TSHOPO",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "007",
+      "nom": "LUBUYA BERA",
+      "province_code": "25",
+      "province": "TSHOPO",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "008",
+      "nom": "BAFWASENDE",
+      "province_code": "25",
+      "province": "TSHOPO",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "009",
+      "nom": "BANALIA",
+      "province_code": "25",
+      "province": "TSHOPO",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 3
+    },
+    {
+      "code": "010",
+      "nom": "BASOKO",
+      "province_code": "25",
+      "province": "TSHOPO",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "011",
+      "nom": "ISANGI",
+      "province_code": "25",
+      "province": "TSHOPO",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "012",
+      "nom": "OPALA",
+      "province_code": "25",
+      "province": "TSHOPO",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "013",
+      "nom": "UBUNDU",
+      "province_code": "25",
+      "province": "TSHOPO",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "014",
+      "nom": "YAHUMA",
+      "province_code": "25",
+      "province": "TSHOPO",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "001",
+      "nom": "BEFALE",
+      "province_code": "26",
+      "province": "TSHUAPA",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "002",
+      "nom": "BOENDE TERRITOIRE",
+      "province_code": "26",
+      "province": "TSHUAPA",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "003",
+      "nom": "BOENDE VILLE",
+      "province_code": "26",
+      "province": "TSHUAPA",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "004",
+      "nom": "BOKUNGU",
+      "province_code": "26",
+      "province": "TSHUAPA",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 6
+    },
+    {
+      "code": "005",
+      "nom": "DJOLU",
+      "province_code": "26",
+      "province": "TSHUAPA",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "006",
+      "nom": "IKELA",
+      "province_code": "26",
+      "province": "TSHUAPA",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "007",
+      "nom": "MONKOTO",
+      "province_code": "26",
+      "province": "TSHUAPA",
+      "zone_fdsu": "ND",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "001",
+      "nom": "KALEMIE VILLE",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "002",
+      "nom": "KALEMIE TERRITOIRE",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 6
+    },
+    {
+      "code": "003",
+      "nom": "KABALO",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "004",
+      "nom": "KONGOLO",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "005",
+      "nom": "MANONO",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 5
+    },
+    {
+      "code": "006",
+      "nom": "MOBA",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "007",
+      "nom": "NYUNZU",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "008",
+      "nom": "ANKORO",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "001",
+      "nom": "LUBUMBASHI",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "002",
+      "nom": "ANNEXE",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "003",
+      "nom": "KAMALONDO",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "004",
+      "nom": "KAMPEMBA",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "005",
+      "nom": "KATUBA",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "006",
+      "nom": "KENYA",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "007",
+      "nom": "RUASHI",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "008",
+      "nom": "KASUMBALESA",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "009",
+      "nom": "LIKASI",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "010",
+      "nom": "KAMBOVE",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "011",
+      "nom": "KASENGA",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 3
+    },
+    {
+      "code": "012",
+      "nom": "KIPUSHI",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "013",
+      "nom": "MITWABA",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "014",
+      "nom": "PWETO",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 5
+    },
+    {
+      "code": "015",
+      "nom": "SAKANIA",
+      "province_code": "24",
+      "province": "TANGANYIKA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "001",
+      "nom": "KOLWEZI",
+      "province_code": "15",
+      "province": "LUALABA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "002",
+      "nom": "LUBUDI",
+      "province_code": "15",
+      "province": "LUALABA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "003",
+      "nom": "DILOLO",
+      "province_code": "15",
+      "province": "LUALABA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 8
+    },
+    {
+      "code": "004",
+      "nom": "KAPANGA",
+      "province_code": "15",
+      "province": "LUALABA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 7
+    },
+    {
+      "code": "005",
+      "nom": "MUTSHATSHA",
+      "province_code": "15",
+      "province": "LUALABA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "006",
+      "nom": "SANDOA",
+      "province_code": "15",
+      "province": "LUALABA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "007",
+      "nom": "KASAJI",
+      "province_code": "15",
+      "province": "LUALABA",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "001",
+      "nom": "KAMINA VILLE",
+      "province_code": "04",
+      "province": "HAUT-LOMAMI",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "002",
+      "nom": "KAMINA",
+      "province_code": "04",
+      "province": "HAUT-LOMAMI",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 5
+    },
+    {
+      "code": "003",
+      "nom": "BUKAMA",
+      "province_code": "04",
+      "province": "HAUT-LOMAMI",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "004",
+      "nom": "KABONGO",
+      "province_code": "04",
+      "province": "HAUT-LOMAMI",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "005",
+      "nom": "KANIAMA",
+      "province_code": "04",
+      "province": "HAUT-LOMAMI",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "006",
+      "nom": "MALEMBA-NKULU",
+      "province_code": "04",
+      "province": "HAUT-LOMAMI",
+      "zone_fdsu": "SD",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "001",
+      "nom": "TSHIKAPA VILLE",
+      "province_code": "07",
+      "province": "KASAI",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "002",
+      "nom": "KAMONIA",
+      "province_code": "07",
+      "province": "KASAI",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "003",
+      "nom": "DEKESE",
+      "province_code": "07",
+      "province": "KASAI",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "004",
+      "nom": "ILEBO",
+      "province_code": "07",
+      "province": "KASAI",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "005",
+      "nom": "LUEBO",
+      "province_code": "07",
+      "province": "KASAI",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "006",
+      "nom": "MWEKA",
+      "province_code": "07",
+      "province": "KASAI",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "001",
+      "nom": "KANANGA",
+      "province_code": "08",
+      "province": "KASAI CENTRAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "002",
+      "nom": "KATOKA",
+      "province_code": "08",
+      "province": "KASAI CENTRAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "003",
+      "nom": "LUKONGA",
+      "province_code": "08",
+      "province": "KASAI CENTRAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "004",
+      "nom": "NDESHA",
+      "province_code": "08",
+      "province": "KASAI CENTRAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "005",
+      "nom": "NGANZA",
+      "province_code": "08",
+      "province": "KASAI CENTRAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "006",
+      "nom": "DEMBA",
+      "province_code": "08",
+      "province": "KASAI CENTRAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "007",
+      "nom": "DIBAYA",
+      "province_code": "08",
+      "province": "KASAI CENTRAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "008",
+      "nom": "DIMBELENGE",
+      "province_code": "08",
+      "province": "KASAI CENTRAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "009",
+      "nom": "KAZUMBA",
+      "province_code": "08",
+      "province": "KASAI CENTRAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "010",
+      "nom": "LUIZA",
+      "province_code": "08",
+      "province": "KASAI CENTRAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "001",
+      "nom": "BIPEMBA",
+      "province_code": "09",
+      "province": "KASAI-ORIENTAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "002",
+      "nom": "DIBINDI",
+      "province_code": "09",
+      "province": "KASAI-ORIENTAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "003",
+      "nom": "DIULU",
+      "province_code": "09",
+      "province": "KASAI-ORIENTAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "004",
+      "nom": "KANSHI",
+      "province_code": "09",
+      "province": "KASAI-ORIENTAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "005",
+      "nom": "MUYA",
+      "province_code": "09",
+      "province": "KASAI-ORIENTAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "006",
+      "nom": "KABEYA-KAMWANGA",
+      "province_code": "09",
+      "province": "KASAI-ORIENTAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "007",
+      "nom": "KATANDA",
+      "province_code": "09",
+      "province": "KASAI-ORIENTAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "008",
+      "nom": "LUPATAPATA",
+      "province_code": "09",
+      "province": "KASAI-ORIENTAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 3
+    },
+    {
+      "code": "009",
+      "nom": "MIABI",
+      "province_code": "09",
+      "province": "KASAI-ORIENTAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "010",
+      "nom": "TSHILENGE",
+      "province_code": "09",
+      "province": "KASAI-ORIENTAL",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "001",
+      "nom": "KABINDA VILLE",
+      "province_code": "14",
+      "province": "LOMAMI",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "002",
+      "nom": "MWENE DITU",
+      "province_code": "14",
+      "province": "LOMAMI",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "003",
+      "nom": "KABINDA TERRITOIRE",
+      "province_code": "14",
+      "province": "LOMAMI",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 3
+    },
+    {
+      "code": "004",
+      "nom": "KAMIJI",
+      "province_code": "14",
+      "province": "LOMAMI",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "005",
+      "nom": "LUBAO",
+      "province_code": "14",
+      "province": "LOMAMI",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 5
+    },
+    {
+      "code": "006",
+      "nom": "LUILU",
+      "province_code": "14",
+      "province": "LOMAMI",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "007",
+      "nom": "NGANDAJIKA",
+      "province_code": "14",
+      "province": "LOMAMI",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "001",
+      "nom": "KATAKO-KOMBE",
+      "province_code": "21",
+      "province": "SANKURU",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "002",
+      "nom": "KOLE",
+      "province_code": "21",
+      "province": "SANKURU",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "003",
+      "nom": "LODJA",
+      "province_code": "21",
+      "province": "SANKURU",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "004",
+      "nom": "LOMELA",
+      "province_code": "21",
+      "province": "SANKURU",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 3
+    },
+    {
+      "code": "005",
+      "nom": "LUBEFU",
+      "province_code": "21",
+      "province": "SANKURU",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "006",
+      "nom": "LUSAMBO TERRITOIRE",
+      "province_code": "21",
+      "province": "SANKURU",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "007",
+      "nom": "LUSAMBO VILLE",
+      "province_code": "21",
+      "province": "SANKURU",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "008",
+      "nom": "LUMUMBA VILLE",
+      "province_code": "21",
+      "province": "SANKURU",
+      "zone_fdsu": "CE",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "001",
+      "nom": "BANDAL",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "002",
+      "nom": "BUMBU",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "003",
+      "nom": "KALAMU",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "004",
+      "nom": "KASA-VUBU",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "005",
+      "nom": "MAKALA",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "006",
+      "nom": "NGIRI-NGIRI",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "007",
+      "nom": "SELEMBAO",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "008",
+      "nom": "BARUMBU",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "009",
+      "nom": "GOMBE",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "010",
+      "nom": "KINSHASA",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "011",
+      "nom": "KINTAMBO",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "012",
+      "nom": "LINGWALA",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "013",
+      "nom": "MONT-NGAFULA",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "014",
+      "nom": "NGALIEMA",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "015",
+      "nom": "KISENSO",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "016",
+      "nom": "LEMBA",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "017",
+      "nom": "LIMETE",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "018",
+      "nom": "MATETE",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "019",
+      "nom": "NGABA",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "020",
+      "nom": "KIMBANSEKE",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "021",
+      "nom": "MALUKU",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "022",
+      "nom": "MASINA",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "023",
+      "nom": "N’DJILI",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "024",
+      "nom": "N’SELE",
+      "province_code": "10",
+      "province": "KINSHASA",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "001",
+      "nom": "MATADI",
+      "province_code": "11",
+      "province": "KONGO CENTRAL",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "002",
+      "nom": "BOMA",
+      "province_code": "11",
+      "province": "KONGO CENTRAL",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "003",
+      "nom": "KASANGULU",
+      "province_code": "11",
+      "province": "KONGO CENTRAL",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "004",
+      "nom": "KIMVULA",
+      "province_code": "11",
+      "province": "KONGO CENTRAL",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "005",
+      "nom": "LUKULA",
+      "province_code": "11",
+      "province": "KONGO CENTRAL",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "006",
+      "nom": "LUOZI",
+      "province_code": "11",
+      "province": "KONGO CENTRAL",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "007",
+      "nom": "MADIMBA",
+      "province_code": "11",
+      "province": "KONGO CENTRAL",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 3
+    },
+    {
+      "code": "008",
+      "nom": "MBANZA-NGUNGU",
+      "province_code": "11",
+      "province": "KONGO CENTRAL",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "009",
+      "nom": "MOANDA",
+      "province_code": "11",
+      "province": "KONGO CENTRAL",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "010",
+      "nom": "SEKE-BANZA",
+      "province_code": "11",
+      "province": "KONGO CENTRAL",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "011",
+      "nom": "SONGOLOLO",
+      "province_code": "11",
+      "province": "KONGO CENTRAL",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 3
+    },
+    {
+      "code": "012",
+      "nom": "TSHELA",
+      "province_code": "11",
+      "province": "KONGO CENTRAL",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "001",
+      "nom": "FESHI",
+      "province_code": "12",
+      "province": "KWANGO",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "002",
+      "nom": "KAHEMBA",
+      "province_code": "12",
+      "province": "KWANGO",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "003",
+      "nom": "KASONGO-LUNDA",
+      "province_code": "12",
+      "province": "KWANGO",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 3
+    },
+    {
+      "code": "004",
+      "nom": "KENGE VILLE",
+      "province_code": "12",
+      "province": "KWANGO",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "005",
+      "nom": "KENGE TERRITOIRE",
+      "province_code": "12",
+      "province": "KWANGO",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 3
+    },
+    {
+      "code": "006",
+      "nom": "POPOKABAKA",
+      "province_code": "12",
+      "province": "KWANGO",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 3
+    },
+    {
+      "code": "001",
+      "nom": "KIKWIT VILLE",
+      "province_code": "13",
+      "province": "KWILU",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "002",
+      "nom": "BAGATA",
+      "province_code": "13",
+      "province": "KWILU",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 7
+    },
+    {
+      "code": "003",
+      "nom": "BULUNGU",
+      "province_code": "13",
+      "province": "KWILU",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "004",
+      "nom": "GUNGU",
+      "province_code": "13",
+      "province": "KWILU",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "005",
+      "nom": "IDIOFA",
+      "province_code": "13",
+      "province": "KWILU",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "006",
+      "nom": "MASI-MANIMBA",
+      "province_code": "13",
+      "province": "KWILU",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "007",
+      "nom": "BANDUNDU VILLE",
+      "province_code": "13",
+      "province": "KWILU",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "001",
+      "nom": "BOLOBO",
+      "province_code": "16",
+      "province": "MAI-NDOMBE",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "002",
+      "nom": "INONGO VILLE",
+      "province_code": "16",
+      "province": "MAI-NDOMBE",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "003",
+      "nom": "INONGO TERRITOIRE",
+      "province_code": "16",
+      "province": "MAI-NDOMBE",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "004",
+      "nom": "KIRI",
+      "province_code": "16",
+      "province": "MAI-NDOMBE",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "005",
+      "nom": "KUTU",
+      "province_code": "16",
+      "province": "MAI-NDOMBE",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "006",
+      "nom": "KWAMOUTH",
+      "province_code": "16",
+      "province": "MAI-NDOMBE",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 3
+    },
+    {
+      "code": "007",
+      "nom": "MUSHIE",
+      "province_code": "16",
+      "province": "MAI-NDOMBE",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "008",
+      "nom": "OSHWE",
+      "province_code": "16",
+      "province": "MAI-NDOMBE",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 3
+    },
+    {
+      "code": "009",
+      "nom": "YUMBI",
+      "province_code": "16",
+      "province": "MAI-NDOMBE",
+      "zone_fdsu": "OT",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "001",
+      "nom": "BUNIA VILLE",
+      "province_code": "06",
+      "province": "ITURI",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "002",
+      "nom": "ARU",
+      "province_code": "06",
+      "province": "ITURI",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "003",
+      "nom": "DJUGU",
+      "province_code": "06",
+      "province": "ITURI",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "004",
+      "nom": "IRUMU",
+      "province_code": "06",
+      "province": "ITURI",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "005",
+      "nom": "MAHAGI",
+      "province_code": "06",
+      "province": "ITURI",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "006",
+      "nom": "MAMBASA",
+      "province_code": "06",
+      "province": "ITURI",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 3
+    },
+    {
+      "code": "001",
+      "nom": "GOMA (GOMA)",
+      "province_code": "19",
+      "province": "NORD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "002",
+      "nom": "KARISIMBI  (GOMA)",
+      "province_code": "19",
+      "province": "NORD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "003",
+      "nom": "BULENGERA (GOMA)",
+      "province_code": "19",
+      "province": "NORD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "004",
+      "nom": "KIMEMI (GOMA)",
+      "province_code": "19",
+      "province": "NORD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "005",
+      "nom": "MUSUSA (GOMA)",
+      "province_code": "19",
+      "province": "NORD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "006",
+      "nom": "VULUMBA (GOMA)",
+      "province_code": "19",
+      "province": "NORD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": null
+    },
+    {
+      "code": "007",
+      "nom": "BENI VILLE",
+      "province_code": "19",
+      "province": "NORD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "008",
+      "nom": "BENI TERRITOIRE",
+      "province_code": "19",
+      "province": "NORD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "009",
+      "nom": "BUTEMBO VILLE",
+      "province_code": "19",
+      "province": "NORD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "010",
+      "nom": "LUBERO",
+      "province_code": "19",
+      "province": "NORD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "011",
+      "nom": "MASISI",
+      "province_code": "19",
+      "province": "NORD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "012",
+      "nom": "NYIRAGONGO",
+      "province_code": "19",
+      "province": "NORD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "013",
+      "nom": "RUTSHURU",
+      "province_code": "19",
+      "province": "NORD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "014",
+      "nom": "WALIKALE",
+      "province_code": "19",
+      "province": "NORD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "001",
+      "nom": "BAGIRA (BUKAVU)",
+      "province_code": "22",
+      "province": "SUD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "002",
+      "nom": "IBANDA (BUKAVU)",
+      "province_code": "22",
+      "province": "SUD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "003",
+      "nom": "KADUTU (BUKAVU)",
+      "province_code": "22",
+      "province": "SUD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "004",
+      "nom": "FIZI",
+      "province_code": "22",
+      "province": "SUD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "005",
+      "nom": "IDJWI",
+      "province_code": "22",
+      "province": "SUD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "006",
+      "nom": "KABARE",
+      "province_code": "22",
+      "province": "SUD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "007",
+      "nom": "KALEHE",
+      "province_code": "22",
+      "province": "SUD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "008",
+      "nom": "MWENGA",
+      "province_code": "22",
+      "province": "SUD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "009",
+      "nom": "SHABUNDA",
+      "province_code": "22",
+      "province": "SUD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "010",
+      "nom": "UVIRA",
+      "province_code": "22",
+      "province": "SUD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "011",
+      "nom": "WALUNGU",
+      "province_code": "22",
+      "province": "SUD-KIVU",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "001",
+      "nom": "KINDU",
+      "province_code": "17",
+      "province": "MANIEMA",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "002",
+      "nom": "KABAMBARE",
+      "province_code": "17",
+      "province": "MANIEMA",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    },
+    {
+      "code": "003",
+      "nom": "KAILO",
+      "province_code": "17",
+      "province": "MANIEMA",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "004",
+      "nom": "KASONGO",
+      "province_code": "17",
+      "province": "MANIEMA",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 5
+    },
+    {
+      "code": "005",
+      "nom": "KIBOMBO",
+      "province_code": "17",
+      "province": "MANIEMA",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 4
+    },
+    {
+      "code": "006",
+      "nom": "LUBUTU",
+      "province_code": "17",
+      "province": "MANIEMA",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 1
+    },
+    {
+      "code": "007",
+      "nom": "PANGI",
+      "province_code": "17",
+      "province": "MANIEMA",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 2
+    },
+    {
+      "code": "008",
+      "nom": "PUNIA",
+      "province_code": "17",
+      "province": "MANIEMA",
+      "zone_fdsu": "ET",
+      "nb_sites_reference": 0
+    }
+  ]
+}

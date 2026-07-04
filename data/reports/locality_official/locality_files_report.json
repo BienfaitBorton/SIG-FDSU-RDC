@@ -1,0 +1,16 @@
+{
+  "source": "Localités.kmz",
+  "created_files": [
+    "data\\reports\\locality_official\\locality_referential_official.json",
+    "data\\reports\\locality_official\\locality_fact_sheets.json",
+    "data\\reports\\locality_official\\locality_quality_report.json",
+    "data\\reports\\locality_official\\locality_referential_report.md",
+    "data\\reports\\locality_official\\locality_files_report.json",
+    "data\\reports\\locality_official\\groupement_locality_index.json",
+    "data\\reports\\locality_official\\collectivity_locality_index.json",
+    "data\\reports\\locality_official\\territory_locality_index.json",
+    "data\\reports\\locality_official\\province_locality_index.json",
+    "data\\reports\\national_counter_registry.json"
+  ],
+  "generated_at": "2026-07-03T17:28:18+00:00"
+}

@@ -1,13 +1,82 @@
-const API_BASE = 'http://127.0.0.1:8000';
+const DATA_MODE = 'json'; // v0.7.0: utiliser 'api' pour tester FastAPI, 'json' pour garder le fallback local.
+const API_BASE_URL = 'http://localhost:8001';
+const REPORTS_BASE = '../data/reports';
+const LOCAL_JSON_MODE = DATA_MODE !== 'api';
+const FDSU_CODE_FORMAT = 'FDSU_<CODE_ZONE>_<CODE_PROVINCE>_<CODE_TERRITOIRE>_<CODE_SITE>';
+const FDSU_ZONE_DEFINITIONS = {
+  ND: { nom: 'Zone Nord', colorVar: '--zone-nd' },
+  SD: { nom: 'Zone Sud', colorVar: '--zone-sd' },
+  CE: { nom: 'Zone Centre', colorVar: '--zone-ce' },
+  OT: { nom: 'Zone Ouest', colorVar: '--zone-ot' },
+  ET: { nom: 'Zone Est', colorVar: '--zone-et' },
+};
+const FDSU_PROVINCE_REFERENCE = {
+  'BAS-UELE': { code: '01', zone_fdsu: 'ND', zone_nom: 'Zone Nord' },
+  EQUATEUR: { code: '02', zone_fdsu: 'ND', zone_nom: 'Zone Nord' },
+  'HAUT-UELE': { code: '05', zone_fdsu: 'ND', zone_nom: 'Zone Nord' },
+  MONGALA: { code: '18', zone_fdsu: 'ND', zone_nom: 'Zone Nord' },
+  'NORD-UBANGI': { code: '20', zone_fdsu: 'ND', zone_nom: 'Zone Nord' },
+  'SUD-UBANGI': { code: '23', zone_fdsu: 'ND', zone_nom: 'Zone Nord' },
+  TSHOPO: { code: '25', zone_fdsu: 'ND', zone_nom: 'Zone Nord' },
+  TSHUAPA: { code: '26', zone_fdsu: 'ND', zone_nom: 'Zone Nord' },
+  TANGANYIKA: { code: '24', zone_fdsu: 'SD', zone_nom: 'Zone Sud' },
+  'HAUT-KATANGA': { code: '03', zone_fdsu: 'SD', zone_nom: 'Zone Sud' },
+  LUALABA: { code: '15', zone_fdsu: 'SD', zone_nom: 'Zone Sud' },
+  'HAUT-LOMAMI': { code: '04', zone_fdsu: 'SD', zone_nom: 'Zone Sud' },
+  KASAI: { code: '07', zone_fdsu: 'CE', zone_nom: 'Zone Centre' },
+  'KASAI CENTRAL': { code: '08', zone_fdsu: 'CE', zone_nom: 'Zone Centre' },
+  'KASAI-ORIENTAL': { code: '09', zone_fdsu: 'CE', zone_nom: 'Zone Centre' },
+  LOMAMI: { code: '14', zone_fdsu: 'CE', zone_nom: 'Zone Centre' },
+  SANKURU: { code: '21', zone_fdsu: 'CE', zone_nom: 'Zone Centre' },
+  KINSHASA: { code: '10', zone_fdsu: 'OT', zone_nom: 'Zone Ouest' },
+  'KONGO CENTRAL': { code: '11', zone_fdsu: 'OT', zone_nom: 'Zone Ouest' },
+  KWANGO: { code: '12', zone_fdsu: 'OT', zone_nom: 'Zone Ouest' },
+  KWILU: { code: '13', zone_fdsu: 'OT', zone_nom: 'Zone Ouest' },
+  'MAI-NDOMBE': { code: '16', zone_fdsu: 'OT', zone_nom: 'Zone Ouest' },
+  ITURI: { code: '06', zone_fdsu: 'ET', zone_nom: 'Zone Est' },
+  'NORD-KIVU': { code: '19', zone_fdsu: 'ET', zone_nom: 'Zone Est' },
+  'SUD-KIVU': { code: '22', zone_fdsu: 'ET', zone_nom: 'Zone Est' },
+  MANIEMA: { code: '17', zone_fdsu: 'ET', zone_nom: 'Zone Est' },
+};
 
 const navigationItems = document.querySelectorAll('.nav-item');
-const panels = document.querySelectorAll('.module-panel');
+const panels = document.querySelectorAll('#dashboard-panel, .module-panel');
 const pageTitle = document.querySelector('.page-title');
 const pageContext = document.querySelector('.page-context');
+const ROUTE_TO_MODULE = {
+  dashboard: 'dashboard',
+  map: 'cartographie',
+  cartographie: 'cartographie',
+  referentiel: 'referentiel',
+  registry: 'gestion_referentiels',
+  gestion_referentiels: 'gestion_referentiels',
+  sources: 'explorateur_sources',
+  explorateur_sources: 'explorateur_sources',
+  sites: 'sites',
+  import: 'import',
+  export: 'export',
+  statistiques: 'statistiques',
+  utilisateurs: 'utilisateurs',
+  parametres: 'parametres',
+};
+const MODULE_TO_ROUTE = {
+  dashboard: 'dashboard',
+  cartographie: 'map',
+  referentiel: 'referentiel',
+  gestion_referentiels: 'registry',
+  explorateur_sources: 'sources',
+  sites: 'sites',
+  import: 'import',
+  export: 'export',
+  statistiques: 'statistiques',
+  utilisateurs: 'utilisateurs',
+  parametres: 'parametres',
+};
 
 const dashboardState = {
   initialized: false,
   modules: {},
+  localDataPromise: null,
 };
 
 const referentielState = {
@@ -48,12 +117,46 @@ const cartographyState = {
   layerStatus: {
     zones: null,
     collectivites: null,
+    provinces: null,
+    villages: null,
   },
   infoElement: null,
   zonesMessageElement: null,
   zonesLayer: null,
   collectivitesLayer: null,
   selectedLayer: null,
+  data: {},
+  features: {},
+  featureLayers: {},
+  activeAttributeLayer: 'provinces',
+  attributePage: 1,
+  attributePageSize: 25,
+  attributeSortKey: 'nom',
+  attributeSortOrder: 'asc',
+  selectedFeatureId: null,
+  thematicMode: '',
+};
+
+const platformState = {
+  dataPromises: {},
+  searchIndex: [],
+  searchReady: false,
+  selectedEntity: null,
+  workbenchLayer: '',
+  workbenchRows: [],
+  workbenchPage: 1,
+  workbenchPageSize: 25,
+  interactionsBound: false,
+};
+
+const importState = {
+  file: null,
+  extension: '',
+  workbook: null,
+  sheets: {},
+  activeSheet: '',
+  preview: null,
+  anomalies: [],
 };
 
 const sourceExplorerState = {
@@ -90,7 +193,7 @@ const GOVERNANCE_TAB_DEFINITIONS = {
       { key: 'statut', label: 'Statut', badge: true },
       { key: 'qualite', label: 'Qualité (%)' },
     ],
-    statusOptions: ['Importé', 'Analysé', 'Validé', 'Publié'],
+    statusOptions: ['Validé', 'Validé provisoirement', 'Partiel', 'Non publié', 'À valider manuellement'],
   },
   sources: {
     label: 'Sources officielles',
@@ -136,7 +239,7 @@ const GOVERNANCE_TAB_DEFINITIONS = {
       { key: 'sans_rattachement', label: 'Sans rattachement administratif' },
       { key: 'statut', label: 'Statut', badge: true },
     ],
-    statusOptions: ['À vérifier', 'Validé', 'Corrigé', 'Rejeté'],
+    statusOptions: ['Validé', 'Validé provisoirement', 'Partiel', 'Non publié', 'À valider manuellement'],
   },
   comparaison: {
     label: 'Comparaison',
@@ -230,6 +333,7 @@ const governanceState = {
     byLevel: [],
     reportPreview: '',
   },
+  jsonSources: {},
 };
 
 const governanceElements = {
@@ -255,39 +359,52 @@ const governanceElements = {
 };
 
 function setActiveModule(moduleKey) {
+  const normalizedModule = ROUTE_TO_MODULE[moduleKey] || moduleKey || 'dashboard';
+  initializePlatformInteractions();
   navigationItems.forEach((item) => {
-    item.classList.toggle('active', item.dataset.module === moduleKey);
+    item.classList.toggle('active', item.dataset.module === normalizedModule);
   });
 
   panels.forEach((panel) => {
-    panel.classList.toggle('hidden', panel.dataset.module !== moduleKey);
+    panel.classList.toggle('hidden', panel.dataset.module !== normalizedModule);
   });
 
-  pageTitle.textContent = moduleNames[moduleKey] || 'Tableau de bord';
-  pageContext.textContent = `Module : ${moduleNames[moduleKey] || 'Tableau de bord'}`;
-  window.location.hash = moduleKey;
+  pageTitle.textContent = moduleNames[normalizedModule] || 'Tableau de bord';
+  pageContext.textContent = `Module : ${moduleNames[normalizedModule] || 'Tableau de bord'}`;
 
-  if (moduleKey === 'dashboard') {
+  if (normalizedModule === 'dashboard') {
     initializeDashboard();
   }
 
-  if (moduleKey === 'referentiel') {
+  if (normalizedModule === 'referentiel') {
     initializeReferentielModule();
   }
 
-  if (moduleKey === 'cartographie') {
+  if (normalizedModule === 'cartographie') {
     initializeCartographyModule();
     if (cartographyState.map) {
       window.setTimeout(() => cartographyState.map.invalidateSize(), 0);
     }
   }
 
-  if (moduleKey === 'explorateur_sources') {
+  if (normalizedModule === 'explorateur_sources') {
     initializeSourceExplorerModule();
   }
 
-  if (moduleKey === 'gestion_referentiels') {
+  if (normalizedModule === 'gestion_referentiels') {
     initializeGovernanceModule();
+  }
+
+  if (normalizedModule === 'sites') {
+    initializeSitesModule();
+  }
+
+  if (normalizedModule === 'import') {
+    initializeImportModule();
+  }
+
+  if (normalizedModule === 'export') {
+    initializeExportModule();
   }
 }
 
@@ -296,11 +413,502 @@ function initializeDashboard() {
     return;
   }
 
+  initializePlatformInteractions();
   getDashboardStats();
   getDatabaseStatus();
   getLastImports();
   getZones();
   dashboardState.initialized = true;
+}
+
+function initializeSitesModule() {
+  const panel = document.querySelector('#sites-panel');
+  if (!panel) return;
+  const badge = panel.querySelector('.panel-badge');
+  const message = panel.querySelector('#sites-module-message');
+  if (badge) badge.textContent = '0 site';
+  if (message) message.textContent = 'Module Sites FDSU à construire en v0.7.0.';
+}
+
+function initializeImportModule() {
+  const input = document.querySelector('#import-file-input');
+  const resetButton = document.querySelector('#import-reset');
+  const reportButton = document.querySelector('#import-anomaly-report');
+  const sheetSelect = document.querySelector('#import-sheet-select');
+
+  if (input && input.dataset.bound !== 'true') {
+    input.dataset.bound = 'true';
+    input.addEventListener('change', () => previewImportFile(input.files?.[0]));
+  }
+  if (resetButton && resetButton.dataset.bound !== 'true') {
+    resetButton.dataset.bound = 'true';
+    resetButton.addEventListener('click', resetImportModule);
+  }
+  if (reportButton && reportButton.dataset.bound !== 'true') {
+    reportButton.dataset.bound = 'true';
+    reportButton.addEventListener('click', downloadImportAnomalyReport);
+  }
+  if (sheetSelect && sheetSelect.dataset.bound !== 'true') {
+    sheetSelect.dataset.bound = 'true';
+    sheetSelect.addEventListener('change', () => renderExcelSheetPreview(sheetSelect.value));
+  }
+}
+
+function previewImportFile(file) {
+  const fileNameElement = document.querySelector('#import-file-name');
+  const previewElement = document.querySelector('#import-preview');
+  const reportButton = document.querySelector('#import-anomaly-report');
+  if (!previewElement) return;
+  if (!file) {
+    resetImportModule();
+    return;
+  }
+
+  const extension = file.name.split('.').pop().toLowerCase();
+  importState.file = file;
+  importState.extension = extension;
+  importState.workbook = null;
+  importState.sheets = {};
+  importState.activeSheet = '';
+  importState.preview = null;
+  importState.anomalies = [];
+  if (fileNameElement) fileNameElement.textContent = `${file.name} - ${formatFileSize(file.size)} - .${extension}`;
+  if (reportButton) reportButton.disabled = true;
+
+  if (['kml', 'kmz', 'zip'].includes(extension)) {
+    renderImportAdvancedGeoMessage(file, extension);
+    return;
+  }
+
+  if (['xlsx', 'xls'].includes(extension)) {
+    previewExcelFile(file);
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      if (extension === 'csv') {
+        renderImportPreview(parseCsvPreview(String(reader.result || ''), file, extension));
+      } else if (['json', 'geojson'].includes(extension)) {
+        renderImportPreview(parseJsonPreview(String(reader.result || ''), file, extension));
+      } else {
+        previewElement.innerHTML = '<p>Format reconnu mais non prévisualisable dans cette version.</p>';
+      }
+    } catch (error) {
+      previewElement.innerHTML = `<p>Prévisualisation impossible : ${escapeHtml(error.message)}</p>`;
+    }
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+function resetImportModule() {
+  importState.file = null;
+  importState.extension = '';
+  importState.workbook = null;
+  importState.sheets = {};
+  importState.activeSheet = '';
+  importState.preview = null;
+  importState.anomalies = [];
+  const input = document.querySelector('#import-file-input');
+  const fileNameElement = document.querySelector('#import-file-name');
+  const previewElement = document.querySelector('#import-preview');
+  const reportButton = document.querySelector('#import-anomaly-report');
+  const sheetSelect = document.querySelector('#import-sheet-select');
+  if (input) input.value = '';
+  if (fileNameElement) fileNameElement.textContent = 'Aucun fichier sélectionné.';
+  if (previewElement) previewElement.textContent = 'Sélectionnez un fichier Excel, CSV, JSON ou GeoJSON.';
+  if (reportButton) reportButton.disabled = true;
+  if (sheetSelect) {
+    sheetSelect.classList.add('hidden');
+    sheetSelect.innerHTML = '';
+  }
+}
+
+function renderImportAdvancedGeoMessage(file, extension) {
+  const previewElement = document.querySelector('#import-preview');
+  if (!previewElement) return;
+  importState.preview = {
+    fileName: file.name,
+    extension,
+    fileType: extension.toUpperCase(),
+    totalRows: 0,
+    columns: [],
+    rows: [],
+    detected: {},
+    anomalies: [],
+  };
+  previewElement.innerHTML = `
+    <div class="import-summary">
+      <div class="detail-row"><span>Fichier</span><strong>${escapeHtml(file.name)}</strong></div>
+      <div class="detail-row"><span>Taille</span><strong>${escapeHtml(formatFileSize(file.size))}</strong></div>
+      <div class="detail-row"><span>Extension</span><strong>.${escapeHtml(extension)}</strong></div>
+    </div>
+    <p>Analyse géographique avancée prévue en backend v0.8.0.</p>
+  `;
+}
+
+function previewExcelFile(file) {
+  const previewElement = document.querySelector('#import-preview');
+  if (!previewElement) return;
+  if (typeof XLSX === 'undefined') {
+    previewElement.innerHTML = '<p>SheetJS n’est pas disponible. Vérifier la connexion au CDN ou ajouter une version locale.</p>';
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const workbook = XLSX.read(reader.result, { type: 'array' });
+      importState.workbook = workbook;
+      importState.sheets = {};
+      workbook.SheetNames.forEach((sheetName) => {
+        importState.sheets[sheetName] = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1, defval: '' });
+      });
+      renderExcelSheetSelector(workbook.SheetNames);
+      renderExcelSheetPreview(workbook.SheetNames[0]);
+    } catch (error) {
+      previewElement.innerHTML = `<p>Lecture Excel impossible : ${escapeHtml(error.message)}</p>`;
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function renderExcelSheetSelector(sheetNames) {
+  const sheetSelect = document.querySelector('#import-sheet-select');
+  if (!sheetSelect) return;
+  sheetSelect.classList.remove('hidden');
+  sheetSelect.innerHTML = sheetNames.map((sheetName) => `<option value="${escapeHtml(sheetName)}">${escapeHtml(sheetName)}</option>`).join('');
+}
+
+function renderExcelSheetPreview(sheetName) {
+  const rows = importState.sheets[sheetName] || [];
+  importState.activeSheet = sheetName;
+  const parsed = parseTableRowsPreview(rows, importState.file, importState.extension, sheetName);
+  renderImportPreview(parsed);
+}
+
+function parseCsvPreview(text, file, extension) {
+  const lines = text.split(/\r?\n/).filter((line) => line.trim() !== '');
+  const separator = lines[0]?.includes(';') ? ';' : ',';
+  const tableRows = lines.map((line) => splitCsvLine(line, separator));
+  return parseTableRowsPreview(tableRows, file, extension);
+}
+
+function splitCsvLine(line, separator) {
+  const values = [];
+  let current = '';
+  let quoted = false;
+  for (const char of line) {
+    if (char === '"') {
+      quoted = !quoted;
+    } else if (char === separator && !quoted) {
+      values.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  values.push(current.trim());
+  return values;
+}
+
+function parseJsonPreview(text, file, extension) {
+  const parsed = JSON.parse(text);
+  const rows = Array.isArray(parsed)
+    ? parsed
+    : Array.isArray(parsed.features)
+      ? parsed.features.map((feature) => ({
+        ...feature.properties,
+        geometry: feature.geometry?.type,
+        longitude: extractGeometryCoordinate(feature.geometry)?.lng ?? feature.properties?.longitude,
+        latitude: extractGeometryCoordinate(feature.geometry)?.lat ?? feature.properties?.latitude,
+      }))
+      : Object.values(parsed).find(Array.isArray) || [parsed];
+  const objects = asArray(rows).filter((row) => row && typeof row === 'object');
+  const columns = [...new Set(objects.flatMap((row) => Object.keys(row)))];
+  const matrixRows = objects.map((row) => columns.map((column) => row[column]));
+  return buildImportPreview({ columns, rows: matrixRows, totalRows: objects.length, file, extension });
+}
+
+function parseTableRowsPreview(tableRows, file, extension, sheetName = '') {
+  const header = asArray(tableRows[0]).map((value, index) => String(value || `colonne_${index + 1}`).trim());
+  const rows = tableRows.slice(1).filter((row) => asArray(row).some((value) => String(value || '').trim() !== ''));
+  return buildImportPreview({ columns: header, rows, totalRows: rows.length, file, extension, sheetName });
+}
+
+function buildImportPreview({ columns, rows, totalRows, file, extension, sheetName = '' }) {
+  const detected = detectImportColumns(columns);
+  const anomalies = detectImportAnomalies({ columns, rows, detected });
+  const preview = {
+    fileName: file?.name || importState.file?.name || '',
+    extension,
+    fileType: extension?.toUpperCase() || '',
+    sheetName,
+    totalRows,
+    columns,
+    rows: rows.slice(0, 50),
+    detected,
+    anomalies,
+  };
+  importState.preview = preview;
+  importState.anomalies = anomalies;
+  return preview;
+}
+
+function renderImportPreview({ columns, rows, totalRows, fileType, sheetName, detected, anomalies }) {
+  const previewElement = document.querySelector('#import-preview');
+  const reportButton = document.querySelector('#import-anomaly-report');
+  if (!previewElement) return;
+  const detectedRows = Object.entries(detected || {})
+    .filter(([, value]) => value)
+    .map(([key, value]) => `<div class="detail-row"><span>${escapeHtml(getImportFieldLabel(key))}</span><strong>${escapeHtml(value)}</strong></div>`)
+    .join('');
+  const anomalyItems = asArray(anomalies).slice(0, 30).map((anomaly) => `<li>${escapeHtml(anomaly.message)}</li>`).join('');
+  if (reportButton) reportButton.disabled = asArray(anomalies).length === 0;
+  previewElement.innerHTML = `
+    <div class="import-summary">
+      <div class="detail-row"><span>Type fichier</span><strong>${escapeHtml(fileType || importState.extension.toUpperCase())}</strong></div>
+      <div class="detail-row"><span>Feuille</span><strong>${escapeHtml(sheetName || 'Non applicable')}</strong></div>
+      <div class="detail-row"><span>Lignes</span><strong>${totalRows.toLocaleString('fr-FR')}</strong></div>
+      <div class="detail-row"><span>Colonnes</span><strong>${columns.length.toLocaleString('fr-FR')}</strong></div>
+    </div>
+    <div class="import-columns">${columns.map((column) => `<span>${escapeHtml(column)}</span>`).join('')}</div>
+    <div class="detail-card">
+      <div class="detail-card-header"><div><p class="panel-label">Détection automatique</p><h3>Champs reconnus</h3></div></div>
+      ${detectedRows || '<p>Aucun champ standard reconnu.</p>'}
+    </div>
+    <div class="detail-card">
+      <div class="detail-card-header"><div><p class="panel-label">Contrôle qualité</p><h3>Anomalies</h3></div></div>
+      ${anomalyItems ? `<ul>${anomalyItems}</ul>` : '<p>Aucune anomalie détectée dans la prévisualisation.</p>'}
+    </div>
+    <div class="table-frame">
+      <table class="governance-table">
+        <thead><tr>${columns.slice(0, 12).map((column) => `<th>${escapeHtml(column)}</th>`).join('')}</tr></thead>
+        <tbody>
+          ${rows.map((row) => `<tr>${columns.slice(0, 12).map((_column, index) => `<td>${escapeHtml(formatAttributeValue(Array.isArray(row) ? row[index] : row?.[index]))}</td>`).join('')}</tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function detectImportColumns(columns) {
+  const rules = {
+    nom: ['nom', 'name', 'libelle', 'localite', 'localité', 'nom1', 'nom_bd', 'nom_rgc'],
+    type: ['type', 'genre', 'niveau', 'type_localite', 'type_collectivite'],
+    province: ['province', 'prov'],
+    territoire: ['territoire', 'territory'],
+    collectivite: ['collectivite', 'collectivité', 'secteur', 'chefferie'],
+    groupement: ['groupement', 'grpt', 'code_grpt'],
+    localite: ['localite', 'localité', 'village'],
+    latitude: ['lat', 'latitude', 'y'],
+    longitude: ['lon', 'lng', 'long', 'longitude', 'x'],
+  };
+  return Object.fromEntries(Object.entries(rules).map(([key, aliases]) => [
+    key,
+    columns.find((column) => aliases.some((alias) => normalizeColumnName(column).includes(normalizeColumnName(alias)))) || '',
+  ]));
+}
+
+function normalizeColumnName(value) {
+  return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function getImportFieldLabel(key) {
+  return {
+    nom: 'Nom',
+    type: 'Type',
+    province: 'Province',
+    territoire: 'Territoire',
+    collectivite: 'Collectivité',
+    groupement: 'Groupement',
+    localite: 'Localité',
+    latitude: 'Latitude',
+    longitude: 'Longitude',
+  }[key] || key;
+}
+
+function detectImportAnomalies({ columns, rows, detected }) {
+  const anomalies = [];
+  ['nom', 'province', 'territoire'].forEach((field) => {
+    if (!detected[field]) {
+      anomalies.push({ type: 'colonnes_manquantes', message: `Colonne manquante probable : ${getImportFieldLabel(field)}.` });
+    }
+  });
+  if (!detected.latitude || !detected.longitude) {
+    anomalies.push({ type: 'colonnes_manquantes', message: 'Colonnes latitude/longitude non détectées.' });
+  }
+
+  const seen = new Map();
+  const indexes = Object.fromEntries(columns.map((column, index) => [column, index]));
+  rows.forEach((row, index) => {
+    const nom = getImportCell(row, indexes[detected.nom]);
+    const province = getImportCell(row, indexes[detected.province]);
+    const territoire = getImportCell(row, indexes[detected.territoire]);
+    const lat = getImportCell(row, indexes[detected.latitude]);
+    const lng = getImportCell(row, indexes[detected.longitude]);
+    const key = [nom, province, territoire].map((value) => String(value || '').trim().toLowerCase()).join('|');
+    if (key.replaceAll('|', '') === '') return;
+    if (seen.has(key)) {
+      anomalies.push({ type: 'doublons_probables', row: index + 2, message: `Doublon probable ligne ${index + 2} avec ligne ${seen.get(key)} : ${nom}.` });
+    } else {
+      seen.set(key, index + 2);
+    }
+    if ((lat || lng) && !isValidLatLng(lat, lng)) {
+      anomalies.push({ type: 'coordonnees_invalides', row: index + 2, message: `Coordonnées invalides ligne ${index + 2}.` });
+    }
+    if (!province && !territoire && !getImportCell(row, indexes[detected.collectivite]) && !getImportCell(row, indexes[detected.groupement])) {
+      anomalies.push({ type: 'sans_rattachement', row: index + 2, message: `Entité sans rattachement ligne ${index + 2}.` });
+    }
+  });
+  return anomalies;
+}
+
+function getImportCell(row, index) {
+  if (index === undefined || index === null || index < 0) return '';
+  return Array.isArray(row) ? row[index] : '';
+}
+
+function isValidLatLng(lat, lng) {
+  const latitude = Number(String(lat).replace(',', '.'));
+  const longitude = Number(String(lng).replace(',', '.'));
+  return Number.isFinite(latitude) && Number.isFinite(longitude) && latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180;
+}
+
+function downloadImportAnomalyReport() {
+  const report = {
+    generated_at: new Date().toISOString(),
+    file: importState.file?.name || '',
+    extension: importState.extension,
+    sheet: importState.activeSheet,
+    summary: {
+      rows: importState.preview?.totalRows || 0,
+      columns: importState.preview?.columns || [],
+      detected: importState.preview?.detected || {},
+    },
+    anomalies: importState.anomalies,
+  };
+  downloadTextFile(`sig_fdsu_import_anomalies_${getExportDateStamp()}.json`, JSON.stringify(report, null, 2), 'application/json');
+}
+
+function initializeExportModule() {
+  const button = document.querySelector('#export-run');
+  const layerSelect = document.querySelector('#export-layer-select');
+  const filterElements = [
+    layerSelect,
+    document.querySelector('#export-province-filter'),
+    document.querySelector('#export-territory-filter'),
+    document.querySelector('#export-type-filter'),
+  ];
+  if (button && button.dataset.bound !== 'true') {
+    button.dataset.bound = 'true';
+    button.addEventListener('click', runPrototypeExport);
+  }
+  filterElements.forEach((element) => {
+    if (!element || element.dataset.bound === 'true') return;
+    element.dataset.bound = 'true';
+    element.addEventListener('change', refreshExportFilters);
+  });
+  refreshExportFilters();
+}
+
+function runPrototypeExport() {
+  const layerKey = document.querySelector('#export-layer-select')?.value || 'provinces';
+  const format = document.querySelector('#export-format-select')?.value || 'csv';
+  const status = document.querySelector('#export-status');
+
+  if (format === 'kml') {
+    if (status) status.textContent = 'KML/KMZ à préparer en backend v0.8.0.';
+    return;
+  }
+
+  getLayerItemsForExport(layerKey).then((items) => {
+    const rows = filterExportRows(asArray(items).map((item) => normalizeAttributeRow(item, layerKey).properties));
+    if (rows.length === 0) {
+      if (status) status.textContent = 'Aucune donnée disponible pour cette couche.';
+      return;
+    }
+
+    const filenameBase = `sig_fdsu_${layerKey}_${getExportDateStamp()}`;
+    if (format === 'json') {
+      downloadTextFile(`${filenameBase}.json`, JSON.stringify(rows, null, 2), 'application/json');
+    } else if (format === 'geojson') {
+      const exportItems = asArray(items).filter((item) => {
+        const props = normalizeAttributeRow(item, layerKey).properties;
+        return filterExportRows([props]).length > 0;
+      });
+      downloadTextFile(`${filenameBase}.geojson`, JSON.stringify(buildFeatureCollection(exportItems, layerKey), null, 2), 'application/geo+json');
+    } else {
+      downloadTextFile(`${filenameBase}.csv`, toCsv(rows), 'text/csv;charset=utf-8');
+    }
+    if (status) status.textContent = `${rows.length.toLocaleString('fr-FR')} éléments exportés (${format === 'excel' ? 'CSV compatible Excel' : format.toUpperCase()}).`;
+  });
+}
+
+function refreshExportFilters() {
+  const layerKey = document.querySelector('#export-layer-select')?.value || 'provinces';
+  getLayerItemsForExport(layerKey).then((items) => {
+    const rows = asArray(items).map((item) => normalizeAttributeRow(item, layerKey).properties);
+    updateSelectOptions(document.querySelector('#export-province-filter'), rows.map((row) => row.province).filter(Boolean), 'Toutes les provinces');
+    updateSelectOptions(document.querySelector('#export-territory-filter'), rows.map((row) => row.territoire).filter(Boolean), 'Tous les territoires');
+    updateSelectOptions(document.querySelector('#export-type-filter'), rows.map((row) => row.type).filter(Boolean), 'Tous les types');
+    updateExportCount(rows);
+  });
+}
+
+function filterExportRows(rows) {
+  const province = document.querySelector('#export-province-filter')?.value || '';
+  const territory = document.querySelector('#export-territory-filter')?.value || '';
+  const type = document.querySelector('#export-type-filter')?.value || '';
+  return rows.filter((row) => (!province || row.province === province)
+    && (!territory || row.territoire === territory)
+    && (!type || row.type === type));
+}
+
+function updateExportCount(rows) {
+  const countElement = document.querySelector('#export-count');
+  if (!countElement) return;
+  countElement.textContent = `${filterExportRows(rows).length.toLocaleString('fr-FR')} élément(s) prêt(s) à exporter.`;
+}
+
+function getLayerItemsForExport(layerKey) {
+  if (asArray(cartographyState.data[layerKey]).length > 0) {
+    return Promise.resolve(cartographyState.data[layerKey]);
+  }
+  return fetchPlatformLayerData(layerKey);
+}
+
+function toCsv(rows) {
+  const columns = [...new Set(rows.flatMap((row) => Object.keys(row)))];
+  const escapeCsv = (value) => `"${String(value ?? '').replaceAll('"', '""')}"`;
+  return [
+    columns.map(escapeCsv).join(';'),
+    ...rows.map((row) => columns.map((column) => escapeCsv(row[column])).join(';')),
+  ].join('\n');
+}
+
+function downloadTextFile(filename, content, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function getExportDateStamp() {
+  return new Date().toISOString().slice(0, 10).replaceAll('-', '');
+}
+
+function formatFileSize(size) {
+  if (!Number.isFinite(size)) return 'Taille inconnue';
+  if (size < 1024) return `${size} o`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} Ko`;
+  return `${(size / (1024 * 1024)).toFixed(1)} Mo`;
 }
 
 function initializeReferentielModule() {
@@ -314,6 +922,16 @@ function initializeReferentielModule() {
   referentielElements.headers = document.querySelectorAll('.province-table th button');
 
   if (!referentielElements.searchInput || !referentielElements.tableBody || !referentielElements.detailContainer) {
+    return;
+  }
+
+  if (LOCAL_JSON_MODE) {
+    referentielElements.searchInput.addEventListener('input', () => {
+      referentielState.search = referentielElements.searchInput.value.trim().toLowerCase();
+      renderAdministrativeHierarchyModule();
+    });
+    renderAdministrativeHierarchyModule();
+    referentielState.initialized = true;
     return;
   }
 
@@ -373,7 +991,6 @@ function initializeCartographyModule() {
 
   if (cartographyState.map) {
     cartographyState.map.invalidateSize();
-    loadZonesFdsuLayer();
     return;
   }
 
@@ -397,29 +1014,54 @@ function initializeCartographyModule() {
       style: styleCollectivitesFeature,
       onEachFeature: (feature, layer) => onGeoEachFeature(feature, layer, 'collectivites'),
     }),
-    provinces: L.geoJSON(null),
-    territoires: L.geoJSON(null),
+    provinces: L.geoJSON(null, {
+      style: styleProvinceFeature,
+      onEachFeature: (feature, layer) => onGeoEachFeature(feature, layer, 'provinces'),
+    }),
+    territoires: L.geoJSON(null, {
+      style: styleTerritoryFeature,
+      onEachFeature: (feature, layer) => onGeoEachFeature(feature, layer, 'territoires'),
+    }),
     villes: L.geoJSON(null),
     communes: L.geoJSON(null),
     secteurs: L.geoJSON(null),
     chefferies: L.geoJSON(null),
-    groupements: L.geoJSON(null),
-    villages: L.geoJSON(null),
-    sites: L.geoJSON(null),
-    missions: L.geoJSON(null),
+    groupements: L.geoJSON(null, {
+      pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#7c3aed', '#a78bfa'),
+      onEachFeature: (feature, layer) => onGeoEachFeature(feature, layer, 'groupements'),
+    }),
+    villages: L.geoJSON(null, {
+      pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#0f766e', '#14b8a6'),
+      onEachFeature: (feature, layer) => onGeoEachFeature(feature, layer, 'villages'),
+    }),
+    sites: L.geoJSON(null, {
+      pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#b45309', '#f59e0b'),
+      onEachFeature: (feature, layer) => onGeoEachFeature(feature, layer, 'sites'),
+    }),
+    missions: L.geoJSON(null, {
+      pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#be123c', '#fb7185'),
+      onEachFeature: (feature, layer) => onGeoEachFeature(feature, layer, 'missions'),
+    }),
   };
 
   cartographyState.layerControl = L.control.layers(
     {},
     {
       'Zones FDSU': cartographyState.layers.zones,
+      'Provinces': cartographyState.layers.provinces,
+      'Territoires': cartographyState.layers.territoires,
       'Collectivités': cartographyState.layers.collectivites,
+      'Groupements': cartographyState.layers.groupements,
+      'Localités': cartographyState.layers.villages,
+      'Sites FDSU': cartographyState.layers.sites,
+      'Missions': cartographyState.layers.missions,
     },
     { collapsed: false }
   ).addTo(cartographyState.map);
 
   setupLayerControls(layerList);
   setupMapInteractions();
+  setupThematicControls();
   zoomAutoButton.addEventListener('click', fitMapToZonesOrRdc);
   fitMapToRdc();
   loadGeneratedLayer({
@@ -436,6 +1078,8 @@ function initializeCartographyModule() {
     fallbackMessage: 'Couche non disponible.',
     visibleByDefault: false,
   });
+  loadWebSigLayers();
+  setupAttributeExplorer();
   cartographyState.initialized = true;
 }
 
@@ -466,7 +1110,7 @@ function loadGeneratedLayer({ layerKey, filePath, emptyMessage, fallbackMessage,
       cartographyState.layerStatus[layerKey] = true;
 
       if (document.querySelector(`input[data-layer="${layerKey}"]`)) {
-        document.querySelector(`input[data-layer="${layerKey}"]`).checked = true;
+        document.querySelector(`input[data-layer="${layerKey}"]`).checked = Boolean(visibleByDefault);
       }
 
       if (visibleByDefault) {
@@ -489,6 +1133,759 @@ function loadGeneratedLayer({ layerKey, filePath, emptyMessage, fallbackMessage,
       cartographyState.layerStatus[layerKey] = false;
       updateLayerAvailabilityMessage(emptyMessage);
     });
+}
+
+function loadReferentialGeoLayer({ layerKey, reportPath, listKey, visibleByDefault, emptyMessage }) {
+  if (!cartographyState.map || typeof L === 'undefined') return;
+
+  const source = LOCAL_JSON_MODE
+    ? fetchReportJson(reportPath).then((result) => result.data?.[listKey])
+    : fetchJson(`/${layerKey}?limit=1000`);
+
+  source
+    .then((items) => {
+      const featureCollection = buildFeatureCollection(asArray(items), layerKey);
+      const geojsonLayer = cartographyState.layers[layerKey];
+
+      if (!geojsonLayer || featureCollection.features.length === 0) {
+        cartographyState.layerStatus[layerKey] = false;
+        updateLayerAvailabilityMessage(emptyMessage);
+        return;
+      }
+
+      geojsonLayer.clearLayers();
+      geojsonLayer.addData(featureCollection);
+      cartographyState[`${layerKey}Layer`] = geojsonLayer;
+      cartographyState.layerStatus[layerKey] = true;
+
+      const checkbox = document.querySelector(`input[data-layer="${layerKey}"]`);
+      if (checkbox) checkbox.checked = Boolean(visibleByDefault);
+      if (visibleByDefault) geojsonLayer.addTo(cartographyState.map);
+
+      const bounds = geojsonLayer.getBounds();
+      if (bounds.isValid()) {
+        cartographyState.map.fitBounds(bounds, { padding: [20, 20] });
+      }
+      updateLayerAvailabilityMessage('');
+    })
+    .catch(() => {
+      cartographyState.layerStatus[layerKey] = false;
+      updateLayerAvailabilityMessage(emptyMessage);
+    });
+}
+
+function loadLocalityPointLayer() {
+  if (!cartographyState.map || typeof L === 'undefined') return;
+
+  const source = LOCAL_JSON_MODE
+    ? fetchReportJson('locality_official/locality_referential_official.json').then((result) => result.data?.locality_referential)
+    : fetchJson('/localites?limit=1500');
+
+  source
+    .then((items) => {
+      const featureCollection = buildFeatureCollection(asArray(items), 'villages');
+      const localitiesLayer = cartographyState.layers.villages;
+
+      if (!localitiesLayer || featureCollection.features.length === 0) {
+        cartographyState.layerStatus.villages = false;
+        updateLayerAvailabilityMessage('Points des localités non disponibles.');
+        return;
+      }
+
+      localitiesLayer.clearLayers();
+      localitiesLayer.addData(featureCollection);
+      cartographyState.villagesLayer = localitiesLayer;
+      cartographyState.layerStatus.villages = true;
+
+      const checkbox = document.querySelector('input[data-layer="villages"]');
+      if (checkbox) checkbox.checked = !cartographyState.layerStatus.provinces;
+      if (!cartographyState.layerStatus.provinces) {
+        localitiesLayer.addTo(cartographyState.map);
+        const bounds = localitiesLayer.getBounds();
+        if (bounds.isValid()) cartographyState.map.fitBounds(bounds, { padding: [20, 20] });
+      }
+      updateLayerAvailabilityMessage('');
+    })
+    .catch(() => {
+      cartographyState.layerStatus.villages = false;
+      updateLayerAvailabilityMessage('Points des localités non disponibles.');
+    });
+}
+
+const WEB_SIG_LAYER_DEFINITIONS = {
+  provinces: {
+    label: 'Provinces',
+    reportPath: 'province_official/province_referential_official.json',
+    listKey: 'province_referential',
+    endpoint: '/provinces?limit=500',
+    visibleByDefault: true,
+  },
+  territoires: {
+    label: 'Territoires',
+    reportPath: 'territory_hierarchy/territoires_hierarchie_kmz.report.json',
+    listKey: 'territories',
+    endpoint: '/territories?limit=500',
+    visibleByDefault: false,
+    filter: (item) => String(item?.attributs?.extended_data?.TYPE || item?.type || '').toLowerCase() === 'territoire',
+  },
+  collectivites: {
+    label: 'Collectivités',
+    reportPath: 'collectivity_official/collectivity_referential_official.json',
+    listKey: 'collectivity_referential',
+    endpoint: '/collectivites?limit=1000',
+    visibleByDefault: false,
+  },
+  groupements: {
+    label: 'Groupements',
+    reportPath: 'groupement_official/groupement_referential_official.json',
+    listKey: 'groupement_referential',
+    endpoint: '/groupements?limit=2000',
+    visibleByDefault: false,
+  },
+  villages: {
+    label: 'Localités',
+    reportPath: 'locality_official/locality_referential_official.json',
+    listKey: 'locality_referential',
+    endpoint: '/localites?limit=5000',
+    visibleByDefault: false,
+  },
+  sites: {
+    label: 'Sites FDSU',
+    endpoint: '/sites',
+    visibleByDefault: false,
+    fallbackItems: [],
+  },
+  missions: {
+    label: 'Missions',
+    endpoint: '/missions?limit=500',
+    visibleByDefault: false,
+    fallbackItems: [],
+  },
+};
+
+function loadWebSigLayers() {
+  Object.entries(WEB_SIG_LAYER_DEFINITIONS).forEach(([layerKey, definition]) => {
+    loadWebSigLayer(layerKey, definition);
+  });
+}
+
+function loadWebSigLayer(layerKey, definition) {
+  const source = fetchPlatformLayerData(layerKey);
+
+  source
+    .then((items) => {
+      const filteredItems = asArray(items).filter((item) => !definition.filter || definition.filter(item));
+      const featureCollection = buildFeatureCollection(filteredItems, layerKey);
+      const layer = cartographyState.layers[layerKey];
+
+      cartographyState.data[layerKey] = filteredItems;
+      cartographyState.features[layerKey] = featureCollection.features;
+      cartographyState.featureLayers[layerKey] = {};
+
+      if (!layer) return;
+      layer.clearLayers();
+      if (featureCollection.features.length > 0) {
+        layer.addData(featureCollection);
+        cartographyState.layerStatus[layerKey] = true;
+      } else {
+        cartographyState.layerStatus[layerKey] = filteredItems.length > 0 ? 'attributes-only' : false;
+      }
+
+      const checkbox = document.querySelector(`input[data-layer="${layerKey}"]`);
+      if (checkbox) {
+        checkbox.disabled = filteredItems.length === 0;
+        checkbox.checked = Boolean(definition.visibleByDefault && featureCollection.features.length > 0);
+      }
+
+      if (definition.visibleByDefault && featureCollection.features.length > 0) {
+        layer.addTo(cartographyState.map);
+        fitLayerBounds(layer);
+      }
+
+      if (layerKey === 'provinces') {
+        buildZoneLayerFromProvinces(filteredItems);
+      }
+
+      renderAttributeExplorer();
+      refreshGlobalSearchIndex();
+      updateLayerAvailabilityMessage();
+    })
+    .catch(() => {
+      cartographyState.data[layerKey] = [];
+      cartographyState.features[layerKey] = [];
+      cartographyState.layerStatus[layerKey] = false;
+      updateLayerAvailabilityMessage();
+      renderAttributeExplorer();
+    });
+}
+
+function buildZoneLayerFromProvinces(provinces) {
+  if (!cartographyState.layers.zones || cartographyState.layers.zones.getLayers().length > 0) return;
+  const features = asArray(provinces)
+    .filter((province) => province.geometry)
+    .map((province) => {
+      const officialProvince = enrichFdsuNomenclature(province);
+      const zoneCode = officialProvince.zone_fdsu;
+      const zoneName = getZoneName(zoneCode);
+      const zoneStats = computeZoneStats(zoneCode);
+      return {
+        type: 'Feature',
+        geometry: province.geometry,
+        properties: {
+          layer: 'zones',
+          code: zoneCode,
+          zone_fdsu: zoneCode,
+          nom: zoneName,
+          type: 'Zone FDSU',
+          province: province.nom,
+          code_province_fdsu: officialProvince.code_province_fdsu,
+          fdsu_codification_format: FDSU_CODE_FORMAT,
+          provinces_rattachees: zoneStats.provinces.join(', '),
+          nb_provinces: zoneStats.provinces.length,
+          territoires: zoneStats.territoires,
+          collectivites: zoneStats.collectivites,
+          groupements: zoneStats.groupements,
+          localites: zoneStats.localites,
+          sites: zoneStats.sites,
+          source: 'Couche stylisée par provinces rattachées aux zones',
+          statut: 'fallback_cartographique',
+        },
+      };
+    });
+  if (features.length === 0) return;
+  const zonesLayer = cartographyState.layers.zones;
+  zonesLayer.clearLayers();
+  zonesLayer.addData({ type: 'FeatureCollection', features });
+  cartographyState.layerStatus.zones = true;
+  cartographyState.zonesLayer = zonesLayer;
+  const checkbox = document.querySelector('input[data-layer="zones"]');
+  if (checkbox) {
+    checkbox.disabled = false;
+    checkbox.checked = true;
+  }
+  zonesLayer.addTo(cartographyState.map);
+  fitLayerBounds(zonesLayer);
+  updateLayerAvailabilityMessage('');
+}
+
+function getZoneName(zoneCode) {
+  const code = String(zoneCode || '').toUpperCase();
+  return FDSU_ZONE_DEFINITIONS[code]?.nom || 'Zone FDSU';
+}
+
+function normalizeFdsuName(value) {
+  return String(value || '')
+    .trim()
+    .toUpperCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Z0-9]/g, '');
+}
+
+function getFdsuProvinceReference(value) {
+  const target = normalizeFdsuName(value);
+  if (!target) return null;
+  return Object.entries(FDSU_PROVINCE_REFERENCE)
+    .find(([name, reference]) => normalizeFdsuName(name) === target || normalizeFdsuName(reference.code) === target)?.[1] || null;
+}
+
+function getFdsuZoneCodeForItem(item = {}) {
+  const provinceReference = getFdsuProvinceReference(item.province || item.nom || item.name || item.code_province_fdsu);
+  if (provinceReference) return provinceReference.zone_fdsu;
+  const zone = String(item.zone_fdsu || item.zone || item.metadata?.zone_fdsu || '').trim().toUpperCase();
+  return FDSU_ZONE_DEFINITIONS[zone] ? zone : '';
+}
+
+function enrichFdsuNomenclature(item = {}) {
+  const provinceReference = getFdsuProvinceReference(item.province || item.nom || item.name || item.code_province_fdsu);
+  const zoneCode = getFdsuZoneCodeForItem(item);
+  return {
+    ...item,
+    zone_fdsu: zoneCode || item.zone_fdsu || item.zone || '',
+    zone_nom: zoneCode ? getZoneName(zoneCode) : item.zone_nom || '',
+    code_province_fdsu: provinceReference?.code || item.code_province_fdsu || '',
+    fdsu_codification_format: FDSU_CODE_FORMAT,
+  };
+}
+
+function computeZoneStats(zoneCode) {
+  const code = String(zoneCode || '').toUpperCase();
+  const matchesZone = (item) => getFdsuZoneCodeForItem(item) === code;
+  const provinces = asArray(cartographyState.data.provinces)
+    .filter(matchesZone)
+    .map((item) => item.nom || item.name)
+    .filter(Boolean);
+  return {
+    provinces,
+    territoires: asArray(cartographyState.data.territoires).filter(matchesZone).length,
+    collectivites: asArray(cartographyState.data.collectivites).filter(matchesZone).length,
+    groupements: asArray(cartographyState.data.groupements).filter(matchesZone).length,
+    localites: asArray(cartographyState.data.villages).filter(matchesZone).length,
+    sites: asArray(cartographyState.data.sites).filter(matchesZone).length,
+  };
+}
+
+function computeZoneProfileProperties(properties) {
+  const zoneCode = properties.zone_fdsu || properties.code;
+  const stats = computeZoneStats(zoneCode);
+  return {
+    nom: properties.nom || getZoneName(zoneCode),
+    type: 'Zone FDSU',
+    code: zoneCode,
+    zone_fdsu: zoneCode,
+    zone_nom: getZoneName(zoneCode),
+    fdsu_codification_format: FDSU_CODE_FORMAT,
+    provinces_rattachees: stats.provinces.join(', '),
+    nb_provinces: stats.provinces.length,
+    territoires: stats.territoires,
+    collectivites: stats.collectivites,
+    groupements: stats.groupements,
+    localites: stats.localites,
+    sites: stats.sites,
+  };
+}
+
+function fetchPlatformLayerData(layerKey) {
+  if (platformState.dataPromises[layerKey]) return platformState.dataPromises[layerKey];
+  const definition = WEB_SIG_LAYER_DEFINITIONS[layerKey];
+  if (!definition) return Promise.resolve([]);
+  platformState.dataPromises[layerKey] = (LOCAL_JSON_MODE
+    ? loadLayerItemsFromReports(definition)
+    : fetchJson(`/map/layers/${getApiLayerName(layerKey)}?limit=5000`).then((payload) => geoJsonToItems(payload) || definition.fallbackItems || [])
+  ).then((items) => {
+    const filteredItems = asArray(items)
+      .map((item) => enrichFdsuNomenclature(item))
+      .filter((item) => !definition.filter || definition.filter(item));
+    cartographyState.data[layerKey] = filteredItems;
+    return filteredItems;
+  });
+  return platformState.dataPromises[layerKey];
+}
+
+function preloadPlatformData() {
+  return Promise.all(Object.keys(WEB_SIG_LAYER_DEFINITIONS).map((layerKey) => fetchPlatformLayerData(layerKey))).then(() => {
+    refreshGlobalSearchIndex();
+    return platformState.searchIndex;
+  });
+}
+
+function getApiLayerName(layerKey) {
+  return layerKey === 'villages' ? 'localites' : layerKey;
+}
+
+function geoJsonToItems(payload) {
+  if (Array.isArray(payload)) return payload;
+  if (!payload || !Array.isArray(payload.features)) return [];
+  return payload.features.map((feature) => ({
+    ...(feature.properties || {}),
+    geometry: feature.geometry,
+  }));
+}
+
+function loadLayerItemsFromReports(definition) {
+  if (!definition.reportPath) return Promise.resolve(definition.fallbackItems || []);
+  return fetchReportJson(definition.reportPath).then((result) => result.data?.[definition.listKey] || []);
+}
+
+function initializePlatformInteractions() {
+  const globalSearchInput = document.querySelector('#global-search-input');
+  const globalSearchResults = document.querySelector('#global-search-results');
+  if (globalSearchInput && globalSearchInput.dataset.bound !== 'true') {
+    globalSearchInput.dataset.bound = 'true';
+    globalSearchInput.addEventListener('input', () => renderGlobalSearchResults(globalSearchInput.value));
+    globalSearchInput.addEventListener('focus', () => {
+      preloadPlatformData();
+      renderGlobalSearchResults(globalSearchInput.value);
+    });
+  }
+  if (!platformState.interactionsBound) {
+    platformState.interactionsBound = true;
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('.global-search-field')) {
+        document.querySelector('#global-search-results')?.classList.add('hidden');
+      }
+    });
+  }
+
+  document.querySelectorAll('.clickable-summary').forEach((card) => {
+    if (card.dataset.bound === 'true') return;
+    card.dataset.bound = 'true';
+    const openLayer = () => {
+      if (card.dataset.layer) {
+        openDashboardLayerList(card.dataset.layer);
+      } else if (card.dataset.route) {
+        navigateTo(card.dataset.route);
+      }
+    };
+    card.addEventListener('click', openLayer);
+    card.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') openLayer();
+    });
+  });
+
+  const closeButton = document.querySelector('#entity-profile-close');
+  if (closeButton && closeButton.dataset.bound !== 'true') {
+    closeButton.dataset.bound = 'true';
+    closeButton.addEventListener('click', closeEntityProfile);
+  }
+  setupDashboardWorkbench();
+}
+
+function refreshGlobalSearchIndex() {
+  const index = [];
+  Object.keys(WEB_SIG_LAYER_DEFINITIONS).forEach((layerKey) => {
+    const rows = asArray(cartographyState.data[layerKey]);
+    rows.forEach((item) => {
+      const row = normalizeAttributeRow(item, layerKey);
+      index.push({
+        layerKey,
+        featureId: row.featureId,
+        label: row.nom,
+        type: row.type,
+        province: row.province,
+        territoire: row.territoire,
+        properties: row.properties,
+        searchable: buildSearchText(row.properties),
+      });
+    });
+  });
+  platformState.searchIndex = index;
+  platformState.searchReady = true;
+  return index;
+}
+
+function buildSearchText(properties) {
+  const profile = getFutureProfile(properties);
+  return [
+    properties.code,
+    properties.canonical_id,
+    properties.nom,
+    properties.type,
+    properties.province,
+    properties.territoire,
+    properties.collectivite,
+    properties.groupement,
+    properties.localite,
+    properties.source,
+    properties.observations,
+    properties.anomalies,
+    ...asArray(profile.activites_economiques),
+    ...asArray(profile.particularites),
+    ...asArray(profile.defis).map((defi) => typeof defi === 'string' ? defi : `${defi.nom || ''} ${defi.niveau || ''}`),
+    ...Object.keys(profile.potentiels || {}),
+    ...asArray(profile.operateurs),
+    ...asArray(profile.infrastructures),
+  ].join(' ').toLowerCase();
+}
+
+function renderGlobalSearchResults(query) {
+  const resultsElement = document.querySelector('#global-search-results');
+  if (!resultsElement) return;
+  const searchTerm = String(query || '').trim().toLowerCase();
+  if (!platformState.searchReady) {
+    preloadPlatformData().then(() => renderGlobalSearchResults(query));
+  }
+  if (searchTerm.length < 2) {
+    resultsElement.classList.add('hidden');
+    resultsElement.innerHTML = '';
+    return;
+  }
+  const results = platformState.searchIndex
+    .filter((entry) => entry.searchable.includes(searchTerm))
+    .slice(0, 12);
+  resultsElement.classList.remove('hidden');
+  resultsElement.innerHTML = results.length
+    ? results.map((entry) => `
+      <button type="button" class="global-search-result" data-layer="${escapeHtml(entry.layerKey)}" data-feature-id="${escapeHtml(entry.featureId)}">
+        <strong>${escapeHtml(entry.label)}</strong>
+        <span>${escapeHtml(entry.type)}${entry.province ? ` • ${escapeHtml(entry.province)}` : ''}${entry.territoire ? ` • ${escapeHtml(entry.territoire)}` : ''}</span>
+      </button>
+    `).join('')
+    : '<p class="global-search-empty">Aucun résultat.</p>';
+  resultsElement.querySelectorAll('[data-feature-id]').forEach((button) => {
+    button.addEventListener('click', () => {
+      resultsElement.classList.add('hidden');
+      openDashboardLayerList(button.dataset.layer);
+      window.setTimeout(() => openEntityFromLayer(button.dataset.layer, button.dataset.featureId, { navigateMap: false }), 120);
+    });
+  });
+}
+
+function openLayerWorkbench(layerKey, featureId = null) {
+  navigateTo('map');
+  window.setTimeout(() => {
+    const layerSelect = document.querySelector('#attribute-layer-select');
+    if (layerSelect) {
+      layerSelect.value = layerKey;
+      cartographyState.activeAttributeLayer = layerKey;
+    }
+    fetchPlatformLayerData(layerKey).then((items) => {
+      if (!cartographyState.data[layerKey]?.length) {
+        cartographyState.data[layerKey] = items;
+      }
+      renderAttributeExplorer();
+      if (featureId) focusAttributeFeature(layerKey, featureId);
+    });
+  }, 80);
+}
+
+function setupDashboardWorkbench() {
+  const search = document.querySelector('#dashboard-workbench-search');
+  const province = document.querySelector('#dashboard-workbench-province');
+  const territory = document.querySelector('#dashboard-workbench-territory');
+  const prev = document.querySelector('#dashboard-workbench-prev');
+  const next = document.querySelector('#dashboard-workbench-next');
+  const mapButton = document.querySelector('#dashboard-workbench-map');
+  const referentielButton = document.querySelector('#dashboard-workbench-referentiel');
+  [search, province, territory].forEach((element) => {
+    if (!element || element.dataset.bound === 'true') return;
+    element.dataset.bound = 'true';
+    element.addEventListener('input', () => {
+      platformState.workbenchPage = 1;
+      renderDashboardWorkbench();
+    });
+    element.addEventListener('change', () => {
+      platformState.workbenchPage = 1;
+      renderDashboardWorkbench();
+    });
+  });
+  if (prev && prev.dataset.bound !== 'true') {
+    prev.dataset.bound = 'true';
+    prev.addEventListener('click', () => {
+      platformState.workbenchPage = Math.max(1, platformState.workbenchPage - 1);
+      renderDashboardWorkbench();
+    });
+  }
+  if (next && next.dataset.bound !== 'true') {
+    next.dataset.bound = 'true';
+    next.addEventListener('click', () => {
+      platformState.workbenchPage += 1;
+      renderDashboardWorkbench();
+    });
+  }
+  if (mapButton && mapButton.dataset.bound !== 'true') {
+    mapButton.dataset.bound = 'true';
+    mapButton.addEventListener('click', () => {
+      const firstLayer = asArray(platformState.workbenchRows).find((row) => row.layerKey)?.layerKey;
+      const targetLayer = platformState.workbenchLayer === 'mixed' ? firstLayer : platformState.workbenchLayer;
+      if (targetLayer) openLayerWorkbench(targetLayer, null);
+    });
+  }
+  if (referentielButton && referentielButton.dataset.bound !== 'true') {
+    referentielButton.dataset.bound = 'true';
+    referentielButton.addEventListener('click', () => navigateTo('referentiel'));
+  }
+}
+
+function openDashboardLayerList(layerKey, presetRows = null, title = '') {
+  navigateTo('dashboard');
+  platformState.workbenchLayer = layerKey;
+  platformState.workbenchPage = 1;
+  const panel = document.querySelector('#dashboard-workbench');
+  panel?.classList.remove('hidden');
+  fetchPlatformLayerData(layerKey).then((items) => {
+    const rows = presetRows || asArray(items).map((item) => normalizeAttributeRow(item, layerKey));
+    platformState.workbenchRows = rows;
+    const titleElement = document.querySelector('#dashboard-workbench-title');
+    const labelElement = document.querySelector('#dashboard-workbench-label');
+  if (titleElement) titleElement.textContent = title || getLayerDisplayLabel(layerKey);
+    if (labelElement) labelElement.textContent = `${rows.length.toLocaleString('fr-FR')} élément(s)`;
+    refreshWorkbenchFilters(rows);
+    renderDashboardWorkbench();
+  });
+}
+
+function refreshWorkbenchFilters(rows) {
+  updateSelectOptions(document.querySelector('#dashboard-workbench-province'), rows.map((row) => row.province).filter(Boolean), 'Toutes les provinces');
+  updateSelectOptions(document.querySelector('#dashboard-workbench-territory'), rows.map((row) => row.territoire).filter(Boolean), 'Tous les territoires');
+}
+
+function renderDashboardWorkbench() {
+  const body = document.querySelector('#dashboard-workbench-body');
+  if (!body) return;
+  const search = String(document.querySelector('#dashboard-workbench-search')?.value || '').trim().toLowerCase();
+  const province = document.querySelector('#dashboard-workbench-province')?.value || '';
+  const territory = document.querySelector('#dashboard-workbench-territory')?.value || '';
+  const rows = asArray(platformState.workbenchRows).filter((row) => {
+    const haystack = [row.nom, row.type, row.province, row.territoire, row.collectivite, row.groupement].join(' ').toLowerCase();
+    return (!search || haystack.includes(search))
+      && (!province || row.province === province)
+      && (!territory || row.territoire === territory);
+  });
+  const pageSize = platformState.workbenchPageSize;
+  const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+  platformState.workbenchPage = Math.min(platformState.workbenchPage, totalPages);
+  const pageRows = rows.slice((platformState.workbenchPage - 1) * pageSize, platformState.workbenchPage * pageSize);
+  const pageInfo = document.querySelector('#dashboard-workbench-page');
+  const prev = document.querySelector('#dashboard-workbench-prev');
+  const next = document.querySelector('#dashboard-workbench-next');
+  if (pageInfo) pageInfo.textContent = `Page ${platformState.workbenchPage} / ${totalPages}`;
+  if (prev) prev.disabled = platformState.workbenchPage <= 1;
+  if (next) next.disabled = platformState.workbenchPage >= totalPages;
+  if (pageRows.length === 0) {
+    body.innerHTML = '<tr><td colspan="6" class="empty-state">Aucun élément dans cette liste.</td></tr>';
+    return;
+  }
+  body.innerHTML = pageRows.map((row) => `
+    <tr data-layer="${escapeHtml(row.layerKey || platformState.workbenchLayer)}" data-feature-id="${escapeHtml(row.featureId)}">
+      <td>${escapeHtml(row.nom)}</td>
+      <td>${escapeHtml(row.layerKey ? `${getLayerDisplayLabel(row.layerKey)} - ${row.type}` : row.type)}</td>
+      <td>${escapeHtml(row.province || '—')}</td>
+      <td>${escapeHtml(row.territoire || '—')}</td>
+      <td>${escapeHtml(formatAttributeValue(row.qualite || '—'))}</td>
+      <td><button type="button" class="table-action-button">Ouvrir fiche</button></td>
+    </tr>
+  `).join('');
+  body.querySelectorAll('tr[data-feature-id]').forEach((tr) => {
+    tr.addEventListener('click', () => {
+      openEntityFromLayer(tr.dataset.layer, tr.dataset.featureId, { navigateMap: false });
+    });
+  });
+}
+
+function openEntityFromLayer(layerKey, featureId, options = {}) {
+  const row = asArray(cartographyState.data[layerKey])
+    .map((item) => normalizeAttributeRow(item, layerKey))
+    .find((item) => item.featureId === featureId);
+  if (!row) return;
+  openEntityProfile(layerKey, row.properties);
+  renderChildrenForEntity(layerKey, row.properties);
+  if (options.navigateMap) {
+    openLayerWorkbench(layerKey, featureId);
+  }
+}
+
+function renderChildrenForEntity(layerKey, properties) {
+  const childLayers = getChildLayers(layerKey);
+  if (childLayers.length === 0) return;
+  Promise.all(childLayers.map((childLayer) => fetchPlatformLayerData(childLayer))).then((itemsByLayer) => {
+    const rows = childLayers.flatMap((childLayer, index) => asArray(itemsByLayer[index])
+      .map((item) => ({ ...normalizeAttributeRow(item, childLayer), layerKey: childLayer }))
+      .filter((row) => isChildOfEntity(layerKey, properties, row.properties)));
+    if (rows.length > 0) {
+      const uniqueLayers = [...new Set(rows.map((row) => row.layerKey))];
+      const listLayer = uniqueLayers.length === 1 ? uniqueLayers[0] : 'mixed';
+      const title = uniqueLayers.length === 1
+        ? `${getLayerDisplayLabel(uniqueLayers[0])} rattaches a ${properties.nom}`
+        : `Elements rattaches a ${properties.nom}`;
+      openDashboardLayerList(listLayer, rows, title);
+    }
+  });
+}
+
+function getChildLayers(layerKey) {
+  return {
+    zones: ['provinces'],
+    provinces: ['territoires'],
+    territoires: ['collectivites', 'groupements', 'villages'],
+    collectivites: ['groupements', 'villages'],
+    groupements: ['villages'],
+    villages: ['sites'],
+    sites: ['missions'],
+  }[layerKey] || [];
+}
+function isChildOfEntity(parentLayer, parentProperties, childProperties) {
+  const name = parentProperties.nom;
+  if (!name) return false;
+  if (parentLayer === 'zones') return childProperties.zone_fdsu === parentProperties.zone_fdsu || childProperties.zone_fdsu === parentProperties.code;
+  if (parentLayer === 'provinces') return childProperties.province === name;
+  if (parentLayer === 'territoires') return childProperties.territoire === name;
+  if (parentLayer === 'collectivites') return childProperties.collectivite === name;
+  if (parentLayer === 'groupements') return childProperties.groupement === name;
+  if (parentLayer === 'villages') return childProperties.localite === name;
+  return false;
+}
+
+function buildFeatureCollection(items, layerKey) {
+  return {
+    type: 'FeatureCollection',
+    features: items
+      .map((item) => buildFeature(item, layerKey))
+      .filter(Boolean),
+  };
+}
+
+function buildFeature(item, layerKey) {
+  item = enrichFdsuNomenclature(item);
+  const geometry = item?.geometry;
+  if (!geometry || !geometry.type || !Array.isArray(geometry.coordinates)) return null;
+  const metadata = item?.metadata || {};
+  const attributes = item?.attributs || {};
+  const extendedData = metadata.extended_data || attributes.extended_data || {};
+  const coordinates = extractGeometryCoordinate(geometry);
+
+  return {
+    type: 'Feature',
+    geometry,
+    properties: {
+      layer: layerKey,
+      canonical_id: item.canonical_id || item.id || '',
+      code: item.code || item.code_officiel || item.canonical_id || item.id || '',
+      nom: item.nom || item.name || 'Non renseigné',
+      type: item.type_localite || item.type_collectivite || item.niveau || extendedData.TYPE || layerKey,
+      province: item.province || '',
+      territoire: item.territoire || '',
+      collectivite: item.collectivité || item.collectivite || item.collectivite_parent || '',
+      groupement: item.groupement || '',
+      localite: layerKey === 'villages' ? item.nom || item.name || '' : '',
+      zone_fdsu: item.zone_fdsu || item.zone || '',
+      zone_nom: item.zone_nom || getZoneName(item.zone_fdsu),
+      code_province_fdsu: item.code_province_fdsu || '',
+      code_territoire_fdsu: item.code_territoire_fdsu || '',
+      fdsu_codification_format: item.fdsu_codification_format || FDSU_CODE_FORMAT,
+      source: item.source || item.source_file || '',
+      qualite: item.qualité ?? item.qualite ?? item.quality ?? '',
+      statut: item.statut || '',
+      latitude: coordinates?.lat ?? '',
+      longitude: coordinates?.lng ?? '',
+      observations: metadata.description || attributes.description || '',
+      anomalies: asArray(item.incoherences || item.anomalies).join(', '),
+      metadata,
+      future_profile: item.future_profile || metadata.future_profile || {},
+      geometry,
+    },
+  };
+}
+
+function extractGeometryCoordinate(geometry) {
+  const coordinates = geometry?.coordinates;
+  if (!Array.isArray(coordinates)) return null;
+  let cursor = coordinates;
+  while (Array.isArray(cursor?.[0])) {
+    cursor = cursor[0];
+  }
+  if (typeof cursor?.[0] !== 'number' || typeof cursor?.[1] !== 'number') return null;
+  return { lng: cursor[0], lat: cursor[1] };
+}
+
+function makePointMarker(latlng, color, fillColor) {
+  return L.circleMarker(latlng, {
+    radius: 4,
+    weight: 1,
+    color,
+    fillColor,
+    fillOpacity: 0.72,
+  });
+}
+
+function styleProvinceFeature() {
+  return {
+    color: '#2563eb',
+    weight: 1.5,
+    opacity: 0.95,
+    fillColor: '#60a5fa',
+    fillOpacity: 0.12,
+  };
+}
+
+function styleTerritoryFeature() {
+  return {
+    color: '#0891b2',
+    weight: 1,
+    opacity: 0.95,
+    fillColor: '#22d3ee',
+    fillOpacity: 0.08,
+  };
 }
 
 function styleCollectivitesFeature() {
@@ -532,6 +1929,7 @@ function getZoneStyle(zoneCode) {
 function getZoneCode(feature) {
   const properties = feature?.properties || {};
   const candidates = [
+    properties.zone_fdsu,
     properties.code,
     properties.zone,
     properties.zone_code,
@@ -553,8 +1951,23 @@ function getZoneCode(feature) {
 
 function onGeoEachFeature(feature, layer, layerKey) {
   if (!layer) return;
+  const properties = feature?.properties || {};
+  const featureId = getFeatureId(properties, layerKey);
+  if (!cartographyState.featureLayers[layerKey]) cartographyState.featureLayers[layerKey] = {};
+  cartographyState.featureLayers[layerKey][featureId] = layer;
 
-  layer.on('click', () => {
+  if (layer.bindPopup) {
+    layer.bindPopup(`
+      <strong>${escapeHtml(getFeatureProperty(properties, ['nom', 'name', 'libelle']))}</strong><br>
+      ${escapeHtml(getFeatureProperty(properties, ['type', 'niveau']))}<br>
+      <span>Voir fiche détaillée</span>
+    `);
+  }
+
+  layer.on('click', (event) => {
+    if (event?.originalEvent && typeof L !== 'undefined') {
+      L.DomEvent.stopPropagation(event.originalEvent);
+    }
     if (cartographyState.selectedLayer && cartographyState.selectedLayer.setStyle) {
       cartographyState.selectedLayer.setStyle({
         weight: 2,
@@ -575,6 +1988,20 @@ function onGeoEachFeature(feature, layer, layerKey) {
     }
 
     renderFeatureDetails(feature, layerKey);
+    openEntityProfile(layerKey, properties, feature);
+    enrichFeatureDetailsFromApi(feature, layerKey);
+    if (layer.openPopup) layer.openPopup();
+  });
+}
+
+function enrichFeatureDetailsFromApi(feature, layerKey) {
+  if (LOCAL_JSON_MODE) return;
+  const properties = feature?.properties || {};
+  const entityId = properties.id || properties.canonical_id || properties.code;
+  if (!entityId) return;
+  fetchJson(`/entities/${getApiLayerName(layerKey)}/${entityId}`).then((entity) => {
+    if (!entity || Object.keys(entity).length === 0) return;
+    renderTerritorialFeatureDetails({ ...properties, ...entity }, layerKey);
   });
 }
 
@@ -582,6 +2009,11 @@ function renderFeatureDetails(feature, layerKey) {
   if (!cartographyState.infoElement) return;
 
   const properties = feature?.properties || {};
+  if (['provinces', 'villages', 'collectivites', 'groupements', 'territoires', 'sites', 'missions'].includes(layerKey)) {
+    renderTerritorialFeatureDetails(properties, layerKey);
+    return;
+  }
+
   const code = getFeatureProperty(properties, ['code', 'zone', 'zone_code', 'zoneCode']);
   const name = getFeatureProperty(properties, ['nom', 'name', 'libelle']);
   const provinceCount = getFeatureProperty(properties, ['nb_provinces', 'nombre_provinces', 'province_count']);
@@ -610,6 +2042,56 @@ function renderFeatureDetails(feature, layerKey) {
   `;
 }
 
+function renderTerritorialFeatureDetails(properties, layerKey) {
+  const layerLabels = {
+    provinces: 'Province',
+    collectivites: 'Collectivité',
+    groupements: 'Groupement',
+    territoires: 'Territoire',
+    villages: 'Localité',
+    sites: 'Site FDSU',
+    missions: 'Mission',
+  };
+
+  const rows = [
+    ['Nom', getFeatureProperty(properties, ['nom', 'name', 'libelle'])],
+    ['Type administratif', getFeatureProperty(properties, ['type', 'type_localite', 'niveau'])],
+    ['Zone FDSU', getFeatureProperty(properties, ['zone_fdsu', 'zone'])],
+    ['Province', getFeatureProperty(properties, ['province'])],
+    ['Territoire', getFeatureProperty(properties, ['territoire'])],
+    ['Collectivité', getFeatureProperty(properties, ['collectivite', 'collectivité'])],
+    ['Groupement', getFeatureProperty(properties, ['groupement'])],
+    ['Localité', getFeatureProperty(properties, ['localite'])],
+    ['Source', getFeatureProperty(properties, ['source'])],
+    ['Score qualité', getFeatureProperty(properties, ['qualite', 'qualité', 'quality'])],
+    ['Statut', getFeatureProperty(properties, ['statut'])],
+    ['Coordonnées GPS', formatGpsCoordinates(properties)],
+    ['Observations', getFeatureProperty(properties, ['observations', 'description'])],
+    ['Anomalies éventuelles', getFeatureProperty(properties, ['anomalies'])],
+  ];
+
+  cartographyState.infoElement.innerHTML = `
+    <p class="zone-detail-label">Type de couche</p>
+    <p class="zone-detail-value">${escapeHtml(layerLabels[layerKey] || layerKey)}</p>
+    <div class="detail-attributes">
+      ${rows.map(([label, value]) => `<div class="detail-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(formatAttributeValue(value))}</strong></div>`).join('')}
+    </div>
+  `;
+}
+
+function getFeatureId(properties, layerKey) {
+  return String(properties?.canonical_id || properties?.id || properties?.code || `${layerKey}-${properties?.nom || properties?.name || 'sans_nom'}-${properties?.province || ''}-${properties?.territoire || ''}`);
+}
+
+function formatGpsCoordinates(properties) {
+  const latitude = properties?.latitude;
+  const longitude = properties?.longitude;
+  if (latitude === '' || longitude === '' || latitude === undefined || longitude === undefined) {
+    return 'Non disponible';
+  }
+  return `${Number(latitude).toFixed(6)}, ${Number(longitude).toFixed(6)}`;
+}
+
 function getFeatureProperty(properties, keys) {
   for (const key of keys) {
     const value = properties?.[key];
@@ -626,25 +2108,21 @@ function showZonesMessage(message) {
   cartographyState.zonesMessageElement.textContent = message || '';
 }
 
-function updateLayerAvailabilityMessage(fallbackMessage) {
-  const zonesAvailable = cartographyState.layerStatus.zones;
-  const collectivitesAvailable = cartographyState.layerStatus.collectivites;
+function updateLayerAvailabilityMessage(fallbackMessage = '') {
+  const attributeOnlyLayers = Object.entries(cartographyState.layerStatus)
+    .filter(([, status]) => status === 'attributes-only')
+    .map(([layerKey]) => WEB_SIG_LAYER_DEFINITIONS[layerKey]?.label || layerKey);
 
-  if (zonesAvailable === false || collectivitesAvailable === false) {
-    showZonesMessage(fallbackMessage);
+  if (attributeOnlyLayers.length > 0) {
+    showZonesMessage(`Couche disponible en attributaire uniquement, géométrie manquante : ${attributeOnlyLayers.join(', ')}.`);
     return;
   }
 
-  if (zonesAvailable === true && collectivitesAvailable === true) {
-    showZonesMessage('');
-    return;
-  }
-
-  showZonesMessage('');
+  showZonesMessage(fallbackMessage || '');
 }
 
 function escapeHtml(value) {
-  return value
+  return String(value ?? '')
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')
@@ -679,19 +2157,31 @@ function setupLayerControls(layerList) {
       const layer = cartographyState.layers[layerKey];
       if (!layer || !cartographyState.map) return;
 
-      if ((layerKey === 'zones' || layerKey === 'collectivites') && layer.getLayers().length === 0) {
+      const hasAttributes = asArray(cartographyState.data[layerKey]).length > 0;
+      if (layer.getLayers().length === 0) {
         checkbox.checked = false;
-        showZonesMessage('Couche non disponible.');
+        showZonesMessage(hasAttributes
+          ? 'Couche disponible en attributaire uniquement, géométrie manquante.'
+          : 'Aucune donnée disponible pour cette couche.');
         return;
       }
 
       if (checkbox.checked) {
         layer.addTo(cartographyState.map);
+        fitLayerBounds(layer);
       } else {
         cartographyState.map.removeLayer(layer);
       }
     });
   });
+}
+
+function fitLayerBounds(layer) {
+  if (!cartographyState.map || !layer?.getBounds) return;
+  const bounds = layer.getBounds();
+  if (bounds.isValid()) {
+    cartographyState.map.fitBounds(bounds, { padding: [20, 20] });
+  }
 }
 
 function setupMapInteractions() {
@@ -802,10 +2292,14 @@ function bindGovernanceEvents() {
 function renderGovernanceKpis() {
   if (!governanceElements.kpis) return;
 
+  const registry = governanceState.report?.registryCounters || {};
+  const groupements = registry.groupements || {};
+  const localites = registry.localites || {};
   const kpis = [
-    { label: 'Référentiels suivis', value: 'Staging prêt' },
-    { label: 'Sources officielles', value: 'Adaptateurs prêts' },
-    { label: 'Objets à valider', value: formatGovernanceMetric(governanceState.normalization.summary?.orphans) },
+    { label: 'Provinces', value: formatGovernanceMetric(registry.provinces?.nombre ?? 26) },
+    { label: 'Collectivités', value: formatGovernanceMetric(registry.collectivites?.nombre ?? 733) },
+    { label: 'Groupements', value: `${formatGovernanceMetric(groupements.trouve ?? groupements.nombre ?? 1681)} / ${formatGovernanceMetric(groupements.attendu_officiel ?? 6053)}` },
+    { label: 'Localités', value: formatGovernanceMetric(localites.nombre) },
     { label: 'Qualité globale', value: formatGovernanceMetric(governanceState.normalization.summary?.qualityScore) },
   ];
 
@@ -977,19 +2471,15 @@ function seedGovernanceModuleData() {
 }
 
 function loadNationalAdministrativeReport() {
-  Promise.all([getProvinces(), getTerritoires(), getCollectivites(), getGroupements(), getVillages()])
-    .then(([provinces, territoires, collectivites, groupements, villages]) => {
-      const report = buildNationalAdministrativeReport({
-        provinces: Array.isArray(provinces) ? provinces : [],
-        territoires: Array.isArray(territoires) ? territoires : [],
-        collectivites: Array.isArray(collectivites) ? collectivites : [],
-        groupements: Array.isArray(groupements) ? groupements : [],
-        villages: Array.isArray(villages) ? villages : [],
-      });
+  loadNationalReferentialJsonData()
+    .then((payload) => {
+      const report = buildNationalReferentialReportFromJson(payload);
 
       governanceState.report = report;
+      governanceState.jsonSources = payload.sources;
       governanceState.normalization = report.normalization;
       governanceState.dataByTab.referentiels = report.referentielRows;
+      governanceState.dataByTab.sources = report.sourceRows;
       governanceState.dataByTab.validation = report.validationRows;
       governanceState.dataByTab.qualite = report.qualityRows;
       governanceState.dataByTab.normalisation = [report.normalizationRow];
@@ -1004,12 +2494,1093 @@ function loadNationalAdministrativeReport() {
       updateGovernanceStatusFilter();
       governanceState.page = 1;
       governanceState.selectedRecord = null;
+      setGovernanceViewState('success');
       renderGovernanceTable();
       renderGovernanceDetailPanel();
     })
     .catch(() => {
       governanceState.report = null;
+      setGovernanceViewState('error');
     });
+}
+
+const NATIONAL_REFERENTIAL_JSON_FILES = {
+  registry: 'national_counter_registry.json',
+  provinceReferential: 'province_official/province_referential_official.json',
+  provinceFactSheets: 'province_official/province_fact_sheets.json',
+  provinceQuality: 'province_official/province_quality_report.json',
+  territoryHierarchy: 'territory_hierarchy/territoires_hierarchie_kmz.report.json',
+  cityReferential: 'city_official/city_referential_official.json',
+  cityFactSheets: 'city_official/city_fact_sheets.json',
+  cityQuality: 'city_official/city_quality_report.json',
+  collectivityReferential: 'collectivity_official/collectivity_referential_official.json',
+  collectivityFactSheets: 'collectivity_official/collectivity_fact_sheets.json',
+  collectivityQuality: 'collectivity_official/collectivity_quality_report.json',
+  territoryCollectivityIndex: 'collectivity_official/territory_collectivity_index.json',
+  provinceCollectivityIndex: 'collectivity_official/province_collectivity_index.json',
+  groupementReferential: 'groupement_official/groupement_referential_official.json',
+  groupementQuality: 'groupement_official/groupement_quality_report.json',
+  groupementCoverageAudit: 'groupement_official/groupement_coverage_audit.json',
+  collectivityGroupementIndex: 'groupement_official/collectivity_groupement_index.json',
+  territoryGroupementIndex: 'groupement_official/territory_groupement_index.json',
+  provinceGroupementIndex: 'groupement_official/province_groupement_index.json',
+  localityReferential: 'locality_official/locality_referential_official.json',
+  localityFactSheets: 'locality_official/locality_fact_sheets.json',
+  localityQuality: 'locality_official/locality_quality_report.json',
+  provinceLocalityIndex: 'locality_official/province_locality_index.json',
+  territoryLocalityIndex: 'locality_official/territory_locality_index.json',
+  collectivityLocalityIndex: 'locality_official/collectivity_locality_index.json',
+  groupementLocalityIndex: 'locality_official/groupement_locality_index.json',
+};
+
+function loadNationalReferentialJsonData() {
+  const entries = Object.entries(NATIONAL_REFERENTIAL_JSON_FILES);
+  return Promise.all(entries.map(([key, path]) => fetchReportJson(path).then((result) => [key, result]))).then((results) => {
+    const payload = {};
+    const sources = {};
+    results.forEach(([key, result]) => {
+      payload[key] = result.data;
+      sources[key] = {
+        path: result.path,
+        available: result.available,
+        label: result.available ? 'Chargé' : 'Donnée non disponible',
+      };
+    });
+    payload.sources = sources;
+    return payload;
+  });
+}
+
+function setupThematicControls() {
+  const select = document.querySelector('#thematic-layer-select');
+  if (!select || select.dataset.bound === 'true') return;
+  select.dataset.bound = 'true';
+  select.addEventListener('change', () => {
+    cartographyState.thematicMode = select.value;
+    applyThematicStyles();
+    showZonesMessage(select.value ? `Carte thématique active : ${select.options[select.selectedIndex].textContent}.` : '');
+  });
+}
+
+function applyThematicStyles() {
+  Object.entries(cartographyState.layers).forEach(([layerKey, layer]) => {
+    if (!layer?.eachLayer) return;
+    layer.eachLayer((leafletLayer) => {
+      const properties = leafletLayer.feature?.properties || {};
+      const style = getThematicStyle(properties, layerKey);
+      if (leafletLayer.setStyle) leafletLayer.setStyle(style);
+    });
+  });
+}
+
+function getThematicStyle(properties, layerKey) {
+  if (!cartographyState.thematicMode) {
+    if (layerKey === 'provinces') return styleProvinceFeature();
+    if (layerKey === 'territoires') return styleTerritoryFeature();
+    if (layerKey === 'collectivites') return styleCollectivitesFeature();
+    return { color: '#0f766e', fillColor: '#14b8a6', fillOpacity: 0.72, weight: 1 };
+  }
+  const text = buildSearchText(properties);
+  const thematicColors = {
+    economic: text.includes('commerce') ? '#f97316' : '#16a34a',
+    agriculture: text.includes('agriculture') ? '#22c55e' : '#84cc16',
+    mining: text.includes('mine') || text.includes('minier') ? '#a855f7' : '#64748b',
+    network: text.includes('faible') || text.includes('absence') ? '#dc2626' : '#2563eb',
+    challenges: text.includes('critique') || text.includes('insécurité') || text.includes('insecurite') ? '#b91c1c' : '#f59e0b',
+    infrastructure: text.includes('route') || text.includes('port') || text.includes('aéroport') ? '#0891b2' : '#64748b',
+    fdsu: text.includes('priorité') || text.includes('priorite') ? '#7c3aed' : '#0f766e',
+  };
+  const color = thematicColors[cartographyState.thematicMode] || '#0f766e';
+  return { color, fillColor: color, fillOpacity: 0.32, weight: 2 };
+}
+
+function setupAttributeExplorer() {
+  const layerSelect = document.querySelector('#attribute-layer-select');
+  const searchInput = document.querySelector('#attribute-search');
+  const provinceFilter = document.querySelector('#attribute-province-filter');
+  const territoryFilter = document.querySelector('#attribute-territory-filter');
+  const prevButton = document.querySelector('#attribute-prev');
+  const nextButton = document.querySelector('#attribute-next');
+
+  [layerSelect, searchInput, provinceFilter, territoryFilter].forEach((element) => {
+    if (!element || element.dataset.bound === 'true') return;
+    element.dataset.bound = 'true';
+    element.addEventListener('input', () => {
+      if (layerSelect) cartographyState.activeAttributeLayer = layerSelect.value;
+      cartographyState.attributePage = 1;
+      renderAttributeExplorer();
+    });
+    element.addEventListener('change', () => {
+      if (layerSelect) cartographyState.activeAttributeLayer = layerSelect.value;
+      cartographyState.attributePage = 1;
+      renderAttributeExplorer();
+    });
+  });
+  if (prevButton && prevButton.dataset.bound !== 'true') {
+    prevButton.dataset.bound = 'true';
+    prevButton.addEventListener('click', () => {
+      cartographyState.attributePage = Math.max(1, cartographyState.attributePage - 1);
+      renderAttributeExplorer();
+    });
+  }
+  if (nextButton && nextButton.dataset.bound !== 'true') {
+    nextButton.dataset.bound = 'true';
+    nextButton.addEventListener('click', () => {
+      cartographyState.attributePage += 1;
+      renderAttributeExplorer();
+    });
+  }
+}
+
+function renderAttributeExplorer() {
+  const tableBody = document.querySelector('#attribute-table-body');
+  const totalElement = document.querySelector('#attribute-total');
+  const pageInfo = document.querySelector('#attribute-page-info');
+  const prevButton = document.querySelector('#attribute-prev');
+  const nextButton = document.querySelector('#attribute-next');
+  const layerSelect = document.querySelector('#attribute-layer-select');
+  const provinceFilter = document.querySelector('#attribute-province-filter');
+  const territoryFilter = document.querySelector('#attribute-territory-filter');
+  const searchInput = document.querySelector('#attribute-search');
+  if (!tableBody) return;
+
+  const layerKey = layerSelect?.value || cartographyState.activeAttributeLayer || 'provinces';
+  const rows = asArray(cartographyState.data[layerKey]).map((item) => normalizeAttributeRow(item, layerKey));
+  refreshAttributeFilters(rows, provinceFilter, territoryFilter);
+
+  const searchTerm = String(searchInput?.value || '').trim().toLowerCase();
+  const provinceValue = provinceFilter?.value || '';
+  const territoryValue = territoryFilter?.value || '';
+  const filteredRows = rows.filter((row) => {
+    const haystack = [row.nom, row.type, row.province, row.territoire, row.collectivite, row.groupement].join(' ').toLowerCase();
+    return (!searchTerm || haystack.includes(searchTerm))
+      && (!provinceValue || row.province === provinceValue)
+      && (!territoryValue || row.territoire === territoryValue);
+  }).sort((a, b) => String(a[cartographyState.attributeSortKey] || '').localeCompare(String(b[cartographyState.attributeSortKey] || ''), 'fr'));
+
+  if (totalElement) totalElement.textContent = `${filteredRows.length.toLocaleString('fr-FR')} / ${rows.length.toLocaleString('fr-FR')} éléments`;
+  const pageSize = cartographyState.attributePageSize;
+  const totalPages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
+  cartographyState.attributePage = Math.min(cartographyState.attributePage, totalPages);
+  const offset = (cartographyState.attributePage - 1) * pageSize;
+  const pageRows = filteredRows.slice(offset, offset + pageSize);
+  if (pageInfo) pageInfo.textContent = `Page ${cartographyState.attributePage} / ${totalPages}`;
+  if (prevButton) prevButton.disabled = cartographyState.attributePage <= 1;
+  if (nextButton) nextButton.disabled = cartographyState.attributePage >= totalPages;
+  if (filteredRows.length === 0) {
+    tableBody.innerHTML = '<tr><td colspan="6" class="empty-state">Donnée non disponible.</td></tr>';
+    return;
+  }
+
+  tableBody.innerHTML = pageRows.map((row) => `
+    <tr data-layer="${escapeHtml(layerKey)}" data-feature-id="${escapeHtml(row.featureId)}" class="${row.featureId === cartographyState.selectedFeatureId ? 'selected' : ''}">
+      <td>${escapeHtml(row.nom)}</td>
+      <td>${escapeHtml(row.type)}</td>
+      <td>${escapeHtml(row.province || '—')}</td>
+      <td>${escapeHtml(row.territoire || '—')}</td>
+      <td>${escapeHtml(formatAttributeValue(row.qualite || '—'))}</td>
+      <td><button type="button" class="table-action-button" data-action="view-feature">Voir fiche</button></td>
+    </tr>
+  `).join('');
+
+  tableBody.querySelectorAll('tr[data-feature-id]').forEach((row) => {
+    row.addEventListener('click', () => {
+      cartographyState.selectedFeatureId = row.dataset.featureId;
+      focusAttributeFeature(row.dataset.layer, row.dataset.featureId);
+      renderAttributeExplorer();
+    });
+  });
+}
+
+function refreshAttributeFilters(rows, provinceFilter, territoryFilter) {
+  updateSelectOptions(provinceFilter, rows.map((row) => row.province).filter(Boolean), 'Toutes les provinces');
+  updateSelectOptions(territoryFilter, rows.map((row) => row.territoire).filter(Boolean), 'Tous les territoires');
+}
+
+function updateSelectOptions(select, values, emptyLabel) {
+  if (!select) return;
+  const currentValue = select.value;
+  const uniqueValues = [...new Set(values)].sort((a, b) => a.localeCompare(b, 'fr'));
+  select.innerHTML = `<option value="">${escapeHtml(emptyLabel)}</option>${uniqueValues.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('')}`;
+  if (uniqueValues.includes(currentValue)) select.value = currentValue;
+}
+
+function normalizeAttributeRow(item, layerKey) {
+  const feature = buildFeature(item, layerKey);
+  const properties = feature?.properties || buildPropertiesFromItem(item, layerKey);
+  return {
+    featureId: getFeatureId(properties, layerKey),
+    properties,
+    nom: properties.nom || 'Non renseigné',
+    type: properties.type || layerKey,
+    province: properties.province || '',
+    territoire: properties.territoire || '',
+    collectivite: properties.collectivite || '',
+    groupement: properties.groupement || '',
+    qualite: properties.qualite || '',
+  };
+}
+
+function buildPropertiesFromItem(item, layerKey) {
+  item = enrichFdsuNomenclature(item);
+  const metadata = item?.metadata || {};
+  const attributes = item?.attributs || {};
+  const extendedData = metadata.extended_data || attributes.extended_data || {};
+  return {
+    layer: layerKey,
+    canonical_id: item?.canonical_id || item?.id || item?.code_officiel || '',
+    code: item?.code || item?.code_officiel || item?.canonical_id || item?.id || '',
+    nom: item?.nom || item?.name || 'Non renseigné',
+    type: item?.type_localite || item?.type_collectivite || item?.niveau || extendedData.TYPE || layerKey,
+    province: item?.province || '',
+    territoire: item?.territoire || '',
+    collectivite: item?.collectivité || item?.collectivite || item?.collectivite_parent || '',
+    groupement: item?.groupement || '',
+    localite: layerKey === 'villages' ? item?.nom || item?.name || '' : '',
+    zone_fdsu: item?.zone_fdsu || item?.zone || '',
+    zone_nom: item?.zone_nom || getZoneName(item?.zone_fdsu),
+    code_province_fdsu: item?.code_province_fdsu || '',
+    code_territoire_fdsu: item?.code_territoire_fdsu || '',
+    fdsu_codification_format: item?.fdsu_codification_format || FDSU_CODE_FORMAT,
+    source: item?.source || item?.source_file || '',
+    qualite: item?.qualité ?? item?.qualite ?? item?.quality ?? '',
+    statut: item?.statut || '',
+    observations: metadata.description || attributes.description || '',
+    anomalies: asArray(item?.incoherences || item?.anomalies).join(', '),
+    metadata,
+    future_profile: item?.future_profile || metadata.future_profile || {},
+    geometry: item?.geometry || null,
+  };
+}
+
+function focusAttributeFeature(layerKey, featureId) {
+  const featureLayer = cartographyState.featureLayers[layerKey]?.[featureId];
+  const feature = cartographyState.features[layerKey]?.find((candidate) => getFeatureId(candidate.properties, layerKey) === featureId);
+  const row = asArray(cartographyState.data[layerKey])
+    .map((item) => normalizeAttributeRow(item, layerKey))
+    .find((item) => item.featureId === featureId);
+
+  if (featureLayer && cartographyState.map) {
+    const layer = cartographyState.layers[layerKey];
+    if (layer && !cartographyState.map.hasLayer(layer)) {
+      layer.addTo(cartographyState.map);
+      const checkbox = document.querySelector(`input[data-layer="${layerKey}"]`);
+      if (checkbox) checkbox.checked = true;
+    }
+    if (featureLayer.getBounds) {
+      fitLayerBounds(featureLayer);
+    } else if (featureLayer.getLatLng) {
+      cartographyState.map.setView(featureLayer.getLatLng(), Math.max(cartographyState.map.getZoom(), 9));
+    }
+    renderFeatureDetails(feature || { properties: row?.properties || {} }, layerKey);
+    openEntityProfile(layerKey, feature?.properties || row?.properties || {}, feature);
+    if (featureLayer.openPopup) featureLayer.openPopup();
+    return;
+  }
+
+  renderTerritorialFeatureDetails(row?.properties || {}, layerKey);
+  openEntityProfile(layerKey, row?.properties || {});
+  showZonesMessage('Fiche attributaire ouverte, géométrie manquante.');
+}
+
+function openEntityProfile(layerKey, properties = {}, feature = null) {
+  const drawer = document.querySelector('#entity-profile-drawer');
+  const title = document.querySelector('#entity-profile-title');
+  const layerLabel = document.querySelector('#entity-profile-layer');
+  const body = document.querySelector('#entity-profile-body');
+  if (!drawer || !title || !layerLabel || !body) return;
+  const normalized = layerKey === 'zones'
+    ? { ...properties, ...computeZoneProfileProperties(properties), layer: layerKey }
+    : { ...properties, layer: layerKey };
+  platformState.selectedEntity = { layerKey, properties: normalized, feature };
+  title.textContent = normalized.nom || normalized.name || 'Entité sans nom';
+  layerLabel.textContent = getLayerDisplayLabel(layerKey);
+  body.innerHTML = buildEntityProfileMarkup(layerKey, normalized);
+  drawer.classList.remove('hidden');
+  body.querySelector('[data-profile-action="export"]')?.addEventListener('click', () => exportEntityProfile(layerKey, normalized, feature));
+  body.querySelector('[data-profile-action="print"]')?.addEventListener('click', () => window.print());
+  body.querySelectorAll('[data-open-related-layer]').forEach((button) => {
+    button.addEventListener('click', () => openLayerWorkbench(button.dataset.openRelatedLayer));
+  });
+}
+
+function closeEntityProfile() {
+  document.querySelector('#entity-profile-drawer')?.classList.add('hidden');
+}
+
+function exportEntityProfile(layerKey, properties, feature = null) {
+  const format = document.querySelector('#entity-profile-export-format')?.value || 'json';
+  const baseName = `sig_fdsu_fiche_${getApiLayerName(layerKey)}_${getExportDateStamp()}`;
+  if (format === 'json') {
+    downloadTextFile(`${baseName}.json`, JSON.stringify(properties, null, 2), 'application/json');
+    return;
+  }
+  if (format === 'csv') {
+    downloadTextFile(`${baseName}.csv`, toCsv([properties]), 'text/csv;charset=utf-8');
+    return;
+  }
+  if (format === 'geojson') {
+    const geometry = feature?.geometry || properties.geometry;
+    if (!geometry) {
+      alert('GeoJSON non disponible : cette fiche ne contient pas de géométrie.');
+      return;
+    }
+    downloadTextFile(`${baseName}.geojson`, JSON.stringify({ type: 'Feature', geometry, properties }, null, 2), 'application/geo+json');
+    return;
+  }
+  if (format === 'pdf') {
+    window.print();
+    return;
+  }
+}
+
+function buildEntityProfileMarkup(layerKey, properties) {
+  const profile = getFutureProfile(properties);
+  const relations = getEntityRelations(layerKey, properties);
+  return `
+    <section class="profile-actions">
+      <select id="entity-profile-export-format" aria-label="Format export fiche">
+        <option value="json">JSON</option>
+        <option value="csv">CSV</option>
+        <option value="geojson">GeoJSON</option>
+        <option value="pdf">Impression / PDF navigateur</option>
+      </select>
+      <button type="button" class="primary-button" data-profile-action="export">Exporter la fiche</button>
+      <button type="button" class="table-action-button" data-profile-action="print">Imprimer</button>
+    </section>
+    ${buildProfileSection('Identité', [
+      ['Code officiel', properties.code || properties.canonical_id],
+      ['Code zone FDSU', properties.zone_fdsu],
+      ['Code province FDSU', properties.code_province_fdsu],
+      ['Code territoire FDSU', properties.code_territoire_fdsu],
+      ['Format codification FDSU', properties.fdsu_codification_format],
+      ['Nom', properties.nom],
+      ['Type administratif', properties.type],
+      ['Hiérarchie administrative', formatHierarchy(properties)],
+      ['Coordonnées', formatGpsCoordinates(properties)],
+      ['Superficie', properties.superficie],
+      ['Population', properties.population],
+      ['Chef-lieu', properties.chef_lieu],
+      ['Provinces rattachées', properties.provinces_rattachees],
+      ['Nombre de provinces', properties.nb_provinces],
+      ['Territoires', properties.territoires],
+      ['Collectivités', properties.collectivites],
+      ['Groupements', properties.groupements],
+      ['Localités', properties.localites],
+      ['Sites FDSU', properties.sites],
+    ])}
+    <section class="profile-section">
+      <h3>Carte</h3>
+      <p>${properties.latitude && properties.longitude ? `Objet géolocalisé : ${formatGpsCoordinates(properties)}.` : 'Géométrie ou coordonnées non disponibles pour cet objet.'}</p>
+    </section>
+    <section class="profile-section">
+      <h3>Activités économiques</h3>
+      ${renderEconomicActivities(profile)}
+    </section>
+    <section class="profile-section">
+      <h3>Particularités</h3>
+      <div class="rich-text-preview">${renderListOrPlaceholder(profile.particularites, 'Aucune particularité renseignée.')}</div>
+    </section>
+    <section class="profile-section">
+      <h3>Défis</h3>
+      ${renderChallenges(profile)}
+    </section>
+    <section class="profile-section">
+      <h3>Potentiel de développement</h3>
+      ${renderPotentials(profile)}
+    </section>
+    <section class="profile-section">
+      <h3>Services publics</h3>
+      ${renderServiceGrid(profile)}
+    </section>
+    <section class="profile-section">
+      <h3>Analyse FDSU</h3>
+      ${buildProfileSection(null, [
+        ['Couverture numérique', profile.couverture_numerique],
+        ['Opérateurs présents', asArray(profile.operateurs).join(', ')],
+        ['Technologies', asArray(profile.technologies).join(', ')],
+        ['Qualité de service', profile.qualite_service],
+        ['Sites existants', profile.sites_existants],
+        ['Sites candidats', profile.sites_candidats],
+        ['Missions réalisées', profile.missions_realisees],
+        ['Besoins prioritaires', asArray(profile.besoins_prioritaires).join(', ')],
+        ['Score priorité FDSU', profile.score_priorite_fdsu],
+        ['Recommandations', profile.recommandations],
+      ], true)}
+    </section>
+    <section class="profile-section">
+      <h3>Relations hiérarchiques</h3>
+      <div class="profile-relations">${relations.map((relation) => `<button type="button" class="table-action-button" data-open-related-layer="${escapeHtml(relation.layer)}">${escapeHtml(relation.label)}</button>`).join('') || '<p>Aucune relation disponible.</p>'}</div>
+    </section>
+    ${buildProfileSection('Qualité des données', [
+      ['Score qualité', properties.qualite || properties.quality],
+      ['Statut', properties.statut],
+      ['Source', properties.source],
+      ['Anomalies', properties.anomalies],
+    ])}
+    <section class="profile-section">
+      <h3>Documents et photos</h3>
+      <p>Aucun document ou photo lié dans cette version.</p>
+    </section>
+    <section class="profile-section">
+      <h3>Historique</h3>
+      <ol class="profile-history">
+        <li>Source importée : ${escapeHtml(properties.source || 'Non renseignée')}</li>
+        <li>Statut courant : ${escapeHtml(properties.statut || 'Non renseigné')}</li>
+        <li>Consultation fiche : ${escapeHtml(new Date().toLocaleString('fr-FR'))}</li>
+      </ol>
+    </section>
+  `;
+}
+
+function buildProfileSection(title, rows, embedded = false) {
+  const content = `<div class="detail-attributes">${rows.map(([label, value]) => `<div class="detail-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(formatAttributeValue(value || 'Non disponible'))}</strong></div>`).join('')}</div>`;
+  if (embedded) return content;
+  return `<section class="profile-section">${title ? `<h3>${escapeHtml(title)}</h3>` : ''}${content}</section>`;
+}
+
+function getFutureProfile(properties) {
+  const metadata = properties.metadata && typeof properties.metadata === 'object' ? properties.metadata : {};
+  const profile = properties.future_profile && typeof properties.future_profile === 'object' ? properties.future_profile : {};
+  return {
+    activites_economiques: profile.activites_economiques || metadata.activites_economiques || [],
+    activite_principale: profile.activite_principale || metadata.activite_principale || '',
+    activite_secondaire: profile.activite_secondaire || metadata.activite_secondaire || '',
+    particularites: profile.particularites || metadata.particularites || [],
+    defis: profile.defis || metadata.defis || [],
+    potentiels: profile.potentiels || metadata.potentiels || {},
+    services_publics: profile.services_publics || metadata.services_publics || {},
+    couverture_numerique: profile.couverture_numerique || '',
+    operateurs: profile.operateurs || [],
+    technologies: profile.technologies || [],
+    qualite_service: profile.qualite_service || '',
+    sites_existants: profile.sites_existants || '',
+    sites_candidats: profile.sites_candidats || '',
+    missions_realisees: profile.missions_realisees || '',
+    besoins_prioritaires: profile.besoins_prioritaires || [],
+    score_priorite_fdsu: profile.score_priorite_fdsu || '',
+    recommandations: profile.recommandations || '',
+    infrastructures: profile.infrastructures || [],
+  };
+}
+
+function renderEconomicActivities(profile) {
+  const activities = [
+    profile.activite_principale ? { nom: profile.activite_principale, role: 'Principale' } : null,
+    profile.activite_secondaire ? { nom: profile.activite_secondaire, role: 'Secondaire' } : null,
+    ...asArray(profile.activites_economiques).map((activity) => typeof activity === 'string' ? { nom: activity } : activity),
+  ].filter(Boolean);
+  if (activities.length === 0) return '<p>Donnée socio-économique non encore renseignée.</p>';
+  return `<div class="activity-chip-list">${activities.map((activity) => `<span class="activity-chip"><strong>${escapeHtml(activity.nom || activity.label || 'Activité')}</strong><small>${escapeHtml(activity.role || activity.priorite || 'À qualifier')}</small></span>`).join('')}</div>`;
+}
+
+function renderChallenges(profile) {
+  const challenges = asArray(profile.defis);
+  if (challenges.length === 0) return '<p>Aucun défi renseigné.</p>';
+  return `<div class="challenge-list">${challenges.map((challenge) => {
+    const label = typeof challenge === 'string' ? challenge : challenge.nom || challenge.label || 'Défi';
+    const level = typeof challenge === 'string' ? 'À qualifier' : challenge.niveau || 'À qualifier';
+    return `<div class="challenge-item"><span>${escapeHtml(label)}</span><strong>${escapeHtml(level)}</strong></div>`;
+  }).join('')}</div>`;
+}
+
+function renderPotentials(profile) {
+  const potentials = profile.potentiels || {};
+  const keys = ['agricole', 'pastoral', 'halieutique', 'minier', 'forestier', 'touristique', 'commercial', 'numerique', 'energetique'];
+  return `<div class="potential-grid">${keys.map((key) => `<div><span>${escapeHtml(key)}</span><strong>${escapeHtml(formatAttributeValue(potentials[key] || 'Non noté'))}/5</strong></div>`).join('')}</div>`;
+}
+
+function renderServiceGrid(profile) {
+  const services = profile.services_publics || {};
+  const keys = ['ecoles', 'centres_sante', 'batiments_administratifs', 'marches', 'eglises', 'points_eau', 'reseau_electrique', 'couverture_telephonique', 'internet', 'ccn', 'sites_fdsu'];
+  return `<div class="service-grid">${keys.map((key) => `<div><span>${escapeHtml(key.replaceAll('_', ' '))}</span><strong>${escapeHtml(formatAttributeValue(services[key] || 'Non disponible'))}</strong></div>`).join('')}</div>`;
+}
+
+function renderListOrPlaceholder(items, placeholder) {
+  const values = asArray(items);
+  if (values.length === 0) return `<p>${escapeHtml(placeholder)}</p>`;
+  return `<ul>${values.map((item) => `<li>${escapeHtml(typeof item === 'string' ? item : JSON.stringify(item))}</li>`).join('')}</ul>`;
+}
+
+function formatHierarchy(properties) {
+  return [
+    properties.zone_fdsu,
+    properties.province,
+    properties.territoire,
+    properties.collectivite,
+    properties.groupement,
+    properties.localite,
+  ].filter(Boolean).join(' > ') || 'Non disponible';
+}
+
+function getEntityRelations(layerKey) {
+  const order = ['provinces', 'territoires', 'collectivites', 'groupements', 'villages', 'sites', 'missions'];
+  const index = order.indexOf(layerKey);
+  if (index < 0) return [];
+  return order.slice(Math.max(0, index - 1), index + 2)
+    .filter((candidate) => candidate !== layerKey)
+    .map((candidate) => ({ layer: candidate, label: WEB_SIG_LAYER_DEFINITIONS[candidate]?.label || candidate }));
+}
+
+function getLayerDisplayLabel(layerKey) {
+  if (layerKey === 'zones') return 'Zones FDSU';
+  return WEB_SIG_LAYER_DEFINITIONS[layerKey]?.label || 'Fiche territoriale';
+}
+
+function fetchReportJson(path) {
+  const url = `${REPORTS_BASE}/${path}`;
+  return fetch(url)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`JSON absent: ${path}`);
+      }
+      return response.json();
+    })
+    .then((data) => ({ path: url, data, available: true }))
+    .catch(() => ({ path: url, data: null, available: false }));
+}
+
+function buildNationalReferentialReportFromJson(payload) {
+  const registryCounters = payload.registry?.registre_national_des_compteurs || {};
+  const provinces = asArray(payload.provinceReferential?.province_referential);
+  const territories = asArray(payload.territoryHierarchy?.territories).filter((item) => normalizeDashboardText(item?.attributs?.extended_data?.TYPE) === 'territoire');
+  const cities = asArray(payload.cityReferential?.city_referential);
+  const collectivities = asArray(payload.collectivityReferential?.collectivity_referential);
+  const groupements = asArray(payload.groupementReferential?.groupement_referential);
+  const localities = asArray(payload.localityReferential?.locality_referential);
+  const groupementAudit = payload.groupementCoverageAudit || {};
+  const groupementQuality = payload.groupementQuality || {};
+  const collectivityQuality = payload.collectivityQuality || {};
+  const localityQuality = payload.localityQuality || {};
+  const provinceQuality = payload.provinceQuality || {};
+  const cityQuality = payload.cityQuality || {};
+  const expectedGroupements = registryCounters.groupements?.attendu_officiel ?? groupementAudit.national_reference?.expected_groupements;
+  const foundGroupements = registryCounters.groupements?.trouve ?? registryCounters.groupements?.nombre ?? groupements.length;
+  const groupementCoverage = registryCounters.groupements?.couverture ?? (groupementAudit.national_reference?.coverage_percent ? `${groupementAudit.national_reference.coverage_percent}%` : 'Donnée non disponible');
+
+  const tree = buildOfficialHierarchyTree({ provinces, territories, cities, collectivities, groupements, localities });
+  const anomalyRows = buildOfficialAnomalyRows({ groupementAudit, groupementQuality, collectivityQuality, localityQuality });
+  const qualityScore = computeDashboardQualityScore([provinceQuality.global_score, cityQuality.global_score, collectivityQuality.global_score, groupementQuality.global_score, localityQuality.global_score]);
+  const byLevel = {
+    rdc: 1,
+    zone_fdsu: tree.children.length,
+    province: registryCounters.provinces?.nombre ?? provinces.length,
+    territoire: registryCounters.territoires?.nombre ?? territories.length,
+    ville: registryCounters.villes?.nombre ?? cities.length,
+    secteur: registryCounters.secteurs?.nombre ?? collectivities.filter((item) => item.type_collectivite === 'Secteur').length,
+    chefferie: registryCounters.chefferies?.nombre ?? collectivities.filter((item) => item.type_collectivite === 'Chefferie').length,
+    groupement: foundGroupements,
+    localite: registryCounters.localites?.nombre ?? localityQuality.locality_count ?? localities.length,
+  };
+  const totalEntities = Object.values(byLevel).reduce((total, value) => total + (Number(value) || 0), 0);
+  const missingFiles = Object.values(payload.sources || {}).filter((source) => !source.available).length;
+  const duplicateCount = (groupementQuality.duplicate_count || 0) + (collectivityQuality.duplicate_count || 0) + (provinceQuality.duplicates || 0) + (localityQuality.duplicate_count || 0);
+  const orphanCount = (groupementQuality.orphan_count || 0) + (collectivityQuality.missing_territory_count || 0) + (localityQuality.orphan_count || 0);
+  const referentielRows = [
+    buildRegistryRow('zones', 'Zones FDSU', 'Zone FDSU', 5, tree.children.length, '100%', 'Validé', 'Non publié', qualityScore, 'Référentiel national consolidé'),
+    buildRegistryRow('provinces', 'Provinces', 'Province', 26, byLevel.province, '100%', registryCounters.provinces?.statut || 'Validé', 'Non publié', provinceQuality.global_score, 'Province26.kmz'),
+    buildRegistryRow('territoires', 'Territoires', 'Territoire', 145, byLevel.territoire, '100%', registryCounters.territoires?.statut || 'Validé', 'Non publié', payload.territoryHierarchy ? 100 : null, 'territoires_hierarchie_kmz.report.json'),
+    buildRegistryRow('villes', 'Villes', 'Ville', 11, byLevel.ville, '100%', registryCounters.villes?.statut || 'Validé', 'Non publié', cityQuality.global_score, 'zones_fdsu.kmz'),
+    buildRegistryRow('collectivites', 'Collectivités', 'Secteur / Chefferie', 733, registryCounters.collectivites?.nombre ?? collectivities.length, '100%', registryCounters.collectivites?.statut || 'Validé provisoirement', 'Non publié', collectivityQuality.global_score, 'collectivites.kmz'),
+    buildRegistryRow('groupements', 'Groupements', 'Groupement', expectedGroupements, foundGroupements, groupementCoverage, registryCounters.groupements?.statut || 'Partiel', registryCounters.groupements?.validation || 'Non publié', groupementQuality.global_score, 'Groupements.kmz'),
+    buildRegistryRow('localites', 'Localités', 'Localité', registryCounters.localites?.reference_nationale, byLevel.localite, registryCounters.localites?.comparaison_reference || 'Référence nationale non disponible', registryCounters.localites?.statut || 'Partiel', registryCounters.localites?.validation || 'Non publié', localityQuality.global_score, 'Localités.kmz'),
+  ];
+
+  return {
+    tree,
+    registryCounters,
+    referentielRows,
+    sourceRows: buildOfficialSourceRows(payload.sources),
+    validationRows: anomalyRows,
+    qualityRows: buildOfficialQualityRows({ provinceQuality, cityQuality, collectivityQuality, groupementQuality, localityQuality, groupementAudit, missingFiles }),
+    normalizationRow: {
+      id: 'national-referential-json',
+      source: 'Référentiels JSON officiels',
+      entites_analysees: totalEntities,
+      score_qualite: qualityScore,
+      erreurs: anomalyRows.length,
+      doublons: duplicateCount,
+      orphelines: orphanCount,
+      rapport: missingFiles ? 'Donnée non disponible' : 'Chargé',
+    },
+    normalization: {
+      summary: {
+        analyzedEntities: totalEntities,
+        qualityScore,
+        errors: anomalyRows.length,
+        duplicates: duplicateCount,
+        orphans: orphanCount,
+        reportStatus: missingFiles ? `${missingFiles} fichier(s) absent(s)` : 'Référentiels JSON chargés',
+      },
+      byLevel: Object.entries(byLevel).map(([level, value]) => ({ level, value })),
+      reportPreview: buildOfficialMarkdownPreview({ byLevel, referentielRows, anomalyRows, missingFiles, groupementCoverage }),
+    },
+    statistics: {
+      entityCount: totalEntities,
+      byLevel,
+      orphanCount,
+      duplicateCount,
+      qualityScore,
+    },
+    anomalies: anomalyRows.map((row) => ({
+      level: row.level || 'referentiel',
+      entity: row.objet,
+      message: row.probleme || row.sans_rattachement || 'Anomalie connue',
+      severity: row.statut === 'À valider manuellement' ? 'error' : 'warning',
+      code: row.id,
+    })),
+    quality: { qualityScore },
+  };
+}
+
+function buildOfficialHierarchyTree({ provinces, territories, cities, collectivities, groupements, localities = [] }) {
+  const root = {
+    level: 'rdc',
+    label: 'RDC',
+    count: 1,
+    status: 'Validé provisoirement',
+    source: 'Référentiel national des compteurs',
+    quality: null,
+    children: [],
+    childStats: {},
+  };
+  const zoneNodes = new Map();
+  const provinceNodes = new Map();
+  const territoryNodes = new Map();
+  const collectivityNodes = new Map();
+  const groupementNodes = new Map();
+
+  provinces.slice().sort(sortByName).forEach((province) => {
+    const zoneCode = province.zone_fdsu || 'INCONNU';
+    const zoneLabel = zoneLabelFromCode(zoneCode);
+    const zoneNode = getOrCreateNode(zoneNodes, zoneCode, {
+      level: 'zone_fdsu',
+      label: zoneLabel,
+      code: zoneCode,
+      count: 0,
+      status: 'Validé',
+      source: province.source || 'province_referential_official.json',
+      quality: province.qualite,
+      children: [],
+      childStats: { provinces: 0 },
+    });
+    if (!root.children.includes(zoneNode)) root.children.push(zoneNode);
+    zoneNode.count += 1;
+    zoneNode.childStats.provinces += 1;
+
+    const provinceNode = {
+      level: 'province',
+      label: province.nom,
+      code: province.code_officiel,
+      count: 1,
+      status: normalizeDashboardStatus(province.statut || 'Validé'),
+      source: province.source || 'province_referential_official.json',
+      quality: province.qualite,
+      children: [],
+      raw: province,
+      childStats: { territoires: 0, collectivites: 0, groupements: 0, localites: 0 },
+    };
+    zoneNode.children.push(provinceNode);
+    provinceNodes.set(normalizeDashboardText(province.nom), provinceNode);
+  });
+
+  territories.slice().sort(sortByName).forEach((territory) => {
+    const provinceNode = provinceNodes.get(normalizeDashboardText(territory.province));
+    if (!provinceNode) return;
+    const territoryNode = {
+      level: 'territoire',
+      label: territory.nom,
+      code: territory.attributs?.extended_data?.CODE_INS || territory.attributs?.extended_data?.CODE,
+      count: 1,
+      status: territory.incoherences?.length ? 'À valider manuellement' : 'Validé',
+      source: 'territoires_hierarchie_kmz.report.json',
+      quality: territory.score_qualite,
+      children: [],
+      raw: territory,
+      anomalies: asArray(territory.incoherences).map((item) => String(item)),
+      childStats: { collectivites: 0, groupements: 0, localites: 0 },
+    };
+    provinceNode.children.push(territoryNode);
+    provinceNode.childStats.territoires += 1;
+    territoryNodes.set(hierarchyKey(territory.province, territory.nom), territoryNode);
+  });
+
+  cities.slice().sort(sortByName).forEach((city) => {
+    const provinceNode = provinceNodes.get(normalizeDashboardText(city.province));
+    if (!provinceNode) return;
+    provinceNode.children.push({
+      level: 'ville',
+      label: city.nom,
+      code: city.canonical_id,
+      count: 1,
+      status: normalizeDashboardStatus(city.statut || 'Validé provisoirement'),
+      source: city.source || 'city_referential_official.json',
+      quality: city.qualite,
+      children: [],
+      raw: city,
+      childStats: {},
+    });
+  });
+
+  collectivities.slice().sort(sortByName).forEach((collectivity) => {
+    const territoryNode = territoryNodes.get(hierarchyKey(collectivity.province, collectivity.territoire));
+    if (!territoryNode) return;
+    const level = normalizeDashboardText(collectivity.type_collectivite) === 'chefferie' ? 'chefferie' : 'secteur';
+    const collectivityNode = {
+      level,
+      label: collectivity.nom,
+      code: collectivity.code_officiel,
+      count: 1,
+      status: normalizeDashboardStatus(collectivity.statut || 'Validé provisoirement'),
+      source: collectivity.source || 'collectivity_referential_official.json',
+      quality: collectivity.qualite,
+      children: [],
+      raw: collectivity,
+      childStats: { groupements: 0, localites: 0 },
+    };
+    territoryNode.children.push(collectivityNode);
+    territoryNode.childStats.collectivites += 1;
+    const provinceNode = provinceNodes.get(normalizeDashboardText(collectivity.province));
+    if (provinceNode) provinceNode.childStats.collectivites += 1;
+    collectivityNodes.set(hierarchyKey(collectivity.province, collectivity.territoire, collectivity.nom), collectivityNode);
+  });
+
+  groupements.slice().sort(sortByName).forEach((groupement) => {
+    const collectivityNode = collectivityNodes.get(hierarchyKey(groupement.province, groupement.territoire, groupement.collectivite_parent));
+    if (!collectivityNode) return;
+    const groupementNode = {
+      level: 'groupement',
+      label: groupement.nom,
+      code: groupement.code_officiel,
+      count: 1,
+      status: normalizeDashboardStatus(groupement.statut || 'Partiel'),
+      source: groupement.source || 'groupement_referential_official.json',
+      quality: groupement.qualite,
+      children: [],
+      raw: groupement,
+      anomalies: asArray(groupement.metadata?.inconsistencies),
+      childStats: { localites: 0 },
+    };
+    collectivityNode.children.push(groupementNode);
+    groupementNodes.set(hierarchyKey(groupement.province, groupement.territoire, groupement.collectivite_parent, groupement.nom), groupementNode);
+    collectivityNode.childStats.groupements += 1;
+    const territoryNode = territoryNodes.get(hierarchyKey(groupement.province, groupement.territoire));
+    if (territoryNode) territoryNode.childStats.groupements += 1;
+    const provinceNode = provinceNodes.get(normalizeDashboardText(groupement.province));
+    if (provinceNode) provinceNode.childStats.groupements += 1;
+  });
+
+  localities.slice().sort(sortByName).forEach((locality) => {
+    const groupementNode = locality.groupement
+      ? groupementNodes.get(hierarchyKey(locality.province, locality.territoire, locality.collectivité, locality.groupement))
+      : null;
+    const collectivityNode = !groupementNode && locality.collectivité
+      ? collectivityNodes.get(hierarchyKey(locality.province, locality.territoire, locality.collectivité))
+      : null;
+    const territoryNode = !groupementNode && !collectivityNode
+      ? territoryNodes.get(hierarchyKey(locality.province, locality.territoire))
+      : null;
+    const parentNode = groupementNode || collectivityNode || territoryNode;
+    if (!parentNode) return;
+
+    parentNode.children.push({
+      level: 'localite',
+      label: locality.nom,
+      code: locality.canonical_id,
+      count: 1,
+      status: normalizeDashboardStatus(locality.statut || 'Partiel'),
+      source: locality.source || 'locality_referential_official.json',
+      quality: locality.qualité,
+      children: [],
+      raw: locality,
+      anomalies: asArray(locality.metadata?.inconsistencies),
+      childStats: {},
+    });
+    parentNode.childStats.localites = (parentNode.childStats.localites || 0) + 1;
+    const localityTerritoryNode = territoryNodes.get(hierarchyKey(locality.province, locality.territoire));
+    if (localityTerritoryNode) localityTerritoryNode.childStats.localites = (localityTerritoryNode.childStats.localites || 0) + 1;
+    const provinceNode = provinceNodes.get(normalizeDashboardText(locality.province));
+    if (provinceNode) provinceNode.childStats.localites = (provinceNode.childStats.localites || 0) + 1;
+  });
+
+  root.children.sort(sortTreeNodes);
+  root.children.forEach((zone) => {
+    zone.children.sort(sortTreeNodes);
+    zone.children.forEach((province) => province.children.sort(sortTreeNodes));
+  });
+  root.childStats = {
+    zones: root.children.length,
+    provinces: provinces.length,
+    territoires: territories.length,
+    villes: cities.length,
+    collectivites: collectivities.length,
+    groupements: groupements.length,
+    localites: localities.length,
+  };
+  return root;
+}
+
+function buildOfficialAnomalyRows({ groupementAudit, groupementQuality, collectivityQuality, localityQuality }) {
+  const rows = [];
+  asArray(groupementQuality.anomalies).slice(0, 120).forEach((anomaly, index) => {
+    rows.push({
+      id: `groupement-anomaly-${index + 1}`,
+      level: 'groupement',
+      objet: anomaly.entite || 'Groupement',
+      doublons: anomaly.probleme === 'doublon referentiel' ? 'Oui' : '—',
+      geometries_invalides: anomaly.probleme === 'geometrie invalide' ? 'Oui' : '—',
+      sans_code: anomaly.probleme === 'code officiel manquant' ? 'Oui' : '—',
+      sans_rattachement: anomaly.probleme || anomaly.cause || 'Anomalie groupement',
+      probleme: anomaly.cause || anomaly.probleme || 'Anomalie groupement',
+      statut: anomaly.entite === 'Bena muhona' ? 'À valider manuellement' : 'Partiel',
+    });
+  });
+  asArray(collectivityQuality.anomalies).slice(0, 40).forEach((anomaly, index) => {
+    rows.push({
+      id: `collectivity-anomaly-${index + 1}`,
+      level: 'collectivite',
+      objet: anomaly.entite || 'Collectivité',
+      doublons: anomaly.probleme === 'doublon referentiel' ? 'Oui' : '—',
+      geometries_invalides: anomaly.probleme === 'geometrie invalide' ? 'Oui' : '—',
+      sans_code: '—',
+      sans_rattachement: anomaly.probleme || 'Anomalie collectivité',
+      probleme: anomaly.cause || anomaly.probleme || 'Anomalie collectivité',
+      statut: anomaly.entite === 'Bahema' ? 'À valider manuellement' : 'Validé provisoirement',
+    });
+  });
+  asArray(groupementAudit.territories_without_groupement).forEach((item, index) => {
+    rows.push({
+      id: `territory-without-groupement-${index + 1}`,
+      level: 'territoire',
+      objet: item.territoire || item.nom || String(item),
+      doublons: '—',
+      geometries_invalides: '—',
+      sans_code: '—',
+      sans_rattachement: 'Territoire sans groupement dans la source partielle',
+      probleme: 'territoires sans groupement',
+      statut: 'Partiel',
+    });
+  });
+  asArray(groupementAudit.collectivities_without_groupement).forEach((item, index) => {
+    rows.push({
+      id: `collectivity-without-groupement-${index + 1}`,
+      level: 'collectivite',
+      objet: item.collectivite_parent || item.collectivite || item.nom || String(item),
+      doublons: '—',
+      geometries_invalides: '—',
+      sans_code: '—',
+      sans_rattachement: 'Collectivité sans groupement dans la source partielle',
+      probleme: 'collectivités sans groupement',
+      statut: item.collectivite_parent === 'Bahema' || item.nom === 'Bahema' ? 'À valider manuellement' : 'Partiel',
+    });
+  });
+  if (!rows.some((row) => normalizeDashboardText(row.objet).includes('bahema'))) {
+    rows.push({
+      id: 'known-bahema',
+      level: 'collectivite',
+      objet: 'Bahema',
+      doublons: '—',
+      geometries_invalides: '—',
+      sans_code: '—',
+      sans_rattachement: 'Anomalie connue à vérifier dans les rapports collectivités/groupements',
+      probleme: 'Bahema',
+      statut: 'À valider manuellement',
+    });
+  }
+  if (!rows.some((row) => normalizeDashboardText(row.objet).includes('bena muhona'))) {
+    rows.push({
+      id: 'known-bena-muhona',
+      level: 'groupement',
+      objet: 'Bena muhona',
+      doublons: '—',
+      geometries_invalides: '—',
+      sans_code: '—',
+      sans_rattachement: 'Groupement orphelin connu dans le rapport officiel',
+      probleme: 'Bena muhona',
+      statut: 'À valider manuellement',
+    });
+  }
+  asArray(localityQuality.anomalies).slice(0, 80).forEach((anomaly, index) => {
+    rows.push({
+      id: `locality-anomaly-${index + 1}`,
+      level: 'localite',
+      objet: anomaly.entite || 'Localité',
+      doublons: anomaly.probleme === 'doublon referentiel' ? 'Oui' : '—',
+      geometries_invalides: anomaly.probleme === 'geometrie_invalide' ? 'Oui' : '—',
+      sans_code: '—',
+      sans_rattachement: anomaly.probleme || anomaly.sans_rattachement || 'Anomalie localité',
+      probleme: anomaly.suggestion || anomaly.probleme || 'Anomalie localité',
+      statut: anomaly.probleme === 'type_inconnu' ? 'À valider manuellement' : 'Partiel',
+    });
+  });
+  return rows;
+}
+
+function buildOfficialQualityRows({ provinceQuality, cityQuality, collectivityQuality, groupementQuality, localityQuality, groupementAudit, missingFiles }) {
+  return [
+    {
+      id: 'province-quality',
+      referentiel: 'Provinces',
+      completude: `${formatGovernanceMetric(provinceQuality.global_score)} %`,
+      coherence: `${formatGovernanceMetric(provinceQuality.global_score)} %`,
+      geometries_valides: `${formatGovernanceMetric(26 - (provinceQuality.provinces_without_geometry || 0))} / 26`,
+      doublons: provinceQuality.duplicates || 0,
+      qualite_globale: provinceQuality.global_score ?? 'Donnée non disponible',
+    },
+    {
+      id: 'city-quality',
+      referentiel: 'Villes',
+      completude: `${formatGovernanceMetric(cityQuality.global_score)} %`,
+      coherence: `${formatGovernanceMetric(cityQuality.global_score)} %`,
+      geometries_valides: `${formatGovernanceMetric(cityQuality.city_count ?? 11)}`,
+      doublons: cityQuality.duplicate_count || 0,
+      qualite_globale: cityQuality.global_score ?? 'Donnée non disponible',
+    },
+    {
+      id: 'collectivity-quality',
+      referentiel: 'Collectivités',
+      completude: `${formatGovernanceMetric(collectivityQuality.global_score)} %`,
+      coherence: `${formatGovernanceMetric(collectivityQuality.global_score)} %`,
+      geometries_valides: `${formatGovernanceMetric((collectivityQuality.collectivity_count || 0) - (collectivityQuality.invalid_geometry_count || 0))}`,
+      doublons: collectivityQuality.duplicate_count || 0,
+      qualite_globale: collectivityQuality.global_score ?? 'Donnée non disponible',
+    },
+    {
+      id: 'groupement-quality',
+      referentiel: 'Groupements',
+      completude: groupementAudit.national_reference?.coverage_percent ? `${groupementAudit.national_reference.coverage_percent} %` : 'Donnée non disponible',
+      coherence: `${formatGovernanceMetric(groupementQuality.global_score)} %`,
+      geometries_valides: `${formatGovernanceMetric((groupementQuality.groupement_count || 0) - (groupementQuality.invalid_geometry_count || 0))}`,
+      doublons: groupementQuality.duplicate_count || 0,
+      qualite_globale: groupementQuality.global_score ?? 'Donnée non disponible',
+    },
+    {
+      id: 'locality-quality',
+      referentiel: 'Localités',
+      completude: `${formatGovernanceMetric(localityQuality.global_score)} %`,
+      coherence: `${formatGovernanceMetric(localityQuality.global_score)} %`,
+      geometries_valides: `${formatGovernanceMetric((localityQuality.locality_count || 0) - (localityQuality.invalid_geometry_count || 0))}`,
+      doublons: localityQuality.duplicate_count || 0,
+      qualite_globale: localityQuality.global_score ?? 'Donnée non disponible',
+    },
+    {
+      id: 'json-availability',
+      referentiel: 'Disponibilité JSON',
+      completude: missingFiles ? 'Partielle' : 'Complète',
+      coherence: missingFiles ? `${missingFiles} absent(s)` : 'OK',
+      geometries_valides: '—',
+      doublons: '—',
+      qualite_globale: missingFiles ? 'Donnée non disponible' : 'Validé provisoirement',
+    },
+  ];
+}
+
+function buildOfficialSourceRows(sources) {
+  return Object.entries(sources || {}).map(([key, source]) => ({
+    id: `source-${key}`,
+    nom: key,
+    url_officielle: source.path,
+    type_donnees: 'JSON référentiel',
+    version: source.available ? 'Généré' : 'Donnée non disponible',
+    derniere_synchronisation: source.available ? 'Chargé au runtime' : 'Donnée non disponible',
+    responsable: 'Dashboard statique',
+    documentation: source.label,
+  }));
+}
+
+function buildRegistryRow(id, nom, type, expected, found, coverage, status, validation, quality, source) {
+  return {
+    id,
+    nom,
+    type,
+    nombre_objets: `${formatGovernanceMetric(found)}${expected ? ` / ${formatGovernanceMetric(expected)}` : ''}`,
+    source_officielle: source,
+    version: coverage || 'Donnée non disponible',
+    date_mise_a_jour: validation || 'Non publié',
+    statut: normalizeDashboardStatus(status),
+    qualite: quality ?? 'Donnée non disponible',
+  };
+}
+
+function buildOfficialMarkdownPreview({ byLevel, referentielRows, anomalyRows, missingFiles, groupementCoverage }) {
+  return [
+    '# Référentiel National FDSU',
+    '',
+    `- Zones FDSU: ${byLevel.zone_fdsu}`,
+    `- Provinces: ${byLevel.province}`,
+    `- Territoires: ${byLevel.territoire}`,
+    `- Villes: ${byLevel.ville}`,
+    `- Collectivités: ${(byLevel.secteur || 0) + (byLevel.chefferie || 0)}`,
+    `- Groupements: ${byLevel.groupement}`,
+    `- Localités: ${byLevel.localite || 0}`,
+    `- Couverture groupements: ${groupementCoverage}`,
+    `- Fichiers absents: ${missingFiles}`,
+    '',
+    '## Statuts',
+    ...referentielRows.map((row) => `- ${row.nom}: ${row.statut}`),
+    '',
+    '## Anomalies visibles',
+    ...anomalyRows.slice(0, 20).map((row) => `- ${row.objet}: ${row.probleme || row.sans_rattachement}`),
+  ].join('\n');
+}
+
+function computeDashboardQualityScore(scores) {
+  const valid = scores.map(Number).filter((value) => Number.isFinite(value));
+  if (!valid.length) return null;
+  return Number((valid.reduce((total, value) => total + value, 0) / valid.length).toFixed(2));
+}
+
+function getOrCreateNode(map, key, template) {
+  if (!map.has(key)) {
+    map.set(key, template);
+  }
+  return map.get(key);
+}
+
+function hierarchyKey(...parts) {
+  return parts.map((part) => normalizeDashboardText(part)).join('|');
+}
+
+function normalizeDashboardText(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase();
+}
+
+function normalizeDashboardStatus(value) {
+  const text = normalizeDashboardText(value);
+  if (text.includes('partiel')) return 'Partiel';
+  if (text.includes('non publ')) return 'Non publié';
+  if (text.includes('manuel') || text.includes('verifier') || text.includes('valider')) return 'À valider manuellement';
+  if (text.includes('provis')) return 'Validé provisoirement';
+  if (text.includes('valid')) return 'Validé';
+  if (text.includes('official_candidate')) return 'Validé provisoirement';
+  return value || 'Donnée non disponible';
+}
+
+function zoneLabelFromCode(code) {
+  const labels = {
+    ND: 'Zone Nord',
+    SD: 'Zone Sud',
+    CE: 'Zone Centre',
+    OT: 'Zone Ouest',
+    ET: 'Zone Est',
+  };
+  return labels[String(code || '').toUpperCase()] || `Zone FDSU ${code || 'INCONNU'}`;
+}
+
+function sortByName(left, right) {
+  return String(left?.nom || left?.label || '').localeCompare(String(right?.nom || right?.label || ''), 'fr');
+}
+
+function sortTreeNodes(left, right) {
+  return String(left.label || '').localeCompare(String(right.label || ''), 'fr');
+}
+
+function asArray(value) {
+  return Array.isArray(value) ? value : [];
 }
 
 function decorateExplorerReport(report) {
@@ -1039,8 +3610,10 @@ function decorateExplorerNode(node, parent, context) {
   const label = String(node.label || '—');
   const path = [...context.path, label];
   const children = Array.isArray(node.children) ? node.children : [];
-  const decoratedChildren = children.map((child) => decorateExplorerNode(child, { id: node.id || buildExplorerNodeId(parent, level, label, node.code) }, { ...context, path }));
   const id = node.id || buildExplorerNodeId(parent, level, label, node.code);
+  const decoratedChildren = children.map((child) => decorateExplorerNode(child, { id }, { ...context, path }));
+  const qualityScore = typeof node.quality === 'number' ? node.quality : getExplorerQualityScore(level, context.quality, context.anomalies);
+  const status = node.status || getExplorerStatus(level, context.anomalies);
 
   return {
     id,
@@ -1052,14 +3625,17 @@ function decorateExplorerNode(node, parent, context) {
     icon: getExplorerIcon(level),
     typeLabel: getExplorerTypeLabel(level),
     adminLevel: getExplorerAdminLevel(level),
-    qualityBadge: getExplorerQualityBadge(level, context.quality, context.anomalies),
-    qualityClass: getExplorerQualityClass(level, context.quality, context.anomalies),
-    status: getExplorerStatus(level, context.anomalies),
-    source: level === 'rdc' ? 'Référentiel national consolidé' : 'API locale consolidée',
+    qualityBadge: formatExplorerQualityBadge(qualityScore),
+    qualityClass: getExplorerQualityClassFromScore(qualityScore),
+    status,
+    source: node.source || (level === 'rdc' ? 'Référentiel national consolidé' : 'Référentiel JSON officiel'),
     informationAvailable: getExplorerInformationAvailable(level),
     hierarchyPath: path,
     hierarchyLabel: path.join(' > '),
     statistics: buildExplorerNodeStatistics(level, context.statistics, context.byLevel, decoratedChildren.length, node.count),
+    raw: node.raw || null,
+    anomalies: Array.isArray(node.anomalies) ? node.anomalies : [],
+    childStats: node.childStats || {},
     children: decoratedChildren,
   };
 }
@@ -1100,9 +3676,24 @@ function getExplorerQualityBadge(level, quality, anomalies) {
 
 function getExplorerQualityClass(level, quality, anomalies) {
   const score = getExplorerQualityScore(level, quality, anomalies);
-  if (score >= 85) return 'quality-high';
-  if (score >= 70) return 'quality-medium';
-  if (score >= 50) return 'quality-warning';
+  return getExplorerQualityClassFromScore(score);
+}
+
+function formatExplorerQualityBadge(score) {
+  if (score === null || score === undefined || Number.isNaN(Number(score))) return 'Donnée non disponible';
+  const normalizedScore = Math.max(0, Math.min(100, Math.round(Number(score))));
+  if (normalizedScore >= 85) return `Excellent · ${normalizedScore}%`;
+  if (normalizedScore >= 70) return `Bon · ${normalizedScore}%`;
+  if (normalizedScore >= 50) return `À surveiller · ${normalizedScore}%`;
+  return `Critique · ${normalizedScore}%`;
+}
+
+function getExplorerQualityClassFromScore(score) {
+  if (score === null || score === undefined || Number.isNaN(Number(score))) return 'quality-warning';
+  const normalizedScore = Math.max(0, Math.min(100, Math.round(Number(score))));
+  if (normalizedScore >= 85) return 'quality-high';
+  if (normalizedScore >= 70) return 'quality-medium';
+  if (normalizedScore >= 50) return 'quality-warning';
   return 'quality-low';
 }
 
@@ -1131,6 +3722,7 @@ function getExplorerIcon(level) {
     chefferie: '👑',
     groupement: '📍',
     village: '🏘',
+    localite: '•',
   };
 
   return icons[String(level || '').toLowerCase()] || '•';
@@ -1150,6 +3742,7 @@ function getExplorerTypeLabel(level) {
     chefferie: 'Chefferie',
     groupement: 'Groupement',
     village: 'Village',
+    localite: 'Localité',
   };
 
   return labels[String(level || '').toLowerCase()] || 'Niveau';
@@ -1169,6 +3762,7 @@ function getExplorerAdminLevel(level) {
     chefferie: 'Niveau 3',
     groupement: 'Niveau 4',
     village: 'Niveau 5',
+    localite: 'Niveau 5',
   };
 
   return levels[String(level || '').toLowerCase()] || 'Niveau inconnu';
@@ -1186,6 +3780,7 @@ function getExplorerInformationAvailable(level) {
     chefferie: ['nom', 'type', 'niveau administratif', 'hiérarchie', 'statistiques', 'qualité', 'statut', 'source'],
     groupement: ['nom', 'type', 'niveau administratif', 'hiérarchie', 'statistiques', 'qualité', 'statut', 'source'],
     village: ['nom', 'type', 'niveau administratif', 'hiérarchie', 'statistiques', 'qualité', 'statut', 'source'],
+    localite: ['nom', 'type', 'niveau administratif', 'hiérarchie', 'statistiques', 'qualité', 'statut', 'source'],
   };
 
   return availability[String(level || '').toLowerCase()] || ['nom', 'type', 'hiérarchie'];
@@ -1196,9 +3791,13 @@ function getExplorerSearchTerm() {
 }
 
 function isExplorerNodeVisible(node, searchTerm) {
-  if (!searchTerm) return true;
+  const statusFilter = governanceState.statusFilter;
+  const statusMatch = statusFilter ? String(node.status || '').toLowerCase() === statusFilter.toLowerCase() : true;
+  if (!searchTerm) {
+    return statusMatch || node.children.some((child) => isExplorerNodeVisible(child, searchTerm));
+  }
   const haystack = [node.label, node.code, node.level, node.typeLabel, node.adminLevel, node.hierarchyLabel].join(' ').toLowerCase();
-  if (haystack.includes(searchTerm)) {
+  if (haystack.includes(searchTerm) && statusMatch) {
     return true;
   }
   return node.children.some((child) => isExplorerNodeVisible(child, searchTerm));
@@ -1827,11 +4426,20 @@ function renderGovernanceDetailPanel() {
     return;
   }
 
-  governanceElements.detailTitle.textContent = `Élément ${governanceState.selectedRecord}`;
+governanceElements.detailTitle.textContent = `Élément ${governanceState.selectedRecord}`;
+  const selectedRow = getGovernanceRowsForActiveTab().find((row) => String(row.id) === String(governanceState.selectedRecord));
+  if (selectedRow) {
+    governanceElements.detailTitle.textContent = selectedRow.nom || selectedRow.objet || selectedRow.referentiel || selectedRow.source || `Élément ${governanceState.selectedRecord}`;
+    governanceElements.detailBody.innerHTML = Object.entries(selectedRow)
+      .filter(([key]) => !['id', 'level'].includes(key))
+      .map(([key, value]) => `<div class="detail-row"><span>${escapeHtml(formatDetailLabel(key))}</span><strong>${escapeHtml(formatGovernanceValue(value))}</strong></div>`)
+      .join('');
+    return;
+  }
+
   governanceElements.detailBody.innerHTML = `
     <div class="detail-row"><span>Identifiant</span><strong>${escapeHtml(String(governanceState.selectedRecord))}</strong></div>
-    <div class="detail-row"><span>État de connexion</span><strong>En attente de liaison API</strong></div>
-    <div class="detail-row"><span>Détail</span><strong>Données non chargées</strong></div>
+    <div class="detail-row"><span>État de connexion</span><strong>Donnée non disponible</strong></div>
   `;
 }
 
@@ -1867,7 +4475,7 @@ function buildTerritorialFileMarkup(node) {
     { label: 'Territoire', value: getHierarchyValue(node, 'territoire') },
     { label: 'Secteur / Chefferie', value: getHierarchyValue(node, 'secteur', 'chefferie') },
     { label: 'Groupement', value: getHierarchyValue(node, 'groupement') },
-    { label: 'Village', value: getHierarchyValue(node, 'village') },
+    { label: 'Localité', value: getHierarchyValue(node, 'localite', 'village') },
   ];
 
   const developmentInfo = [
@@ -1890,6 +4498,17 @@ function buildTerritorialFileMarkup(node) {
     { label: 'Dernière mise à jour', value: 'Non renseigné' },
     { label: 'Références disponibles', value: futureSources.join(', ') },
   ];
+
+  const anomalyInfo = [
+    { label: 'Anomalies', value: node.anomalies?.length ? node.anomalies.join(' | ') : 'Aucune anomalie attachée au nœud' },
+    { label: 'Statut qualité', value: node.status },
+    { label: 'Contrôle manuel', value: node.status === 'À valider manuellement' ? 'Requis' : 'Non requis' },
+  ];
+
+  const childStatsInfo = Object.entries(node.childStats || {}).map(([key, value]) => ({
+    label: formatDetailLabel(key),
+    value,
+  }));
 
   const historicalInfo = [
     { label: 'Créé le', value: 'Non renseigné' },
@@ -1922,6 +4541,8 @@ function buildTerritorialFileMarkup(node) {
       ${renderTerritorialSection('Informations générales', generalInfo, true)}
       ${renderTerritorialSection('Organisation administrative', administrativeInfo)}
       ${renderTerritorialSection('Géographie', geographicInfo)}
+      ${renderTerritorialSection('Statistiques enfants', childStatsInfo.length ? childStatsInfo : [{ label: 'Enfants', value: node.statistics.children }])}
+      ${renderTerritorialSection('Anomalies', anomalyInfo)}
       ${renderTerritorialSection('Développement', developmentInfo)}
       ${renderTerritorialSection('Télécommunications', telecomInfo)}
       ${renderTerritorialSection('Documentation', documentationInfo)}
@@ -1972,10 +4593,29 @@ function formatTerritorialValue(value) {
   return String(value);
 }
 
+function formatDetailLabel(key) {
+  return String(key || '')
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
 function getHierarchyValue(node, ...levels) {
-  const normalizedLevels = levels.map((level) => String(level).toLowerCase());
-  const match = [...(node.hierarchyPath || [])].reverse().find((item) => normalizedLevels.includes(String(item).toLowerCase()));
-  return match || 'Non renseigné';
+  const path = node.hierarchyPath || [];
+  const indexes = {
+    zone_fdsu: 1,
+    province: 2,
+    territoire: 3,
+    secteur: 4,
+    chefferie: 4,
+    groupement: 5,
+    village: 6,
+    localite: 6,
+  };
+  for (const level of levels) {
+    const index = indexes[String(level).toLowerCase()];
+    if (path[index]) return path[index];
+  }
+  return 'Non renseigné';
 }
 
 function setGovernanceViewState(stateKey) {
@@ -1995,7 +4635,7 @@ function formatGovernanceValue(value) {
 
 function formatGovernanceMetric(value) {
   if (value === null || value === undefined || String(value).trim() === '') {
-    return 'En attente';
+    return 'Donnée non disponible';
   }
   return String(value);
 }
@@ -2041,8 +4681,53 @@ function initializeSourceExplorerModule() {
     });
 
     sourceExplorerState.initialized = true;
-    renderSourceExplorerEmpty('Chargez un rapport JSON généré par scripts/explore_source.py pour explorer la source.');
+    if (LOCAL_JSON_MODE) {
+      renderSourceExplorerLocalSources();
+    } else {
+      renderSourceExplorerEmpty('Chargez un rapport JSON généré par scripts/explore_source.py pour explorer la source.');
+    }
   }
+}
+
+function renderSourceExplorerLocalSources() {
+  if (sourceExplorerElements.sourcePath) sourceExplorerElements.sourcePath.textContent = 'data/reports';
+  if (sourceExplorerElements.sourceFormat) sourceExplorerElements.sourceFormat.textContent = 'JSON local';
+  if (sourceExplorerElements.objectCount) sourceExplorerElements.objectCount.textContent = String(Object.keys(NATIONAL_REFERENTIAL_JSON_FILES).length);
+  if (sourceExplorerElements.fieldCount) sourceExplorerElements.fieldCount.textContent = '—';
+  if (sourceExplorerElements.folderCount) sourceExplorerElements.folderCount.textContent = '5';
+
+  loadNationalReferentialJsonData().then((payload) => {
+    const rows = Object.entries(payload.sources || {});
+    if (sourceExplorerElements.catalogBody) {
+      sourceExplorerElements.catalogBody.innerHTML = rows.map(([key, source]) => `
+        <tr>
+          <td>${escapeHtml(key)}</td>
+          <td>JSON référentiel</td>
+          <td>${escapeHtml(source.available ? '1' : '0')}</td>
+          <td>—</td>
+          <td>—</td>
+          <td><span class="status-badge">${escapeHtml(source.label)}</span></td>
+          <td>Dashboard JSON local</td>
+          <td>${escapeHtml(source.path)}</td>
+        </tr>
+      `).join('');
+    }
+    if (sourceExplorerElements.dictionaryBody) {
+      sourceExplorerElements.dictionaryBody.innerHTML = rows.map(([key, source]) => `
+        <tr>
+          <td>${escapeHtml(key)}</td>
+          <td>${escapeHtml(source.available ? 'disponible' : 'absent')}</td>
+          <td>${escapeHtml(source.available ? '1' : '0')}</td>
+          <td>${escapeHtml(source.available ? '1' : '0')}</td>
+          <td>${escapeHtml(source.available ? '0' : '1')}</td>
+          <td>${escapeHtml(source.path)}</td>
+        </tr>
+      `).join('');
+    }
+    if (sourceExplorerElements.tagsContainer) {
+      sourceExplorerElements.tagsContainer.innerHTML = '<span class="source-tag">Mode JSON local</span><span class="source-tag">Sans API</span><span class="source-tag">Sans BD</span>';
+    }
+  });
 }
 
 function renderSourceExplorerEmpty(message) {
@@ -2155,6 +4840,91 @@ function fetchProvinces() {
     });
 }
 
+function renderAdministrativeHierarchyModule() {
+  if (!referentielElements.tableBody) return;
+  referentielElements.tableBody.innerHTML = '<tr><td colspan="7" class="empty-state">Chargement de l’arborescence JSON locale...</td></tr>';
+
+  loadNationalReferentialJsonData()
+    .then((payload) => {
+      const report = decorateExplorerReport(buildNationalReferentialReportFromJson(payload));
+      const rows = [];
+      const searchTerm = referentielState.search || '';
+
+      function visit(node, depth = 0) {
+        const haystack = [node.label, node.code, node.level, node.typeLabel, node.hierarchyLabel].join(' ').toLowerCase();
+        const childMatches = [];
+        node.children.forEach((child) => {
+          const before = rows.length;
+          visit(child, depth + 1);
+          if (rows.length > before) childMatches.push(child.id);
+        });
+        const selfMatches = !searchTerm || haystack.includes(searchTerm);
+        if (!selfMatches && childMatches.length === 0) return;
+        rows.splice(rows.length - childMatches.length, 0, { node, depth });
+      }
+
+      report.root.children.forEach((child) => visit(child, 0));
+
+      const table = referentielElements.tableBody.closest('table');
+      const thead = table?.querySelector('thead');
+      if (thead) {
+        thead.innerHTML = `
+          <tr>
+            <th>Hiérarchie</th>
+            <th>Type</th>
+            <th>Code</th>
+            <th>Zone</th>
+            <th>Parent</th>
+            <th>Statut</th>
+            <th>Qualité</th>
+          </tr>
+        `;
+      }
+
+      if (rows.length === 0) {
+        referentielElements.tableBody.innerHTML = '<tr><td colspan="7" class="empty-state">Aucun élément trouvé.</td></tr>';
+        return;
+      }
+
+      referentielElements.tableBody.innerHTML = rows
+        .slice(0, 600)
+        .map(({ node, depth }) => {
+          const parent = node.parentId ? report.nodesById[node.parentId]?.label || '—' : 'RDC';
+          const zone = node.hierarchyPath?.[1] || '—';
+          return `
+            <tr data-node-id="${escapeHtml(node.id)}">
+              <td>${'&nbsp;'.repeat(depth * 4)}${escapeHtml(node.label)}</td>
+              <td>${escapeHtml(node.typeLabel)}</td>
+              <td>${escapeHtml(node.code || '—')}</td>
+              <td>${escapeHtml(zone)}</td>
+              <td>${escapeHtml(parent)}</td>
+              <td><span class="status-badge">${escapeHtml(node.status)}</span></td>
+              <td>${escapeHtml(node.qualityBadge)}</td>
+            </tr>
+          `;
+        })
+        .join('');
+
+      referentielElements.tableBody.querySelectorAll('tr[data-node-id]').forEach((row) => {
+        row.addEventListener('click', () => {
+          const node = report.nodesById[row.dataset.nodeId];
+          if (!node || !referentielElements.detailContainer) return;
+          referentielElements.tableBody.querySelectorAll('tr').forEach((item) => item.classList.remove('selected'));
+          row.classList.add('selected');
+          referentielElements.detailContainer.innerHTML = buildTerritorialFileMarkup(node);
+        });
+      });
+
+      const firstNode = rows[0]?.node;
+      if (firstNode && referentielElements.detailContainer) {
+        referentielElements.detailContainer.innerHTML = buildTerritorialFileMarkup(firstNode);
+      }
+    })
+    .catch(() => {
+      referentielElements.tableBody.innerHTML = '<tr><td colspan="7" class="empty-state">Donnée non disponible.</td></tr>';
+    });
+}
+
 function renderProvinceTable() {
   if (!referentielElements.tableBody) return;
 
@@ -2224,14 +4994,29 @@ function renderProvinceDetails() {
 }
 
 function getDashboardStats() {
+  if (!LOCAL_JSON_MODE) {
+    fetchJson('/dashboard/summary').then((summary) => {
+      const data = summary || {};
+      updateSummaryCard('stat-provinces')(Number(data.provinces) || 0);
+      updateSummaryCard('stat-territoires')(Number(data.territories ?? data.territoires) || 0);
+      updateSummaryCard('stat-collectivites')(Number(data.collectivites) || 0);
+      updateSummaryCard('stat-groupements')(Number(data.groupements) || 0);
+      updateSummaryCard('stat-villages')(Number(data.localites ?? data.villages) || 0);
+      updateSummaryCard('stat-sites')(Number(data.sites) || 0);
+      updateSummaryCard('stat-missions')(Number(data.missions) || 0);
+      updateSummaryCard('stat-utilisateurs')(Number(data.users) || 0);
+    });
+    return;
+  }
+
   getCount('/provinces?limit=500').then(updateSummaryCard('stat-provinces'));
   getCount('/territoires?limit=500').then(updateSummaryCard('stat-territoires'));
   getCount('/collectivites?limit=500').then(updateSummaryCard('stat-collectivites'));
   getCount('/groupements?limit=500').then(updateSummaryCard('stat-groupements'));
   getCount('/villages?limit=500').then(updateSummaryCard('stat-villages'));
-  getCount('/sites?limit=500').then(updateSummaryCard('stat-sites'));
-  getCount('/missions?limit=500').then(updateSummaryCard('stat-missions'));
-  getCount('/users?limit=500').then(updateSummaryCard('stat-utilisateurs'));
+  updateSummaryCard('stat-sites')(0);
+  updateSummaryCard('stat-missions')(0);
+  updateSummaryCard('stat-utilisateurs')(0);
 }
 
 function getDatabaseStatus() {
@@ -2239,22 +5024,31 @@ function getDatabaseStatus() {
   const dbStatusEl = document.querySelector('#db-status');
   const dbSyncEl = document.querySelector('#db-sync');
 
-  getProvinces()
+  if (!apiStatusEl || !dbStatusEl || !dbSyncEl) return;
+  apiStatusEl.textContent = LOCAL_JSON_MODE ? 'Mode JSON local' : 'API FastAPI';
+  dbStatusEl.textContent = LOCAL_JSON_MODE ? 'Non connectée' : 'API rapports JSON';
+
+  if (!LOCAL_JSON_MODE) {
+    fetchJson('/health')
+      .then((health) => {
+        apiStatusEl.textContent = health?.status === 'ok' ? 'API FastAPI connectée' : 'API FastAPI indisponible';
+        dbStatusEl.textContent = health?.database || 'Base non connectée';
+        dbSyncEl.textContent = health?.loaded_at || new Date().toLocaleString('fr-FR');
+      })
+      .catch(() => {
+        apiStatusEl.textContent = 'API FastAPI indisponible';
+        dbStatusEl.textContent = 'Base non connectée';
+        dbSyncEl.textContent = new Date().toLocaleString('fr-FR');
+      });
+    return;
+  }
+
+  loadLocalDashboardData()
     .then((data) => {
-      if (Array.isArray(data)) {
-        apiStatusEl.textContent = 'Disponible';
-        dbStatusEl.textContent = 'Disponible';
-        dbSyncEl.textContent = 'Non disponible';
-      } else {
-        apiStatusEl.textContent = 'Non disponible';
-        dbStatusEl.textContent = 'Non disponible';
-        dbSyncEl.textContent = 'Non disponible';
-      }
+      dbSyncEl.textContent = data.loadedAt;
     })
     .catch(() => {
-      apiStatusEl.textContent = 'Non disponible';
-      dbStatusEl.textContent = 'Non disponible';
-      dbSyncEl.textContent = 'Non disponible';
+      dbSyncEl.textContent = new Date().toLocaleString('fr-FR');
     });
 }
 
@@ -2265,63 +5059,151 @@ function getLastImports() {
 }
 
 function getZones() {
-  getProvinces()
-    .then((provinces) => {
-      const counts = { ND: 0, SD: 0, CE: 0, OT: 0, ET: 0 };
-      if (Array.isArray(provinces)) {
-        provinces.forEach((province) => {
-          const zone = String(province.zone || '').toUpperCase();
-          if (counts[zone] !== undefined) {
-            counts[zone] += 1;
-          }
-        });
-      }
-      updateZoneCount('ND', counts.ND);
-      updateZoneCount('SD', counts.SD);
-      updateZoneCount('CE', counts.CE);
-      updateZoneCount('OT', counts.OT);
-      updateZoneCount('ET', counts.ET);
-    })
-    .catch(() => {
-      updateZoneCount('ND', 0);
-      updateZoneCount('SD', 0);
-      updateZoneCount('CE', 0);
-      updateZoneCount('OT', 0);
-      updateZoneCount('ET', 0);
-    });
+  const source = LOCAL_JSON_MODE
+    ? loadLocalDashboardData().then((data) => data.provinces)
+    : fetchJson('/provinces?limit=500').then((provinces) => asArray(provinces));
+
+  source.then((provinces) => {
+    const zoneCounts = asArray(provinces).reduce((acc, province) => {
+      const zone = String(province.zone_fdsu || province.zone || '').toUpperCase();
+      if (acc[zone] !== undefined) acc[zone] += 1;
+      return acc;
+    }, { ND: 0, SD: 0, CE: 0, OT: 0, ET: 0 });
+    updateZoneCount('ND', zoneCounts.ND);
+    updateZoneCount('SD', zoneCounts.SD);
+    updateZoneCount('CE', zoneCounts.CE);
+    updateZoneCount('OT', zoneCounts.OT);
+    updateZoneCount('ET', zoneCounts.ET);
+  });
 }
 
 function getProvinces() {
+  if (LOCAL_JSON_MODE) {
+    return loadLocalDashboardData().then((data) => data.provinces);
+  }
   return fetchJson('/provinces?limit=500');
 }
 
 function getTerritoires() {
-  return fetchJson('/territoires?limit=500');
+  if (LOCAL_JSON_MODE) {
+    return loadLocalDashboardData().then((data) => makePlaceholderRows(data.counts.territoires, 'territoire'));
+  }
+  return fetchJson('/territories?limit=500');
 }
 
 function getCollectivites() {
+  if (LOCAL_JSON_MODE) {
+    return loadLocalDashboardData().then((data) => makePlaceholderRows(data.counts.collectivites, 'collectivite'));
+  }
   return fetchJson('/collectivites?limit=500');
 }
 
 function getGroupements() {
+  if (LOCAL_JSON_MODE) {
+    return loadLocalDashboardData().then((data) => makePlaceholderRows(data.counts.groupements, 'groupement'));
+  }
   return fetchJson('/groupements?limit=500');
 }
 
 function getVillages() {
-  return fetchJson('/villages?limit=500');
+  if (LOCAL_JSON_MODE) {
+    return loadLocalDashboardData().then((data) => makePlaceholderRows(data.counts.localites, 'localite'));
+  }
+  return fetchJson('/localites?limit=500');
 }
 
 function getCount(endpoint) {
+  if (LOCAL_JSON_MODE) {
+    return loadLocalDashboardData().then((data) => {
+      const key = getLocalCountKey(endpoint);
+      return key ? data.counts[key] : 0;
+    });
+  }
   return fetchJson(endpoint).then((data) => {
     if (Array.isArray(data)) {
       return data.length;
     }
     return 0;
-  });
+    });
+}
+
+function loadLocalDashboardData() {
+  if (!dashboardState.localDataPromise) {
+    dashboardState.localDataPromise = Promise.all([
+      fetchReportJson('national_counter_registry.json'),
+      fetchReportJson('province_official/province_referential_official.json'),
+      fetchReportJson('locality_official/locality_quality_report.json'),
+    ]).then(([registryResult, provinceResult, localityQualityResult]) => {
+      const counters = registryResult.data?.registre_national_des_compteurs || {};
+      const localityQuality = localityQualityResult.data || {};
+      const provincesRaw = asArray(provinceResult.data?.province_referential);
+      const provinces = provincesRaw.map((province, index) => ({
+        id: index + 1,
+        nom: province.nom || 'Non renseigné',
+        code: province.code_officiel || province.canonical_id || '',
+        zone: province.zone_fdsu || '',
+        chef_lieu: province.chef_lieu || '',
+        population: null,
+        superficie: null,
+        source: province.source || 'province_referential_official.json',
+        statut: normalizeDashboardStatus(province.statut || 'Validé'),
+        qualite: province.qualite,
+      }));
+      const zoneCounts = provinces.reduce((acc, province) => {
+        const zone = String(province.zone || '').toUpperCase();
+        if (acc[zone] !== undefined) acc[zone] += 1;
+        return acc;
+      }, { ND: 0, SD: 0, CE: 0, OT: 0, ET: 0 });
+
+      return {
+        loadedAt: new Date().toLocaleString('fr-FR'),
+        counters,
+        provinces,
+        zoneCounts,
+        counts: {
+          zones: 5,
+          provinces: counters.provinces?.nombre ?? provinces.length ?? 26,
+          territoires: counters.territoires?.nombre ?? 145,
+          villes: counters.villes?.nombre ?? 11,
+          collectivites: counters.collectivites?.nombre ?? 733,
+          groupements: counters.groupements?.trouve ?? counters.groupements?.nombre ?? 1681,
+          localites: counters.localites?.nombre ?? localityQuality.locality_count ?? 26710,
+          sites: 0,
+          missions: 0,
+          users: 0,
+        },
+      };
+    });
+  }
+  return dashboardState.localDataPromise;
+}
+
+function getLocalCountKey(endpoint) {
+  const text = String(endpoint || '').toLowerCase();
+  if (text.includes('provinces')) return 'provinces';
+  if (text.includes('territoires') || text.includes('territories')) return 'territoires';
+  if (text.includes('collectivites')) return 'collectivites';
+  if (text.includes('groupements')) return 'groupements';
+  if (text.includes('villages') || text.includes('localites') || text.includes('localités')) return 'localites';
+  if (text.includes('sites')) return 'sites';
+  if (text.includes('missions')) return 'missions';
+  if (text.includes('users') || text.includes('utilisateurs')) return 'users';
+  return null;
+}
+
+function makePlaceholderRows(count, prefix) {
+  return Array.from({ length: Number(count) || 0 }, (_, index) => ({ id: index + 1, nom: `${prefix}-${index + 1}` }));
 }
 
 function fetchJson(endpoint) {
-  const url = new URL(endpoint, API_BASE).toString();
+  if (LOCAL_JSON_MODE) {
+    const localPath = String(endpoint || '');
+    if (localPath.endsWith('.json') || localPath.endsWith('.geojson') || localPath.startsWith('/geodata/')) {
+      return fetch(localPath).then((response) => (response.ok ? response.json() : null)).catch(() => null);
+    }
+    return Promise.resolve(null);
+  }
+  const url = new URL(endpoint, API_BASE_URL).toString();
 
   return fetch(url)
     .then((response) => {
@@ -2372,24 +5254,44 @@ function updateSortIndicators() {
   });
 }
 
+function getRouteFromHash() {
+  return window.location.hash.replace('#', '').trim() || 'dashboard';
+}
+
+function getModuleFromRoute(route) {
+  return ROUTE_TO_MODULE[route] || 'dashboard';
+}
+
+function navigateTo(moduleOrRoute) {
+  const moduleKey = getModuleFromRoute(moduleOrRoute);
+  const route = MODULE_TO_ROUTE[moduleKey] || 'dashboard';
+  if (getRouteFromHash() === route) {
+    setActiveModule(moduleKey);
+    return;
+  }
+  window.location.hash = route;
+}
+
+function renderRouteFromHash() {
+  setActiveModule(getModuleFromRoute(getRouteFromHash()));
+}
+
 navigationItems.forEach((item) => {
   item.addEventListener('click', () => {
-    setActiveModule(item.dataset.module);
+    navigateTo(item.dataset.route || item.dataset.module);
   });
 });
 
 const quickActions = document.querySelectorAll('.quick-actions button');
 quickActions.forEach((button) => {
   button.addEventListener('click', () => {
-    setActiveModule(button.dataset.module);
+    navigateTo(button.dataset.route || button.dataset.module);
   });
 });
 
-const defaultModule = window.location.hash.replace('#', '') || 'dashboard';
-setActiveModule(defaultModule);
+window.addEventListener('hashchange', renderRouteFromHash);
 
-window.addEventListener('load', () => {
-  if (window.location.hash.replace('#', '') === 'cartographie') {
-    initializeCartographyModule();
-  }
-});
+if (!window.location.hash) {
+  window.location.hash = 'dashboard';
+}
+renderRouteFromHash();

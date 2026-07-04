@@ -53,6 +53,73 @@ uvicorn api.main:app --reload
 3. L'API sera disponible par défaut sur `http://127.0.0.1:8000`.
 4. La documentation interactive peut être consultée sur `http://127.0.0.1:8000/docs`.
 
+## SIG-FDSU RDC v0.8.0 - Modes JSON et PostgreSQL/PostGIS
+
+Le dashboard conserve deux modes :
+
+- `DATA_MODE = 'json'` dans `dashboard/app.js` : lecture directe des rapports JSON locaux.
+- `DATA_MODE = 'api'` dans `dashboard/app.js` : lecture via FastAPI sur `API_BASE_URL = 'http://localhost:8001'`.
+
+L'API conserve aussi un fallback JSON et peut lire PostgreSQL/PostGIS via la variable d'environnement `DATA_MODE`.
+
+Créer un fichier `.env` local à partir de `.env.example` ou définir :
+
+```powershell
+$env:DATABASE_URL="postgresql://postgres:postgres@localhost:5432/sig_fdsu_rdc"
+$env:DATA_MODE="db"
+```
+
+### Installer PostgreSQL/PostGIS
+
+Installer PostgreSQL et PostGIS, puis créer la base :
+
+```powershell
+createdb -U postgres sig_fdsu_rdc
+```
+
+Initialiser PostGIS et le schéma :
+
+```powershell
+psql -U postgres -d sig_fdsu_rdc -f database/init.sql
+psql -U postgres -d sig_fdsu_rdc -f database/schema.sql
+```
+
+Charger les référentiels JSON existants :
+
+```powershell
+python database/seed_from_json.py
+```
+
+Le seed lit uniquement `data/reports`, ignore les doublons et produit un rapport `inserted / ignored / errors`.
+
+### Lancer en mode API PostgreSQL/PostGIS
+
+```powershell
+$env:DATA_MODE="db"
+python -m uvicorn api.main:app --host 127.0.0.1 --port 8001
+```
+
+Endpoints métier v0.8.0 :
+
+- `GET /health`
+- `GET /dashboard/summary`
+- `GET /provinces`
+- `GET /territoires`
+- `GET /collectivites`
+- `GET /groupements`
+- `GET /localites`
+- `GET /sites`
+- `GET /map/layers/{layer_name}`
+- `GET /entities/{layer}/{id}`
+
+### Lancer le dashboard
+
+```powershell
+python -m http.server 8000 --bind 127.0.0.1
+```
+
+Ouvrir `http://localhost:8000/dashboard/index.html#dashboard`.
+
 ## Tests
 
 Exécuter les tests avec Pytest :

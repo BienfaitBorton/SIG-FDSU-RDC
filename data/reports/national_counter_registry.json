@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-03T14:59:05+00:00",
+  "generated_at": "2026-07-03T17:28:18+00:00",
   "source": "collectivites.kmz",
   "registre_national_des_compteurs": {
     "provinces": {
@@ -45,7 +45,31 @@
       "nombre": 179,
       "orphelins": 1,
       "incoherences_attributaires": 176
+    },
+    "localites": {
+      "nombre": 26710,
+      "repartition_par_type": {
+        "Autre": 43,
+        "Camp": 1649,
+        "Cité": 142,
+        "Localité": 800,
+        "Quartier": 25,
+        "Village": 24051
+      },
+      "statut": "partiel",
+      "validation": "non publié",
+      "score_qualite": 98.18,
+      "reference_nationale": null,
+      "comparaison_reference": "reference nationale localites non disponible dans le registre",
+      "anomalies": 2556
+    },
+    "anomalies_localites": {
+      "nombre": 2556,
+      "orphelins": 924,
+      "types_inconnus": 43,
+      "rattachements_impossibles": 924
     }
   },
-  "source_groupements": "Groupements.kmz"
+  "source_groupements": "Groupements.kmz",
+  "source_localites": "Localités.kmz"
 }

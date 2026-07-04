@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SIG-FDSU RDC - Interface de gestion</title>
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-o9N1j7kGkva0nN1N8px8r+3J6PA6kQY+fgGEA5p6L2E=" crossorigin="" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 </head>
 <body>
   <div class="app-shell">
@@ -19,27 +19,27 @@
       </div>
 
       <nav class="nav-menu">
-        <button class="nav-item active" data-module="dashboard">
+        <button class="nav-item active" data-module="dashboard" data-route="dashboard">
           <span class="nav-icon">🏠</span>
           <span>Tableau de bord</span>
         </button>
-        <button class="nav-item" data-module="cartographie">
+        <button class="nav-item" data-module="cartographie" data-route="map">
           <span class="nav-icon">🗺️</span>
           <span>Cartographie</span>
         </button>
-        <button class="nav-item" data-module="referentiel">
+        <button class="nav-item" data-module="referentiel" data-route="referentiel">
           <span class="nav-icon">🧭</span>
           <span>Référentiel administratif</span>
         </button>
-        <button class="nav-item" data-module="gestion_referentiels">
+        <button class="nav-item" data-module="gestion_referentiels" data-route="registry">
           <span class="nav-icon">🗂️</span>
           <span>Gestion des Référentiels</span>
         </button>
-        <button class="nav-item" data-module="explorateur_sources">
+        <button class="nav-item" data-module="explorateur_sources" data-route="sources">
           <span class="nav-icon">🧪</span>
           <span>Explorateur de Sources</span>
         </button>
-        <button class="nav-item" data-module="sites">
+        <button class="nav-item" data-module="sites" data-route="sites">
           <span class="nav-icon">📍</span>
           <span>Sites FDSU</span>
         </button>
@@ -85,9 +85,10 @@
         </div>
 
         <div class="topbar-actions">
-          <div class="search-field">
-            <input type="search" placeholder="Rechercher un module..." aria-label="Recherche" />
+          <div class="search-field global-search-field">
+            <input id="global-search-input" type="search" placeholder="Rechercher code, nom, activité, défi, site..." aria-label="Recherche globale SIG" autocomplete="off" />
             <span class="search-icon">🔍</span>
+            <div id="global-search-results" class="global-search-results hidden" role="listbox"></div>
           </div>
           <button class="notification-button" aria-label="Notifications">🔔</button>
           <div class="profile-card">
@@ -104,39 +105,81 @@
         <div class="dashboard-grid" id="dashboard-panel" data-module="dashboard">
           <div class="dashboard-main">
             <div class="summary-grid">
-              <article class="summary-card">
+              <article class="summary-card clickable-summary" data-layer="provinces" tabindex="0">
                 <p class="summary-label">Provinces</p>
                 <p class="summary-value" id="stat-provinces">—</p>
               </article>
-              <article class="summary-card">
+              <article class="summary-card clickable-summary" data-layer="territoires" tabindex="0">
                 <p class="summary-label">Territoires</p>
                 <p class="summary-value" id="stat-territoires">—</p>
               </article>
-              <article class="summary-card">
+              <article class="summary-card clickable-summary" data-layer="collectivites" tabindex="0">
                 <p class="summary-label">Collectivités</p>
                 <p class="summary-value" id="stat-collectivites">—</p>
               </article>
-              <article class="summary-card">
+              <article class="summary-card clickable-summary" data-layer="groupements" tabindex="0">
                 <p class="summary-label">Groupements</p>
                 <p class="summary-value" id="stat-groupements">—</p>
               </article>
-              <article class="summary-card">
-                <p class="summary-label">Villages</p>
+              <article class="summary-card clickable-summary" data-layer="villages" tabindex="0">
+                <p class="summary-label">Localités</p>
                 <p class="summary-value" id="stat-villages">—</p>
               </article>
-              <article class="summary-card">
+              <article class="summary-card clickable-summary" data-layer="sites" tabindex="0">
                 <p class="summary-label">Sites FDSU</p>
                 <p class="summary-value" id="stat-sites">—</p>
               </article>
-              <article class="summary-card">
+              <article class="summary-card clickable-summary" data-layer="missions" tabindex="0">
                 <p class="summary-label">Missions</p>
                 <p class="summary-value" id="stat-missions">—</p>
               </article>
-              <article class="summary-card">
+              <article class="summary-card clickable-summary" data-route="utilisateurs" tabindex="0">
                 <p class="summary-label">Utilisateurs</p>
                 <p class="summary-value" id="stat-utilisateurs">—</p>
               </article>
             </div>
+
+            <section class="dashboard-workbench hidden" id="dashboard-workbench">
+              <div class="panel-header">
+                <div>
+                  <p class="panel-label" id="dashboard-workbench-label">Navigation métier</p>
+                  <h2 id="dashboard-workbench-title">Liste</h2>
+                </div>
+                <div class="workbench-actions">
+                  <button type="button" id="dashboard-workbench-map" class="primary-button">Afficher sur la carte</button>
+                  <button type="button" id="dashboard-workbench-referentiel" class="table-action-button">Ouvrir dans le référentiel</button>
+                </div>
+              </div>
+              <div class="attribute-toolbar">
+                <input id="dashboard-workbench-search" type="search" placeholder="Rechercher dans la liste..." aria-label="Recherche liste métier" />
+                <select id="dashboard-workbench-province">
+                  <option value="">Toutes les provinces</option>
+                </select>
+                <select id="dashboard-workbench-territory">
+                  <option value="">Tous les territoires</option>
+                </select>
+              </div>
+              <div class="table-frame attribute-table-frame">
+                <table class="governance-table">
+                  <thead>
+                    <tr>
+                      <th>Nom</th>
+                      <th>Type</th>
+                      <th>Province</th>
+                      <th>Territoire</th>
+                      <th>Qualité</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashboard-workbench-body"></tbody>
+                </table>
+              </div>
+              <div class="attribute-pagination">
+                <button type="button" id="dashboard-workbench-prev">Précédent</button>
+                <span id="dashboard-workbench-page">Page 1 / 1</span>
+                <button type="button" id="dashboard-workbench-next">Suivant</button>
+              </div>
+            </section>
 
             <article class="map-card">
               <div class="panel-header">
@@ -220,14 +263,27 @@
                 <div>
                   <button id="zoom-auto" class="primary-button">Zoom automatique</button>
                 </div>
+                <div class="thematic-controls">
+                  <label for="thematic-layer-select">Carte thématique</label>
+                  <select id="thematic-layer-select">
+                    <option value="">Aucune</option>
+                    <option value="economic">Activités économiques</option>
+                    <option value="agriculture">Potentiel agricole</option>
+                    <option value="mining">Potentiel minier</option>
+                    <option value="network">Couverture réseau</option>
+                    <option value="challenges">Défis</option>
+                    <option value="infrastructure">Infrastructures</option>
+                    <option value="fdsu">Potentiel FDSU</option>
+                  </select>
+                </div>
                 <div class="legend-card">
                   <p class="legend-title">Légende Zones FDSU</p>
                   <ul class="legend-list">
-                    <li><span class="legend-swatch legend-nd"></span>ND</li>
-                    <li><span class="legend-swatch legend-ot"></span>OT</li>
-                    <li><span class="legend-swatch legend-ce"></span>CE</li>
-                    <li><span class="legend-swatch legend-sd"></span>SD</li>
-                    <li><span class="legend-swatch legend-et"></span>ET</li>
+                    <li><span class="legend-swatch legend-nd"></span>ND - Nord</li>
+                    <li><span class="legend-swatch legend-ot"></span>OT - Ouest</li>
+                    <li><span class="legend-swatch legend-ce"></span>CE - Centre</li>
+                    <li><span class="legend-swatch legend-sd"></span>SD - Sud</li>
+                    <li><span class="legend-swatch legend-et"></span>ET - Est</li>
                   </ul>
                 </div>
               </div>
@@ -253,7 +309,7 @@
                   <li><label><input type="checkbox" data-layer="secteurs" /> Secteurs</label></li>
                   <li><label><input type="checkbox" data-layer="chefferies" /> Chefferies</label></li>
                   <li><label><input type="checkbox" data-layer="groupements" /> Groupements</label></li>
-                  <li><label><input type="checkbox" data-layer="villages" /> Villages</label></li>
+                  <li><label><input type="checkbox" data-layer="villages" /> Localités</label></li>
                   <li><label><input type="checkbox" data-layer="sites" /> Sites FDSU</label></li>
                   <li><label><input type="checkbox" data-layer="missions" /> Missions</label></li>
                 </ul>
@@ -272,6 +328,54 @@
               </div>
             </aside>
           </div>
+
+          <section class="attribute-panel">
+            <div class="panel-header">
+              <div>
+                <p class="panel-label">Attributaire</p>
+                <h3>Explorateur des couches</h3>
+              </div>
+              <span class="panel-badge" id="attribute-total">0 élément</span>
+            </div>
+            <div class="attribute-toolbar">
+              <select id="attribute-layer-select" aria-label="Couche attributaire">
+                <option value="provinces">Provinces</option>
+                <option value="territoires">Territoires</option>
+                <option value="collectivites">Collectivités</option>
+                <option value="groupements">Groupements</option>
+                <option value="villages">Localités</option>
+                <option value="sites">Sites FDSU</option>
+                <option value="missions">Missions</option>
+              </select>
+              <input id="attribute-search" type="search" placeholder="Rechercher..." aria-label="Recherche attributaire" />
+              <select id="attribute-province-filter" aria-label="Filtre province">
+                <option value="">Toutes les provinces</option>
+              </select>
+              <select id="attribute-territory-filter" aria-label="Filtre territoire">
+                <option value="">Tous les territoires</option>
+              </select>
+            </div>
+            <div class="table-frame attribute-table-frame">
+              <table class="governance-table">
+                <thead>
+                  <tr>
+                    <th>Nom</th>
+                    <th>Type</th>
+                    <th>Province</th>
+                    <th>Territoire</th>
+                    <th>Qualité</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="attribute-table-body"></tbody>
+              </table>
+            </div>
+            <div class="attribute-pagination">
+              <button type="button" id="attribute-prev">Précédent</button>
+              <span id="attribute-page-info">Page 1 / 1</span>
+              <button type="button" id="attribute-next">Suivant</button>
+            </div>
+          </section>
         </div>
 
         <div class="module-panel hidden" id="referentiel-panel" data-module="referentiel">
@@ -464,9 +568,9 @@
               <p class="panel-label">Sites FDSU</p>
               <h2>Inventaire des sites</h2>
             </div>
-            <span class="panel-badge">Bientôt</span>
+            <span class="panel-badge">0 site</span>
           </div>
-          <p>Exploration et synthèse des sites FDSU dans le territoire national.</p>
+          <p id="sites-module-message">Module Sites FDSU à construire en v0.7.0.</p>
         </div>
 
         <div class="module-panel hidden" id="explorateur-sources-panel" data-module="explorateur_sources">
@@ -555,9 +659,29 @@
               <p class="panel-label">Import</p>
               <h2>Chargement des données</h2>
             </div>
-            <span class="panel-badge">Bientôt</span>
+            <span class="panel-badge">Prototype v0.7.2</span>
           </div>
-          <p>Processus d’import des fichiers et des référentiels sans connexion directe à la base.</p>
+          <section class="prototype-panel">
+            <div class="source-explorer-loader">
+              <label for="import-file-input">Fichier à prévisualiser</label>
+              <input id="import-file-input" type="file" accept=".xlsx,.xls,.csv,.kml,.kmz,.geojson,.json,.zip" />
+              <p id="import-file-name">Aucun fichier sélectionné.</p>
+            </div>
+            <div class="attribute-toolbar">
+              <select id="import-sheet-select" class="hidden" aria-label="Feuille Excel"></select>
+              <button id="import-reset" type="button" class="governance-action-button">Réinitialiser import</button>
+              <button id="import-anomaly-report" type="button" class="governance-action-button" disabled>Télécharger rapport d'anomalies</button>
+            </div>
+            <div class="detail-card">
+              <div class="detail-card-header">
+                <div>
+                  <p class="panel-label">Prévisualisation</p>
+                  <h3>Colonnes détectées</h3>
+                </div>
+              </div>
+              <div id="import-preview" class="import-preview">Sélectionnez un fichier Excel, CSV, JSON ou GeoJSON.</div>
+            </div>
+          </section>
         </div>
 
         <div class="module-panel hidden" id="export-panel" data-module="export">
@@ -566,9 +690,39 @@
               <p class="panel-label">Export</p>
               <h2>Extraction des rapports</h2>
             </div>
-            <span class="panel-badge">Bientôt</span>
+            <span class="panel-badge">Prototype v0.7.2</span>
           </div>
-          <p>Préparation des exports et des jeux de données pour diffusion.</p>
+          <section class="prototype-panel">
+            <div class="attribute-toolbar">
+              <select id="export-layer-select" aria-label="Couche à exporter">
+                <option value="provinces">Provinces</option>
+                <option value="territoires">Territoires</option>
+                <option value="collectivites">Collectivités</option>
+                <option value="groupements">Groupements</option>
+                <option value="villages">Localités</option>
+                <option value="sites">Sites FDSU</option>
+              </select>
+              <select id="export-format-select" aria-label="Format d'export">
+                <option value="csv">CSV</option>
+                <option value="json">JSON</option>
+                <option value="geojson">GeoJSON</option>
+                <option value="excel">Excel (CSV v0.7.2)</option>
+                <option value="kml">KML/KMZ à préparer</option>
+              </select>
+              <select id="export-province-filter" aria-label="Filtre province">
+                <option value="">Toutes les provinces</option>
+              </select>
+              <select id="export-territory-filter" aria-label="Filtre territoire">
+                <option value="">Tous les territoires</option>
+              </select>
+              <select id="export-type-filter" aria-label="Filtre type">
+                <option value="">Tous les types</option>
+              </select>
+              <button id="export-run" type="button" class="primary-button">Exporter</button>
+            </div>
+            <div id="export-count" class="cartography-note">0 élément prêt à exporter.</div>
+            <div id="export-status" class="cartography-note">Choisissez une couche et un format.</div>
+          </section>
         </div>
 
         <div class="module-panel hidden" id="statistiques-panel" data-module="statistiques">
@@ -604,10 +758,21 @@
           <p>Réglages généraux de l’application et options de personnalisation.</p>
         </div>
       </section>
+      <aside id="entity-profile-drawer" class="entity-profile-drawer hidden" aria-live="polite">
+        <div class="entity-profile-header">
+          <div>
+            <p class="panel-label" id="entity-profile-layer">Fiche territoriale</p>
+            <h2 id="entity-profile-title">Aucune entité sélectionnée</h2>
+          </div>
+          <button type="button" id="entity-profile-close" class="table-action-button">Fermer</button>
+        </div>
+        <div id="entity-profile-body" class="entity-profile-body"></div>
+      </aside>
     </main>
   </div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-o3uh3rktTzhA+2nfTmKYpqD4kQxQfGKX/4eRS6n5mZ4=" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
