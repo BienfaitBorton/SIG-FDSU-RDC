@@ -26,6 +26,7 @@ from api.routes import (
     documents,
     photos,
     imports,
+    decision,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -506,6 +507,7 @@ app.include_router(missions.router, prefix="/missions", tags=["Missions"])
 app.include_router(documents.router, prefix="/documents", tags=["Documents"])
 app.include_router(photos.router, prefix="/photos", tags=["Photos"])
 app.include_router(imports.router, prefix="/imports", tags=["Imports"])
+app.include_router(decision.router, prefix="/decision", tags=["Aide a la decision"])
 
 @app.get("/", tags=["Root"])
 def read_root() -> dict[str, str]:

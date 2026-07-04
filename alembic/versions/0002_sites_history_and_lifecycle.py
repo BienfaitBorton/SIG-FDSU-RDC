@@ -1,7 +1,7 @@
 """add site_history table, lifecycle enum and site fields
 
-Revision ID: 0002_sites_history_and_lifecycle
-Revises: 0001_add_nb_sites_reference_to_territoires
+Revision ID: 0002_sites_history
+Revises: 0001_nb_sites_reference
 Create Date: 2026-07-01 00:30:00.000000
 
 """
@@ -9,46 +9,59 @@ from alembic import op
 import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
-revision = '0002_sites_history_and_lifecycle'
-down_revision = '0001_add_nb_sites_reference_to_territoires'
+revision = '0002_sites_history'
+down_revision = '0001_nb_sites_reference'
 branch_labels = None
 depends_on = None
 
 
 def upgrade() -> None:
-    # Create new ENUM type for lifecycle
-    op.execute("CREATE TYPE site_lifecycle AS ENUM ('Prévu', 'Planifié', 'En construction', 'Actif', 'Hors service')")
+    bind = op.get_bind()
+    inspector = sa.inspect(bind)
+    site_columns = {column["name"] for column in inspector.get_columns("sites")}
 
-    # Add new columns to sites
-    op.add_column('sites', sa.Column('programme', sa.String(length=200), nullable=True))
-    op.add_column('sites', sa.Column('annee_planification', sa.Integer(), nullable=True))
-    op.add_column('sites', sa.Column('phase', sa.String(length=100), nullable=True))
-    op.add_column('sites', sa.Column('priorite', sa.Integer(), nullable=False, server_default=sa.text('0')))
-
-    # Create site_history table
-    op.create_table(
-        'site_history',
-        sa.Column('id', sa.BigInteger(), primary_key=True),
-        sa.Column('site_id', sa.BigInteger(), sa.ForeignKey('sites.id', ondelete='CASCADE'), nullable=False),
-        sa.Column('changed_at', sa.DateTime(), nullable=False, server_default=sa.text('now()')),
-        sa.Column('changed_by', sa.String(length=200), nullable=True),
-        sa.Column('action', sa.String(length=50), nullable=True),
-        sa.Column('data', sa.JSON(), nullable=True),
-    )
-
-    # Alter existing statut column from old enum to new site_lifecycle
-    # Map old values to new roughly: 'En étude' -> 'Planifié'
     op.execute(
-        "ALTER TABLE sites ALTER COLUMN statut TYPE site_lifecycle USING (\n"
-        "CASE WHEN statut = 'En étude' THEN 'Planifié'\n"
-        "WHEN statut = 'Prévu' THEN 'Prévu'\n"
-        "WHEN statut = 'En construction' THEN 'En construction'\n"
-        "WHEN statut = 'Actif' THEN 'Actif'\n"
-        "WHEN statut = 'Hors service' THEN 'Hors service'\n"
-        "ELSE 'Prévu' END)::site_lifecycle"
+        """
+        DO $$
+        BEGIN
+            CREATE TYPE site_lifecycle AS ENUM ('Prevu', 'Planifie', 'En construction', 'Actif', 'Hors service');
+        EXCEPTION WHEN duplicate_object THEN
+            NULL;
+        END $$;
+        """
     )
 
-    # Drop old enum type if exists
+    if "programme" not in site_columns:
+        op.add_column('sites', sa.Column('programme', sa.String(length=200), nullable=True))
+    if "annee_planification" not in site_columns:
+        op.add_column('sites', sa.Column('annee_planification', sa.Integer(), nullable=True))
+    if "phase" not in site_columns:
+        op.add_column('sites', sa.Column('phase', sa.String(length=100), nullable=True))
+    if "priorite" not in site_columns:
+        op.add_column('sites', sa.Column('priorite', sa.Integer(), nullable=False, server_default=sa.text('0')))
+
+    if not inspector.has_table("site_history"):
+        op.create_table(
+            'site_history',
+            sa.Column('id', sa.BigInteger(), primary_key=True),
+            sa.Column('site_id', sa.BigInteger(), sa.ForeignKey('sites.id', ondelete='CASCADE'), nullable=False),
+            sa.Column('changed_at', sa.DateTime(), nullable=False, server_default=sa.text('now()')),
+            sa.Column('changed_by', sa.String(length=200), nullable=True),
+            sa.Column('action', sa.String(length=50), nullable=True),
+            sa.Column('data', sa.JSON(), nullable=True),
+        )
+
+    if "statut" in site_columns:
+        op.execute(
+            "ALTER TABLE sites ALTER COLUMN statut TYPE site_lifecycle USING (\n"
+            "CASE WHEN statut = 'En etude' THEN 'Planifie'\n"
+            "WHEN statut = 'Prevu' THEN 'Prevu'\n"
+            "WHEN statut = 'En construction' THEN 'En construction'\n"
+            "WHEN statut = 'Actif' THEN 'Actif'\n"
+            "WHEN statut = 'Hors service' THEN 'Hors service'\n"
+            "ELSE 'Prevu' END)::site_lifecycle"
+        )
+
     op.execute("DROP TYPE IF EXISTS site_status")
 
 

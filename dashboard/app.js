@@ -53,6 +53,7 @@ const ROUTE_TO_MODULE = {
   sources: 'explorateur_sources',
   explorateur_sources: 'explorateur_sources',
   sites: 'sites',
+  decision: 'decision',
   import: 'import',
   export: 'export',
   statistiques: 'statistiques',
@@ -66,6 +67,7 @@ const MODULE_TO_ROUTE = {
   gestion_referentiels: 'registry',
   explorateur_sources: 'sources',
   sites: 'sites',
+  decision: 'decision',
   import: 'import',
   export: 'export',
   statistiques: 'statistiques',
@@ -95,6 +97,7 @@ const moduleNames = {
   gestion_referentiels: 'Gestion des Référentiels',
   explorateur_sources: 'Explorateur de Sources',
   sites: 'Sites FDSU',
+  decision: 'Aide à la décision',
   import: 'Import',
   export: 'Export',
   statistiques: 'Statistiques',
@@ -157,6 +160,12 @@ const importState = {
   activeSheet: '',
   preview: null,
   anomalies: [],
+};
+
+const decisionState = {
+  initialized: false,
+  rows: [],
+  selectedIndex: null,
 };
 
 const sourceExplorerState = {
@@ -399,6 +408,10 @@ function setActiveModule(moduleKey) {
     initializeSitesModule();
   }
 
+  if (normalizedModule === 'decision') {
+    initializeDecisionModule();
+  }
+
   if (normalizedModule === 'import') {
     initializeImportModule();
   }
@@ -419,6 +432,197 @@ function initializeDashboard() {
   getLastImports();
   getZones();
   dashboardState.initialized = true;
+}
+
+function initializeDecisionModule() {
+  if (decisionState.initialized) {
+    renderDecisionRows();
+    return;
+  }
+  [
+    '#decision-use-case',
+    '#decision-zone',
+    '#decision-province',
+    '#decision-territoire',
+    '#decision-population',
+    '#decision-network',
+    '#decision-health',
+    '#decision-school',
+    '#decision-activity',
+    '#decision-potential',
+    '#decision-connectivity-score',
+    '#decision-priority-score',
+    '#decision-search',
+  ].forEach((selector) => {
+    const element = document.querySelector(selector);
+    if (!element || element.dataset.bound === 'true') return;
+    element.dataset.bound = 'true';
+    element.addEventListener('change', loadDecisionRows);
+    element.addEventListener('input', debounceDecisionLoad);
+  });
+  document.querySelector('#decision-run')?.addEventListener('click', loadDecisionRows);
+  document.querySelector('#decision-export-csv')?.addEventListener('click', () => {
+    downloadTextFile(`sig_fdsu_decision_${getExportDateStamp()}.csv`, toCsv(decisionState.rows), 'text/csv;charset=utf-8');
+  });
+  document.querySelector('#decision-export-json')?.addEventListener('click', () => {
+    downloadTextFile(`sig_fdsu_decision_${getExportDateStamp()}.json`, JSON.stringify(decisionState.rows, null, 2), 'application/json');
+  });
+  decisionState.initialized = true;
+  loadDecisionRows();
+}
+
+let decisionLoadTimer = null;
+function debounceDecisionLoad() {
+  window.clearTimeout(decisionLoadTimer);
+  decisionLoadTimer = window.setTimeout(loadDecisionRows, 350);
+}
+
+function decisionValue(selector) {
+  return String(document.querySelector(selector)?.value || '').trim();
+}
+
+function appendDecisionParam(params, key, value) {
+  if (value !== '' && value !== null && value !== undefined) {
+    params.set(key, value);
+  }
+}
+
+function buildDecisionEndpoint() {
+  const useCase = decisionValue('#decision-use-case') || 'localites';
+  const params = new URLSearchParams();
+  appendDecisionParam(params, 'zone', decisionValue('#decision-zone'));
+  appendDecisionParam(params, 'province', decisionValue('#decision-province'));
+  appendDecisionParam(params, 'territoire', decisionValue('#decision-territoire'));
+  appendDecisionParam(params, 'couverture_reseau', decisionValue('#decision-network'));
+  appendDecisionParam(params, 'centre_sante', decisionValue('#decision-health'));
+  appendDecisionParam(params, 'ecole_secondaire', decisionValue('#decision-school'));
+  appendDecisionParam(params, 'activite_economique', decisionValue('#decision-activity'));
+  appendDecisionParam(params, 'potentiel', decisionValue('#decision-potential'));
+  appendDecisionParam(params, 'niveau_connectivite', decisionValue('#decision-connectivity-score'));
+  appendDecisionParam(params, 'score_priorite_min', decisionValue('#decision-priority-score'));
+  appendDecisionParam(params, 'q', decisionValue('#decision-search'));
+  appendDecisionParam(params, 'population_min', decisionValue('#decision-population'));
+  params.set('limit', '250');
+
+  if (useCase === 'territoires') return `/decision/territoires-prioritaires?${params.toString()}`;
+  if (useCase === 'search') return `/decision/search?${params.toString()}`;
+  return `/decision/localites-prioritaires?${params.toString()}`;
+}
+
+function fetchDecisionJson(endpoint) {
+  const url = new URL(endpoint, API_BASE_URL).toString();
+  return fetch(url)
+    .then((response) => (response.ok ? response.json() : null))
+    .catch(() => null);
+}
+
+function loadDecisionRows() {
+  const body = document.querySelector('#decision-results-body');
+  if (body) body.innerHTML = '<tr><td colspan="9" class="empty-state">Chargement...</td></tr>';
+  fetchDecisionJson(buildDecisionEndpoint()).then((payload) => {
+    const rows = Array.isArray(payload) ? payload : asArray(payload?.items);
+    decisionState.rows = rows;
+    decisionState.selectedIndex = rows.length ? 0 : null;
+    renderDecisionRows();
+  });
+}
+
+function formatDecisionValue(value) {
+  if (value === null || value === undefined || value === '') return 'donnée à compléter';
+  if (typeof value === 'boolean') return value ? 'Oui' : 'Non';
+  if (typeof value === 'number') return value.toLocaleString('fr-FR');
+  return String(value);
+}
+
+function renderDecisionRows() {
+  const body = document.querySelector('#decision-results-body');
+  const count = document.querySelector('#decision-count');
+  const rows = asArray(decisionState.rows);
+  if (count) count.textContent = `${rows.length.toLocaleString('fr-FR')} résultat${rows.length > 1 ? 's' : ''}`;
+  if (!body) return;
+  if (!rows.length) {
+    body.innerHTML = '<tr><td colspan="9" class="empty-state">Aucun résultat connu. Les données métier restent à compléter.</td></tr>';
+    renderDecisionDetail(null);
+    return;
+  }
+  body.innerHTML = rows.map((row, index) => `
+    <tr data-index="${index}" class="${index === decisionState.selectedIndex ? 'selected' : ''}">
+      <td>${escapeHtml(formatDecisionValue(row.score_priorite_fdsu))}</td>
+      <td>${escapeHtml(row.nom || 'donnée à compléter')}</td>
+      <td>${escapeHtml(formatDecisionValue(row.zone))}</td>
+      <td>${escapeHtml(formatDecisionValue(row.province))}</td>
+      <td>${escapeHtml(formatDecisionValue(row.population))}</td>
+      <td>${escapeHtml(formatDecisionValue(row.couverture_4g))}</td>
+      <td>${escapeHtml([formatDecisionValue(row.centre_sante), formatDecisionValue(row.ecole_secondaire)].join(' / '))}</td>
+      <td>${escapeHtml(formatDecisionValue(row.potentiel_agricole || row.potentiel_minier || row.potentiel_commercial || row.potentiel_numerique))}</td>
+      <td>${escapeHtml(formatDecisionValue(row.recommandation))}</td>
+    </tr>
+  `).join('');
+  body.querySelectorAll('tr[data-index]').forEach((row) => {
+    row.addEventListener('click', () => {
+      decisionState.selectedIndex = Number(row.dataset.index);
+      renderDecisionRows();
+    });
+  });
+  renderDecisionDetail(rows[decisionState.selectedIndex ?? 0]);
+}
+
+function renderDecisionDetail(row) {
+  const detail = document.querySelector('#decision-detail');
+  const map = document.querySelector('#decision-map');
+  if (!detail) return;
+  if (!row) {
+    detail.innerHTML = `
+      <p class="panel-label">Fiche</p>
+      <h3>Aucun élément sélectionné</h3>
+      <p class="status-card-text">Les champs non renseignés apparaîtront comme donnée à compléter.</p>
+    `;
+    if (map) map.textContent = 'Carte décisionnelle';
+    return;
+  }
+  if (map) {
+    map.innerHTML = `
+      <strong>${escapeHtml(row.nom || 'Entité')}</strong>
+      <span>${escapeHtml(row.province || 'Province à compléter')} · ${escapeHtml(row.territoire || 'Territoire à compléter')}</span>
+    `;
+  }
+  const fields = [
+    ['Niveau', row.niveau],
+    ['Code', row.code],
+    ['Zone', row.zone],
+    ['Population', row.population],
+    ['Couverture 2G', row.couverture_2g],
+    ['Couverture 3G', row.couverture_3g],
+    ['Couverture 4G', row.couverture_4g],
+    ['Couverture 5G', row.couverture_5g],
+    ['Centre de santé', row.centre_sante],
+    ['École primaire', row.ecole_primaire],
+    ['École secondaire', row.ecole_secondaire],
+    ['Marché', row.marche],
+    ['Électricité', row.electricite],
+    ['Activité principale', row.activite_principale],
+    ['Activité secondaire', row.activite_secondaire],
+    ['Potentiel agricole', row.potentiel_agricole],
+    ['Potentiel minier', row.potentiel_minier],
+    ['Potentiel commercial', row.potentiel_commercial],
+    ['Potentiel numérique', row.potentiel_numerique],
+    ['Niveau enclavement', row.niveau_enclavement],
+    ['Score connectivité', row.score_connectivite],
+    ['Score potentiel', row.score_potentiel],
+    ['Score priorité FDSU', row.score_priorite_fdsu],
+  ];
+  detail.innerHTML = `
+    <p class="panel-label">Fiche</p>
+    <h3>${escapeHtml(row.nom || 'donnée à compléter')}</h3>
+    <dl class="decision-detail-list">
+      ${fields.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(formatDecisionValue(value))}</dd></div>`).join('')}
+    </dl>
+    <div class="decision-recommendation">
+      <strong>Recommandation FDSU</strong>
+      <p>${escapeHtml(formatDecisionValue(row.recommandation))}</p>
+    </div>
+    <p class="decision-missing">${escapeHtml(asArray(row.champs_a_completer).length ? `À compléter : ${row.champs_a_completer.join(', ')}` : 'Dossier complet pour les champs minimum.')}</p>
+  `;
 }
 
 function initializeSitesModule() {

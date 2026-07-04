@@ -43,6 +43,10 @@
           <span class="nav-icon">📍</span>
           <span>Sites FDSU</span>
         </button>
+        <button class="nav-item" data-module="decision" data-route="decision">
+          <span class="nav-icon">CCN</span>
+          <span>Aide à la décision</span>
+        </button>
         <button class="nav-item" data-module="import">
           <span class="nav-icon">⬆️</span>
           <span>Import</span>
@@ -571,6 +575,94 @@
             <span class="panel-badge">0 site</span>
           </div>
           <p id="sites-module-message">Module Sites FDSU à construire en v0.7.0.</p>
+        </div>
+
+        <div class="module-panel hidden" id="decision-panel" data-module="decision">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Aide à la décision</p>
+              <h2>Moteur de priorisation FDSU</h2>
+            </div>
+            <span class="panel-badge" id="decision-count">0 résultat</span>
+          </div>
+
+          <section class="decision-filters">
+            <select id="decision-use-case" aria-label="Cas d'usage">
+              <option value="localites">Localités prioritaires</option>
+              <option value="territoires">Territoires prioritaires</option>
+              <option value="search">Recherche multicritère</option>
+            </select>
+            <select id="decision-zone" aria-label="Zone FDSU">
+              <option value="">Toutes les zones</option>
+              <option value="ND">Zone Nord</option>
+              <option value="SD">Zone Sud</option>
+              <option value="CE">Zone Centre</option>
+              <option value="OT">Zone Ouest</option>
+              <option value="ET">Zone Est</option>
+            </select>
+            <input id="decision-province" type="search" placeholder="Province" aria-label="Province" />
+            <input id="decision-territoire" type="search" placeholder="Territoire" aria-label="Territoire" />
+            <input id="decision-population" type="number" min="0" step="100" value="3000" aria-label="Population minimale" />
+            <select id="decision-network" aria-label="Couverture réseau">
+              <option value="">Toute couverture</option>
+              <option value="2G">2G présente</option>
+              <option value="3G">3G présente</option>
+              <option value="4G">4G présente</option>
+              <option value="5G">5G présente</option>
+            </select>
+            <select id="decision-health" aria-label="Centre de santé">
+              <option value="">Centre de santé</option>
+              <option value="true">Présent</option>
+              <option value="false">Absent</option>
+            </select>
+            <select id="decision-school" aria-label="École secondaire">
+              <option value="">École secondaire</option>
+              <option value="true">Présente</option>
+              <option value="false">Absente</option>
+            </select>
+            <input id="decision-activity" type="search" placeholder="Activité économique" aria-label="Activité économique" />
+            <input id="decision-potential" type="search" placeholder="Potentiel" aria-label="Potentiel" />
+            <input id="decision-connectivity-score" type="number" min="0" max="100" step="1" placeholder="Score connectivité max" aria-label="Score connectivité maximal" />
+            <input id="decision-priority-score" type="number" min="0" max="100" step="1" placeholder="Priorité min." aria-label="Score priorité minimum" />
+            <input id="decision-search" type="search" placeholder="Recherche" aria-label="Recherche décisionnelle" />
+            <button type="button" class="primary-button" id="decision-run">Filtrer</button>
+          </section>
+
+          <div class="decision-layout">
+            <section class="decision-results">
+              <div class="decision-actions">
+                <button type="button" class="table-action-button" id="decision-export-csv">CSV</button>
+                <button type="button" class="table-action-button" id="decision-export-json">JSON</button>
+              </div>
+              <div class="table-frame attribute-table-frame">
+                <table class="governance-table">
+                  <thead>
+                    <tr>
+                      <th>Priorité</th>
+                      <th>Nom</th>
+                      <th>Zone</th>
+                      <th>Province</th>
+                      <th>Population</th>
+                      <th>4G</th>
+                      <th>Services</th>
+                      <th>Potentiel</th>
+                      <th>Recommandation</th>
+                    </tr>
+                  </thead>
+                  <tbody id="decision-results-body"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <aside class="decision-side">
+              <div id="decision-map" class="decision-map">Carte décisionnelle</div>
+              <div class="decision-card" id="decision-detail">
+                <p class="panel-label">Fiche</p>
+                <h3>Aucun élément sélectionné</h3>
+                <p class="status-card-text">Les champs non renseignés apparaîtront comme donnée à compléter.</p>
+              </div>
+            </aside>
+          </div>
         </div>
 
         <div class="module-panel hidden" id="explorateur-sources-panel" data-module="explorateur_sources">

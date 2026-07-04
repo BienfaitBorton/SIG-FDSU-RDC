@@ -4,7 +4,7 @@ from datetime import date, datetime
 from enum import Enum
 
 from geoalchemy2 import Geometry
-from sqlalchemy import BigInteger, Date, DateTime, Enum as SQLEnum, ForeignKey, Index, Numeric, String, Text, event, func, select, Integer
+from sqlalchemy import Boolean, BigInteger, Date, DateTime, Enum as SQLEnum, ForeignKey, Index, Numeric, String, Text, event, func, select, Integer
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -458,6 +458,134 @@ class ImportHistory(Base):
             f"<ImportHistory(id={self.id}, filename={self.filename}, "
             f"status={self.status}, rows_total={self.rows_total})>"
         )
+
+
+class TerritorialProfile(Base):
+    __tablename__ = "territorial_profiles"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    localite_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("villages.id", ondelete="CASCADE"), nullable=True)
+    territoire_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("territoires.id", ondelete="CASCADE"), nullable=True)
+    population: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    niveau_enclavement: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    source: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    observation: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index("ix_territorial_profiles_localite_id", "localite_id"),
+        Index("ix_territorial_profiles_territoire_id", "territoire_id"),
+    )
+
+
+class ConnectivityProfile(Base):
+    __tablename__ = "connectivity_profiles"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    localite_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("villages.id", ondelete="CASCADE"), nullable=True)
+    territoire_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("territoires.id", ondelete="CASCADE"), nullable=True)
+    couverture_2g: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    couverture_3g: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    couverture_4g: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    couverture_5g: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    score_connectivite: Mapped[float | None] = mapped_column(Numeric(6, 2), nullable=True)
+    source: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    observation: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index("ix_connectivity_profiles_localite_id", "localite_id"),
+        Index("ix_connectivity_profiles_territoire_id", "territoire_id"),
+    )
+
+
+class PublicService(Base):
+    __tablename__ = "public_services"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    localite_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("villages.id", ondelete="CASCADE"), nullable=True)
+    territoire_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("territoires.id", ondelete="CASCADE"), nullable=True)
+    centre_sante: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    ecole_primaire: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    ecole_secondaire: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    marche: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    electricite: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    source: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    observation: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index("ix_public_services_localite_id", "localite_id"),
+        Index("ix_public_services_territoire_id", "territoire_id"),
+    )
+
+
+class EconomicActivity(Base):
+    __tablename__ = "economic_activities"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    localite_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("villages.id", ondelete="CASCADE"), nullable=True)
+    territoire_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("territoires.id", ondelete="CASCADE"), nullable=True)
+    activite_principale: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    activite_secondaire: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    potentiel_agricole: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    potentiel_minier: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    potentiel_commercial: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    potentiel_numerique: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    score_potentiel: Mapped[float | None] = mapped_column(Numeric(6, 2), nullable=True)
+    source: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    observation: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index("ix_economic_activities_localite_id", "localite_id"),
+        Index("ix_economic_activities_territoire_id", "territoire_id"),
+    )
+
+
+class DevelopmentChallenge(Base):
+    __tablename__ = "development_challenges"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    localite_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("villages.id", ondelete="CASCADE"), nullable=True)
+    territoire_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("territoires.id", ondelete="CASCADE"), nullable=True)
+    niveau_enclavement: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    defis: Mapped[str | None] = mapped_column(Text, nullable=True)
+    source: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    observation: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index("ix_development_challenges_localite_id", "localite_id"),
+        Index("ix_development_challenges_territoire_id", "territoire_id"),
+    )
+
+
+class FdsuPriorityScore(Base):
+    __tablename__ = "fdsu_priority_scores"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    localite_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("villages.id", ondelete="CASCADE"), nullable=True)
+    territoire_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("territoires.id", ondelete="CASCADE"), nullable=True)
+    score_connectivite: Mapped[float | None] = mapped_column(Numeric(6, 2), nullable=True)
+    score_potentiel: Mapped[float | None] = mapped_column(Numeric(6, 2), nullable=True)
+    score_priorite_fdsu: Mapped[float | None] = mapped_column(Numeric(6, 2), nullable=True)
+    recommandation: Mapped[str | None] = mapped_column(Text, nullable=True)
+    source: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    observation: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index("ix_fdsu_priority_scores_localite_id", "localite_id"),
+        Index("ix_fdsu_priority_scores_territoire_id", "territoire_id"),
+        Index("ix_fdsu_priority_scores_priorite", "score_priorite_fdsu"),
+    )
 
 
 class SiteHistory(Base):

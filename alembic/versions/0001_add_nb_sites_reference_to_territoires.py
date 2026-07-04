@@ -1,6 +1,6 @@
 """add nb_sites_reference to territoires
 
-Revision ID: 0001_add_nb_sites_reference_to_territoires
+Revision ID: 0001_nb_sites_reference
 Revises: 
 Create Date: 2026-07-01 00:00:00.000000
 
@@ -9,7 +9,7 @@ from alembic import op
 import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
-revision = '0001_add_nb_sites_reference_to_territoires'
+revision = '0001_nb_sites_reference'
 down_revision = None
 branch_labels = None
 depends_on = None
