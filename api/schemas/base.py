@@ -213,3 +213,38 @@ class PhotoRead(PhotoBase):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class TerritorialEnrichmentSuggestionBase(BaseModel):
+    entity_type: str = Field(..., description="Niveau territorial concerné.", json_schema_extra={"example": "province"})
+    entity_id: int | None = Field(None, description="Identifiant interne de l'entité si disponible.")
+    entity_name: str | None = Field(None, description="Nom lisible de l'entité.", json_schema_extra={"example": "Kinshasa"})
+    field_name: str = Field(..., description="Champ de fiche à enrichir.", json_schema_extra={"example": "potentiel_numerique"})
+    proposed_value: str = Field(..., description="Valeur proposée, jamais injectée directement dans la fiche officielle.")
+    source_name: str = Field(..., description="Source publique autorisée.", json_schema_extra={"example": "CAID"})
+    source_url: str = Field(..., description="URL publique de la source consultée.")
+    consulted_at: datetime = Field(..., description="Date de consultation de la source.")
+    confidence_level: str = Field(..., description="Niveau de confiance attribué.", json_schema_extra={"example": "élevé"})
+
+
+class TerritorialEnrichmentSuggestionCreate(TerritorialEnrichmentSuggestionBase):
+    pass
+
+
+class TerritorialEnrichmentSuggestionUpdate(BaseModel):
+    proposed_value: str | None = Field(None, description="Valeur ajustée avant validation.")
+    status: str | None = Field(None, description="Statut de revue: proposé, validé ou rejeté.")
+    review_note: str | None = Field(None, description="Commentaire de validation ou rejet.")
+    validated_by: str | None = Field(None, description="Utilisateur validateur.")
+
+
+class TerritorialEnrichmentSuggestionRead(TerritorialEnrichmentSuggestionBase):
+    id: int
+    status: str
+    review_note: str | None = None
+    validated_at: datetime | None = None
+    validated_by: str | None = None
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}

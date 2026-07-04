@@ -27,6 +27,8 @@ from api.routes import (
     photos,
     imports,
     decision,
+    territorial_enrichment,
+    knowledge,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -264,6 +266,56 @@ def territory_items() -> list[dict[str, Any]]:
     return [simplify_entity(item) for item in territories]
 
 
+def entity_source_items(layer: str, skip: int = 0, limit: int = 500) -> list[dict[str, Any]]:
+    if layer == "zones":
+        return paginate(load_nomenclature().get("zones", []), skip, limit)
+    if layer == "provinces":
+        return read_provinces_json(skip=skip, limit=limit)
+    if layer in ("territoires", "territories"):
+        return read_territories_json(skip=skip, limit=limit)
+    if layer == "collectivites":
+        return read_collectivites_json(skip=skip, limit=limit)
+    if layer == "groupements":
+        return read_groupements_json(skip=skip, limit=limit)
+    if layer in ("localites", "villages"):
+        return read_localites_json(skip=skip, limit=limit)
+    if layer == "sites":
+        return read_sites_json(skip=skip, limit=limit)
+    if layer == "missions":
+        return read_missions_json(skip=skip, limit=limit)
+    return []
+
+
+def entity_search_text(item: dict[str, Any], layer: str) -> str:
+    metadata = item.get("metadata") if isinstance(item.get("metadata"), dict) else {}
+    profile = item.get("future_profile") if isinstance(item.get("future_profile"), dict) else {}
+    fields = [
+        layer,
+        item.get("id"),
+        item.get("canonical_id"),
+        item.get("code"),
+        item.get("code_officiel"),
+        item.get("nom"),
+        item.get("name"),
+        item.get("type"),
+        item.get("niveau"),
+        item.get("zone_fdsu"),
+        item.get("province"),
+        item.get("territoire"),
+        item.get("collectivite"),
+        item.get("groupement"),
+        metadata.get("description"),
+        profile.get("activite_principale"),
+        profile.get("activite_secondaire"),
+        profile.get("recommandations"),
+    ]
+    fields.extend(as_list(profile.get("activites_economiques")))
+    fields.extend(as_list(profile.get("particularites")))
+    fields.extend(str(item) for item in as_list(profile.get("defis")))
+    fields.extend(str(item) for item in as_list(profile.get("services_publics")))
+    return " ".join(str(value) for value in fields if value).lower()
+
+
 @app.get("/health", tags=["v0.7.0"])
 def health() -> dict[str, str]:
     if use_database():
@@ -372,9 +424,16 @@ def read_villages_json(skip: int = Query(0, ge=0), limit: int = Query(1500, gt=0
 
 
 @app.get("/sites", tags=["v0.7.0"])
-def read_sites_json() -> list[dict[str, Any]]:
+def read_sites_json(skip: int = Query(0, ge=0), limit: int = Query(500, gt=0)) -> list[dict[str, Any]]:
     if use_database():
-        return db_entity_rows("sites", 0, 500)
+        return db_entity_rows("sites", skip, limit)
+    return []
+
+
+@app.get("/missions", tags=["v0.7.0"])
+def read_missions_json(skip: int = Query(0, ge=0), limit: int = Query(500, gt=0)) -> list[dict[str, Any]]:
+    if use_database():
+        return db_entity_rows("missions", skip, limit)
     return []
 
 
@@ -462,6 +521,58 @@ def read_map_layer(layer_name: str, skip: int = Query(0, ge=0), limit: int = Que
     return {"type": "FeatureCollection", "features": features}
 
 
+@app.get("/entities/search", tags=["v0.8.0"])
+def search_entities(
+    q: str = Query("", description="Texte recherche: nom, code FDSU, activite, defi, service ou document"),
+    layer: str | None = Query(None, description="Filtre optionnel: zone, provinces, territoires, collectivites, groupements, localites, sites, missions"),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(25, gt=0, le=200),
+) -> dict[str, Any]:
+    query_value = q if isinstance(q, str) else ""
+    layer_value = layer if isinstance(layer, str) and layer else None
+    skip_value = skip if isinstance(skip, int) else 0
+    limit_value = limit if isinstance(limit, int) else 25
+    requested_layers = [layer_value] if layer_value else [
+        "zones",
+        "provinces",
+        "territoires",
+        "collectivites",
+        "groupements",
+        "localites",
+        "sites",
+        "missions",
+    ]
+    normalized_query = query_value.strip().lower()
+    matches: list[dict[str, Any]] = []
+    for layer_name in requested_layers:
+        canonical_layer = "localites" if layer_name == "villages" else layer_name
+        items = entity_source_items(canonical_layer, 0, 5000)
+        for item in items:
+            simplified = simplify_entity(item) if canonical_layer != "zones" else enrich_entity(item)
+            if normalized_query and normalized_query not in entity_search_text(simplified, canonical_layer):
+                continue
+            matches.append({
+                "layer": canonical_layer,
+                "id": simplified.get("id") or simplified.get("canonical_id") or simplified.get("code") or simplified.get("nom"),
+                "nom": simplified.get("nom") or simplified.get("name"),
+                "type": simplified.get("type") or simplified.get("niveau") or canonical_layer,
+                "zone_fdsu": simplified.get("zone_fdsu") or simplified.get("code") if canonical_layer == "zones" else simplified.get("zone_fdsu"),
+                "province": simplified.get("province"),
+                "territoire": simplified.get("territoire"),
+                "collectivite": simplified.get("collectivite"),
+                "groupement": simplified.get("groupement"),
+                "source": simplified.get("source"),
+            })
+    total = len(matches)
+    return {
+        "query": query_value,
+        "total": total,
+        "skip": skip_value,
+        "limit": limit_value,
+        "items": matches[skip_value : skip_value + limit_value],
+    }
+
+
 @app.get("/entities/{layer}/{entity_id}", tags=["v0.8.0"])
 def read_entity(layer: str, entity_id: int | str) -> dict[str, Any]:
     if use_database():
@@ -493,9 +604,43 @@ def read_entity(layer: str, entity_id: int | str) -> dict[str, Any]:
         return {}
     for item in as_list(load_report(source[0]).get(source[1])):
         simplified = simplify_entity(item)
-        if str(simplified.get("id")) == str(entity_id) or str(simplified.get("canonical_id")) == str(entity_id):
+        candidates = [
+            simplified.get("id"),
+            simplified.get("canonical_id"),
+            simplified.get("code"),
+            simplified.get("code_officiel"),
+            simplified.get("nom"),
+            simplified.get("name"),
+        ]
+        if any(str(candidate).lower() == str(entity_id).lower() for candidate in candidates if candidate):
             return simplified
     return {}
+
+
+@app.get("/provinces/{entity_id}", tags=["v0.8.0"])
+def read_province_detail(entity_id: int | str) -> dict[str, Any]:
+    return read_entity("provinces", entity_id)
+
+
+@app.get("/territoires/{entity_id}", tags=["v0.8.0"])
+def read_territoire_detail(entity_id: int | str) -> dict[str, Any]:
+    return read_entity("territoires", entity_id)
+
+
+@app.get("/collectivites/{entity_id}", tags=["v0.8.0"])
+def read_collectivite_detail(entity_id: int | str) -> dict[str, Any]:
+    return read_entity("collectivites", entity_id)
+
+
+@app.get("/groupements/{entity_id}", tags=["v0.8.0"])
+def read_groupement_detail(entity_id: int | str) -> dict[str, Any]:
+    return read_entity("groupements", entity_id)
+
+
+@app.get("/localites/{entity_id}", tags=["v0.8.0"])
+def read_localite_detail(entity_id: int | str) -> dict[str, Any]:
+    return read_entity("localites", entity_id)
+
 
 app.include_router(provinces.router, prefix="/provinces", tags=["Provinces"])
 app.include_router(territoires.router, prefix="/territoires", tags=["Territoires"])
@@ -508,6 +653,8 @@ app.include_router(documents.router, prefix="/documents", tags=["Documents"])
 app.include_router(photos.router, prefix="/photos", tags=["Photos"])
 app.include_router(imports.router, prefix="/imports", tags=["Imports"])
 app.include_router(decision.router, prefix="/decision", tags=["Aide a la decision"])
+app.include_router(territorial_enrichment.router, prefix="/territorial-enrichment", tags=["Enrichissement territorial"])
+app.include_router(knowledge.router, prefix="/knowledge", tags=["Centre de connaissances"])
 
 @app.get("/", tags=["Root"])
 def read_root() -> dict[str, str]:

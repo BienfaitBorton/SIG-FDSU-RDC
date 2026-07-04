@@ -54,6 +54,10 @@ const ROUTE_TO_MODULE = {
   explorateur_sources: 'explorateur_sources',
   sites: 'sites',
   decision: 'decision',
+  knowledge: 'connaissances',
+  connaissances: 'connaissances',
+  enrichment: 'enrichissement',
+  enrichissement: 'enrichissement',
   import: 'import',
   export: 'export',
   statistiques: 'statistiques',
@@ -68,6 +72,8 @@ const MODULE_TO_ROUTE = {
   explorateur_sources: 'sources',
   sites: 'sites',
   decision: 'decision',
+  connaissances: 'knowledge',
+  enrichissement: 'enrichment',
   import: 'import',
   export: 'export',
   statistiques: 'statistiques',
@@ -90,6 +96,107 @@ const referentielState = {
   selectedProvinceId: null,
 };
 
+const enrichmentFields = [
+  'subdivision_administrative_reelle',
+  'activites_economiques_principales',
+  'activites_economiques_secondaires',
+  'particularites',
+  'defis',
+  'potentiel_agricole',
+  'potentiel_minier',
+  'potentiel_commercial',
+  'potentiel_numerique',
+  'services_publics',
+  'couverture_reseau',
+];
+
+const enrichmentState = {
+  initialized: false,
+  suggestions: [],
+  selectedId: null,
+};
+
+const knowledgeSections = [
+  ['presentation', 'Présentation'],
+  ['administration', 'Administration'],
+  ['geographie', 'Géographie'],
+  ['subdivision', 'Subdivision'],
+  ['population', 'Population'],
+  ['activites_economiques_principales', 'Activités économiques principales'],
+  ['activites_economiques_secondaires', 'Activités économiques secondaires'],
+  ['particularites', 'Particularités'],
+  ['defis', 'Défis'],
+  ['potentiel_agricole', 'Potentiel agricole'],
+  ['potentiel_minier', 'Potentiel minier'],
+  ['potentiel_forestier', 'Potentiel forestier'],
+  ['potentiel_touristique', 'Potentiel touristique'],
+  ['potentiel_numerique', 'Potentiel numérique'],
+  ['services_publics', 'Services publics'],
+  ['connectivite', 'Connectivité'],
+  ['infrastructures', 'Infrastructures'],
+  ['documents', 'Documents'],
+  ['photos', 'Photos'],
+  ['rapports', 'Rapports'],
+  ['historique', 'Historique'],
+  ['sources', 'Sources'],
+  ['analyse_fdsu', 'Analyse FDSU'],
+];
+
+const knowledgeState = {
+  initialized: false,
+  summary: null,
+  priorities: [],
+  profile: null,
+  selectedTab: 'presentation',
+};
+
+const localKnowledgeSummary = {
+  complete_profiles: 0,
+  incomplete_profiles: 2,
+  profiles_without_photo: 2,
+  profiles_without_activities: 2,
+  profiles_without_challenges: 2,
+  profiles_without_public_services: 2,
+  profiles_without_connectivity: 2,
+  profiles_without_documents: 2,
+};
+
+const localKnowledgePriorities = [
+  { province: 'Kinshasa', territoire: 'Ville-Province', completeness: 25, missing_fields_count: 18, priority: 'haute', last_updated_at: '2026-07-04' },
+  { province: 'À qualifier', territoire: 'Territoire exemple', completeness: 12, missing_fields_count: 22, priority: 'critique', last_updated_at: '2026-07-04' },
+];
+
+const localEnrichmentSuggestions = [
+  {
+    id: 1,
+    entity_type: 'province',
+    entity_id: null,
+    entity_name: 'Kinshasa',
+    field_name: 'subdivision_administrative_reelle',
+    proposed_value: 'Ville-Province avec quatre districts administratifs usuels : Funa, Lukunga, Mont-Amba et Tshangu.',
+    source_name: 'Ministère de l\'Intérieur RDC',
+    source_url: 'https://example.local/source-a-verifier',
+    consulted_at: new Date().toISOString(),
+    confidence_level: 'à vérifier',
+    status: 'proposé',
+    review_note: '',
+  },
+  {
+    id: 2,
+    entity_type: 'territoire',
+    entity_id: null,
+    entity_name: 'Exemple à qualifier',
+    field_name: 'potentiel_numerique',
+    proposed_value: 'Potentiel numérique à documenter depuis une source institutionnelle avant validation.',
+    source_name: 'ARPTC',
+    source_url: 'https://example.local/source-a-verifier',
+    consulted_at: new Date().toISOString(),
+    confidence_level: 'faible',
+    status: 'proposé',
+    review_note: '',
+  },
+];
+
 const moduleNames = {
   dashboard: 'Tableau de bord',
   cartographie: 'Cartographie',
@@ -98,6 +205,8 @@ const moduleNames = {
   explorateur_sources: 'Explorateur de Sources',
   sites: 'Sites FDSU',
   decision: 'Aide à la décision',
+  connaissances: 'Centre de connaissances',
+  enrichissement: 'Enrichissement territorial',
   import: 'Import',
   export: 'Export',
   statistiques: 'Statistiques',
@@ -149,6 +258,9 @@ const platformState = {
   workbenchRows: [],
   workbenchPage: 1,
   workbenchPageSize: 25,
+  workbenchSortKey: 'nom',
+  workbenchSortOrder: 'asc',
+  workbenchSelectedFeatureId: null,
   interactionsBound: false,
 };
 
@@ -380,6 +492,8 @@ function setActiveModule(moduleKey) {
 
   pageTitle.textContent = moduleNames[normalizedModule] || 'Tableau de bord';
   pageContext.textContent = `Module : ${moduleNames[normalizedModule] || 'Tableau de bord'}`;
+  document.querySelector('.main-content')?.scrollTo({ top: 0, behavior: 'auto' });
+  window.scrollTo({ top: 0, behavior: 'auto' });
 
   if (normalizedModule === 'dashboard') {
     initializeDashboard();
@@ -410,6 +524,14 @@ function setActiveModule(moduleKey) {
 
   if (normalizedModule === 'decision') {
     initializeDecisionModule();
+  }
+
+  if (normalizedModule === 'connaissances') {
+    initializeKnowledgeModule();
+  }
+
+  if (normalizedModule === 'enrichissement') {
+    initializeEnrichmentModule();
   }
 
   if (normalizedModule === 'import') {
@@ -623,6 +745,379 @@ function renderDecisionDetail(row) {
     </div>
     <p class="decision-missing">${escapeHtml(asArray(row.champs_a_completer).length ? `À compléter : ${row.champs_a_completer.join(', ')}` : 'Dossier complet pour les champs minimum.')}</p>
   `;
+}
+
+function initializeKnowledgeModule() {
+  if (knowledgeState.initialized) {
+    renderKnowledgeModule();
+    return;
+  }
+
+  knowledgeState.initialized = true;
+  document.querySelector('#knowledge-search')?.addEventListener('input', debounceKnowledgeSearch);
+  document.querySelector('#knowledge-priority-filter')?.addEventListener('change', renderKnowledgePriorityTable);
+  document.querySelector('#knowledge-sort')?.addEventListener('change', renderKnowledgePriorityTable);
+
+  Promise.all([
+    LOCAL_JSON_MODE ? Promise.resolve(localKnowledgeSummary) : fetchJson('/knowledge'),
+    LOCAL_JSON_MODE ? Promise.resolve(localKnowledgePriorities) : fetchJson('/knowledge/completeness'),
+    LOCAL_JSON_MODE ? Promise.resolve(buildLocalKnowledgeProfile()) : fetchJson('/knowledge/kinshasa'),
+  ]).then(([summary, priorities, profile]) => {
+    knowledgeState.summary = summary || localKnowledgeSummary;
+    knowledgeState.priorities = asArray(priorities).length ? priorities : localKnowledgePriorities;
+    knowledgeState.profile = profile || buildLocalKnowledgeProfile();
+    renderKnowledgeModule();
+  });
+}
+
+let knowledgeSearchTimer = null;
+
+function debounceKnowledgeSearch() {
+  window.clearTimeout(knowledgeSearchTimer);
+  knowledgeSearchTimer = window.setTimeout(runKnowledgeSearch, 180);
+}
+
+function renderKnowledgeModule() {
+  renderKnowledgeKpis();
+  renderKnowledgePriorityTable();
+  renderKnowledgeProfile();
+}
+
+function renderKnowledgeKpis() {
+  const summary = knowledgeState.summary || localKnowledgeSummary;
+  const bindings = {
+    'knowledge-complete': summary.complete_profiles,
+    'knowledge-incomplete': summary.incomplete_profiles,
+    'knowledge-no-photo': summary.profiles_without_photo,
+    'knowledge-no-activities': summary.profiles_without_activities,
+    'knowledge-no-challenges': summary.profiles_without_challenges,
+    'knowledge-no-services': summary.profiles_without_public_services,
+    'knowledge-no-connectivity': summary.profiles_without_connectivity,
+    'knowledge-no-documents': summary.profiles_without_documents,
+  };
+  Object.entries(bindings).forEach(([id, value]) => {
+    const element = document.querySelector(`#${id}`);
+    if (element) element.textContent = String(value ?? 0);
+  });
+}
+
+function renderKnowledgePriorityTable() {
+  const body = document.querySelector('#knowledge-priority-body');
+  if (!body) return;
+  const priorityFilter = document.querySelector('#knowledge-priority-filter')?.value || '';
+  const sortKey = document.querySelector('#knowledge-sort')?.value || 'priority';
+  const priorityRank = { critique: 0, haute: 1, normale: 2 };
+  const rows = (knowledgeState.priorities || [])
+    .filter((row) => !priorityFilter || row.priority === priorityFilter)
+    .slice()
+    .sort((a, b) => {
+      if (sortKey === 'completeness') return Number(a.completeness) - Number(b.completeness);
+      if (sortKey === 'missing') return Number(b.missing_fields_count) - Number(a.missing_fields_count);
+      if (sortKey === 'updated') return String(b.last_updated_at).localeCompare(String(a.last_updated_at));
+      return (priorityRank[a.priority] ?? 9) - (priorityRank[b.priority] ?? 9);
+    });
+
+  if (rows.length === 0) {
+    body.innerHTML = '<tr><td colspan="6" class="empty-state">Aucune priorité trouvée.</td></tr>';
+    return;
+  }
+  body.innerHTML = rows.map((row) => `
+    <tr>
+      <td>${escapeHtml(row.province)}</td>
+      <td>${escapeHtml(row.territoire)}</td>
+      <td>${renderKnowledgeProgress(row.completeness)}</td>
+      <td>${escapeHtml(String(row.missing_fields_count))}</td>
+      <td><span class="status-badge">${escapeHtml(row.priority)}</span></td>
+      <td>${escapeHtml(row.last_updated_at)}</td>
+    </tr>
+  `).join('');
+}
+
+function renderKnowledgeProfile() {
+  const profile = knowledgeState.profile || buildLocalKnowledgeProfile();
+  const title = document.querySelector('#knowledge-profile-title');
+  const bars = document.querySelector('#knowledge-completeness-bars');
+  const tabs = document.querySelector('#knowledge-tabs');
+  const content = document.querySelector('#knowledge-tab-content');
+  if (title) title.textContent = `${profile.title || 'Fiche'} · ${profile.entity_type || 'CNCT'}`;
+  if (bars) {
+    const completeness = profile.completeness || {};
+    bars.innerHTML = Object.entries(completeness).map(([label, value]) => `
+      <div class="knowledge-completeness-row">
+        <span>${escapeHtml(label)}</span>
+        ${renderKnowledgeProgress(value)}
+      </div>
+    `).join('') || '<p>Donnée non encore renseignée</p>';
+  }
+  if (tabs) {
+    tabs.innerHTML = knowledgeSections.map(([key, label]) => `
+      <button type="button" class="${knowledgeState.selectedTab === key ? 'active' : ''}" data-knowledge-tab="${escapeHtml(key)}">${escapeHtml(label)}</button>
+    `).join('');
+    tabs.querySelectorAll('[data-knowledge-tab]').forEach((button) => {
+      button.addEventListener('click', () => {
+        knowledgeState.selectedTab = button.dataset.knowledgeTab;
+        renderKnowledgeProfile();
+      });
+    });
+  }
+  if (content) {
+    const section = asArray(profile.sections).find((item) => item.key === knowledgeState.selectedTab);
+    const sourceRows = asArray(section?.sources).length
+      ? asArray(section.sources).map((source) => `
+        <div class="detail-row"><span>${escapeHtml(source.source || 'Source')}</span><strong>${escapeHtml([source.author, source.date, source.confidence_level, source.status].filter(Boolean).join(' · '))}</strong></div>
+        <div class="detail-row"><span>URL</span><strong>${escapeHtml(source.url || 'Donnée non encore renseignée')}</strong></div>
+      `).join('')
+      : '<div class="detail-row"><span>Source</span><strong>Aucune information sans source</strong></div>';
+    content.innerHTML = `
+      <h4>${escapeHtml(section?.label || 'Rubrique')}</h4>
+      <p>${escapeHtml(formatKnowledgeValue(section?.value))}</p>
+      <div class="knowledge-section-source">${sourceRows}</div>
+    `;
+  }
+}
+
+function renderKnowledgeProgress(value) {
+  const normalized = Math.max(0, Math.min(100, Number(value) || 0));
+  return `<div class="knowledge-progress" aria-label="${normalized}%"><span style="width: ${normalized}%"></span><strong>${normalized}%</strong></div>`;
+}
+
+function formatKnowledgeValue(value) {
+  if (value === null || value === undefined || value === '') return 'Donnée non encore renseignée';
+  if (Array.isArray(value)) return value.length ? value.join(', ') : 'Donnée non encore renseignée';
+  if (typeof value === 'object') return JSON.stringify(value);
+  return String(value);
+}
+
+function buildLocalKnowledgeProfile() {
+  const source = {
+    source: 'Référentiel FDSU interne',
+    author: 'SIG-FDSU RDC',
+    date: '2026-07-04',
+    url: '',
+    confidence_level: 'interne',
+    status: 'validé',
+  };
+  return {
+    entity: 'kinshasa',
+    entity_type: 'Ville-Province',
+    title: 'Kinshasa',
+    completeness: {
+      Référentiel: 100,
+      Subdivision: 100,
+      Activités: 0,
+      Défis: 0,
+      'Services publics': 0,
+      Connectivité: 0,
+      Photos: 0,
+      Documents: 0,
+    },
+    sections: knowledgeSections.map(([key, label]) => {
+      const values = {
+        presentation: 'Ville-Province de la RDC.',
+        administration: 'Statut Ville-Province.',
+        subdivision: 'Districts : Funa, Lukunga, Mont-Amba, Tshangu.',
+        sources: 'Sources internes et propositions contrôlées uniquement.',
+      };
+      const value = values[key] || 'Donnée non encore renseignée';
+      return {
+        key,
+        label,
+        value,
+        completeness: value === 'Donnée non encore renseignée' ? 0 : 100,
+        sources: value === 'Donnée non encore renseignée' ? [] : [source],
+      };
+    }),
+  };
+}
+
+function runKnowledgeSearch() {
+  const query = document.querySelector('#knowledge-search')?.value.trim() || '';
+  const container = document.querySelector('#knowledge-search-results');
+  if (!container) return;
+  if (!query) {
+    container.innerHTML = '';
+    return;
+  }
+  const source = LOCAL_JSON_MODE ? Promise.resolve(searchLocalKnowledge(query)) : fetchJson(`/knowledge/search?q=${encodeURIComponent(query)}`);
+  source.then((results) => {
+    const rows = asArray(results);
+    container.innerHTML = rows.length
+      ? rows.map((item) => `<button type="button" class="global-search-result"><strong>${escapeHtml(item.entity)}</strong><span>${escapeHtml(item.entity_type)} · ${escapeHtml(asArray(item.matched_fields).join(', ') || 'CNCT')}</span></button>`).join('')
+      : '<p class="empty-state">Aucun résultat CNCT.</p>';
+  });
+}
+
+function searchLocalKnowledge(query) {
+  const text = query.toLowerCase();
+  const profile = buildLocalKnowledgeProfile();
+  return profile.sections
+    .filter((section) => `${section.label} ${section.value}`.toLowerCase().includes(text))
+    .map((section) => ({
+      entity: profile.title,
+      entity_type: profile.entity_type,
+      matched_fields: [section.label],
+      excerpt: formatKnowledgeValue(section.value),
+      completeness: section.completeness,
+    }));
+}
+
+function initializeEnrichmentModule() {
+  if (enrichmentState.initialized) {
+    loadEnrichmentSuggestions();
+    return;
+  }
+
+  enrichmentState.initialized = true;
+  const fieldFilter = document.querySelector('#enrichment-field-filter');
+  const statusFilter = document.querySelector('#enrichment-status-filter');
+  const refreshButton = document.querySelector('#enrichment-refresh');
+
+  if (fieldFilter) {
+    fieldFilter.innerHTML = '<option value="">Tous les champs</option>' + enrichmentFields
+      .map((field) => `<option value="${escapeHtml(field)}">${escapeHtml(formatDetailLabel(field))}</option>`)
+      .join('');
+    fieldFilter.addEventListener('change', loadEnrichmentSuggestions);
+  }
+  statusFilter?.addEventListener('change', loadEnrichmentSuggestions);
+  refreshButton?.addEventListener('click', loadEnrichmentSuggestions);
+  loadEnrichmentSuggestions();
+}
+
+function loadEnrichmentSuggestions() {
+  const status = document.querySelector('#enrichment-status-filter')?.value || '';
+  const field = document.querySelector('#enrichment-field-filter')?.value || '';
+  const tableBody = document.querySelector('#enrichment-suggestions-body');
+  if (tableBody) {
+    tableBody.innerHTML = '<tr><td colspan="6" class="empty-state">Chargement des propositions...</td></tr>';
+  }
+
+  const source = LOCAL_JSON_MODE
+    ? Promise.resolve(localEnrichmentSuggestions)
+    : fetchJson(`/territorial-enrichment/suggestions?limit=200${status ? `&status=${encodeURIComponent(status)}` : ''}${field ? `&field_name=${encodeURIComponent(field)}` : ''}`);
+
+  source.then((suggestions) => {
+    enrichmentState.suggestions = asArray(suggestions)
+      .filter((item) => !status || item.status === status)
+      .filter((item) => !field || item.field_name === field);
+    if (!enrichmentState.selectedId && enrichmentState.suggestions.length > 0) {
+      enrichmentState.selectedId = enrichmentState.suggestions[0].id;
+    }
+    renderEnrichmentSuggestions();
+    renderEnrichmentDetail();
+  }).catch(() => {
+    if (tableBody) {
+      tableBody.innerHTML = '<tr><td colspan="6" class="empty-state">Impossible de charger les propositions.</td></tr>';
+    }
+  });
+}
+
+function renderEnrichmentSuggestions() {
+  const tableBody = document.querySelector('#enrichment-suggestions-body');
+  if (!tableBody) return;
+  if (enrichmentState.suggestions.length === 0) {
+    tableBody.innerHTML = '<tr><td colspan="6" class="empty-state">Aucune proposition disponible.</td></tr>';
+    return;
+  }
+
+  tableBody.innerHTML = enrichmentState.suggestions.map((item) => `
+    <tr data-enrichment-id="${escapeHtml(String(item.id))}" class="${item.id === enrichmentState.selectedId ? 'selected' : ''}">
+      <td>${escapeHtml(item.entity_name || item.entity_type || 'Entité à qualifier')}</td>
+      <td>${escapeHtml(formatDetailLabel(item.field_name))}</td>
+      <td>${escapeHtml(item.source_name)}</td>
+      <td>${escapeHtml(item.confidence_level)}</td>
+      <td><span class="status-badge">${escapeHtml(item.status || 'proposé')}</span></td>
+      <td><button type="button" class="table-action-button" data-select-enrichment="${escapeHtml(String(item.id))}">Revoir</button></td>
+    </tr>
+  `).join('');
+
+  tableBody.querySelectorAll('[data-select-enrichment]').forEach((button) => {
+    button.addEventListener('click', () => {
+      enrichmentState.selectedId = Number(button.dataset.selectEnrichment);
+      renderEnrichmentSuggestions();
+      renderEnrichmentDetail();
+    });
+  });
+}
+
+function renderEnrichmentDetail() {
+  const title = document.querySelector('#enrichment-detail-title');
+  const body = document.querySelector('#enrichment-detail-body');
+  if (!title || !body) return;
+  const suggestion = enrichmentState.suggestions.find((item) => Number(item.id) === Number(enrichmentState.selectedId));
+  if (!suggestion) {
+    title.textContent = 'Aucune proposition sélectionnée';
+    body.innerHTML = '<div class="empty-detail">Sélectionnez une proposition pour consulter la source, modifier la valeur, puis accepter ou rejeter.</div>';
+    return;
+  }
+
+  title.textContent = suggestion.entity_name || suggestion.entity_type || 'Proposition';
+  body.innerHTML = `
+    <div class="detail-row"><span>Champ</span><strong>${escapeHtml(formatDetailLabel(suggestion.field_name))}</strong></div>
+    <div class="detail-row"><span>Source</span><strong>${escapeHtml(suggestion.source_name)}</strong></div>
+    <div class="detail-row"><span>URL</span><strong><a href="${escapeHtml(suggestion.source_url)}" target="_blank" rel="noreferrer">${escapeHtml(suggestion.source_url)}</a></strong></div>
+    <div class="detail-row"><span>Consultation</span><strong>${escapeHtml(formatAttributeValue(suggestion.consulted_at))}</strong></div>
+    <div class="detail-row"><span>Confiance</span><strong>${escapeHtml(suggestion.confidence_level)}</strong></div>
+    <label class="enrichment-editor-label" for="enrichment-proposed-value">Valeur proposée</label>
+    <textarea id="enrichment-proposed-value" class="enrichment-editor" rows="7">${escapeHtml(suggestion.proposed_value || '')}</textarea>
+    <label class="enrichment-editor-label" for="enrichment-review-note">Note de revue</label>
+    <textarea id="enrichment-review-note" class="enrichment-editor" rows="3">${escapeHtml(suggestion.review_note || '')}</textarea>
+    <div class="profile-actions">
+      <button type="button" class="primary-button" data-enrichment-action="validé">Accepter</button>
+      <button type="button" class="table-action-button" data-enrichment-action="rejeté">Rejeter</button>
+      <button type="button" class="table-action-button" data-enrichment-action="proposé">Enregistrer modification</button>
+    </div>
+  `;
+
+  body.querySelectorAll('[data-enrichment-action]').forEach((button) => {
+    button.addEventListener('click', () => updateEnrichmentSuggestion(suggestion.id, button.dataset.enrichmentAction));
+  });
+}
+
+function updateEnrichmentSuggestion(suggestionId, status) {
+  const proposedValue = document.querySelector('#enrichment-proposed-value')?.value || '';
+  const reviewNote = document.querySelector('#enrichment-review-note')?.value || '';
+  const payload = {
+    proposed_value: proposedValue,
+    review_note: reviewNote,
+    status,
+    validated_by: 'Administrateur',
+  };
+
+  if (LOCAL_JSON_MODE) {
+    enrichmentState.suggestions = enrichmentState.suggestions.map((item) => (
+      Number(item.id) === Number(suggestionId)
+        ? { ...item, ...payload, validated_at: status === 'validé' ? new Date().toISOString() : item.validated_at }
+        : item
+    ));
+    const index = localEnrichmentSuggestions.findIndex((item) => Number(item.id) === Number(suggestionId));
+    if (index >= 0) localEnrichmentSuggestions[index] = { ...localEnrichmentSuggestions[index], ...payload };
+    renderEnrichmentSuggestions();
+    renderEnrichmentDetail();
+    return;
+  }
+
+  const endpoint = status === 'validé'
+    ? `/territorial-enrichment/suggestions/${suggestionId}/accept`
+    : status === 'rejeté'
+      ? `/territorial-enrichment/suggestions/${suggestionId}/reject`
+      : `/territorial-enrichment/suggestions/${suggestionId}`;
+  const method = status === 'proposé' ? 'PATCH' : 'POST';
+  fetch(new URL(endpoint, API_BASE_URL).toString(), {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+    .then((response) => {
+      if (!response.ok) throw new Error('Mise à jour impossible');
+      return response.json();
+    })
+    .then((updated) => {
+      enrichmentState.suggestions = enrichmentState.suggestions.map((item) => (
+        Number(item.id) === Number(updated.id) ? updated : item
+      ));
+      renderEnrichmentSuggestions();
+      renderEnrichmentDetail();
+    });
 }
 
 function initializeSitesModule() {
@@ -1106,6 +1601,47 @@ function downloadTextFile(filename, content, type) {
 
 function getExportDateStamp() {
   return new Date().toISOString().slice(0, 10).replaceAll('-', '');
+}
+
+function buildHtmlTableDocument(properties) {
+  const rows = Object.entries(properties || {})
+    .filter(([, value]) => typeof value !== 'object')
+    .map(([key, value]) => `<tr><th>${escapeHtml(formatDetailLabel(key))}</th><td>${escapeHtml(formatAttributeValue(value || missingDataText()))}</td></tr>`)
+    .join('');
+  return `<html><head><meta charset="utf-8"></head><body><table>${rows}</table></body></html>`;
+}
+
+function buildHtmlProfileDocument(properties) {
+  const title = escapeHtml(properties.nom || properties.name || 'Fiche SIG-FDSU');
+  const rows = Object.entries(properties || {})
+    .filter(([, value]) => typeof value !== 'object')
+    .map(([key, value]) => `<p><strong>${escapeHtml(formatDetailLabel(key))}</strong>: ${escapeHtml(formatAttributeValue(value || missingDataText()))}</p>`)
+    .join('');
+  return `<html><head><meta charset="utf-8"><title>${title}</title></head><body><h1>${title}</h1>${rows}</body></html>`;
+}
+
+function buildKmlFeature(properties, geometry) {
+  const coordinates = extractGeometryCoordinate(geometry);
+  const point = coordinates ? `${coordinates.lng},${coordinates.lat},0` : '';
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <Placemark>
+      <name>${escapeXml(properties.nom || properties.name || 'SIG-FDSU')}</name>
+      <description>${escapeXml(formatHierarchy(properties))}</description>
+      ${point ? `<Point><coordinates>${point}</coordinates></Point>` : ''}
+    </Placemark>
+  </Document>
+</kml>`;
+}
+
+function escapeXml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&apos;');
 }
 
 function formatFileSize(size) {
@@ -1733,6 +2269,19 @@ function initializePlatformInteractions() {
     closeButton.addEventListener('click', closeEntityProfile);
   }
   setupDashboardWorkbench();
+  setupDashboardZoneShortcuts();
+}
+
+function setupDashboardZoneShortcuts() {
+  document.querySelectorAll('.zone-item[data-zone], .legend-list [data-zone]').forEach((item) => {
+    if (item.dataset.bound === 'true') return;
+    item.dataset.bound = 'true';
+    const openZone = () => openZoneProvinceList(item.dataset.zone);
+    item.addEventListener('click', openZone);
+    item.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') openZone();
+    });
+  });
 }
 
 function refreshGlobalSearchIndex() {
@@ -1809,10 +2358,23 @@ function renderGlobalSearchResults(query) {
   resultsElement.querySelectorAll('[data-feature-id]').forEach((button) => {
     button.addEventListener('click', () => {
       resultsElement.classList.add('hidden');
-      openDashboardLayerList(button.dataset.layer);
-      window.setTimeout(() => openEntityFromLayer(button.dataset.layer, button.dataset.featureId, { navigateMap: false }), 120);
+      openDashboardSearchList(searchTerm, button.dataset.layer, button.dataset.featureId);
     });
   });
+}
+
+function openDashboardSearchList(searchTerm, preferredLayer = '', preferredFeatureId = '') {
+  const matchingRows = platformState.searchIndex
+    .filter((entry) => entry.searchable.includes(searchTerm))
+    .map((entry) => ({
+      ...normalizeAttributeRow(entry.properties, entry.layerKey),
+      layerKey: entry.layerKey,
+    }));
+  const selectedRow = matchingRows.find((row) => row.layerKey === preferredLayer && row.featureId === preferredFeatureId);
+  if (selectedRow) {
+    platformState.workbenchSelectedFeatureId = selectedRow.featureId;
+  }
+  openDashboardLayerList('mixed', matchingRows, `Recherche: ${searchTerm}`);
 }
 
 function openLayerWorkbench(layerKey, featureId = null) {
@@ -1833,15 +2395,31 @@ function openLayerWorkbench(layerKey, featureId = null) {
   }, 80);
 }
 
+function openZoneProvinceList(zoneCode) {
+  const normalizedZone = String(zoneCode || '').toUpperCase();
+  fetchPlatformLayerData('provinces').then((items) => {
+    const rows = asArray(items)
+      .map((item) => normalizeAttributeRow(item, 'provinces'))
+      .filter((row) => String(row.properties.zone_fdsu || '').toUpperCase() === normalizedZone)
+      .map((row) => ({ ...row, layerKey: 'provinces' }));
+    openDashboardLayerList('provinces', rows, `Provinces de la zone ${normalizedZone}`);
+  });
+}
+
 function setupDashboardWorkbench() {
   const search = document.querySelector('#dashboard-workbench-search');
   const province = document.querySelector('#dashboard-workbench-province');
   const territory = document.querySelector('#dashboard-workbench-territory');
+  const sort = document.querySelector('#dashboard-workbench-sort');
+  const pageSize = document.querySelector('#dashboard-workbench-page-size');
   const prev = document.querySelector('#dashboard-workbench-prev');
   const next = document.querySelector('#dashboard-workbench-next');
+  const backButton = document.querySelector('#dashboard-workbench-back');
   const mapButton = document.querySelector('#dashboard-workbench-map');
+  const exportButton = document.querySelector('#dashboard-workbench-export');
+  const printButton = document.querySelector('#dashboard-workbench-print');
   const referentielButton = document.querySelector('#dashboard-workbench-referentiel');
-  [search, province, territory].forEach((element) => {
+  [search, province, territory, sort, pageSize].forEach((element) => {
     if (!element || element.dataset.bound === 'true') return;
     element.dataset.bound = 'true';
     element.addEventListener('input', () => {
@@ -1849,6 +2427,14 @@ function setupDashboardWorkbench() {
       renderDashboardWorkbench();
     });
     element.addEventListener('change', () => {
+      if (element === sort) {
+        const [key, order] = String(sort.value || 'nom:asc').split(':');
+        platformState.workbenchSortKey = key || 'nom';
+        platformState.workbenchSortOrder = order === 'desc' ? 'desc' : 'asc';
+      }
+      if (element === pageSize) {
+        platformState.workbenchPageSize = Number(pageSize.value) || 25;
+      }
       platformState.workbenchPage = 1;
       renderDashboardWorkbench();
     });
@@ -1867,13 +2453,30 @@ function setupDashboardWorkbench() {
       renderDashboardWorkbench();
     });
   }
+  if (backButton && backButton.dataset.bound !== 'true') {
+    backButton.dataset.bound = 'true';
+    backButton.addEventListener('click', () => {
+      document.querySelector('#dashboard-workbench')?.classList.add('hidden');
+      closeEntityProfile();
+      document.querySelector('#dashboard-panel')?.scrollIntoView({ block: 'start' });
+    });
+  }
   if (mapButton && mapButton.dataset.bound !== 'true') {
     mapButton.dataset.bound = 'true';
     mapButton.addEventListener('click', () => {
-      const firstLayer = asArray(platformState.workbenchRows).find((row) => row.layerKey)?.layerKey;
+      const selectedRow = getWorkbenchSelectedRow();
+      const firstLayer = selectedRow?.layerKey || asArray(platformState.workbenchRows).find((row) => row.layerKey)?.layerKey;
       const targetLayer = platformState.workbenchLayer === 'mixed' ? firstLayer : platformState.workbenchLayer;
-      if (targetLayer) openLayerWorkbench(targetLayer, null);
+      if (targetLayer) openLayerWorkbench(targetLayer, selectedRow?.featureId || null);
     });
+  }
+  if (exportButton && exportButton.dataset.bound !== 'true') {
+    exportButton.dataset.bound = 'true';
+    exportButton.addEventListener('click', () => exportDashboardWorkbench());
+  }
+  if (printButton && printButton.dataset.bound !== 'true') {
+    printButton.dataset.bound = 'true';
+    printButton.addEventListener('click', () => window.print());
   }
   if (referentielButton && referentielButton.dataset.bound !== 'true') {
     referentielButton.dataset.bound = 'true';
@@ -1885,9 +2488,11 @@ function openDashboardLayerList(layerKey, presetRows = null, title = '') {
   navigateTo('dashboard');
   platformState.workbenchLayer = layerKey;
   platformState.workbenchPage = 1;
+  if (!presetRows) platformState.workbenchSelectedFeatureId = null;
   const panel = document.querySelector('#dashboard-workbench');
   panel?.classList.remove('hidden');
-  fetchPlatformLayerData(layerKey).then((items) => {
+  const dataPromise = presetRows ? Promise.resolve([]) : fetchPlatformLayerData(layerKey);
+  dataPromise.then((items) => {
     const rows = presetRows || asArray(items).map((item) => normalizeAttributeRow(item, layerKey));
     platformState.workbenchRows = rows;
     const titleElement = document.querySelector('#dashboard-workbench-title');
@@ -1915,7 +2520,7 @@ function renderDashboardWorkbench() {
     return (!search || haystack.includes(search))
       && (!province || row.province === province)
       && (!territory || row.territoire === territory);
-  });
+  }).sort((left, right) => compareWorkbenchRows(left, right));
   const pageSize = platformState.workbenchPageSize;
   const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
   platformState.workbenchPage = Math.min(platformState.workbenchPage, totalPages);
@@ -1923,28 +2528,144 @@ function renderDashboardWorkbench() {
   const pageInfo = document.querySelector('#dashboard-workbench-page');
   const prev = document.querySelector('#dashboard-workbench-prev');
   const next = document.querySelector('#dashboard-workbench-next');
-  if (pageInfo) pageInfo.textContent = `Page ${platformState.workbenchPage} / ${totalPages}`;
+  if (pageInfo) pageInfo.textContent = `Page ${platformState.workbenchPage} / ${totalPages} - ${rows.length.toLocaleString('fr-FR')} element(s)`;
   if (prev) prev.disabled = platformState.workbenchPage <= 1;
   if (next) next.disabled = platformState.workbenchPage >= totalPages;
   if (pageRows.length === 0) {
     body.innerHTML = '<tr><td colspan="6" class="empty-state">Aucun élément dans cette liste.</td></tr>';
     return;
   }
+  const columns = getWorkbenchColumns(platformState.workbenchLayer, pageRows);
+  const headerRow = body.closest('table')?.querySelector('thead tr');
+  if (headerRow) {
+    headerRow.innerHTML = `${columns.map((column) => `<th>${escapeHtml(column.label)}</th>`).join('')}<th>Action</th>`;
+  }
   body.innerHTML = pageRows.map((row) => `
-    <tr data-layer="${escapeHtml(row.layerKey || platformState.workbenchLayer)}" data-feature-id="${escapeHtml(row.featureId)}">
-      <td>${escapeHtml(row.nom)}</td>
-      <td>${escapeHtml(row.layerKey ? `${getLayerDisplayLabel(row.layerKey)} - ${row.type}` : row.type)}</td>
-      <td>${escapeHtml(row.province || '—')}</td>
-      <td>${escapeHtml(row.territoire || '—')}</td>
-      <td>${escapeHtml(formatAttributeValue(row.qualite || '—'))}</td>
-      <td><button type="button" class="table-action-button">Ouvrir fiche</button></td>
+    <tr class="${row.featureId === platformState.workbenchSelectedFeatureId ? 'selected' : ''}" data-layer="${escapeHtml(row.layerKey || platformState.workbenchLayer)}" data-feature-id="${escapeHtml(row.featureId)}">
+      ${columns.map((column) => `<td>${escapeHtml(formatAttributeValue(getWorkbenchCellValue(row, column.key)))}</td>`).join('')}
+      <td>
+        <button type="button" class="table-action-button" data-row-action="open">Ouvrir fiche</button>
+        <button type="button" class="table-action-button" data-row-action="map">Voir carte</button>
+      </td>
     </tr>
   `).join('');
   body.querySelectorAll('tr[data-feature-id]').forEach((tr) => {
     tr.addEventListener('click', () => {
+      platformState.workbenchSelectedFeatureId = tr.dataset.featureId;
+      renderDashboardWorkbench();
+    });
+    tr.addEventListener('dblclick', () => {
       openEntityFromLayer(tr.dataset.layer, tr.dataset.featureId, { navigateMap: false });
     });
+    tr.querySelector('[data-row-action="open"]')?.addEventListener('click', (event) => {
+      event.stopPropagation();
+      platformState.workbenchSelectedFeatureId = tr.dataset.featureId;
+      openEntityFromLayer(tr.dataset.layer, tr.dataset.featureId, { navigateMap: false });
+    });
+    tr.querySelector('[data-row-action="map"]')?.addEventListener('click', (event) => {
+      event.stopPropagation();
+      platformState.workbenchSelectedFeatureId = tr.dataset.featureId;
+      openLayerWorkbench(tr.dataset.layer, tr.dataset.featureId);
+    });
   });
+}
+
+function compareWorkbenchRows(left, right) {
+  const key = platformState.workbenchSortKey || 'nom';
+  const order = platformState.workbenchSortOrder === 'desc' ? -1 : 1;
+  return String(left[key] || '').localeCompare(String(right[key] || ''), 'fr') * order;
+}
+
+function getWorkbenchColumns(layerKey, rows) {
+  const effectiveLayer = layerKey === 'mixed'
+    ? rows.find((row) => row.layerKey)?.layerKey || 'provinces'
+    : layerKey;
+  const definitions = {
+    provinces: [
+      { key: 'nom', label: 'Nom' },
+      { key: 'code_province_fdsu', label: 'Code FDSU' },
+      { key: 'zone_fdsu', label: 'Zone FDSU' },
+      { key: 'territoires', label: 'Territoires' },
+      { key: 'collectivites', label: 'Collectivités' },
+      { key: 'groupements', label: 'Groupements' },
+      { key: 'localites', label: 'Localités' },
+      { key: 'qualite', label: 'Score qualité' },
+      { key: 'score_priorite_fdsu', label: 'Score FDSU' },
+    ],
+    territoires: [
+      { key: 'nom', label: 'Nom' },
+      { key: 'province', label: 'Province' },
+      { key: 'zone_fdsu', label: 'Zone' },
+      { key: 'collectivites', label: 'Collectivités' },
+      { key: 'groupements', label: 'Groupements' },
+      { key: 'localites', label: 'Localités' },
+      { key: 'score_priorite_fdsu', label: 'Score FDSU' },
+    ],
+    groupements: [
+      { key: 'nom', label: 'Nom' },
+      { key: 'collectivite', label: 'Collectivité' },
+      { key: 'territoire', label: 'Territoire' },
+      { key: 'province', label: 'Province' },
+      { key: 'localites', label: 'Localités' },
+    ],
+    villages: [
+      { key: 'nom', label: 'Nom' },
+      { key: 'groupement', label: 'Groupement' },
+      { key: 'territoire', label: 'Territoire' },
+      { key: 'province', label: 'Province' },
+      { key: 'coordinates', label: 'Coordonnées' },
+      { key: 'population', label: 'Population' },
+      { key: 'couverture_numerique', label: 'Couverture 4G' },
+      { key: 'score_priorite_fdsu', label: 'Score FDSU' },
+    ],
+  };
+  return definitions[effectiveLayer] || [
+    { key: 'nom', label: 'Nom' },
+    { key: 'type', label: 'Type' },
+    { key: 'province', label: 'Province' },
+    { key: 'territoire', label: 'Territoire' },
+    { key: 'qualite', label: 'Qualité' },
+  ];
+}
+
+function getWorkbenchCellValue(row, key) {
+  const properties = row.properties || {};
+  const profile = getFutureProfile(properties);
+  if (key === 'coordinates') return formatGpsCoordinates(properties);
+  if (key === 'score_priorite_fdsu') return profile.score_priorite_fdsu || properties.score_priorite_fdsu;
+  if (key === 'couverture_numerique') return profile.couverture_numerique || properties.couverture_numerique;
+  if (key in row) return row[key];
+  return properties[key] ?? profile[key] ?? '';
+}
+
+function getFilteredWorkbenchRows() {
+  const search = String(document.querySelector('#dashboard-workbench-search')?.value || '').trim().toLowerCase();
+  const province = document.querySelector('#dashboard-workbench-province')?.value || '';
+  const territory = document.querySelector('#dashboard-workbench-territory')?.value || '';
+  return asArray(platformState.workbenchRows).filter((row) => {
+    const haystack = [row.nom, row.type, row.province, row.territoire, row.collectivite, row.groupement].join(' ').toLowerCase();
+    return (!search || haystack.includes(search))
+      && (!province || row.province === province)
+      && (!territory || row.territoire === territory);
+  }).sort((left, right) => compareWorkbenchRows(left, right));
+}
+
+function getWorkbenchSelectedRow() {
+  return asArray(platformState.workbenchRows).find((row) => row.featureId === platformState.workbenchSelectedFeatureId) || null;
+}
+
+function exportDashboardWorkbench() {
+  const rows = getFilteredWorkbenchRows().map((row) => ({
+    niveau: row.layerKey || platformState.workbenchLayer,
+    nom: row.nom,
+    type: row.type,
+    province: row.province,
+    territoire: row.territoire,
+    collectivite: row.collectivite,
+    groupement: row.groupement,
+    qualite: row.qualite,
+  }));
+  downloadTextFile(`sig_fdsu_liste_${platformState.workbenchLayer || 'recherche'}_${getExportDateStamp()}.csv`, toCsv(rows), 'text/csv;charset=utf-8');
 }
 
 function openEntityFromLayer(layerKey, featureId, options = {}) {
@@ -2192,9 +2913,9 @@ function onGeoEachFeature(feature, layer, layerKey) {
     }
 
     renderFeatureDetails(feature, layerKey);
+    if (cartographyState.map?.closePopup) cartographyState.map.closePopup();
     openEntityProfile(layerKey, properties, feature);
     enrichFeatureDetailsFromApi(feature, layerKey);
-    if (layer.openPopup) layer.openPopup();
   });
 }
 
@@ -2582,8 +3303,85 @@ function renderGovernanceActions() {
 
   const actions = ['Importer', 'Comparer', 'Valider', 'Publier', 'Exporter'];
   governanceElements.actions.innerHTML = actions
-    .map((action) => `<button type="button" class="governance-action-button" disabled>${escapeHtml(action)}</button>`)
+    .map((action) => `<button type="button" class="governance-action-button" data-governance-action="${escapeHtml(action.toLowerCase())}">${escapeHtml(action)}</button>`)
     .join('');
+  governanceElements.actions.querySelectorAll('[data-governance-action]').forEach((button) => {
+    button.addEventListener('click', () => handleGovernanceAction(button.dataset.governanceAction));
+  });
+}
+
+function handleGovernanceAction(action) {
+  if (action === 'importer') {
+    navigateTo('import');
+    window.setTimeout(() => {
+      document.querySelector('#import-entity')?.focus();
+      showZonesMessage('Import ouvert avec contexte: référentiel administratif.');
+    }, 80);
+    return;
+  }
+  if (action === 'comparer') {
+    showGovernanceActionPanel('Comparaison référentiel', 'Aucun fichier importé pour comparaison dans cette session.');
+    return;
+  }
+  if (action === 'valider') {
+    governanceState.activeTab = 'validation';
+    governanceState.page = 1;
+    renderGovernanceTabs();
+    updateGovernanceStatusFilter();
+    renderGovernanceTable();
+    renderGovernanceDetailPanel();
+    showGovernanceActionPanel('Validation des anomalies', 'Panneau de validation ouvert. Sélectionnez une anomalie pour consulter sa fiche.');
+    return;
+  }
+  if (action === 'publier') {
+    showGovernanceActionPanel('Publication', 'Publication disponible après validation des anomalies.');
+    return;
+  }
+  if (action === 'exporter') {
+    const format = window.prompt('Format export référentiel: CSV, Excel, JSON, GeoJSON, KML ou KMZ', 'CSV');
+    exportGovernanceRows(format);
+  }
+}
+
+function exportGovernanceRows(format = 'CSV') {
+  const rows = getGovernanceFilteredRows();
+  const normalizedFormat = String(format || 'CSV').trim().toLowerCase();
+  const baseName = `sig_fdsu_referentiel_${governanceState.activeTab}_${getExportDateStamp()}`;
+  if (normalizedFormat === 'json') {
+    downloadTextFile(`${baseName}.json`, JSON.stringify(rows, null, 2), 'application/json');
+  } else if (normalizedFormat === 'excel' || normalizedFormat === 'xlsx') {
+    downloadTextFile(`${baseName}.xls`, buildHtmlRowsDocument(rows), 'application/vnd.ms-excel;charset=utf-8');
+  } else if (normalizedFormat === 'geojson') {
+    downloadTextFile(`${baseName}.geojson`, JSON.stringify({ type: 'FeatureCollection', features: [] }, null, 2), 'application/geo+json');
+  } else if (normalizedFormat === 'kml' || normalizedFormat === 'kmz') {
+    downloadTextFile(`${baseName}.kml`, buildKmlRows(rows), 'application/vnd.google-earth.kml+xml');
+  } else {
+    downloadTextFile(`${baseName}.csv`, toCsv(rows), 'text/csv;charset=utf-8');
+  }
+  showGovernanceActionPanel('Export référentiel', `Export ${normalizedFormat.toUpperCase()} généré pour le filtre actif.`);
+}
+
+function buildHtmlRowsDocument(rows) {
+  const columns = [...new Set(asArray(rows).flatMap((row) => Object.keys(row || {})))];
+  const header = columns.map((column) => `<th>${escapeHtml(formatDetailLabel(column))}</th>`).join('');
+  const body = asArray(rows).map((row) => `<tr>${columns.map((column) => `<td>${escapeHtml(formatAttributeValue(row[column]))}</td>`).join('')}</tr>`).join('');
+  return `<html><head><meta charset="utf-8"></head><body><table><thead><tr>${header}</tr></thead><tbody>${body}</tbody></table></body></html>`;
+}
+
+function buildKmlRows(rows) {
+  const placemarks = rows.map((row) => `
+    <Placemark>
+      <name>${escapeXml(row.nom || row.objet || row.referentiel || row.source || 'Référentiel')}</name>
+      <description>${escapeXml(JSON.stringify(row))}</description>
+    </Placemark>
+  `).join('');
+  return `<?xml version="1.0" encoding="UTF-8"?><kml xmlns="http://www.opengis.net/kml/2.2"><Document>${placemarks}</Document></kml>`;
+}
+
+function showGovernanceActionPanel(title, message) {
+  if (!governanceElements.detailTitle || !governanceElements.detailBody) return;
+  governanceElements.detailTitle.textContent = title;
+  governanceElements.detailBody.innerHTML = `<div class="empty-detail">${escapeHtml(message)}</div>`;
 }
 
 function seedGovernanceModuleData() {
@@ -3001,7 +3799,11 @@ function openEntityProfile(layerKey, properties = {}, feature = null) {
   layerLabel.textContent = getLayerDisplayLabel(layerKey);
   body.innerHTML = buildEntityProfileMarkup(layerKey, normalized);
   drawer.classList.remove('hidden');
-  body.querySelector('[data-profile-action="export"]')?.addEventListener('click', () => exportEntityProfile(layerKey, normalized, feature));
+  document.body.classList.add('entity-profile-open');
+  body.querySelector('[data-profile-action="toggle-export"]')?.addEventListener('click', () => {
+    body.querySelector('.profile-export-menu')?.classList.toggle('hidden');
+  });
+  body.querySelector('[data-profile-action="save"]')?.addEventListener('click', () => exportEntityProfile(layerKey, normalized, feature));
   body.querySelector('[data-profile-action="print"]')?.addEventListener('click', () => window.print());
   body.querySelectorAll('[data-open-related-layer]').forEach((button) => {
     button.addEventListener('click', () => openLayerWorkbench(button.dataset.openRelatedLayer));
@@ -3010,17 +3812,26 @@ function openEntityProfile(layerKey, properties = {}, feature = null) {
 
 function closeEntityProfile() {
   document.querySelector('#entity-profile-drawer')?.classList.add('hidden');
+  document.body.classList.remove('entity-profile-open');
 }
 
 function exportEntityProfile(layerKey, properties, feature = null) {
   const format = document.querySelector('#entity-profile-export-format')?.value || 'json';
-  const baseName = `sig_fdsu_fiche_${getApiLayerName(layerKey)}_${getExportDateStamp()}`;
+  const baseName = getProfileExportBaseName(layerKey, properties);
   if (format === 'json') {
     downloadTextFile(`${baseName}.json`, JSON.stringify(properties, null, 2), 'application/json');
     return;
   }
   if (format === 'csv') {
     downloadTextFile(`${baseName}.csv`, toCsv([properties]), 'text/csv;charset=utf-8');
+    return;
+  }
+  if (format === 'excel') {
+    downloadTextFile(`${baseName}.xls`, buildHtmlTableDocument(properties), 'application/vnd.ms-excel;charset=utf-8');
+    return;
+  }
+  if (format === 'word') {
+    downloadTextFile(`${baseName}.doc`, buildHtmlProfileDocument(properties), 'application/msword;charset=utf-8');
     return;
   }
   if (format === 'geojson') {
@@ -3032,10 +3843,34 @@ function exportEntityProfile(layerKey, properties, feature = null) {
     downloadTextFile(`${baseName}.geojson`, JSON.stringify({ type: 'Feature', geometry, properties }, null, 2), 'application/geo+json');
     return;
   }
-  if (format === 'pdf') {
-    window.print();
+  if (format === 'kml' || format === 'kmz') {
+    const geometry = feature?.geometry || properties.geometry;
+    if (!geometry) {
+      alert(`${format.toUpperCase()} non disponible : cette fiche ne contient pas de géométrie.`);
+      return;
+    }
+    downloadTextFile(`${baseName}.kml`, buildKmlFeature(properties, geometry), 'application/vnd.google-earth.kml+xml');
     return;
   }
+  if (format === 'pdf') {
+    downloadTextFile(`${baseName}.pdf`, buildHtmlProfileDocument(properties), 'application/pdf');
+    return;
+  }
+}
+
+function getProfileExportBaseName(layerKey, properties) {
+  const type = sanitizeExportSegment(getApiLayerName(layerKey));
+  const name = sanitizeExportSegment(properties.nom || properties.name || properties.code || properties.canonical_id || 'fiche');
+  return `sig_fdsu_${type}_${name}_${getExportDateStamp()}`;
+}
+
+function sanitizeExportSegment(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .toLowerCase() || 'fiche';
 }
 
 function buildEntityProfileMarkup(layerKey, properties) {
@@ -3043,36 +3878,23 @@ function buildEntityProfileMarkup(layerKey, properties) {
   const relations = getEntityRelations(layerKey, properties);
   return `
     <section class="profile-actions">
+      <button type="button" class="primary-button" data-profile-action="toggle-export">Exporter</button>
+      <button type="button" class="table-action-button" data-profile-action="print">Imprimer</button>
+    </section>
+    <section class="profile-actions profile-export-menu hidden">
       <select id="entity-profile-export-format" aria-label="Format export fiche">
+        <option value="pdf">PDF / Impression navigateur</option>
+        <option value="word">Word</option>
+        <option value="excel">Excel</option>
         <option value="json">JSON</option>
         <option value="csv">CSV</option>
         <option value="geojson">GeoJSON</option>
-        <option value="pdf">Impression / PDF navigateur</option>
+        <option value="kml">KML</option>
+        <option value="kmz">KMZ (KML à compresser)</option>
       </select>
-      <button type="button" class="primary-button" data-profile-action="export">Exporter la fiche</button>
-      <button type="button" class="table-action-button" data-profile-action="print">Imprimer</button>
+      <button type="button" class="primary-button" data-profile-action="save">Enregistrer la fiche</button>
     </section>
-    ${buildProfileSection('Identité', [
-      ['Code officiel', properties.code || properties.canonical_id],
-      ['Code zone FDSU', properties.zone_fdsu],
-      ['Code province FDSU', properties.code_province_fdsu],
-      ['Code territoire FDSU', properties.code_territoire_fdsu],
-      ['Format codification FDSU', properties.fdsu_codification_format],
-      ['Nom', properties.nom],
-      ['Type administratif', properties.type],
-      ['Hiérarchie administrative', formatHierarchy(properties)],
-      ['Coordonnées', formatGpsCoordinates(properties)],
-      ['Superficie', properties.superficie],
-      ['Population', properties.population],
-      ['Chef-lieu', properties.chef_lieu],
-      ['Provinces rattachées', properties.provinces_rattachees],
-      ['Nombre de provinces', properties.nb_provinces],
-      ['Territoires', properties.territoires],
-      ['Collectivités', properties.collectivites],
-      ['Groupements', properties.groupements],
-      ['Localités', properties.localites],
-      ['Sites FDSU', properties.sites],
-    ])}
+    ${buildTypedIdentitySection(layerKey, properties, profile)}
     <section class="profile-section">
       <h3>Carte</h3>
       <p>${properties.latitude && properties.longitude ? `Objet géolocalisé : ${formatGpsCoordinates(properties)}.` : 'Géométrie ou coordonnées non disponibles pour cet objet.'}</p>
@@ -3126,6 +3948,7 @@ function buildEntityProfileMarkup(layerKey, properties) {
       <h3>Documents et photos</h3>
       <p>Aucun document ou photo lié dans cette version.</p>
     </section>
+    ${buildKnowledgeBaseSection(profile)}
     <section class="profile-section">
       <h3>Historique</h3>
       <ol class="profile-history">
@@ -3137,10 +3960,136 @@ function buildEntityProfileMarkup(layerKey, properties) {
   `;
 }
 
+function buildTypedIdentitySection(layerKey, properties, profile) {
+  const type = getEntityProfileType(layerKey, properties);
+  const fieldSets = {
+    zone: [
+      ['Code zone FDSU', properties.zone_fdsu || properties.code],
+      ['Nom', properties.nom],
+      ['Provinces rattachées', properties.provinces_rattachees],
+      ['Nombre de provinces', properties.nb_provinces],
+      ['Sites FDSU', properties.sites],
+      ['Missions', properties.missions],
+    ],
+    province: [
+      ['Zone FDSU', properties.zone_fdsu],
+      ['Code province', properties.code_province_fdsu || properties.code || properties.canonical_id],
+      ['Nom', properties.nom],
+      ['Chef-lieu', properties.chef_lieu],
+      ['Territoires', properties.territoires],
+      ['Villes', properties.villes],
+      ['Collectivités', properties.collectivites],
+      ['Groupements', properties.groupements],
+      ['Localités', properties.localites],
+      ['Sites FDSU', properties.sites],
+      ['Missions', properties.missions],
+    ],
+    ville_province: [
+      ['Type', 'Ville-Province'],
+      ['Zone FDSU', properties.zone_fdsu],
+      ['Code province', properties.code_province_fdsu || properties.code || properties.canonical_id],
+      ['Nom', properties.nom],
+      ['Districts', properties.districts || 'Funa, Lukunga, Mont-Amba, Tshangu'],
+      ['Communes', properties.communes],
+      ['Quartiers', properties.quartiers],
+      ['Population', properties.population || profile.population],
+      ['Superficie', properties.superficie],
+      ['Sites FDSU', properties.sites],
+      ['Connectivité', profile.couverture_numerique],
+    ],
+    territoire: [
+      ['Province', properties.province],
+      ['Zone FDSU', properties.zone_fdsu],
+      ['Code territoire', properties.code_territoire_fdsu || properties.code || properties.canonical_id],
+      ['Secteurs', properties.secteurs],
+      ['Chefferies', properties.chefferies],
+      ['Collectivités', properties.collectivites],
+      ['Groupements', properties.groupements],
+      ['Localités', properties.localites],
+      ['Villages', properties.villages],
+      ['Sites FDSU', properties.sites],
+      ['Missions', properties.missions],
+    ],
+    groupement: [
+      ['Collectivité', properties.collectivite],
+      ['Territoire', properties.territoire],
+      ['Province', properties.province],
+      ['Localités', properties.localites],
+      ['Villages', properties.villages],
+    ],
+    localite: [
+      ['Groupement', properties.groupement],
+      ['Collectivité', properties.collectivite],
+      ['Territoire', properties.territoire],
+      ['Province', properties.province],
+      ['Coordonnées', formatGpsCoordinates(properties)],
+      ['Population', properties.population || profile.population],
+      ['Couverture réseau', profile.couverture_numerique],
+      ['Potentiel CCN', profile.potentiel_numerique],
+      ['Score FDSU', profile.score_priorite_fdsu],
+    ],
+    default: [
+      ['Code officiel', properties.code || properties.canonical_id],
+      ['Nom', properties.nom],
+      ['Type administratif', properties.type],
+      ['Hiérarchie administrative', formatHierarchy(properties)],
+      ['Coordonnées', formatGpsCoordinates(properties)],
+      ['Source', properties.source],
+    ],
+  };
+  return buildProfileSection(getProfileTypeLabel(type), fieldSets[type] || fieldSets.default);
+}
+
+function getEntityProfileType(layerKey, properties) {
+  const name = normalizeDashboardText(properties.nom || properties.name);
+  const type = normalizeDashboardText(properties.type || '');
+  if (layerKey === 'zones') return 'zone';
+  if (layerKey === 'provinces' && name === 'kinshasa') return 'ville_province';
+  if (layerKey === 'provinces') return 'province';
+  if (layerKey === 'territoires') return type.includes('ville') ? 'ville' : 'territoire';
+  if (layerKey === 'groupements') return 'groupement';
+  if (layerKey === 'villages' || layerKey === 'localites') return 'localite';
+  return 'default';
+}
+
+function getProfileTypeLabel(type) {
+  return {
+    zone: 'Fiche Zone FDSU',
+    province: 'Fiche Province',
+    ville_province: 'Fiche Ville-Province',
+    territoire: 'Fiche Territoire',
+    ville: 'Fiche Ville',
+    groupement: 'Fiche Groupement',
+    localite: 'Fiche Localité',
+    default: 'Fiche métier',
+  }[type] || 'Fiche métier';
+}
+
 function buildProfileSection(title, rows, embedded = false) {
-  const content = `<div class="detail-attributes">${rows.map(([label, value]) => `<div class="detail-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(formatAttributeValue(value || 'Non disponible'))}</strong></div>`).join('')}</div>`;
+  const content = `<div class="detail-attributes">${rows.map(([label, value]) => `<div class="detail-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(formatAttributeValue(value || missingDataText()))}</strong></div>`).join('')}</div>`;
   if (embedded) return content;
   return `<section class="profile-section">${title ? `<h3>${escapeHtml(title)}</h3>` : ''}${content}</section>`;
+}
+
+function missingDataText() {
+  return 'Donnée non encore renseignée';
+}
+
+function buildKnowledgeBaseSection(profile) {
+  const fields = [
+    ['Historique', profile.historique],
+    ['Description', profile.description],
+    ['Géographie', profile.geographie],
+    ['Climat', profile.climat],
+    ['Subdivision', profile.subdivision],
+    ['Population', profile.population],
+    ['Potentiel agricole', profile.potentiel_agricole],
+    ['Potentiel minier', profile.potentiel_minier],
+    ['Potentiel touristique', profile.potentiel_touristique],
+    ['Potentiel numérique', profile.potentiel_numerique],
+    ['Rapports', asArray(profile.rapports).join(', ')],
+  ];
+  return buildProfileSection('Base de connaissances territoriale', fields);
 }
 
 function getFutureProfile(properties) {
@@ -3165,6 +4114,17 @@ function getFutureProfile(properties) {
     score_priorite_fdsu: profile.score_priorite_fdsu || '',
     recommandations: profile.recommandations || '',
     infrastructures: profile.infrastructures || [],
+    historique: profile.historique || metadata.historique || '',
+    description: profile.description || metadata.description || '',
+    geographie: profile.geographie || metadata.geographie || '',
+    climat: profile.climat || metadata.climat || '',
+    subdivision: profile.subdivision || metadata.subdivision || '',
+    population: profile.population || metadata.population || '',
+    potentiel_agricole: profile.potentiel_agricole || metadata.potentiel_agricole || profile.potentiels?.agricole || '',
+    potentiel_minier: profile.potentiel_minier || metadata.potentiel_minier || profile.potentiels?.minier || '',
+    potentiel_touristique: profile.potentiel_touristique || metadata.potentiel_touristique || profile.potentiels?.touristique || '',
+    potentiel_numerique: profile.potentiel_numerique || metadata.potentiel_numerique || profile.potentiels?.numerique || '',
+    rapports: profile.rapports || metadata.rapports || [],
   };
 }
 
@@ -4621,6 +5581,9 @@ function renderGovernanceDetailPanel() {
 
     governanceElements.detailTitle.textContent = selectedNode.label;
     governanceElements.detailBody.innerHTML = buildTerritorialFileMarkup(selectedNode);
+    governanceElements.detailBody.querySelector('[data-open-node-profile]')?.addEventListener('click', () => {
+      openEntityProfile(getLayerFromExplorerNode(selectedNode), propertiesFromExplorerNode(selectedNode));
+    });
     return;
   }
 
@@ -4735,6 +5698,7 @@ function buildTerritorialFileMarkup(node) {
           <p class="territorial-file-subtitle">${escapeHtml(node.hierarchyLabel || 'Non renseigné')}</p>
         </div>
         <div class="territorial-file-modes">
+          <button type="button" class="mode-chip" data-open-node-profile>Ouvrir fiche métier</button>
           <button type="button" class="mode-chip active" aria-pressed="true">${escapeHtml(modeLabel)}</button>
           <button type="button" class="mode-chip" disabled aria-disabled="true">Mode édition futur</button>
         </div>
@@ -4754,6 +5718,37 @@ function buildTerritorialFileMarkup(node) {
       ${renderTerritorialSection('Sources', sourceInfo, false, true)}
     </div>
   `;
+}
+
+function getLayerFromExplorerNode(node) {
+  return {
+    zone_fdsu: 'zones',
+    province: 'provinces',
+    territoire: 'territoires',
+    secteur: 'collectivites',
+    chefferie: 'collectivites',
+    cite: 'collectivites',
+    groupement: 'groupements',
+    village: 'villages',
+    localite: 'villages',
+  }[node.level] || 'provinces';
+}
+
+function propertiesFromExplorerNode(node) {
+  return {
+    nom: node.label,
+    type: node.typeLabel || node.level,
+    code: node.code,
+    zone_fdsu: getHierarchyValue(node, 'zone_fdsu') || (node.level === 'zone_fdsu' ? node.code : ''),
+    province: getHierarchyValue(node, 'province'),
+    territoire: getHierarchyValue(node, 'territoire'),
+    collectivite: getHierarchyValue(node, 'secteur', 'chefferie', 'cite'),
+    groupement: getHierarchyValue(node, 'groupement'),
+    localite: getHierarchyValue(node, 'localite', 'village'),
+    qualite: node.qualityBadge,
+    statut: node.status,
+    source: node.source,
+  };
 }
 
 function renderTerritorialSection(title, fields, open = false, isSources = false) {

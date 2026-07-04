@@ -47,6 +47,14 @@
           <span class="nav-icon">CCN</span>
           <span>Aide à la décision</span>
         </button>
+        <button class="nav-item" data-module="connaissances" data-route="knowledge">
+          <span class="nav-icon">CNCT</span>
+          <span>Centre de connaissances</span>
+        </button>
+        <button class="nav-item" data-module="enrichissement" data-route="enrichment">
+          <span class="nav-icon">ENR</span>
+          <span>Enrichissement territorial</span>
+        </button>
         <button class="nav-item" data-module="import">
           <span class="nav-icon">⬆️</span>
           <span>Import</span>
@@ -150,6 +158,9 @@
                   <h2 id="dashboard-workbench-title">Liste</h2>
                 </div>
                 <div class="workbench-actions">
+                  <button type="button" id="dashboard-workbench-back" class="table-action-button">Retour au tableau de bord</button>
+                  <button type="button" id="dashboard-workbench-export" class="table-action-button">Exporter</button>
+                  <button type="button" id="dashboard-workbench-print" class="table-action-button">Imprimer</button>
                   <button type="button" id="dashboard-workbench-map" class="primary-button">Afficher sur la carte</button>
                   <button type="button" id="dashboard-workbench-referentiel" class="table-action-button">Ouvrir dans le référentiel</button>
                 </div>
@@ -161,6 +172,20 @@
                 </select>
                 <select id="dashboard-workbench-territory">
                   <option value="">Tous les territoires</option>
+                </select>
+                <select id="dashboard-workbench-sort" aria-label="Tri liste métier">
+                  <option value="nom:asc">Nom A-Z</option>
+                  <option value="nom:desc">Nom Z-A</option>
+                  <option value="type:asc">Type A-Z</option>
+                  <option value="province:asc">Province A-Z</option>
+                  <option value="territoire:asc">Territoire A-Z</option>
+                  <option value="qualite:desc">Qualité</option>
+                </select>
+                <select id="dashboard-workbench-page-size" aria-label="Taille de page liste métier">
+                  <option value="10">10 / page</option>
+                  <option value="25" selected>25 / page</option>
+                  <option value="50">50 / page</option>
+                  <option value="100">100 / page</option>
                 </select>
               </div>
               <div class="table-frame attribute-table-frame">
@@ -223,11 +248,11 @@
                 </div>
               </div>
               <ul class="zone-list">
-                <li class="zone-item zone-nd"><span>ND</span><strong id="zone-ND">0</strong></li>
-                <li class="zone-item zone-sd"><span>SD</span><strong id="zone-SD">0</strong></li>
-                <li class="zone-item zone-ce"><span>CE</span><strong id="zone-CE">0</strong></li>
-                <li class="zone-item zone-ot"><span>OT</span><strong id="zone-OT">0</strong></li>
-                <li class="zone-item zone-et"><span>ET</span><strong id="zone-ET">0</strong></li>
+                <li class="zone-item zone-nd" data-zone="ND" tabindex="0"><span>ND</span><strong id="zone-ND">0</strong></li>
+                <li class="zone-item zone-sd" data-zone="SD" tabindex="0"><span>SD</span><strong id="zone-SD">0</strong></li>
+                <li class="zone-item zone-ce" data-zone="CE" tabindex="0"><span>CE</span><strong id="zone-CE">0</strong></li>
+                <li class="zone-item zone-ot" data-zone="OT" tabindex="0"><span>OT</span><strong id="zone-OT">0</strong></li>
+                <li class="zone-item zone-et" data-zone="ET" tabindex="0"><span>ET</span><strong id="zone-ET">0</strong></li>
               </ul>
             </div>
 
@@ -283,11 +308,11 @@
                 <div class="legend-card">
                   <p class="legend-title">Légende Zones FDSU</p>
                   <ul class="legend-list">
-                    <li><span class="legend-swatch legend-nd"></span>ND - Nord</li>
-                    <li><span class="legend-swatch legend-ot"></span>OT - Ouest</li>
-                    <li><span class="legend-swatch legend-ce"></span>CE - Centre</li>
-                    <li><span class="legend-swatch legend-sd"></span>SD - Sud</li>
-                    <li><span class="legend-swatch legend-et"></span>ET - Est</li>
+                    <li data-zone="ND" tabindex="0"><span class="legend-swatch legend-nd"></span>ND - Nord</li>
+                    <li data-zone="OT" tabindex="0"><span class="legend-swatch legend-ot"></span>OT - Ouest</li>
+                    <li data-zone="CE" tabindex="0"><span class="legend-swatch legend-ce"></span>CE - Centre</li>
+                    <li data-zone="SD" tabindex="0"><span class="legend-swatch legend-sd"></span>SD - Sud</li>
+                    <li data-zone="ET" tabindex="0"><span class="legend-swatch legend-et"></span>ET - Est</li>
                   </ul>
                 </div>
               </div>
@@ -663,6 +688,132 @@
               </div>
             </aside>
           </div>
+        </div>
+
+        <div class="module-panel hidden" id="connaissances-panel" data-module="connaissances">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Centre National de Connaissances Territoriales</p>
+              <h2>Centre de connaissances</h2>
+            </div>
+            <span class="panel-badge">CNCT Sprint 3.2</span>
+          </div>
+
+          <section class="knowledge-kpi-grid">
+            <article class="summary-card"><p class="summary-label">Profils complets</p><p class="summary-value" id="knowledge-complete">0</p></article>
+            <article class="summary-card"><p class="summary-label">Profils incomplets</p><p class="summary-value" id="knowledge-incomplete">0</p></article>
+            <article class="summary-card"><p class="summary-label">Sans photo</p><p class="summary-value" id="knowledge-no-photo">0</p></article>
+            <article class="summary-card"><p class="summary-label">Sans activités</p><p class="summary-value" id="knowledge-no-activities">0</p></article>
+            <article class="summary-card"><p class="summary-label">Sans défis</p><p class="summary-value" id="knowledge-no-challenges">0</p></article>
+            <article class="summary-card"><p class="summary-label">Sans services publics</p><p class="summary-value" id="knowledge-no-services">0</p></article>
+            <article class="summary-card"><p class="summary-label">Sans connectivité</p><p class="summary-value" id="knowledge-no-connectivity">0</p></article>
+            <article class="summary-card"><p class="summary-label">Sans documents</p><p class="summary-value" id="knowledge-no-documents">0</p></article>
+          </section>
+
+          <section class="knowledge-layout">
+            <div class="knowledge-main">
+              <div class="attribute-toolbar">
+                <input id="knowledge-search" type="search" placeholder="Rechercher activités, défis, particularités, potentiel, sources, rapports..." aria-label="Recherche CNCT" />
+                <select id="knowledge-priority-filter" aria-label="Filtre priorité">
+                  <option value="">Toutes les priorités</option>
+                  <option value="critique">Critique</option>
+                  <option value="haute">Haute</option>
+                  <option value="normale">Normale</option>
+                </select>
+                <select id="knowledge-sort" aria-label="Tri priorités">
+                  <option value="priority">Priorité</option>
+                  <option value="completeness">Complétude</option>
+                  <option value="missing">Champs manquants</option>
+                  <option value="updated">Dernière mise à jour</option>
+                </select>
+              </div>
+              <div id="knowledge-search-results" class="knowledge-search-results"></div>
+              <div class="table-frame attribute-table-frame">
+                <table class="governance-table">
+                  <thead>
+                    <tr>
+                      <th>Province</th>
+                      <th>Territoire</th>
+                      <th>Complétude</th>
+                      <th>Champs manquants</th>
+                      <th>Priorité</th>
+                      <th>Dernière mise à jour</th>
+                    </tr>
+                  </thead>
+                  <tbody id="knowledge-priority-body"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <aside class="knowledge-profile detail-card">
+              <div class="detail-card-header">
+                <div>
+                  <p class="panel-label">Fiche encyclopédique</p>
+                  <h3 id="knowledge-profile-title">Kinshasa</h3>
+                </div>
+              </div>
+              <div id="knowledge-completeness-bars" class="knowledge-completeness-bars"></div>
+              <div id="knowledge-tabs" class="knowledge-tabs"></div>
+              <div id="knowledge-tab-content" class="knowledge-tab-content"></div>
+              <div class="knowledge-workflow">
+                <span>Recherche</span><span>Propositions</span><span>Comparaison</span><span>Validation</span><span>Publication</span>
+              </div>
+            </aside>
+          </section>
+        </div>
+
+        <div class="module-panel hidden" id="enrichissement-panel" data-module="enrichissement">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Enrichissement territorial</p>
+              <h2>Propositions d'enrichissement</h2>
+            </div>
+            <span class="panel-badge">Validation obligatoire</span>
+          </div>
+
+          <section class="enrichment-layout">
+            <div class="enrichment-main">
+              <div class="attribute-toolbar">
+                <select id="enrichment-status-filter" aria-label="Filtre statut">
+                  <option value="">Tous les statuts</option>
+                  <option value="proposé">Proposées</option>
+                  <option value="validé">Validées</option>
+                  <option value="rejeté">Rejetées</option>
+                </select>
+                <select id="enrichment-field-filter" aria-label="Filtre champ">
+                  <option value="">Tous les champs</option>
+                </select>
+                <button type="button" class="table-action-button" id="enrichment-refresh">Rafraîchir</button>
+              </div>
+              <div class="table-frame attribute-table-frame">
+                <table class="governance-table">
+                  <thead>
+                    <tr>
+                      <th>Entité</th>
+                      <th>Champ</th>
+                      <th>Source</th>
+                      <th>Confiance</th>
+                      <th>Statut</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="enrichment-suggestions-body"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <aside class="enrichment-detail detail-card">
+              <div class="detail-card-header">
+                <div>
+                  <p class="panel-label">Revue</p>
+                  <h3 id="enrichment-detail-title">Aucune proposition sélectionnée</h3>
+                </div>
+              </div>
+              <div id="enrichment-detail-body" class="detail-body">
+                <div class="empty-detail">Sélectionnez une proposition pour consulter la source, modifier la valeur, puis accepter ou rejeter.</div>
+              </div>
+            </aside>
+          </section>
         </div>
 
         <div class="module-panel hidden" id="explorateur-sources-panel" data-module="explorateur_sources">

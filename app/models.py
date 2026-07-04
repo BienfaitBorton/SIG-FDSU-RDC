@@ -460,6 +460,34 @@ class ImportHistory(Base):
         )
 
 
+class TerritorialEnrichmentSuggestion(Base):
+    __tablename__ = "territorial_enrichment_suggestions"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    entity_type: Mapped[str] = mapped_column(String(80), nullable=False)
+    entity_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    entity_name: Mapped[str | None] = mapped_column(String(250), nullable=True)
+    field_name: Mapped[str] = mapped_column(String(120), nullable=False)
+    proposed_value: Mapped[str] = mapped_column(Text, nullable=False)
+    source_name: Mapped[str] = mapped_column(String(200), nullable=False)
+    source_url: Mapped[str] = mapped_column(Text, nullable=False)
+    consulted_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False)
+    confidence_level: Mapped[str] = mapped_column(String(40), nullable=False)
+    status: Mapped[str] = mapped_column(String(30), nullable=False, server_default="proposé")
+    review_note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    validated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    validated_by: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index("ix_territorial_enrichment_entity", "entity_type", "entity_id"),
+        Index("ix_territorial_enrichment_field", "field_name"),
+        Index("ix_territorial_enrichment_status", "status"),
+        Index("ix_territorial_enrichment_source", "source_name"),
+    )
+
+
 class TerritorialProfile(Base):
     __tablename__ = "territorial_profiles"
 
@@ -476,6 +504,131 @@ class TerritorialProfile(Base):
     __table_args__ = (
         Index("ix_territorial_profiles_localite_id", "localite_id"),
         Index("ix_territorial_profiles_territoire_id", "territoire_id"),
+    )
+
+
+class TerritorialDocument(Base):
+    __tablename__ = "territorial_documents"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    entity_type: Mapped[str] = mapped_column(String(80), nullable=False)
+    entity_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    entity_name: Mapped[str | None] = mapped_column(String(250), nullable=True)
+    title: Mapped[str] = mapped_column(String(300), nullable=False)
+    document_type: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    source_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("territorial_sources.id", ondelete="SET NULL"), nullable=True)
+    status: Mapped[str] = mapped_column(String(40), nullable=False, server_default="proposé")
+    metadata_json: Mapped[dict | None] = mapped_column("metadata", JSONB, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index("ix_territorial_documents_entity", "entity_type", "entity_id"),
+        Index("ix_territorial_documents_status", "status"),
+    )
+
+
+class TerritorialSource(Base):
+    __tablename__ = "territorial_sources"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    entity_type: Mapped[str] = mapped_column(String(80), nullable=False)
+    entity_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    field_name: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    source_name: Mapped[str] = mapped_column(String(200), nullable=False)
+    author: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    source_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    confidence_level: Mapped[str] = mapped_column(String(40), nullable=False, server_default="à vérifier")
+    status: Mapped[str] = mapped_column(String(40), nullable=False, server_default="proposé")
+    metadata_json: Mapped[dict | None] = mapped_column("metadata", JSONB, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index("ix_territorial_sources_entity", "entity_type", "entity_id"),
+        Index("ix_territorial_sources_field", "field_name"),
+        Index("ix_territorial_sources_status", "status"),
+    )
+
+
+class TerritorialStatistic(Base):
+    __tablename__ = "territorial_statistics"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    entity_type: Mapped[str] = mapped_column(String(80), nullable=False)
+    entity_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    indicator_name: Mapped[str] = mapped_column(String(160), nullable=False)
+    indicator_value: Mapped[str | None] = mapped_column(Text, nullable=True)
+    unit: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    source_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("territorial_sources.id", ondelete="SET NULL"), nullable=True)
+    status: Mapped[str] = mapped_column(String(40), nullable=False, server_default="proposé")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index("ix_territorial_statistics_entity", "entity_type", "entity_id"),
+        Index("ix_territorial_statistics_indicator", "indicator_name"),
+    )
+
+
+class TerritorialHistory(Base):
+    __tablename__ = "territorial_history"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    entity_type: Mapped[str] = mapped_column(String(80), nullable=False)
+    entity_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    event_type: Mapped[str] = mapped_column(String(120), nullable=False)
+    event_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    source_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("territorial_sources.id", ondelete="SET NULL"), nullable=True)
+    status: Mapped[str] = mapped_column(String(40), nullable=False, server_default="proposé")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now())
+
+    __table_args__ = (
+        Index("ix_territorial_history_entity", "entity_type", "entity_id"),
+        Index("ix_territorial_history_event", "event_type"),
+    )
+
+
+class TerritorialQuality(Base):
+    __tablename__ = "territorial_quality"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    entity_type: Mapped[str] = mapped_column(String(80), nullable=False)
+    entity_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    dimension: Mapped[str] = mapped_column(String(120), nullable=False)
+    score: Mapped[float | None] = mapped_column(Numeric(6, 2), nullable=True)
+    status: Mapped[str] = mapped_column(String(40), nullable=False, server_default="à compléter")
+    observation: Mapped[str | None] = mapped_column(Text, nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index("ix_territorial_quality_entity", "entity_type", "entity_id"),
+        Index("ix_territorial_quality_dimension", "dimension"),
+    )
+
+
+class TerritorialCompleteness(Base):
+    __tablename__ = "territorial_completeness"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    entity_type: Mapped[str] = mapped_column(String(80), nullable=False)
+    entity_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    entity_name: Mapped[str | None] = mapped_column(String(250), nullable=True)
+    section_name: Mapped[str] = mapped_column(String(120), nullable=False)
+    completeness_rate: Mapped[float] = mapped_column(Numeric(6, 2), nullable=False, server_default="0")
+    missing_fields_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    priority: Mapped[str] = mapped_column(String(40), nullable=False, server_default="normale")
+    last_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
+    metadata_json: Mapped[dict | None] = mapped_column("metadata", JSONB, nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index("ix_territorial_completeness_entity", "entity_type", "entity_id"),
+        Index("ix_territorial_completeness_section", "section_name"),
+        Index("ix_territorial_completeness_priority", "priority"),
     )
 
 
