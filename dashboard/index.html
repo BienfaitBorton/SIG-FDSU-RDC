@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SIG-FDSU RDC - Interface de gestion</title>
   <link rel="stylesheet" href="styles.css" />
@@ -53,7 +53,7 @@
         </button>
         <button class="nav-item" data-module="enrichissement" data-route="enrichment">
           <span class="nav-icon">ENR</span>
-          <span>Enrichissement territorial</span>
+          <span>Assistant d’enrichissement</span>
         </button>
         <button class="nav-item" data-module="import">
           <span class="nav-icon">⬆️</span>
@@ -710,6 +710,8 @@
             <article class="summary-card"><p class="summary-label">Sans documents</p><p class="summary-value" id="knowledge-no-documents">0</p></article>
           </section>
 
+          <section class="knowledge-origin-panel" id="knowledge-data-origins"></section>
+
           <section class="knowledge-layout">
             <div class="knowledge-main">
               <div class="attribute-toolbar">
@@ -765,8 +767,8 @@
         <div class="module-panel hidden" id="enrichissement-panel" data-module="enrichissement">
           <div class="panel-header">
             <div>
-              <p class="panel-label">Enrichissement territorial</p>
-              <h2>Propositions d'enrichissement</h2>
+              <p class="panel-label">Assistant d’enrichissement</p>
+              <h2>Propositions d’enrichissement</h2>
             </div>
             <span class="panel-badge">Validation obligatoire</span>
           </div>

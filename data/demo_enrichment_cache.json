@@ -1,0 +1,252 @@
+{
+  "demo_enrichment_mode": true,
+  "generated_at": "2026-07-05",
+  "status": "proposition à valider",
+  "rules": {
+    "official_tables_modified": false,
+    "display_only": true,
+    "fallback_label": "À compléter",
+    "pending_label": "Information en cours de validation"
+  },
+  "entities": [
+    {
+      "entity_name": "Tshopo",
+      "entity_type": "province",
+      "fields": {
+        "description": "Province créée en 2015 après le démembrement de l'ancienne Province orientale, avec Kisangani comme chef-lieu.",
+        "chef_lieu": "Kisangani",
+        "superficie": "199 567 km²",
+        "population": "2 614 630 habitants, donnée 2006",
+        "subdivision": "Ville de Kisangani et sept territoires : Bafwasende, Banalia, Basoko, Isangi, Opala, Ubundu et Yahuma.",
+        "geographie": "Province située au centre de la partie septentrionale de la RDC, traversée par le fleuve Congo et plusieurs rivières.",
+        "activites_economiques": ["agriculture", "pêche", "chasse", "commerce fluvial", "exploitation forestière à encadrer"],
+        "activite_principale": "Agriculture et activités rurales liées au fleuve et à la forêt",
+        "activite_secondaire": "Pêche, chasse, commerce fluvial et bois artisanal",
+        "particularites": ["Chef-lieu à Kisangani", "province très forestière", "carrefour fluvial et logistique"],
+        "defis": ["enclavement de certains territoires", "accès aux services de base", "pression sur les forêts"],
+        "potentiel_agricole": "Terres agricoles et filières vivrières à structurer.",
+        "potentiel_touristique": "Chutes de la Tshopo, fleuve Congo, patrimoine naturel autour de Kisangani.",
+        "potentiel_numerique": "À valider par données ARPTC ou opérateurs.",
+        "sources": "Référentiel interne province_fact_sheets.json ; Wikipedia Tshopo (province)"
+      },
+      "source_name": "Référentiel interne SIG-FDSU + Wikipedia",
+      "source_url": "data/reports/province_official/province_fact_sheets.json ; https://fr.wikipedia.org/wiki/Tshopo_(province)",
+      "consulted_at": "2026-07-05",
+      "confidence_level": "70%",
+      "status": "proposition à valider"
+    },
+    {
+      "entity_name": "Kinshasa",
+      "entity_type": "province",
+      "fields": {
+        "description": "Capitale et plus grande ville de la RDC, Kinshasa fonctionne aussi comme ville-province.",
+        "chef_lieu": "Kinshasa",
+        "superficie": "9 965 km²",
+        "population": "Population métropolitaine estimée à environ 18,5 millions d'habitants en 2026",
+        "subdivision": "Ville-province divisée en 24 communes et 365 quartiers.",
+        "geographie": "Située sur la rive sud du Pool Malebo et du fleuve Congo, face à Brazzaville.",
+        "activites_economiques": ["services", "administration nationale", "télécommunications", "banque", "industrie manufacturière", "commerce informel"],
+        "activite_principale": "Services, administration, commerce et fonctions métropolitaines",
+        "activite_secondaire": "Manufacture, télécommunications, banque, divertissement et économie informelle",
+        "particularites": ["capitale politique", "métropole francophone majeure", "centre économique national"],
+        "defis": ["croissance urbaine rapide", "pression sur les infrastructures", "emploi informel très important"],
+        "potentiel_commercial": "Très fort potentiel de marché et de services à l'échelle nationale.",
+        "potentiel_numerique": "Fort potentiel lié à la concentration des services, banques, télécommunications et administrations.",
+        "sources": "Wikipedia Kinshasa"
+      },
+      "source_name": "Wikipedia",
+      "source_url": "https://en.wikipedia.org/wiki/Kinshasa",
+      "consulted_at": "2026-07-05",
+      "confidence_level": "45%",
+      "status": "proposition à valider"
+    },
+    {
+      "entity_name": "Haut-Uele",
+      "entity_type": "province",
+      "fields": {
+        "description": "Province du nord-est de la RDC issue du démembrement de l'ancienne Province orientale.",
+        "chef_lieu": "Isiro",
+        "superficie": "89 683 km²",
+        "population": "2 528 169 habitants, estimation 2020",
+        "subdivision": "Ville d'Isiro et six territoires : Rungu, Niangara, Dungu, Faradje, Watsa et Wamba.",
+        "geographie": "Province située au nord-est du pays, limitrophe de provinces congolaises et d'États sud-soudanais.",
+        "particularites": ["Parc national de la Garamba dans les territoires de Dungu et Faradje", "chef-lieu provincial à Isiro"],
+        "defis": ["accessibilité routière", "besoin de consolidation des services publics", "sécurisation des zones rurales à documenter"],
+        "potentiel_touristique": "Parc national de la Garamba et patrimoine naturel.",
+        "sources": "Référentiel interne province_fact_sheets.json ; Wikipedia Haut-Uele"
+      },
+      "source_name": "Référentiel interne SIG-FDSU + Wikipedia",
+      "source_url": "data/reports/province_official/province_fact_sheets.json ; https://fr.wikipedia.org/wiki/Haut-Uele",
+      "consulted_at": "2026-07-05",
+      "confidence_level": "70%",
+      "status": "proposition à valider"
+    },
+    {
+      "entity_name": "Dungu",
+      "entity_type": "territoire",
+      "fields": {
+        "description": "Territoire du Haut-Uele situé au nord-ouest et au centre de la province.",
+        "superficie": "32 446 km²",
+        "population": "347 480 habitants",
+        "subdivision": "Commune rurale de Dungu et trois chefferies : Malingindu, Ndolomo et Wando.",
+        "geographie": "Territoire localisé au nord-ouest et au centre du Haut-Uele.",
+        "particularites": ["Pont sur la rivière Dungu", "présence de la chefferie Wando"],
+        "defis": ["connectivité territoriale à confirmer", "services publics à documenter"],
+        "sources": "Wikipedia Dungu (territoire), référence CENI 2018 mentionnée"
+      },
+      "source_name": "Wikipedia / CENI cité",
+      "source_url": "https://fr.wikipedia.org/wiki/Dungu_(territoire)",
+      "consulted_at": "2026-07-05",
+      "confidence_level": "45%",
+      "status": "proposition à valider"
+    },
+    {
+      "entity_name": "Banalia",
+      "entity_type": "territoire",
+      "fields": {
+        "description": "Territoire de la province de la Tshopo, situé au nord de la ville de Kisangani.",
+        "superficie": "24 430 km²",
+        "population": "493 697 habitants",
+        "subdivision": "Commune de Banalia, chefferie Baboro et secteurs Baboa de Kole, Bamanga, Banalia-Bangba et Popoy.",
+        "geographie": "Territoire situé au nord de Kisangani.",
+        "activites_economiques": ["agriculture", "chasse", "élevage", "pêche", "petit commerce"],
+        "activite_principale": "Agriculture",
+        "activite_secondaire": "Chasse, élevage, pêche et petit commerce",
+        "particularites": ["plantation industrielle de cacao à Bengamisa mentionnée", "territoire fortement forestier"],
+        "defis": ["structuration des activités rurales", "connectivité et services à documenter"],
+        "potentiel_agricole": "Agriculture vivrière et cacao à Bengamisa.",
+        "potentiel_minier": "Minerai de fer mentionné comme potentiel à confirmer.",
+        "sources": "Wikipedia Banalia (territoire), référence CENI 2018 mentionnée"
+      },
+      "source_name": "Wikipedia / CENI cité",
+      "source_url": "https://fr.wikipedia.org/wiki/Banalia_(territoire)",
+      "consulted_at": "2026-07-05",
+      "confidence_level": "45%",
+      "status": "proposition à valider"
+    },
+    {
+      "entity_name": "Wando",
+      "entity_type": "chefferie",
+      "fields": {
+        "description": "Chefferie rattachée au territoire de Dungu dans la province du Haut-Uele.",
+        "subdivision": "Chefferie du territoire de Dungu, aux côtés de Malingindu et Ndolomo.",
+        "geographie": "Localisation administrative à confirmer dans le territoire de Dungu.",
+        "defis": ["données statistiques détaillées encore à consolider", "source administrative locale à rechercher"],
+        "sources": "Wikipedia Dungu (territoire), référence CENI 2018 mentionnée"
+      },
+      "source_name": "Wikipedia / CENI cité",
+      "source_url": "https://fr.wikipedia.org/wiki/Dungu_(territoire)",
+      "consulted_at": "2026-07-05",
+      "confidence_level": "35%",
+      "status": "proposition à valider"
+    },
+    {
+      "entity_name": "Isiro",
+      "entity_type": "ville",
+      "fields": {
+        "description": "Ville chef-lieu de la province du Haut-Uele, anciennement Paulis.",
+        "population": "182 900 habitants, estimation 2012",
+        "subdivision": "Ville composée des communes Kupa, Mambaya et Mendambo.",
+        "geographie": "Située entre la forêt équatoriale et la savane.",
+        "activites_economiques": ["café robusta", "mines", "commerce"],
+        "activite_principale": "Commerce, mines et café robusta",
+        "particularites": ["chef-lieu provincial", "Université de l'Uélé", "sanctuaire Bienheureuse-Anuarite"],
+        "defis": ["routes difficiles et isolement mentionnés", "liaisons de transport à consolider"],
+        "sources": "Wikipedia Isiro ; OCHA FISS cité par la page"
+      },
+      "source_name": "Wikipedia / OCHA cité",
+      "source_url": "https://fr.wikipedia.org/wiki/Isiro",
+      "consulted_at": "2026-07-05",
+      "confidence_level": "45%",
+      "status": "proposition à valider"
+    },
+    {
+      "entity_name": "Bas-Uele",
+      "entity_type": "province",
+      "fields": {
+        "description": "Province du nord de la RDC, ancien district de la Province orientale.",
+        "chef_lieu": "Buta",
+        "superficie": "148 331 km²",
+        "population": "1 093 845 habitants, donnée 2006",
+        "subdivision": "Ville de Buta et six territoires : Buta, Aketi, Bondo, Ango, Bambesa et Poko.",
+        "geographie": "Province située sur la rivière Uélé, dans le nord du pays.",
+        "particularites": ["faible densité", "population dispersée", "importance des chefferies"],
+        "defis": ["dispersion de la population", "accès aux services", "mise en valeur durable des ressources"],
+        "potentiel_agricole": "Potentiel agricole historique à confirmer et structurer.",
+        "sources": "Référentiel interne province_fact_sheets.json ; Wikipedia Bas-Uele"
+      },
+      "source_name": "Référentiel interne SIG-FDSU + Wikipedia",
+      "source_url": "data/reports/province_official/province_fact_sheets.json ; https://fr.wikipedia.org/wiki/Bas-Uele",
+      "consulted_at": "2026-07-05",
+      "confidence_level": "70%",
+      "status": "proposition à valider"
+    },
+    {
+      "entity_name": "Équateur",
+      "aliases": ["Equateur"],
+      "entity_type": "province",
+      "fields": {
+        "description": "Province créée en 2015 après l'éclatement de l'ancienne province historique de l'Équateur.",
+        "chef_lieu": "Mbandaka",
+        "superficie": "103 902 km²",
+        "population": "1 626 606 habitants, donnée 2006",
+        "subdivision": "Ville de Mbandaka et sept territoires : Bikoro, Lukolela, Basankusu, Makanza, Bolomba, Bomongo et Ingende.",
+        "geographie": "Province relativement plate, traversée par le fleuve Congo.",
+        "climat": "Climat tropical humide avec des pluies toute l'année.",
+        "particularites": ["forêt ombrophile", "fleuve Congo", "lac Tumba"],
+        "potentiel_agricole": "Potentiel forestier et agricole à documenter par source institutionnelle.",
+        "sources": "Référentiel interne province_fact_sheets.json ; Wikipedia Équateur (province)"
+      },
+      "source_name": "Référentiel interne SIG-FDSU + Wikipedia",
+      "source_url": "data/reports/province_official/province_fact_sheets.json ; https://fr.wikipedia.org/wiki/Équateur_(province)",
+      "consulted_at": "2026-07-05",
+      "confidence_level": "70%",
+      "status": "proposition à valider"
+    },
+    {
+      "entity_name": "Kasai",
+      "aliases": ["Kasaï"],
+      "entity_type": "province",
+      "fields": {
+        "description": "Province créée en 2015, formée à partir du district du Kasaï et de la ville de Tshikapa.",
+        "chef_lieu": "Tshikapa",
+        "superficie": "95 631 km²",
+        "population": "3 686 000 habitants, estimation 2024",
+        "subdivision": "Cinq territoires : Dekese, Ilebo, Kamonia, Luebo et Mweka.",
+        "particularites": ["capitale provinciale à Tshikapa", "province issue du démembrement du Kasaï-Occidental"],
+        "defis": ["données économiques fines à consolider", "services et connectivité à vérifier"],
+        "sources": "Référentiel interne province_fact_sheets.json ; Wikipedia Kasaï Province"
+      },
+      "source_name": "Référentiel interne SIG-FDSU + Wikipedia",
+      "source_url": "data/reports/province_official/province_fact_sheets.json ; https://en.wikipedia.org/wiki/Kasaï_Province",
+      "consulted_at": "2026-07-05",
+      "confidence_level": "70%",
+      "status": "proposition à valider"
+    },
+    {
+      "entity_name": "Kongo Central",
+      "entity_type": "province",
+      "fields": {
+        "description": "Province occidentale de la RDC et unique accès du pays au littoral atlantique.",
+        "chef_lieu": "Matadi",
+        "superficie": "53 920 km²",
+        "population": "5 575 000 habitants, donnée 2015",
+        "subdivision": "Deux villes et dix territoires : Kasangulu, Kimvula, Lukula, Luozi, Madimba, Mbanza-Ngungu, Moanda, Seke-Banza, Songololo et Tshela.",
+        "geographie": "Province traversée par le bas Congo, avec accès maritime et port de Matadi.",
+        "activites_economiques": ["agriculture", "pétrole", "industrie alimentaire", "cimenterie", "énergie hydroélectrique", "port et logistique"],
+        "activite_principale": "Logistique, agriculture, énergie et industrie",
+        "activite_secondaire": "Pétrole, cimenterie, produits agricoles et artisanat",
+        "particularites": ["littoral atlantique", "port de Matadi", "barrages d'Inga"],
+        "defis": ["gestion des infrastructures stratégiques", "services publics et connectivité à détailler par territoire"],
+        "potentiel_touristique": "Moanda, littoral atlantique, patrimoine historique et fleuve Congo.",
+        "potentiel_commercial": "Fort potentiel logistique lié au corridor Matadi-Kinshasa.",
+        "sources": "Référentiel interne province_fact_sheets.json ; Wikipedia Kongo Central"
+      },
+      "source_name": "Référentiel interne SIG-FDSU + Wikipedia",
+      "source_url": "data/reports/province_official/province_fact_sheets.json ; https://fr.wikipedia.org/wiki/Kongo_Central",
+      "consulted_at": "2026-07-05",
+      "confidence_level": "70%",
+      "status": "proposition à valider"
+    }
+  ]
+}

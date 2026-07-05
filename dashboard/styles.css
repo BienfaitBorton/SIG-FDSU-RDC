@@ -1309,6 +1309,84 @@ button {
   color: var(--text);
 }
 
+.relation-detail-row {
+  grid-template-columns: minmax(120px, 1fr) minmax(80px, 0.8fr) auto;
+}
+
+.relation-list-button {
+  justify-self: end;
+  white-space: nowrap;
+}
+
+.demo-enrichment-section {
+  border-color: rgba(56, 189, 248, 0.36);
+  background: rgba(14, 165, 233, 0.08);
+}
+
+.demo-enrichment-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.demo-enrichment-header h3 {
+  margin: 0 0 6px;
+}
+
+.demo-enrichment-header p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.demo-enrichment-badge,
+.demo-enrichment-fields span,
+.demo-enrichment-meta span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 5px 9px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.demo-enrichment-badge {
+  background: rgba(250, 204, 21, 0.14);
+  color: #fde68a;
+  border: 1px solid rgba(250, 204, 21, 0.24);
+  white-space: nowrap;
+}
+
+.demo-enrichment-meta,
+.demo-enrichment-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.demo-enrichment-meta span,
+.demo-enrichment-fields span {
+  background: rgba(15, 23, 42, 0.44);
+  color: var(--text);
+}
+
+.demo-enrichment-source {
+  display: grid;
+  gap: 4px;
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.32);
+}
+
+.demo-enrichment-source small {
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
 .empty-detail {
   padding: 24px;
   text-align: center;
@@ -1929,6 +2007,72 @@ body.entity-profile-open .leaflet-control-container {
   margin-bottom: 12px;
 }
 
+.knowledge-origin-panel {
+  margin-bottom: 18px;
+  padding: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.36);
+}
+
+.knowledge-origin-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.knowledge-origin-header h3 {
+  margin: 4px 0 0;
+}
+
+.knowledge-origin-rules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.knowledge-origin-rules span {
+  padding: 6px 9px;
+  border-radius: 8px;
+  background: rgba(14, 165, 233, 0.12);
+  color: var(--accent-strong);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.knowledge-origin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+}
+
+.knowledge-origin-item {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.32);
+}
+
+.knowledge-origin-item strong,
+.knowledge-origin-item span,
+.knowledge-origin-item small {
+  overflow-wrap: anywhere;
+}
+
+.knowledge-origin-item span {
+  color: var(--text-muted);
+}
+
+.knowledge-origin-item small {
+  color: var(--text-soft);
+}
+
 .knowledge-completeness-bars {
   display: grid;
   gap: 10px;
@@ -2197,5 +2341,220 @@ body.entity-profile-open .leaflet-control-container {
 
   .metrics-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Sprint 3.3.2 - layout unifie des modules */
+.main-content {
+  min-height: 100vh;
+  height: 100vh;
+  overflow: auto;
+  gap: 16px;
+  padding: 18px 24px;
+}
+
+.topbar {
+  flex: 0 0 auto;
+  padding: 16px 22px;
+  border-radius: 16px;
+}
+
+.page-context {
+  margin-bottom: 4px;
+}
+
+.page-title {
+  font-size: clamp(1.45rem, 1.8vw, 2.1rem);
+  line-height: 1.15;
+}
+
+.content-area {
+  min-height: 0;
+  display: grid;
+  gap: 14px;
+}
+
+#dashboard-panel,
+.module-panel {
+  scroll-margin-top: 0;
+  outline: none;
+}
+
+.dashboard-grid,
+.module-panel {
+  margin-top: 0;
+}
+
+.module-panel {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-height: 0;
+  padding: 18px;
+  border-radius: 16px;
+}
+
+.panel-header {
+  margin-bottom: 0;
+  gap: 12px;
+}
+
+.panel-label {
+  margin-bottom: 4px;
+}
+
+.panel-header h2 {
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+
+.panel-badge {
+  padding: 6px 10px;
+}
+
+.dashboard-main,
+.dashboard-right-panel,
+.cartography-main,
+.cartography-sidebar,
+.governance-shell,
+.decision-side,
+.knowledge-main,
+.knowledge-profile,
+.enrichment-main,
+.enrichment-detail,
+.import-preview {
+  gap: 12px;
+  align-content: start;
+}
+
+.dashboard-grid {
+  gap: 16px;
+}
+
+.cartography-layout,
+.referentiel-content,
+.governance-main-layout,
+.decision-layout,
+.knowledge-layout,
+.enrichment-layout,
+.normalization-hub-layout {
+  gap: 14px;
+  align-items: start;
+}
+
+.summary-grid,
+.metrics-grid,
+.governance-kpis,
+.source-explorer-kpis,
+.knowledge-kpi-grid,
+.normalization-summary-grid {
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.summary-card,
+.metric-card,
+.governance-kpi-card,
+.status-card,
+.zone-card,
+.info-card,
+.layers-panel,
+.carto-info-panel,
+.source-explorer-table,
+.normalization-hub,
+.normalization-statistics-card,
+.normalization-report-card {
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.dashboard-workbench,
+.attribute-panel,
+.prototype-panel,
+.decision-recommendation,
+.knowledge-section-source,
+.knowledge-workflow {
+  margin-top: 0;
+}
+
+.decision-filters,
+.attribute-toolbar {
+  margin: 0 0 12px;
+}
+
+.source-explorer-tags {
+  margin-bottom: 10px;
+}
+
+.map-canvas {
+  min-height: clamp(360px, calc(100vh - 260px), 620px);
+}
+
+.map-placeholder {
+  min-height: clamp(260px, calc(100vh - 300px), 420px);
+  padding: 18px;
+}
+
+.decision-map {
+  min-height: clamp(160px, 24vh, 220px);
+}
+
+.normalization-report-preview {
+  min-height: clamp(120px, 22vh, 220px);
+}
+
+.attribute-table-frame,
+.governance-table-wrapper,
+.province-table-wrapper,
+.source-explorer-table,
+.knowledge-table-wrapper,
+.enrichment-table-wrapper {
+  max-height: calc(100vh - 300px);
+  overflow: auto;
+}
+
+.entity-profile-drawer {
+  top: 12px;
+  right: 12px;
+  bottom: 12px;
+  width: min(560px, calc(100vw - 24px));
+}
+
+@media (min-width: 1600px) {
+  .main-content {
+    padding: 20px 28px;
+  }
+}
+
+@media (max-width: 1080px) {
+  .main-content {
+    height: auto;
+    min-height: 100vh;
+    padding: 14px;
+  }
+
+  .topbar,
+  .module-panel {
+    padding: 16px;
+  }
+
+  .nav-menu {
+    margin-top: 12px;
+  }
+}
+
+@media (max-width: 720px) {
+  .main-content {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .topbar {
+    padding: 14px;
+  }
+
+  .panel-header {
+    flex-direction: column;
+    align-items: stretch;
   }
 }

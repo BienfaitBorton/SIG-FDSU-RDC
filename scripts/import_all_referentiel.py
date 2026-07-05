@@ -44,7 +44,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def _print_short(rep) -> None:
-    print(f"{rep.filename} -> read={rep.rows_total} inserted={rep.rows_inserted} updated={rep.rows_updated} rejected={rep.rows_rejected} dur�e={rep.duration_seconds:.2f}s")
+    print(f"{rep.filename} -> read={rep.rows_total} inserted={rep.rows_inserted} updated={rep.rows_updated} rejected={rep.rows_rejected} durée={rep.duration_seconds:.2f}s")
 
 
 def main() -> int:

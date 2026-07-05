@@ -55,10 +55,11 @@ uvicorn api.main:app --reload
 
 ## SIG-FDSU RDC v0.8.0 - Modes JSON et PostgreSQL/PostGIS
 
-Le dashboard conserve deux modes :
+Le dashboard conserve deux modes et demarre par defaut en detection automatique :
 
+- `DATA_MODE = 'auto'` dans `dashboard/app.js` : detection de `GET /health` et utilisation de FastAPI si `mode = db`.
 - `DATA_MODE = 'json'` dans `dashboard/app.js` : lecture directe des rapports JSON locaux.
-- `DATA_MODE = 'api'` dans `dashboard/app.js` : lecture via FastAPI sur `API_BASE_URL = 'http://localhost:8001'`.
+- `DATA_MODE = 'api'` dans `dashboard/app.js` : lecture via FastAPI sur `API_BASE_URL = 'http://127.0.0.1:8001'`.
 
 L'API conserve aussi un fallback JSON et peut lire PostgreSQL/PostGIS via la variable d'environnement `DATA_MODE`.
 

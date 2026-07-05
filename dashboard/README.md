@@ -1,62 +1,60 @@
 # Dashboard SIG-FDSU RDC
 
-Ce dossier contient l’architecture de l’interface graphique du SIG-FDSU RDC.
-
-## Objectif
-
-- page d’accueil professionnelle
-- menu latéral
-- barre supérieure
-- zone centrale de contenu
-- navigation entre les modules
+Ce dossier contient l'interface graphique du SIG-FDSU RDC.
 
 ## Structure
 
-- `index.html` : page principale
-- `styles.css` : styles visuels
-- `app.js` : navigation client-side entre les modules
+- `index.html` : page principale.
+- `styles.css` : styles visuels.
+- `app.js` : navigation client-side et chargement des donnees.
+- `serve_utf8.py` : serveur statique UTF-8 pour le dashboard.
 
-## Utilisation
+## Lancer le dashboard
 
-Servir la racine du dépôt pour permettre au dashboard de lire les rapports JSON :
+Depuis la racine du depot :
 
 ```powershell
-python -m http.server 8000 --bind 127.0.0.1
+python dashboard/serve_utf8.py
 ```
 
-Puis ouvrir `http://localhost:8000/dashboard/index.html#dashboard`.
+Puis ouvrir :
 
-## Mode de données
+```text
+http://127.0.0.1:8000/index.html#dashboard
+```
 
-Le dashboard v0.7.0 conserve le fallback JSON local et prépare un mode API optionnel.
+## Mode de donnees
 
-Dans `dashboard/app.js` :
+Le dashboard detecte automatiquement FastAPI/PostgreSQL et conserve le fallback JSON local uniquement si l'API n'est pas disponible.
+
+Configuration attendue dans `dashboard/app.js` :
 
 ```javascript
-const DATA_MODE = 'json';
-const API_BASE_URL = 'http://localhost:8001';
+const DATA_MODE = 'auto';
+const API_BASE_URL = 'http://127.0.0.1:8001';
 ```
 
-- `DATA_MODE = 'json'` : lit les fichiers `data/reports/*.json` via le serveur statique.
-- `DATA_MODE = 'api'` : interroge FastAPI sur `API_BASE_URL`.
+- `DATA_MODE = 'auto'` : teste `GET /health` et utilise FastAPI si `mode = db`.
+- `DATA_MODE = 'json'` : force les fichiers `data/reports/*.json`.
+- `DATA_MODE = 'api'` : force FastAPI sur `API_BASE_URL`.
 
-## Lancer l'API expérimentale
+## Lancer l'API
 
-Depuis la racine du dépôt :
+Depuis la racine du depot :
 
 ```powershell
+$env:DATA_MODE="db"
 python -m uvicorn api.main:app --host 127.0.0.1 --port 8001
 ```
 
-Endpoints minimum exposés pour l'expérimentation :
+Endpoints utilises par le dashboard :
 
 - `GET /health`
 - `GET /dashboard/summary`
 - `GET /provinces`
+- `GET /territoires`
 - `GET /territories`
 - `GET /collectivites`
 - `GET /groupements`
 - `GET /localites`
-- `GET /sites`
-
-L'API v0.7.0 lit les rapports JSON déjà générés et ne lance aucun import en base.
+- `GET /map/layers/{layer_name}`

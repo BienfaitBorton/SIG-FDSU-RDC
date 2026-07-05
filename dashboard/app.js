@@ -1,7 +1,9 @@
-const DATA_MODE = 'json'; // v0.7.0: utiliser 'api' pour tester FastAPI, 'json' pour garder le fallback local.
-const API_BASE_URL = 'http://localhost:8001';
+const DATA_MODE = 'auto'; // 'auto' detecte FastAPI/PostgreSQL, 'api' force l'API, 'json' force le fallback local.
+const API_BASE_URL = 'http://127.0.0.1:8001';
+const DEMO_ENRICHMENT_MODE = true;
 const REPORTS_BASE = '../data/reports';
-const LOCAL_JSON_MODE = DATA_MODE !== 'api';
+let LOCAL_JSON_MODE = DATA_MODE === 'json';
+let API_HEALTH = null;
 const FDSU_CODE_FORMAT = 'FDSU_<CODE_ZONE>_<CODE_PROVINCE>_<CODE_TERRITOIRE>_<CODE_SITE>';
 const FDSU_ZONE_DEFINITIONS = {
   ND: { nom: 'Zone Nord', colorVar: '--zone-nd' },
@@ -147,6 +149,7 @@ const knowledgeState = {
   summary: null,
   priorities: [],
   profile: null,
+  origins: null,
   selectedTab: 'presentation',
 };
 
@@ -165,6 +168,18 @@ const localKnowledgePriorities = [
   { province: 'Kinshasa', territoire: 'Ville-Province', completeness: 25, missing_fields_count: 18, priority: 'haute', last_updated_at: '2026-07-04' },
   { province: 'À qualifier', territoire: 'Territoire exemple', completeness: 12, missing_fields_count: 22, priority: 'critique', last_updated_at: '2026-07-04' },
 ];
+
+const localKnowledgeOrigins = {
+  automatic_web_collection_enabled: false,
+  official_publication_enabled: false,
+  validation_required: true,
+  origins: [
+    { origin: 'PostgreSQL / PostGIS', status: 'prioritaire', confidence: 45, source_count: 'tables relationnelles', validation_status: 'interne', last_update: '2026-07-05' },
+    { origin: 'Documents internes', status: 'indexé', confidence: 30, source_count: 0, validation_status: 'proposition uniquement', last_update: '2026-07-05' },
+    { origin: 'CAID', status: 'connecteur prêt', confidence: 40, source_count: 1, validation_status: 'désactivé sans validation humaine', last_update: '2026-07-05' },
+    { origin: 'INS', status: 'connecteur prêt', confidence: 40, source_count: 2, validation_status: 'désactivé sans validation humaine', last_update: '2026-07-05' },
+  ],
+};
 
 const localEnrichmentSuggestions = [
   {
@@ -254,6 +269,8 @@ const platformState = {
   searchIndex: [],
   searchReady: false,
   selectedEntity: null,
+  demoEnrichment: null,
+  demoEnrichmentPromise: null,
   workbenchLayer: '',
   workbenchRows: [],
   workbenchPage: 1,
@@ -494,6 +511,11 @@ function setActiveModule(moduleKey) {
   pageContext.textContent = `Module : ${moduleNames[normalizedModule] || 'Tableau de bord'}`;
   document.querySelector('.main-content')?.scrollTo({ top: 0, behavior: 'auto' });
   window.scrollTo({ top: 0, behavior: 'auto' });
+  const activePanel = document.querySelector(`.content-area [data-module="${normalizedModule}"]`);
+  if (activePanel) {
+    activePanel.setAttribute('tabindex', '-1');
+    window.requestAnimationFrame(() => activePanel.focus({ preventScroll: true }));
+  }
 
   if (normalizedModule === 'dashboard') {
     initializeDashboard();
@@ -541,6 +563,71 @@ function setActiveModule(moduleKey) {
   if (normalizedModule === 'export') {
     initializeExportModule();
   }
+}
+
+function fetchApiJson(endpoint) {
+  const url = new URL(endpoint, API_BASE_URL).toString();
+  return fetch(url, {
+    headers: { Accept: 'application/json' },
+    cache: 'no-store',
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(`Route API indisponible: ${endpoint}`);
+    }
+    return response.json();
+  });
+}
+
+function detectDataMode() {
+  if (DATA_MODE === 'json') {
+    LOCAL_JSON_MODE = true;
+    API_HEALTH = null;
+    return Promise.resolve(null);
+  }
+
+  return fetchApiJson('/health')
+    .then((health) => {
+      API_HEALTH = health;
+      const databaseConnected = health?.mode === 'db' && health?.status === 'ok';
+      LOCAL_JSON_MODE = DATA_MODE === 'api' ? false : !databaseConnected;
+      return health;
+    })
+    .catch(() => {
+      API_HEALTH = null;
+      LOCAL_JSON_MODE = DATA_MODE === 'api' ? false : true;
+      return null;
+    });
+}
+
+function initializeApplication() {
+  detectDataMode().finally(() => {
+    loadDemoEnrichmentData().finally(() => {
+      if (!window.location.hash) {
+        window.location.hash = 'dashboard';
+      }
+      renderRouteFromHash();
+    });
+  });
+}
+
+function loadDemoEnrichmentData() {
+  if (!DEMO_ENRICHMENT_MODE) {
+    platformState.demoEnrichment = null;
+    return Promise.resolve(null);
+  }
+  if (platformState.demoEnrichmentPromise) {
+    return platformState.demoEnrichmentPromise;
+  }
+  platformState.demoEnrichmentPromise = fetchApiJson('/knowledge/demo-enrichment')
+    .then((payload) => {
+      platformState.demoEnrichment = payload?.demo_enrichment_mode ? payload : null;
+      return platformState.demoEnrichment;
+    })
+    .catch(() => {
+      platformState.demoEnrichment = null;
+      return null;
+    });
+  return platformState.demoEnrichmentPromise;
 }
 
 function initializeDashboard() {
@@ -762,10 +849,12 @@ function initializeKnowledgeModule() {
     LOCAL_JSON_MODE ? Promise.resolve(localKnowledgeSummary) : fetchJson('/knowledge'),
     LOCAL_JSON_MODE ? Promise.resolve(localKnowledgePriorities) : fetchJson('/knowledge/completeness'),
     LOCAL_JSON_MODE ? Promise.resolve(buildLocalKnowledgeProfile()) : fetchJson('/knowledge/kinshasa'),
-  ]).then(([summary, priorities, profile]) => {
+    LOCAL_JSON_MODE ? Promise.resolve(localKnowledgeOrigins) : fetchJson('/knowledge/documentary/origins').catch(() => localKnowledgeOrigins),
+  ]).then(([summary, priorities, profile, origins]) => {
     knowledgeState.summary = summary || localKnowledgeSummary;
     knowledgeState.priorities = asArray(priorities).length ? priorities : localKnowledgePriorities;
     knowledgeState.profile = profile || buildLocalKnowledgeProfile();
+    knowledgeState.origins = origins || localKnowledgeOrigins;
     renderKnowledgeModule();
   });
 }
@@ -779,8 +868,43 @@ function debounceKnowledgeSearch() {
 
 function renderKnowledgeModule() {
   renderKnowledgeKpis();
+  renderKnowledgeOrigins();
   renderKnowledgePriorityTable();
   renderKnowledgeProfile();
+}
+
+function renderKnowledgeOrigins() {
+  const container = document.querySelector('#knowledge-data-origins');
+  if (!container) return;
+  const payload = knowledgeState.origins || localKnowledgeOrigins;
+  const rows = asArray(payload.origins).slice(0, 8);
+  const rules = [
+    payload.automatic_web_collection_enabled ? 'Collecte web active' : 'Collecte web automatique désactivée',
+    payload.official_publication_enabled ? 'Publication directe active' : 'Aucune publication directe',
+    payload.validation_required ? 'Validation humaine obligatoire' : 'Validation non configurée',
+  ];
+  container.innerHTML = `
+    <div class="knowledge-origin-header">
+      <div>
+        <p class="panel-label">Origine des données</p>
+        <h3>Traçabilité CNCT</h3>
+      </div>
+      <span class="panel-badge">${escapeHtml(rules[2])}</span>
+    </div>
+    <div class="knowledge-origin-rules">
+      ${rules.map((rule) => `<span>${escapeHtml(rule)}</span>`).join('')}
+    </div>
+    <div class="knowledge-origin-grid">
+      ${rows.map((row) => `
+        <article class="knowledge-origin-item">
+          <strong>${escapeHtml(row.origin || 'Source')}</strong>
+          <span>${escapeHtml(row.status || 'à vérifier')}</span>
+          <small>${escapeHtml(`Confiance ${row.confidence ?? 0}% · Sources ${row.source_count ?? 0}`)}</small>
+          <small>${escapeHtml(row.validation_status || 'proposition uniquement')}</small>
+        </article>
+      `).join('')}
+    </div>
+  `;
 }
 
 function renderKnowledgeKpis() {
@@ -2395,6 +2519,41 @@ function openLayerWorkbench(layerKey, featureId = null) {
   }, 80);
 }
 
+function openRelationCounterList(relationKey, properties) {
+  const targetLayer = getRelationLayerForCounter(properties, relationKey);
+  if (!targetLayer) return;
+  fetchPlatformLayerData(targetLayer).then((items) => {
+    const parentFilter = getRelationParentFilter(properties);
+    const rows = asArray(items)
+      .map((item) => normalizeAttributeRow(item, targetLayer))
+      .filter((row) => !parentFilter.field || normalizeDashboardText(row.properties[parentFilter.field]) === parentFilter.value)
+      .map((row) => ({ ...row, layerKey: targetLayer }));
+    openDashboardLayerList(targetLayer, rows, `${getLayerDisplayLabel(targetLayer)} - ${properties.nom || properties.name || ''}`);
+  });
+}
+
+function getRelationLayerForCounter(properties, relationKey) {
+  const links = asArray(properties.relation_links);
+  const match = links.find((item) => item.key === relationKey);
+  if (match?.layer) return match.layer === 'localites' ? 'villages' : match.layer;
+  return {
+    territoires: 'territoires',
+    collectivites: 'collectivites',
+    groupements: 'groupements',
+    localites: 'villages',
+  }[relationKey] || '';
+}
+
+function getRelationParentFilter(properties) {
+  const layer = getApiLayerName(properties.layer || '');
+  const parentName = normalizeDashboardText(properties.nom || properties.name);
+  if (layer === 'provinces') return { field: 'province', value: parentName };
+  if (layer === 'territoires') return { field: 'territoire', value: parentName };
+  if (layer === 'collectivites') return { field: 'collectivite', value: parentName };
+  if (layer === 'groupements') return { field: 'groupement', value: parentName };
+  return { field: '', value: '' };
+}
+
 function openZoneProvinceList(zoneCode) {
   const normalizedZone = String(zoneCode || '').toUpperCase();
   fetchPlatformLayerData('provinces').then((items) => {
@@ -3794,20 +3953,132 @@ function openEntityProfile(layerKey, properties = {}, feature = null) {
   const normalized = layerKey === 'zones'
     ? { ...properties, ...computeZoneProfileProperties(properties), layer: layerKey }
     : { ...properties, layer: layerKey };
-  platformState.selectedEntity = { layerKey, properties: normalized, feature };
-  title.textContent = normalized.nom || normalized.name || 'Entité sans nom';
+  const demoEnriched = applyDemoEnrichmentToProperties(normalized);
+  platformState.selectedEntity = { layerKey, properties: demoEnriched, feature };
+  title.textContent = demoEnriched.nom || demoEnriched.name || 'Entité sans nom';
   layerLabel.textContent = getLayerDisplayLabel(layerKey);
-  body.innerHTML = buildEntityProfileMarkup(layerKey, normalized);
+  body.innerHTML = buildEntityProfileMarkup(layerKey, demoEnriched);
   drawer.classList.remove('hidden');
   document.body.classList.add('entity-profile-open');
+  bindEntityProfileActions(body, layerKey, demoEnriched, feature);
+  hydrateEntityProfileFromApi(layerKey, demoEnriched, feature);
+}
+
+function bindEntityProfileActions(body, layerKey, properties, feature = null) {
   body.querySelector('[data-profile-action="toggle-export"]')?.addEventListener('click', () => {
     body.querySelector('.profile-export-menu')?.classList.toggle('hidden');
   });
-  body.querySelector('[data-profile-action="save"]')?.addEventListener('click', () => exportEntityProfile(layerKey, normalized, feature));
+  body.querySelector('[data-profile-action="save"]')?.addEventListener('click', () => exportEntityProfile(layerKey, properties, feature));
   body.querySelector('[data-profile-action="print"]')?.addEventListener('click', () => window.print());
   body.querySelectorAll('[data-open-related-layer]').forEach((button) => {
     button.addEventListener('click', () => openLayerWorkbench(button.dataset.openRelatedLayer));
   });
+  body.querySelectorAll('[data-open-relation-list]').forEach((button) => {
+    button.addEventListener('click', () => openRelationCounterList(button.dataset.openRelationList, properties));
+  });
+}
+
+function hydrateEntityProfileFromApi(layerKey, properties, feature = null) {
+  if (LOCAL_JSON_MODE || properties.relation_links) return;
+  const entityId = properties.id || properties.canonical_id || properties.code;
+  if (!entityId) return;
+  fetchJson(`/entities/${getApiLayerName(layerKey)}/${entityId}`).then((entity) => {
+    if (!entity || Object.keys(entity).length === 0) return;
+    const drawer = document.querySelector('#entity-profile-drawer');
+    const title = document.querySelector('#entity-profile-title');
+    const body = document.querySelector('#entity-profile-body');
+    if (!drawer || drawer.classList.contains('hidden') || !body) return;
+    const enriched = applyDemoEnrichmentToProperties({ ...properties, ...entity, layer: layerKey });
+    platformState.selectedEntity = { layerKey, properties: enriched, feature };
+    if (title) title.textContent = enriched.nom || enriched.name || 'Entité sans nom';
+    body.innerHTML = buildEntityProfileMarkup(layerKey, enriched);
+    bindEntityProfileActions(body, layerKey, enriched, feature);
+  });
+}
+
+function applyDemoEnrichmentToProperties(properties) {
+  if (!DEMO_ENRICHMENT_MODE || !platformState.demoEnrichment?.entities) return properties;
+  const match = findDemoEnrichmentForEntity(properties);
+  if (!match?.fields) return properties;
+  const enriched = { ...properties };
+  const futureProfile = {
+    ...(properties.future_profile && typeof properties.future_profile === 'object' ? properties.future_profile : {}),
+  };
+  const applied = [];
+  const identityFields = new Set(['description', 'chef_lieu', 'superficie', 'population', 'subdivision', 'geographie', 'climat']);
+  Object.entries(match.fields).forEach(([field, value]) => {
+    if (value === null || value === undefined || value === '') return;
+    const target = identityFields.has(field) ? enriched : futureProfile;
+    if (isDemoMissingValue(target[field])) {
+      target[field] = value;
+      if (field.startsWith('potentiel_')) {
+        const potentialKey = field.replace('potentiel_', '').replace('numerique', 'numerique');
+        futureProfile.potentiels = {
+          ...(futureProfile.potentiels && typeof futureProfile.potentiels === 'object' ? futureProfile.potentiels : {}),
+          [potentialKey]: value,
+        };
+      }
+      applied.push({
+        field,
+        value,
+        source_name: match.source_name || 'CNCT démo',
+        source_url: match.source_url || '',
+        consulted_at: match.consulted_at || '',
+        confidence_level: match.confidence_level || 'à vérifier',
+        status: match.status || 'proposition à valider',
+      });
+    }
+  });
+  if (applied.length) {
+    enriched.future_profile = futureProfile;
+    enriched.demo_enrichment = {
+      entity_name: match.entity_name,
+      source_name: match.source_name,
+      source_url: match.source_url,
+      consulted_at: match.consulted_at,
+      confidence_level: match.confidence_level,
+      status: match.status || 'proposition à valider',
+      applied,
+    };
+  }
+  return enriched;
+}
+
+function findDemoEnrichmentForEntity(properties) {
+  const names = [
+    properties.nom,
+    properties.name,
+    properties.entity_name,
+    properties.code,
+    properties.canonical_id,
+  ].filter(Boolean).map(normalizeDemoEntityName);
+  return asArray(platformState.demoEnrichment?.entities).find((item) => {
+    const candidates = [item.entity_name, ...(Array.isArray(item.aliases) ? item.aliases : [])]
+      .filter(Boolean)
+      .map(normalizeDemoEntityName);
+    return candidates.some((candidate) => names.includes(candidate));
+  });
+}
+
+function normalizeDemoEntityName(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/gi, ' ')
+    .trim()
+    .toLowerCase();
+}
+
+function isDemoMissingValue(value) {
+  if (value === null || value === undefined || value === '') return true;
+  const text = normalizeDemoEntityName(value);
+  return [
+    'donnee non encore renseignee',
+    'non renseignee',
+    'non renseigne',
+    'non disponible',
+    'a completer',
+  ].includes(text);
 }
 
 function closeEntityProfile() {
@@ -3834,6 +4105,14 @@ function exportEntityProfile(layerKey, properties, feature = null) {
     downloadTextFile(`${baseName}.doc`, buildHtmlProfileDocument(properties), 'application/msword;charset=utf-8');
     return;
   }
+  if (format === 'pdf') {
+    alert('Export PDF direct prévu avec génération PDF dédiée. Utilisez temporairement PDF / Impression navigateur.');
+    return;
+  }
+  if (format === 'print_pdf') {
+    window.print();
+    return;
+  }
   if (format === 'geojson') {
     const geometry = feature?.geometry || properties.geometry;
     if (!geometry) {
@@ -3850,10 +4129,6 @@ function exportEntityProfile(layerKey, properties, feature = null) {
       return;
     }
     downloadTextFile(`${baseName}.kml`, buildKmlFeature(properties, geometry), 'application/vnd.google-earth.kml+xml');
-    return;
-  }
-  if (format === 'pdf') {
-    downloadTextFile(`${baseName}.pdf`, buildHtmlProfileDocument(properties), 'application/pdf');
     return;
   }
 }
@@ -3883,17 +4158,19 @@ function buildEntityProfileMarkup(layerKey, properties) {
     </section>
     <section class="profile-actions profile-export-menu hidden">
       <select id="entity-profile-export-format" aria-label="Format export fiche">
-        <option value="pdf">PDF / Impression navigateur</option>
-        <option value="word">Word</option>
-        <option value="excel">Excel</option>
-        <option value="json">JSON</option>
+        <option value="pdf">PDF</option>
+        <option value="print_pdf">PDF / Impression navigateur</option>
+        <option value="word">Word / DOCX</option>
+        <option value="excel">Excel / XLSX</option>
         <option value="csv">CSV</option>
+        <option value="json">JSON</option>
         <option value="geojson">GeoJSON</option>
         <option value="kml">KML</option>
-        <option value="kmz">KMZ (KML à compresser)</option>
+        <option value="kmz">KMZ</option>
       </select>
       <button type="button" class="primary-button" data-profile-action="save">Enregistrer la fiche</button>
     </section>
+    ${renderDemoEnrichmentBanner(properties)}
     ${buildTypedIdentitySection(layerKey, properties, profile)}
     <section class="profile-section">
       <h3>Carte</h3>
@@ -3976,11 +4253,11 @@ function buildTypedIdentitySection(layerKey, properties, profile) {
       ['Code province', properties.code_province_fdsu || properties.code || properties.canonical_id],
       ['Nom', properties.nom],
       ['Chef-lieu', properties.chef_lieu],
-      ['Territoires', properties.territoires],
+      ['Territoires', properties.territoires, 'territoires'],
       ['Villes', properties.villes],
-      ['Collectivités', properties.collectivites],
-      ['Groupements', properties.groupements],
-      ['Localités', properties.localites],
+      ['Collectivités', properties.collectivites, 'collectivites'],
+      ['Groupements', properties.groupements, 'groupements'],
+      ['Localités', properties.localites, 'localites'],
       ['Sites FDSU', properties.sites],
       ['Missions', properties.missions],
     ],
@@ -4003,10 +4280,21 @@ function buildTypedIdentitySection(layerKey, properties, profile) {
       ['Code territoire', properties.code_territoire_fdsu || properties.code || properties.canonical_id],
       ['Secteurs', properties.secteurs],
       ['Chefferies', properties.chefferies],
-      ['Collectivités', properties.collectivites],
-      ['Groupements', properties.groupements],
-      ['Localités', properties.localites],
+      ['Collectivités', properties.collectivites, 'collectivites'],
+      ['Groupements', properties.groupements, 'groupements'],
+      ['Localités', properties.localites, 'localites'],
       ['Villages', properties.villages],
+      ['Sites FDSU', properties.sites],
+      ['Missions', properties.missions],
+    ],
+    collectivite: [
+      ['Territoire', properties.territoire],
+      ['Province', properties.province],
+      ['Zone FDSU', properties.zone_fdsu],
+      ['Code collectivité', properties.code || properties.canonical_id],
+      ['Type', properties.type],
+      ['Groupements', properties.groupements, 'groupements'],
+      ['Localités', properties.localites, 'localites'],
       ['Sites FDSU', properties.sites],
       ['Missions', properties.missions],
     ],
@@ -4014,8 +4302,10 @@ function buildTypedIdentitySection(layerKey, properties, profile) {
       ['Collectivité', properties.collectivite],
       ['Territoire', properties.territoire],
       ['Province', properties.province],
-      ['Localités', properties.localites],
+      ['Localités', properties.localites, 'localites'],
       ['Villages', properties.villages],
+      ['Sites FDSU', properties.sites],
+      ['Missions', properties.missions],
     ],
     localite: [
       ['Groupement', properties.groupement],
@@ -4024,6 +4314,10 @@ function buildTypedIdentitySection(layerKey, properties, profile) {
       ['Province', properties.province],
       ['Coordonnées', formatGpsCoordinates(properties)],
       ['Population', properties.population || profile.population],
+      ['Sites FDSU liés', properties.sites],
+      ['Missions liées', properties.missions],
+      ['Services publics', formatPublicServices(properties.services_publics)],
+      ['Connectivité', formatConnectivity(properties.connectivite)],
       ['Couverture réseau', profile.couverture_numerique],
       ['Potentiel CCN', profile.potentiel_numerique],
       ['Score FDSU', profile.score_priorite_fdsu],
@@ -4047,6 +4341,7 @@ function getEntityProfileType(layerKey, properties) {
   if (layerKey === 'provinces' && name === 'kinshasa') return 'ville_province';
   if (layerKey === 'provinces') return 'province';
   if (layerKey === 'territoires') return type.includes('ville') ? 'ville' : 'territoire';
+  if (layerKey === 'collectivites') return 'collectivite';
   if (layerKey === 'groupements') return 'groupement';
   if (layerKey === 'villages' || layerKey === 'localites') return 'localite';
   return 'default';
@@ -4059,6 +4354,7 @@ function getProfileTypeLabel(type) {
     ville_province: 'Fiche Ville-Province',
     territoire: 'Fiche Territoire',
     ville: 'Fiche Ville',
+    collectivite: 'Fiche Collectivité',
     groupement: 'Fiche Groupement',
     localite: 'Fiche Localité',
     default: 'Fiche métier',
@@ -4066,13 +4362,90 @@ function getProfileTypeLabel(type) {
 }
 
 function buildProfileSection(title, rows, embedded = false) {
-  const content = `<div class="detail-attributes">${rows.map(([label, value]) => `<div class="detail-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(formatAttributeValue(value || missingDataText()))}</strong></div>`).join('')}</div>`;
+  const content = `<div class="detail-attributes">${rows.map((row) => buildProfileDetailRow(row)).join('')}</div>`;
   if (embedded) return content;
   return `<section class="profile-section">${title ? `<h3>${escapeHtml(title)}</h3>` : ''}${content}</section>`;
 }
 
+function buildProfileDetailRow(row) {
+  const [label, value, relationKey] = row;
+  const hasValue = value !== null && value !== undefined && value !== '';
+  const formatted = hasValue ? formatAttributeValue(value) : missingDataText();
+  const relationButton = relationKey && hasValue
+    ? `<button type="button" class="table-action-button relation-list-button" data-open-relation-list="${escapeHtml(relationKey)}">Voir la liste</button>`
+    : '';
+  return `
+    <div class="detail-row relation-detail-row">
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(formatted)}</strong>
+      ${relationButton}
+    </div>
+  `;
+}
+
 function missingDataText() {
-  return 'Donnée non encore renseignée';
+  return 'À compléter';
+}
+
+function renderDemoEnrichmentBanner(properties) {
+  const demo = properties.demo_enrichment;
+  const applied = asArray(demo?.applied);
+  if (!demo || applied.length === 0) return '';
+  return `
+    <section class="profile-section demo-enrichment-section">
+      <div class="demo-enrichment-header">
+        <div>
+          <h3>Enrichissement CNCT démo</h3>
+          <p>Les informations ci-dessous complètent l'affichage sans modifier le référentiel officiel.</p>
+        </div>
+        <span class="demo-enrichment-badge">Proposition à valider</span>
+      </div>
+      <div class="demo-enrichment-meta">
+        <span>Donnée affichée en mode démo</span>
+        <span>Confiance : ${escapeHtml(demo.confidence_level || 'à vérifier')}</span>
+        <span>Consultation : ${escapeHtml(demo.consulted_at || 'à compléter')}</span>
+      </div>
+      <div class="demo-enrichment-source">
+        <strong>Source</strong>
+        <span>${escapeHtml(demo.source_name || 'Source à vérifier')}</span>
+        <small>${escapeHtml(demo.source_url || 'URL non disponible')}</small>
+      </div>
+      <div class="demo-enrichment-fields">
+        ${applied.slice(0, 8).map((item) => `<span>${escapeHtml(formatDetailLabel(item.field))}</span>`).join('')}
+      </div>
+    </section>
+  `;
+}
+
+function formatPublicServices(services) {
+  if (!services || typeof services !== 'object') return '';
+  const labels = [
+    ['centre_sante', 'Centre de santé'],
+    ['ecole_primaire', 'École primaire'],
+    ['ecole_secondaire', 'École secondaire'],
+    ['marche', 'Marché'],
+    ['electricite', 'Électricité'],
+  ];
+  const available = labels
+    .filter(([key]) => services[key] === true)
+    .map(([, label]) => label);
+  return available.length ? available.join(', ') : '0 service public renseigné';
+}
+
+function formatConnectivity(connectivity) {
+  if (!connectivity || typeof connectivity !== 'object') return '';
+  const networks = [
+    ['couverture_2g', '2G'],
+    ['couverture_3g', '3G'],
+    ['couverture_4g', '4G'],
+    ['couverture_5g', '5G'],
+  ]
+    .filter(([key]) => connectivity[key] === true)
+    .map(([, label]) => label);
+  const score = connectivity.score_connectivite !== null && connectivity.score_connectivite !== undefined
+    ? `Score ${Number(connectivity.score_connectivite).toLocaleString('fr-FR')}`
+    : '';
+  return [networks.join(', '), score].filter(Boolean).join(' - ') || '0 couverture renseignée';
 }
 
 function buildKnowledgeBaseSection(profile) {
@@ -4114,12 +4487,12 @@ function getFutureProfile(properties) {
     score_priorite_fdsu: profile.score_priorite_fdsu || '',
     recommandations: profile.recommandations || '',
     infrastructures: profile.infrastructures || [],
-    historique: profile.historique || metadata.historique || '',
-    description: profile.description || metadata.description || '',
-    geographie: profile.geographie || metadata.geographie || '',
-    climat: profile.climat || metadata.climat || '',
-    subdivision: profile.subdivision || metadata.subdivision || '',
-    population: profile.population || metadata.population || '',
+    historique: profile.historique || metadata.historique || properties.historique || '',
+    description: profile.description || metadata.description || properties.description || '',
+    geographie: profile.geographie || metadata.geographie || properties.geographie || '',
+    climat: profile.climat || metadata.climat || properties.climat || '',
+    subdivision: profile.subdivision || metadata.subdivision || properties.subdivision || '',
+    population: profile.population || metadata.population || properties.population || '',
     potentiel_agricole: profile.potentiel_agricole || metadata.potentiel_agricole || profile.potentiels?.agricole || '',
     potentiel_minier: profile.potentiel_minier || metadata.potentiel_minier || profile.potentiels?.minier || '',
     potentiel_touristique: profile.potentiel_touristique || metadata.potentiel_touristique || profile.potentiels?.touristique || '',
@@ -4134,13 +4507,13 @@ function renderEconomicActivities(profile) {
     profile.activite_secondaire ? { nom: profile.activite_secondaire, role: 'Secondaire' } : null,
     ...asArray(profile.activites_economiques).map((activity) => typeof activity === 'string' ? { nom: activity } : activity),
   ].filter(Boolean);
-  if (activities.length === 0) return '<p>Donnée socio-économique non encore renseignée.</p>';
+  if (activities.length === 0) return '<p>À compléter</p>';
   return `<div class="activity-chip-list">${activities.map((activity) => `<span class="activity-chip"><strong>${escapeHtml(activity.nom || activity.label || 'Activité')}</strong><small>${escapeHtml(activity.role || activity.priorite || 'À qualifier')}</small></span>`).join('')}</div>`;
 }
 
 function renderChallenges(profile) {
   const challenges = asArray(profile.defis);
-  if (challenges.length === 0) return '<p>Aucun défi renseigné.</p>';
+  if (challenges.length === 0) return '<p>À compléter</p>';
   return `<div class="challenge-list">${challenges.map((challenge) => {
     const label = typeof challenge === 'string' ? challenge : challenge.nom || challenge.label || 'Défi';
     const level = typeof challenge === 'string' ? 'À qualifier' : challenge.niveau || 'À qualifier';
@@ -4151,13 +4524,17 @@ function renderChallenges(profile) {
 function renderPotentials(profile) {
   const potentials = profile.potentiels || {};
   const keys = ['agricole', 'pastoral', 'halieutique', 'minier', 'forestier', 'touristique', 'commercial', 'numerique', 'energetique'];
-  return `<div class="potential-grid">${keys.map((key) => `<div><span>${escapeHtml(key)}</span><strong>${escapeHtml(formatAttributeValue(potentials[key] || 'Non noté'))}/5</strong></div>`).join('')}</div>`;
+  return `<div class="potential-grid">${keys.map((key) => {
+    const value = potentials[key];
+    const formatted = typeof value === 'number' ? `${value}/5` : formatAttributeValue(value || 'À compléter');
+    return `<div><span>${escapeHtml(key)}</span><strong>${escapeHtml(formatted)}</strong></div>`;
+  }).join('')}</div>`;
 }
 
 function renderServiceGrid(profile) {
   const services = profile.services_publics || {};
   const keys = ['ecoles', 'centres_sante', 'batiments_administratifs', 'marches', 'eglises', 'points_eau', 'reseau_electrique', 'couverture_telephonique', 'internet', 'ccn', 'sites_fdsu'];
-  return `<div class="service-grid">${keys.map((key) => `<div><span>${escapeHtml(key.replaceAll('_', ' '))}</span><strong>${escapeHtml(formatAttributeValue(services[key] || 'Non disponible'))}</strong></div>`).join('')}</div>`;
+  return `<div class="service-grid">${keys.map((key) => `<div><span>${escapeHtml(key.replaceAll('_', ' '))}</span><strong>${escapeHtml(formatAttributeValue(services[key] || 'À compléter'))}</strong></div>`).join('')}</div>`;
 }
 
 function renderListOrPlaceholder(items, placeholder) {
@@ -6224,14 +6601,16 @@ function getDatabaseStatus() {
   const dbSyncEl = document.querySelector('#db-sync');
 
   if (!apiStatusEl || !dbStatusEl || !dbSyncEl) return;
-  apiStatusEl.textContent = LOCAL_JSON_MODE ? 'Mode JSON local' : 'API FastAPI';
-  dbStatusEl.textContent = LOCAL_JSON_MODE ? 'Non connectée' : 'API rapports JSON';
+  apiStatusEl.textContent = LOCAL_JSON_MODE ? 'Mode JSON local' : 'Mode DB';
+  dbStatusEl.textContent = LOCAL_JSON_MODE ? 'Non connectée' : 'Vérification...';
 
   if (!LOCAL_JSON_MODE) {
-    fetchJson('/health')
+    Promise.resolve(API_HEALTH || fetchApiJson('/health'))
       .then((health) => {
-        apiStatusEl.textContent = health?.status === 'ok' ? 'API FastAPI connectée' : 'API FastAPI indisponible';
-        dbStatusEl.textContent = health?.database || 'Base non connectée';
+        API_HEALTH = health;
+        const databaseConnected = health?.mode === 'db' && health?.status === 'ok';
+        apiStatusEl.textContent = databaseConnected ? 'Mode DB' : 'API FastAPI indisponible';
+        dbStatusEl.textContent = databaseConnected ? 'Connectée' : (health?.database || 'Base non connectée');
         dbSyncEl.textContent = health?.loaded_at || new Date().toLocaleString('fr-FR');
       })
       .catch(() => {
@@ -6402,18 +6781,7 @@ function fetchJson(endpoint) {
     }
     return Promise.resolve(null);
   }
-  const url = new URL(endpoint, API_BASE_URL).toString();
-
-  return fetch(url)
-    .then((response) => {
-      if (!response.ok) {
-        return Promise.reject(new Error('Route non disponible'));
-      }
-      return response.json();
-    })
-    .catch(() => {
-      return Promise.resolve(null);
-    });
+  return fetchApiJson(endpoint).catch(() => null);
 }
 
 function updateSummaryCard(id) {
@@ -6490,7 +6858,4 @@ quickActions.forEach((button) => {
 
 window.addEventListener('hashchange', renderRouteFromHash);
 
-if (!window.location.hash) {
-  window.location.hash = 'dashboard';
-}
-renderRouteFromHash();
+initializeApplication();
