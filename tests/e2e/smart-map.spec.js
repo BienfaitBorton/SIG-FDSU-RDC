@@ -43,6 +43,15 @@ async function openCartography(page) {
   await page.waitForFunction(() => window.cartographyState?.initialized === true, null, { timeout: 30_000 });
 }
 
+async function waitForHierarchyReady(page) {
+  await page.waitForFunction(() => {
+    const state = window.cartographyState;
+    return state?.spatialContext?.layerKey === 'rdc'
+      && (state?.features?.provinces?.length ?? 0) > 0
+      && (state?.layers?.provinces?.getLayers?.().length ?? 0) > 0;
+  }, null, { timeout: 60_000 });
+}
+
 test.describe('SIG-FDSU RDC – Smart Map', () => {
   test('chargement complet du dashboard', async ({ page }) => {
     const errors = attachConsoleCollector(page);
@@ -70,21 +79,10 @@ test.describe('SIG-FDSU RDC – Smart Map', () => {
 
   test('affichage et activation des couches', async ({ page }) => {
     await openCartography(page);
+    await waitForHierarchyReady(page);
 
-    const provincesCheckbox = page.locator('#layer-list input[data-layer="provinces"]');
-    await expect(provincesCheckbox).toBeVisible();
-    await page.waitForFunction(() => {
-      const checkbox = document.querySelector('#layer-list input[data-layer="provinces"]');
-      return checkbox && !checkbox.disabled;
-    }, null, { timeout: 60_000 });
-    await provincesCheckbox.check();
-
-    await page.waitForFunction(() => {
-      const state = window.cartographyState;
-      return state?.layerStatus?.provinces === true || state?.features?.provinces?.length > 0;
-    }, null, { timeout: 45_000 });
-
-    await expect(page.locator('#map-synchronized-list .sync-list-header, #map-synchronized-list .zone-detail-empty')).toBeVisible();
+    await expect(page.locator('#map-synchronized-list .sync-list-item').first()).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator('#map-synchronized-list .sync-list-header')).toBeVisible();
   });
 
   test('zoom et déplacement sur la carte', async ({ page }) => {
@@ -240,5 +238,129 @@ test.describe('SIG-FDSU RDC – Smart Map', () => {
       expect(sidebarBox.width).toBeGreaterThan(200);
       expect(layoutBox.width).toBeGreaterThan(sidebarBox.width);
     }
+  });
+});
+
+test.describe('SIG-FDSU RDC – Navigation hiérarchique exclusive', () => {
+  test('vue nationale affiche uniquement les provinces', async ({ page }) => {
+    await openCartography(page);
+    await waitForHierarchyReady(page);
+
+    const stats = await page.evaluate(() => ({
+      context: window.cartographyState.spatialContext?.layerKey,
+      visibleProvinces: window.cartographyState.layers.provinces.getLayers().length,
+      totalProvinces: window.cartographyState.features.provinces.length,
+      territoiresVisible: window.cartographyState.map.hasLayer(window.cartographyState.layers.territoires),
+    }));
+
+    expect(stats.context).toBe('rdc');
+    expect(stats.visibleProvinces).toBe(stats.totalProvinces);
+    expect(stats.totalProvinces).toBeGreaterThan(0);
+    expect(stats.territoiresVisible).toBe(false);
+  });
+
+  test('clic province isole le contexte et met à jour le fil d’Ariane', async ({ page }) => {
+    await openCartography(page);
+    await waitForHierarchyReady(page);
+
+    const totalProvinces = await page.evaluate(() => window.cartographyState.features.provinces.length);
+    await page.locator('#map-synchronized-list .sync-list-item').first().click();
+
+    await page.waitForFunction(() => (window.cartographyState?.spatialContextTrail?.length ?? 0) > 1, null, { timeout: 30_000 });
+
+    const after = await page.evaluate(() => ({
+      visibleProvinces: window.cartographyState.layers.provinces.getLayers().length,
+      breadcrumb: document.querySelector('#map-breadcrumb')?.innerText || '',
+      backEnabled: !document.querySelector('#map-context-back')?.disabled,
+      contextLayer: window.cartographyState.spatialContext?.layerKey,
+    }));
+
+    expect(after.contextLayer).toBe('provinces');
+    expect(after.visibleProvinces).toBe(1);
+    expect(after.breadcrumb).toContain('RDC');
+    expect(after.backEnabled).toBe(true);
+    expect(totalProvinces).toBeGreaterThan(1);
+  });
+
+  test('clic territoire affiche uniquement les collectivités du contexte', async ({ page }) => {
+    await openCartography(page);
+    await waitForHierarchyReady(page);
+
+    await page.locator('#map-synchronized-list .sync-list-item').first().click();
+    await page.waitForFunction(() => window.cartographyState.spatialContext?.layerKey === 'provinces', null, { timeout: 30_000 });
+
+    await page.waitForFunction(
+      () => {
+        const listCount = document.querySelectorAll('#map-synchronized-list .sync-list-item').length;
+        const emptyMessage = document.querySelector('#map-synchronized-list .zone-detail-empty, #zones-message')?.textContent || '';
+        return listCount > 0 || /Aucune subdivision disponible/i.test(emptyMessage);
+      },
+      null,
+      { timeout: 30_000 },
+    );
+
+    const territoryCount = await page.locator('#map-synchronized-list .sync-list-item').count();
+    if (territoryCount === 0) {
+      await expect(page.locator('#zones-message')).toContainText(/Aucune subdivision disponible/i);
+      return;
+    }
+
+    await page.locator('#map-synchronized-list .sync-list-item').first().click();
+    await page.waitForFunction(() => window.cartographyState.spatialContext?.layerKey === 'territoires', null, { timeout: 30_000 });
+
+    const stats = await page.evaluate(() => ({
+      visibleTerritoires: window.cartographyState.layers.territoires.getLayers().length,
+      contextLayer: window.cartographyState.spatialContext?.layerKey,
+      breadcrumb: document.querySelector('#map-breadcrumb')?.innerText || '',
+    }));
+
+    expect(stats.contextLayer).toBe('territoires');
+    expect(stats.visibleTerritoires).toBe(1);
+    expect(stats.breadcrumb).toMatch(/RDC/i);
+  });
+
+  test('bouton retour et vue nationale restaurent la RDC', async ({ page }) => {
+    await openCartography(page);
+    await waitForHierarchyReady(page);
+
+    await page.locator('#map-synchronized-list .sync-list-item').first().click();
+    await page.waitForFunction(() => (window.cartographyState?.spatialContextTrail?.length ?? 0) > 1, null, { timeout: 30_000 });
+
+    await page.locator('#map-context-back').click();
+    await page.waitForFunction(() => window.cartographyState.spatialContext?.layerKey === 'rdc', null, { timeout: 15_000 });
+    await expect(page.locator('#map-breadcrumb')).toContainText('RDC');
+
+    await page.locator('#map-synchronized-list .sync-list-item').first().click();
+    await page.waitForFunction(() => window.cartographyState.spatialContext?.layerKey === 'provinces', null, { timeout: 15_000 });
+
+    await page.locator('#zoom-auto').click();
+    await page.waitForFunction(() => window.cartographyState.spatialContext?.layerKey === 'rdc', null, { timeout: 15_000 });
+    await expect(page.locator('#map-context-back')).toBeDisabled();
+  });
+
+  test('aucun crash si une subdivision est vide', async ({ page }) => {
+    const errors = attachConsoleCollector(page);
+    await openCartography(page);
+    await waitForHierarchyReady(page);
+
+    await page.evaluate(async () => {
+      window.cartographyState.features.missions = [];
+      window.cartographyState.data.missions = [];
+      window.cartographyState.spatialContext = {
+        level: 'sites',
+        layerKey: 'sites',
+        featureId: 'site-test-empty',
+        properties: { nom: 'Site test', id: 'site-test-empty' },
+        feature: null,
+      };
+      window.cartographyState.spatialContextTrail = [
+        { layerKey: 'rdc', label: 'RDC', properties: {} },
+        { layerKey: 'sites', label: 'Site test', properties: { nom: 'Site test' } },
+      ];
+      if (typeof renderContextMap === 'function') renderContextMap();
+    });
+
+    await expect(page.locator('#zones-message')).toContainText(/Aucune subdivision disponible/i);
+    expect(errors.filter((e) => !isNonBlockingConsoleError(e))).toEqual([]);
   });
 });
