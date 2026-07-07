@@ -4602,6 +4602,7 @@ function initializeNationalMapModule() {
   nationalMapState.breadcrumbElement = document.querySelector('#dashboard-map-breadcrumb');
   nationalMapState.synchronizedListElement = document.querySelector('#dashboard-map-synchronized-list');
   nationalMapState.messageElement = document.querySelector('#dashboard-map-message');
+  setupNationalMapResizeObserver(mapElement);
 
   if (!nationalMapState.map) {
     nationalMapState.map = L.map(mapElement, {
@@ -4659,6 +4660,26 @@ function initializeNationalMapModule() {
 
   nationalMapState.initialized = true;
   bootstrap();
+}
+
+function setupNationalMapResizeObserver(mapElement) {
+  if (!mapElement || nationalMapState.resizeObserver) return;
+
+  const invalidate = () => {
+    if (nationalMapState.map) {
+      window.requestAnimationFrame(() => nationalMapState.map.invalidateSize());
+    }
+  };
+
+  if (typeof ResizeObserver !== 'undefined') {
+    nationalMapState.resizeObserver = new ResizeObserver(invalidate);
+    nationalMapState.resizeObserver.observe(mapElement);
+  }
+
+  if (nationalMapState.windowResizeBound !== true) {
+    nationalMapState.windowResizeBound = true;
+    window.addEventListener('resize', invalidate);
+  }
 }
 
 function initializeGovernanceModule() {

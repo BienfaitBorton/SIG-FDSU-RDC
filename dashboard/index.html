@@ -164,17 +164,66 @@
                 </div>
                 <span class="panel-badge">Actif</span>
               </div>
-              <div class="dashboard-national-map-shell">
-                <div class="map-nav-actions">
-                  <button id="dashboard-map-context-back" type="button" class="table-action-button" disabled>Retour</button>
-                  <button id="dashboard-map-reset-national" type="button" class="primary-button">Vue nationale</button>
+              <div class="dashboard-map-workspace">
+                <div class="dashboard-national-map-shell dashboard-map-primary">
+                  <div class="map-nav-actions">
+                    <button id="dashboard-map-context-back" type="button" class="table-action-button" disabled>Retour</button>
+                    <button id="dashboard-map-reset-national" type="button" class="primary-button">Vue nationale</button>
+                  </div>
+                  <nav id="dashboard-map-breadcrumb" class="map-breadcrumb" aria-label="Fil d'Ariane cartographie nationale"></nav>
+                  <p id="dashboard-map-message" class="cartography-note" aria-live="polite" hidden></p>
+                  <div id="dashboard-national-map" class="dashboard-national-map" role="region" aria-label="Carte nationale interactive"></div>
+                  <div id="dashboard-map-synchronized-list" class="map-synchronized-list dashboard-national-sync-list"></div>
                 </div>
-                <nav id="dashboard-map-breadcrumb" class="map-breadcrumb" aria-label="Fil d'Ariane cartographie nationale"></nav>
-                <p id="dashboard-map-message" class="cartography-note" aria-live="polite" hidden></p>
-                <div id="dashboard-national-map" class="dashboard-national-map" role="region" aria-label="Carte nationale interactive"></div>
-                <div id="dashboard-map-synchronized-list" class="map-synchronized-list dashboard-national-sync-list"></div>
+                <aside class="dashboard-zones-sidebar" aria-label="Zones FDSU">
+                  <div class="dashboard-zones-sidebar-header">
+                    <p class="panel-label">Zones FDSU</p>
+                    <h3>Répartition</h3>
+                  </div>
+                  <ul class="zone-list dashboard-zones-list">
+                    <li class="zone-item zone-nd" data-zone="ND" tabindex="0"><span>ND</span><strong id="zone-ND">0</strong></li>
+                    <li class="zone-item zone-sd" data-zone="SD" tabindex="0"><span>SD</span><strong id="zone-SD">0</strong></li>
+                    <li class="zone-item zone-ce" data-zone="CE" tabindex="0"><span>CE</span><strong id="zone-CE">0</strong></li>
+                    <li class="zone-item zone-ot" data-zone="OT" tabindex="0"><span>OT</span><strong id="zone-OT">0</strong></li>
+                    <li class="zone-item zone-et" data-zone="ET" tabindex="0"><span>ET</span><strong id="zone-ET">0</strong></li>
+                  </ul>
+                </aside>
               </div>
             </article>
+
+            <div class="dashboard-status-row">
+              <div class="status-card">
+                <div class="panel-header">
+                  <div>
+                    <p class="panel-label">État global</p>
+                    <h3>Statut API &amp; base</h3>
+                  </div>
+                </div>
+                <ul class="status-list">
+                  <li><span>API</span><strong id="api-status">Chargement...</strong></li>
+                  <li><span>Base de données</span><strong id="db-status">Chargement...</strong></li>
+                  <li><span>Dernière synchronisation</span><strong id="db-sync">—</strong></li>
+                </ul>
+              </div>
+              <div class="status-card secondary-card">
+                <div class="panel-header">
+                  <div>
+                    <p class="panel-label">Import récent</p>
+                    <h3>Dernier import</h3>
+                  </div>
+                </div>
+                <p class="status-card-text" id="last-import">Historique des imports non exposé par l’API.</p>
+              </div>
+              <div class="status-card secondary-card">
+                <div class="panel-header">
+                  <div>
+                    <p class="panel-label">KPI</p>
+                    <h3>Performance</h3>
+                  </div>
+                </div>
+                <p class="status-card-text" id="kpi-summary">Données KPI non disponibles.</p>
+              </div>
+            </div>
             </div>
 
             <section id="dashboard-detail-view" class="dashboard-detail-view hidden" aria-hidden="true">
@@ -232,56 +281,6 @@
             </section>
           </div>
 
-          <aside class="dashboard-right-panel">
-            <div class="status-card">
-              <div class="panel-header">
-                <div>
-                  <p class="panel-label">État global</p>
-                  <h3>Statut API & base</h3>
-                </div>
-              </div>
-              <ul class="status-list">
-                <li><span>API</span><strong id="api-status">Chargement...</strong></li>
-                <li><span>Base de données</span><strong id="db-status">Chargement...</strong></li>
-                <li><span>Dernière synchronisation</span><strong id="db-sync">—</strong></li>
-              </ul>
-            </div>
-
-            <div class="zone-card">
-              <div class="panel-header">
-                <div>
-                  <p class="panel-label">Zones FDSU</p>
-                  <h3>Classification métier</h3>
-                </div>
-              </div>
-              <ul class="zone-list">
-                <li class="zone-item zone-nd" data-zone="ND" tabindex="0"><span>ND</span><strong id="zone-ND">0</strong></li>
-                <li class="zone-item zone-sd" data-zone="SD" tabindex="0"><span>SD</span><strong id="zone-SD">0</strong></li>
-                <li class="zone-item zone-ce" data-zone="CE" tabindex="0"><span>CE</span><strong id="zone-CE">0</strong></li>
-                <li class="zone-item zone-ot" data-zone="OT" tabindex="0"><span>OT</span><strong id="zone-OT">0</strong></li>
-                <li class="zone-item zone-et" data-zone="ET" tabindex="0"><span>ET</span><strong id="zone-ET">0</strong></li>
-              </ul>
-            </div>
-
-            <div class="status-card secondary-card">
-              <div class="panel-header">
-                <div>
-                  <p class="panel-label">Import récent</p>
-                  <h3>Dernier import</h3>
-                </div>
-              </div>
-              <p class="status-card-text" id="last-import">Historique des imports non exposé par l’API.</p>
-            </div>
-            <div class="status-card secondary-card">
-              <div class="panel-header">
-                <div>
-                  <p class="panel-label">KPI</p>
-                  <h3>Performance</h3>
-                </div>
-              </div>
-              <p class="status-card-text" id="kpi-summary">Données KPI non disponibles.</p>
-            </div>
-          </aside>
         </div>
 
         <div class="module-panel hidden" id="cartographie-panel" data-module="cartographie">

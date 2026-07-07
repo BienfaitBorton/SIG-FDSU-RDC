@@ -447,10 +447,54 @@ button {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-width: 0;
+}
+
+.dashboard-map-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(200px, 240px);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.dashboard-map-primary {
+  min-width: 0;
+}
+
+.dashboard-zones-sidebar {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(148, 163, 184, 0.08);
+  border-radius: 24px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.dashboard-zones-sidebar-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.dashboard-zones-list {
+  flex: 1;
+}
+
+.dashboard-zones-list .zone-item {
+  padding: 12px 14px;
+}
+
+.dashboard-status-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
 }
 
 .dashboard-national-map {
-  min-height: 420px;
+  width: 100%;
+  min-height: 520px;
+  height: clamp(420px, 58vh, 680px);
   border-radius: 26px;
   border: 1px solid rgba(56, 189, 248, 0.18);
   overflow: hidden;
@@ -830,7 +874,7 @@ button {
 }
 
 .status-card,
-.zone-card {
+.dashboard-zones-sidebar {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(148, 163, 184, 0.08);
   border-radius: 28px;
@@ -911,11 +955,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 24px;
-}
-
-.dashboard-right-panel {
-  display: grid;
-  gap: 20px;
+  min-width: 0;
 }
 
 .referentiel-content {
@@ -1773,7 +1813,7 @@ button {
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(320px, 0.9fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 24px;
 }
 
@@ -2495,6 +2535,14 @@ body.entity-profile-open .leaflet-control-container {
     grid-template-columns: 1fr;
   }
 
+  .dashboard-map-workspace {
+    grid-template-columns: minmax(0, 1fr) minmax(180px, 220px);
+  }
+
+  .dashboard-status-row {
+    grid-template-columns: 1fr;
+  }
+
   .governance-kpis {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2568,6 +2616,23 @@ body.entity-profile-open .leaflet-control-container {
 
   .map-placeholder {
     min-height: 320px;
+  }
+
+  .dashboard-map-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-national-map {
+    min-height: 360px;
+    height: clamp(320px, 48vh, 520px);
+  }
+
+  .dashboard-zones-sidebar {
+    order: 2;
+  }
+
+  .dashboard-map-primary {
+    order: 1;
   }
 
   .metrics-grid {
@@ -2716,7 +2781,6 @@ body.entity-profile-open .leaflet-control-container {
 }
 
 .dashboard-main,
-.dashboard-right-panel,
 .cartography-main,
 .cartography-sidebar,
 .governance-shell,
@@ -2759,7 +2823,7 @@ body.entity-profile-open .leaflet-control-container {
 .metric-card,
 .governance-kpi-card,
 .status-card,
-.zone-card,
+.dashboard-zones-sidebar,
 .info-card,
 .layers-panel,
 .carto-info-panel,
