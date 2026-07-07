@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import os
 from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+from app.config import DATABASE_URL
 from app.models import Base
 
 
@@ -18,11 +18,7 @@ target_metadata = Base.metadata
 
 
 def get_database_url() -> str:
-    return os.environ.get(
-        "DATABASE_URL",
-        config.get_main_option("sqlalchemy.url")
-        or "postgresql://postgres:postgres@localhost:5432/sig_fdsu_rdc",
-    )
+    return DATABASE_URL
 
 
 def run_migrations_offline() -> None:

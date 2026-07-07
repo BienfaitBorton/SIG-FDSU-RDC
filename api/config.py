@@ -1,17 +1,27 @@
-import os
+"""Façade API — réutilise la configuration centrale `app.config`."""
 
-DB_HOST = os.environ.get("DB_HOST", "localhost")
-DB_PORT = os.environ.get("DB_PORT", "5432")
-DB_NAME = os.environ.get("DB_NAME", "sig_fdsu_rdc")
-DB_USER = os.environ.get("DB_USER", "postgres")
-DB_PASSWORD = os.environ.get("DB_PASSWORD", "test123")
-
-DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
+from app.config import (
+    DATA_MODE,
+    DATABASE_URL,
+    DB_HOST,
+    DB_NAME,
+    DB_PASSWORD,
+    DB_PORT,
+    DB_USER,
+    build_database_url,
 )
 
-DATA_MODE = os.environ.get("DATA_MODE", "json").strip().lower()
+__all__ = [
+    "DATA_MODE",
+    "DATABASE_URL",
+    "DB_HOST",
+    "DB_NAME",
+    "DB_PASSWORD",
+    "DB_PORT",
+    "DB_USER",
+    "build_database_url",
+    "connect_db",
+]
 
 
 def connect_db(**kwargs):

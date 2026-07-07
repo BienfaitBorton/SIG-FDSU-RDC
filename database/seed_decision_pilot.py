@@ -1,16 +1,12 @@
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
 from typing import Any
 
 import psycopg2
 
+from app.config import DATABASE_URL
 
-DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    "postgresql://postgres:postgres@localhost:5432/sig_fdsu_rdc",
-)
 SOURCE = "pilote_demo"
 
 

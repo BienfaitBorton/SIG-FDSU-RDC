@@ -2,9 +2,8 @@
 """Reset the database schema and recreate SQLAlchemy models.
 
 Usage:
-  - Configure connection via environment variable `DATABASE_URL` or
-    the following vars: `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`, `DB_NAME`.
-  - Defaults: user=postgres, password=test123, host=localhost, port=5432, db=postgres
+  - Configure connection via `DATABASE_URL` or `DB_*` variables (see `app/config.py`).
+  - Defaults: user=postgres, password=test123, host=localhost, port=5432, db=sig_fdsu_rdc
 
 This script will:
   1. Connect to PostgreSQL
@@ -27,23 +26,14 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
+from app.config import DATABASE_URL
 from app.models import Base
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
 
 def get_database_url() -> str:
-    env = os.environ
-    url = env.get("DATABASE_URL")
-    if url:
-        return url
-
-    user = env.get("DB_USER", "postgres")
-    password = env.get("DB_PASSWORD", "test123")
-    host = env.get("DB_HOST", "localhost")
-    port = env.get("DB_PORT", "5432")
-    db = env.get("DB_NAME", "postgres")
-    return f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{db}"
+    return DATABASE_URL
 
 
 def drop_public_tables(engine) -> List[str]:

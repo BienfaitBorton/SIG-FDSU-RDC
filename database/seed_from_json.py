@@ -1,22 +1,18 @@
 from __future__ import annotations
 
 import json
-import os
 from pathlib import Path
 from typing import Any
 
 import psycopg2
 from psycopg2.extras import Json
 
+from app.config import DATABASE_URL
 from app.fdsu_nomenclature import enrich_entity, find_province, find_territory, load_nomenclature
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 REPORTS_DIR = BASE_DIR / "data" / "reports"
-DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    "postgresql://postgres:postgres@localhost:5432/sig_fdsu_rdc",
-)
 
 ZONE_LABELS = {zone["code"]: zone["nom"] for zone in load_nomenclature().get("zones", [])}
 

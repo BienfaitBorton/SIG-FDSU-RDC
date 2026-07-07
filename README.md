@@ -41,6 +41,24 @@ pip install -r requirements.txt
 
 4. Configurer la base de données PostgreSQL et activer PostGIS.
 
+### Configuration (`.env`)
+
+Copier le modèle et ajuster si nécessaire :
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Variables principales (voir `.env.example`) :
+
+| Variable | Rôle |
+|----------|------|
+| `DATABASE_URL` | Connexion PostgreSQL/PostGIS |
+| `DATA_MODE=json` | Mode démonstration — API sert les rapports JSON locaux (défaut) |
+| `DATA_MODE=db` | Mode production locale — API lit/écrit PostgreSQL/PostGIS |
+
+Le fichier `.env` est chargé automatiquement au démarrage de l'API (`app/config.py`). Les variables déjà définies dans le shell priment sur `.env`.
+
 ## Démarrage rapide (Windows)
 
 Depuis la racine du projet, après création de l'environnement virtuel et installation des dépendances :
@@ -86,7 +104,7 @@ L'API conserve aussi un fallback JSON et peut lire PostgreSQL/PostGIS via la var
 Créer un fichier `.env` local à partir de `.env.example` ou définir :
 
 ```powershell
-$env:DATABASE_URL="postgresql://postgres:postgres@localhost:5432/sig_fdsu_rdc"
+$env:DATABASE_URL="postgresql://postgres:test123@localhost:5432/sig_fdsu_rdc"
 $env:DATA_MODE="db"
 ```
 
