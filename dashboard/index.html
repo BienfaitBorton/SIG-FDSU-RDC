@@ -290,12 +290,12 @@
             <section class="cartography-main">
               <div class="map-toolbar">
                 <div>
-                  <button id="zoom-auto" class="primary-button">Zoom automatique</button>
+                  <button id="zoom-auto" class="primary-button">Retour vue nationale</button>
                 </div>
                 <div class="thematic-controls">
                   <label for="thematic-layer-select">Carte thématique</label>
                   <select id="thematic-layer-select">
-                    <option value="">Aucune</option>
+                    <option value="administrative">Mode administratif</option>
                     <option value="economic">Activités économiques</option>
                     <option value="agriculture">Potentiel agricole</option>
                     <option value="mining">Potentiel minier</option>
@@ -314,8 +314,21 @@
                     <li data-zone="SD" tabindex="0"><span class="legend-swatch legend-sd"></span>SD - Sud</li>
                     <li data-zone="ET" tabindex="0"><span class="legend-swatch legend-et"></span>ET - Est</li>
                   </ul>
+                  <p class="legend-title legend-title-secondary">Couches cartographiques</p>
+                  <ul class="legend-list">
+                    <li><span class="legend-swatch legend-boundary"></span>Contour RDC</li>
+                    <li><span class="legend-swatch legend-zone-fill"></span>Zones</li>
+                    <li><span class="legend-swatch legend-province-line"></span>Provinces</li>
+                    <li><span class="legend-swatch legend-territory-line"></span>Territoires</li>
+                    <li><span class="legend-swatch legend-collectivity-line"></span>Collectivités</li>
+                    <li><span class="legend-swatch legend-groupement-point"></span>Groupements</li>
+                    <li><span class="legend-swatch legend-locality-point"></span>Localités</li>
+                    <li><span class="legend-swatch legend-site-point"></span>Sites</li>
+                    <li><span class="legend-swatch legend-mission-point"></span>Missions</li>
+                  </ul>
                 </div>
               </div>
+              <nav id="map-breadcrumb" class="map-breadcrumb" aria-label="Fil d'Ariane cartographique"></nav>
               <p id="zones-message" class="cartography-note" aria-live="polite"></p>
               <div id="map" class="map-canvas"></div>
             </section>
@@ -342,6 +355,16 @@
                   <li><label><input type="checkbox" data-layer="sites" /> Sites FDSU</label></li>
                   <li><label><input type="checkbox" data-layer="missions" /> Missions</label></li>
                 </ul>
+              </div>
+
+              <div class="info-panel carto-sync-panel">
+                <div class="panel-header">
+                  <div>
+                    <p class="panel-label">Liste synchronisée</p>
+                    <h3>Entités visibles</h3>
+                  </div>
+                </div>
+                <div id="map-synchronized-list" class="map-synchronized-list"></div>
               </div>
 
               <div class="info-panel carto-info-panel">
