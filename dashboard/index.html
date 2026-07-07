@@ -216,11 +216,17 @@
                   <p class="panel-label">Cartographie nationale</p>
                   <h2>Centre de pilotage</h2>
                 </div>
-                <span class="panel-badge">À venir</span>
+                <span class="panel-badge">Actif</span>
               </div>
-              <div class="map-placeholder">
-                <div class="map-hero">Carte nationale</div>
-                <p>Réserve l’espace principal pour la carte nationale, les couches et les alertes géospatiales.</p>
+              <div class="dashboard-national-map-shell">
+                <div class="map-nav-actions">
+                  <button id="dashboard-map-context-back" type="button" class="table-action-button" disabled>Retour</button>
+                  <button id="dashboard-map-reset-national" type="button" class="primary-button">Vue nationale</button>
+                </div>
+                <nav id="dashboard-map-breadcrumb" class="map-breadcrumb" aria-label="Fil d'Ariane cartographie nationale"></nav>
+                <p id="dashboard-map-message" class="cartography-note" aria-live="polite" hidden></p>
+                <div id="dashboard-national-map" class="dashboard-national-map" role="region" aria-label="Carte nationale interactive"></div>
+                <div id="dashboard-map-synchronized-list" class="map-synchronized-list dashboard-national-sync-list"></div>
               </div>
             </article>
           </div>
@@ -289,9 +295,8 @@
           <div class="cartography-layout">
             <section class="cartography-main">
               <div class="map-toolbar">
-                <div class="map-nav-actions">
-                  <button id="map-context-back" type="button" class="table-action-button" disabled>Retour</button>
-                  <button id="zoom-auto" type="button" class="primary-button">Vue nationale</button>
+                <div>
+                  <button id="zoom-auto" type="button" class="primary-button">Retour vue nationale</button>
                 </div>
                 <div class="thematic-controls">
                   <label for="thematic-layer-select">Carte thématique</label>

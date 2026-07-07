@@ -443,6 +443,29 @@ button {
   cursor: not-allowed;
 }
 
+.dashboard-national-map-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dashboard-national-map {
+  min-height: 420px;
+  border-radius: 26px;
+  border: 1px solid rgba(56, 189, 248, 0.18);
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.92);
+}
+
+.dashboard-national-map.leaflet-container {
+  font: inherit;
+}
+
+.dashboard-national-sync-list {
+  max-height: 220px;
+  overflow: auto;
+}
+
 .map-canvas {
   min-height: 620px;
   border-radius: 26px;
