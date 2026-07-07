@@ -10,7 +10,7 @@ from sqlalchemy.exc import IntegrityError
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-from api.config import DATABASE_URL, DATA_MODE
+from api.config import DATA_MODE, connect_db
 from api.middlewares.exceptions import (
     sqlalchemy_integrity_error_handler,
     value_error_handler,
@@ -89,7 +89,7 @@ def use_database() -> bool:
 
 
 def db_fetch_all(query: str, params: tuple[Any, ...] = ()) -> list[dict[str, Any]]:
-    with psycopg2.connect(DATABASE_URL) as conn:
+    with connect_db() as conn:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, params)
             return [dict(row) for row in cur.fetchall()]
