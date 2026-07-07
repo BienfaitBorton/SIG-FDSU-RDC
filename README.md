@@ -41,6 +41,26 @@ pip install -r requirements.txt
 
 4. Configurer la base de données PostgreSQL et activer PostGIS.
 
+## Démarrage rapide (Windows)
+
+Depuis la racine du projet, après création de l'environnement virtuel et installation des dépendances :
+
+```powershell
+.\start_sig.ps1
+```
+
+Le script `start_sig.ps1` :
+
+- vérifie la présence de `.venv`, `api\main.py` et `dashboard\serve_utf8.py` ;
+- ouvre **deux fenêtres PowerShell** (API + dashboard) pour consulter les logs ;
+- affiche les URLs utiles ;
+- ouvre automatiquement le dashboard dans le navigateur.
+
+URLs locales :
+
+- **Dashboard** : http://127.0.0.1:8000
+- **API Docs** : http://127.0.0.1:8001/docs
+
 ## Lancement de l'API
 
 1. Vérifier que la base de données est accessible et configurée.
