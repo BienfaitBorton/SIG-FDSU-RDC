@@ -12,6 +12,17 @@ const FDSU_ZONE_DEFINITIONS = {
   OT: { nom: 'Zone Ouest', colorVar: '--zone-ot' },
   ET: { nom: 'Zone Est', colorVar: '--zone-et' },
 };
+const FDSU_ZONE_CODES = ['ND', 'OT', 'CE', 'SD', 'ET'];
+const FDSU_LAYER_STACK_ORDER = ['rdcBoundary', 'zones', 'provinces', 'territoires', 'collectivites', 'groupements', 'villages', 'sites', 'missions'];
+const FDSU_SMART_MAP_MODES = {
+  administrative: 'Mode administratif',
+  connectivity: 'Mode connectivité',
+  economic: 'Mode potentiel économique',
+  ccnPriority: 'Mode priorité CCN',
+  dataQuality: 'Mode qualité des données',
+  decision: 'Mode aide à la décision',
+};
+const RDC_MAP_BOUNDS = [[-13.45, 12.2], [5.4, 31.3]];
 const FDSU_PROVINCE_REFERENCE = {
   'BAS-UELE': { code: '01', zone_fdsu: 'ND', zone_nom: 'Zone Nord' },
   EQUATEUR: { code: '02', zone_fdsu: 'ND', zone_nom: 'Zone Nord' },
@@ -245,13 +256,23 @@ const cartographyState = {
     zones: null,
     collectivites: null,
     provinces: null,
+    territoires: null,
+    groupements: null,
     villages: null,
+    sites: null,
+    missions: null,
   },
   infoElement: null,
   zonesMessageElement: null,
+  breadcrumbElement: null,
+  synchronizedListElement: null,
   zonesLayer: null,
   collectivitesLayer: null,
   selectedLayer: null,
+  selectedFeature: null,
+  hoveredFeatureId: null,
+  spatialContext: null,
+  spatialContextTrail: [],
   data: {},
   features: {},
   featureLayers: {},
@@ -1848,6 +1869,8 @@ function initializeCartographyModule() {
   const zoomAutoButton = document.querySelector('#zoom-auto');
   cartographyState.infoElement = document.querySelector('#carto-info');
   cartographyState.zonesMessageElement = document.querySelector('#zones-message');
+  cartographyState.breadcrumbElement = document.querySelector('#map-breadcrumb');
+  cartographyState.synchronizedListElement = document.querySelector('#map-synchronized-list');
 
   if (!mapElement || !layerList || !zoomAutoButton || !cartographyState.infoElement || !cartographyState.zonesMessageElement) {
     return;
@@ -1863,13 +1886,19 @@ function initializeCartographyModule() {
     zoom: 5,
     minZoom: 3,
     maxZoom: 12,
+    maxBounds: RDC_MAP_BOUNDS,
+    maxBoundsViscosity: 0.65,
   });
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors',
+    opacity: 0.38,
   }).addTo(cartographyState.map);
 
   cartographyState.layers = {
+    rdcBoundary: L.geoJSON(null, {
+      style: styleRdcBoundaryFeature,
+    }),
     zones: L.geoJSON(null, {
       style: styleZoneFeature,
       onEachFeature: (feature, layer) => onGeoEachFeature(feature, layer, 'zones'),
@@ -1925,22 +1954,18 @@ function initializeCartographyModule() {
 
   setupLayerControls(layerList);
   setupMapInteractions();
+  setupLeafletLayerControlSync();
+  renderMapBreadcrumb();
+  renderSynchronizedLayerList();
   setupThematicControls();
-  zoomAutoButton.addEventListener('click', fitMapToZonesOrRdc);
+  zoomAutoButton.addEventListener('click', resetMapToNationalView);
   fitMapToRdc();
   loadGeneratedLayer({
-    layerKey: 'zones',
-    filePath: '/geodata/zones_fdsu.geojson',
-    emptyMessage: 'Couche non disponible.',
-    fallbackMessage: 'Couche non disponible.',
+    layerKey: 'rdcBoundary',
+    filePath: '/geodata/rdc_boundary.geojson',
+    emptyMessage: 'Contour RDC non disponible.',
+    fallbackMessage: 'Contour RDC non disponible.',
     visibleByDefault: true,
-  });
-  loadGeneratedLayer({
-    layerKey: 'collectivites',
-    filePath: '/geodata/collectivites.geojson',
-    emptyMessage: 'Couche non disponible.',
-    fallbackMessage: 'Couche non disponible.',
-    visibleByDefault: false,
   });
   loadWebSigLayers();
   setupAttributeExplorer();
@@ -1991,7 +2016,8 @@ function loadGeneratedLayer({ layerKey, filePath, emptyMessage, fallbackMessage,
         fitMapToRdc();
       }
 
-      updateLayerAvailabilityMessage(emptyMessage);
+      // Succès : effacer le message d'indisponibilité (emptyMessage ne doit s'afficher qu'en échec).
+      updateLayerAvailabilityMessage('');
     })
     .catch(() => {
       cartographyState.layerStatus[layerKey] = false;
@@ -2082,7 +2108,7 @@ const WEB_SIG_LAYER_DEFINITIONS = {
     reportPath: 'province_official/province_referential_official.json',
     listKey: 'province_referential',
     endpoint: '/provinces?limit=500',
-    visibleByDefault: true,
+    visibleByDefault: false,
   },
   territoires: {
     label: 'Territoires',
@@ -2128,15 +2154,13 @@ const WEB_SIG_LAYER_DEFINITIONS = {
 };
 
 function loadWebSigLayers() {
-  Object.entries(WEB_SIG_LAYER_DEFINITIONS).forEach(([layerKey, definition]) => {
-    loadWebSigLayer(layerKey, definition);
-  });
+  loadWebSigLayer('provinces', WEB_SIG_LAYER_DEFINITIONS.provinces);
 }
 
 function loadWebSigLayer(layerKey, definition) {
   const source = fetchPlatformLayerData(layerKey);
 
-  source
+  return source
     .then((items) => {
       const filteredItems = asArray(items).filter((item) => !definition.filter || definition.filter(item));
       const featureCollection = buildFeatureCollection(filteredItems, layerKey);
@@ -2151,6 +2175,7 @@ function loadWebSigLayer(layerKey, definition) {
       if (featureCollection.features.length > 0) {
         layer.addData(featureCollection);
         cartographyState.layerStatus[layerKey] = true;
+        if (cartographyState.spatialContext) refreshVisibleCartographyLayer(layerKey);
       } else {
         cartographyState.layerStatus[layerKey] = filteredItems.length > 0 ? 'attributes-only' : false;
       }
@@ -2163,6 +2188,7 @@ function loadWebSigLayer(layerKey, definition) {
 
       if (definition.visibleByDefault && featureCollection.features.length > 0) {
         layer.addTo(cartographyState.map);
+        refreshCartographicLayerPresentation();
         fitLayerBounds(layer);
       }
 
@@ -2185,34 +2211,50 @@ function loadWebSigLayer(layerKey, definition) {
 
 function buildZoneLayerFromProvinces(provinces) {
   if (!cartographyState.layers.zones || cartographyState.layers.zones.getLayers().length > 0) return;
-  const features = asArray(provinces)
+  const zones = new Map();
+  asArray(provinces)
     .filter((province) => province.geometry)
-    .map((province) => {
+    .forEach((province) => {
       const officialProvince = enrichFdsuNomenclature(province);
       const zoneCode = officialProvince.zone_fdsu;
+      if (!FDSU_ZONE_DEFINITIONS[zoneCode]) return;
+      if (!zones.has(zoneCode)) zones.set(zoneCode, { code: zoneCode, polygons: [], provinceNames: [] });
+      const zone = zones.get(zoneCode);
+      appendGeometryPolygons(zone.polygons, province.geometry);
+      if (province.nom || province.name) zone.provinceNames.push(province.nom || province.name);
+    });
+
+  const features = FDSU_ZONE_CODES
+    .map((zoneCode) => zones.get(zoneCode))
+    .filter((zone) => zone && zone.polygons.length > 0)
+    .map((zone) => {
+      const zoneCode = zone.code;
       const zoneName = getZoneName(zoneCode);
       const zoneStats = computeZoneStats(zoneCode);
+      const provinceNames = zoneStats.provinces.length > 0 ? zoneStats.provinces : zone.provinceNames;
       return {
         type: 'Feature',
-        geometry: province.geometry,
+        geometry: {
+          type: 'MultiPolygon',
+          coordinates: zone.polygons,
+        },
         properties: {
           layer: 'zones',
           code: zoneCode,
           zone_fdsu: zoneCode,
           nom: zoneName,
           type: 'Zone FDSU',
-          province: province.nom,
-          code_province_fdsu: officialProvince.code_province_fdsu,
           fdsu_codification_format: FDSU_CODE_FORMAT,
-          provinces_rattachees: zoneStats.provinces.join(', '),
-          nb_provinces: zoneStats.provinces.length,
+          provinces_rattachees: provinceNames.join(', '),
+          nb_provinces: provinceNames.length,
           territoires: zoneStats.territoires,
           collectivites: zoneStats.collectivites,
           groupements: zoneStats.groupements,
           localites: zoneStats.localites,
           sites: zoneStats.sites,
-          source: 'Couche stylisée par provinces rattachées aux zones',
-          statut: 'fallback_cartographique',
+          source: 'Couche de synthese par zones FDSU, construite depuis les provinces',
+          statut: 'fallback_cartographique_synthese',
+          synthetic_zone_layer: true,
         },
       };
     });
@@ -2220,16 +2262,30 @@ function buildZoneLayerFromProvinces(provinces) {
   const zonesLayer = cartographyState.layers.zones;
   zonesLayer.clearLayers();
   zonesLayer.addData({ type: 'FeatureCollection', features });
+  cartographyState.features.zones = features;
   cartographyState.layerStatus.zones = true;
   cartographyState.zonesLayer = zonesLayer;
   const checkbox = document.querySelector('input[data-layer="zones"]');
   if (checkbox) {
     checkbox.disabled = false;
-    checkbox.checked = true;
   }
-  zonesLayer.addTo(cartographyState.map);
-  fitLayerBounds(zonesLayer);
+  if (checkbox?.checked) {
+    zonesLayer.addTo(cartographyState.map);
+    fitLayerBounds(zonesLayer);
+  }
+  refreshCartographicLayerPresentation();
   updateLayerAvailabilityMessage('');
+}
+
+function appendGeometryPolygons(targetPolygons, geometry) {
+  if (!geometry || !Array.isArray(targetPolygons)) return;
+  if (geometry.type === 'Polygon' && Array.isArray(geometry.coordinates)) {
+    targetPolygons.push(geometry.coordinates);
+  } else if (geometry.type === 'MultiPolygon' && Array.isArray(geometry.coordinates)) {
+    geometry.coordinates.forEach((polygon) => {
+      if (Array.isArray(polygon)) targetPolygons.push(polygon);
+    });
+  }
 }
 
 function getZoneName(zoneCode) {
@@ -2309,13 +2365,19 @@ function computeZoneProfileProperties(properties) {
   };
 }
 
+function canUseApiLayerData() {
+  if (DATA_MODE === 'json') return false;
+  if (DATA_MODE === 'api') return true;
+  return API_HEALTH?.status === 'ok';
+}
+
 function fetchPlatformLayerData(layerKey) {
   if (platformState.dataPromises[layerKey]) return platformState.dataPromises[layerKey];
   const definition = WEB_SIG_LAYER_DEFINITIONS[layerKey];
   if (!definition) return Promise.resolve([]);
-  platformState.dataPromises[layerKey] = (LOCAL_JSON_MODE
-    ? loadLayerItemsFromReports(definition)
-    : fetchJson(`/map/layers/${getApiLayerName(layerKey)}?limit=5000`).then((payload) => geoJsonToItems(payload) || definition.fallbackItems || [])
+  platformState.dataPromises[layerKey] = (canUseApiLayerData()
+    ? fetchApiJson(`/map/layers/${getApiLayerName(layerKey)}?limit=5000`).then((payload) => geoJsonToItems(payload) || definition.fallbackItems || []).catch(() => definition.fallbackItems || [])
+    : loadLayerItemsFromReports(definition)
   ).then((items) => {
     const filteredItems = asArray(items)
       .map((item) => enrichFdsuNomenclature(item))
@@ -2880,6 +2942,48 @@ function isChildOfEntity(parentLayer, parentProperties, childProperties) {
   return false;
 }
 
+function isWithinSpatialContext(layerKey, properties, context = cartographyState.spatialContext) {
+  if (!context?.layerKey || !context.properties) return true;
+  if (layerKey === 'rdcBoundary') return true;
+  const contextLayer = context.layerKey;
+  const contextName = context.properties.nom || context.properties.name || context.properties.libelle || context.properties.localite;
+  const contextZone = context.properties.zone_fdsu || context.properties.code;
+  if (contextLayer === 'zones') return (properties.zone_fdsu || properties.code) === contextZone;
+  if (layerKey === 'zones' && contextZone) return (properties.zone_fdsu || properties.code) === contextZone;
+  if (layerKey === contextLayer) {
+    return getFeatureId(properties, layerKey) === context.featureId
+      || properties.nom === contextName
+      || properties.localite === contextName;
+  }
+  if (contextLayer === 'provinces') return properties.province === contextName || properties.nom === contextName;
+  if (contextLayer === 'territoires') return properties.territoire === contextName || properties.nom === contextName;
+  if (contextLayer === 'collectivites') return properties.collectivite === contextName || properties.nom === contextName;
+  if (contextLayer === 'groupements') return properties.groupement === contextName || properties.nom === contextName;
+  if (contextLayer === 'villages') return properties.localite === contextName || properties.nom === contextName;
+  return true;
+}
+
+function refreshVisibleCartographyLayers() {
+  Object.keys(cartographyState.layers).forEach((layerKey) => {
+    if (layerKey === 'rdcBoundary') return;
+    refreshVisibleCartographyLayer(layerKey);
+  });
+  refreshCartographicLayerPresentation();
+  renderSynchronizedLayerList();
+}
+
+function refreshVisibleCartographyLayer(layerKey) {
+  const layer = cartographyState.layers[layerKey];
+  if (!layer || !layer.clearLayers || !layer.addData) return;
+  const features = asArray(cartographyState.features[layerKey])
+    .filter((feature) => isWithinSpatialContext(layerKey, feature.properties || {}));
+  layer.clearLayers();
+  cartographyState.featureLayers[layerKey] = {};
+  if (features.length > 0) {
+    layer.addData({ type: 'FeatureCollection', features });
+  }
+}
+
 function buildFeatureCollection(items, layerKey) {
   return {
     type: 'FeatureCollection',
@@ -2952,6 +3056,16 @@ function makePointMarker(latlng, color, fillColor) {
   });
 }
 
+function styleRdcBoundaryFeature() {
+  return {
+    color: '#e2e8f0',
+    weight: 2.5,
+    opacity: 0.95,
+    fillColor: '#020617',
+    fillOpacity: 0.06,
+  };
+}
+
 function styleProvinceFeature() {
   return {
     color: '#2563eb',
@@ -2986,13 +3100,14 @@ function styleCollectivitesFeature() {
 function styleZoneFeature(feature) {
   const zoneCode = getZoneCode(feature);
   const zoneStyle = getZoneStyle(zoneCode);
+  const isSyntheticZone = Boolean(feature?.properties?.synthetic_zone_layer);
 
   return {
-    color: zoneStyle.color,
-    weight: 2,
+    color: isSyntheticZone ? zoneStyle.fillColor : zoneStyle.color,
+    weight: isSyntheticZone ? 1 : 2,
     opacity: 1,
     fillColor: zoneStyle.fillColor,
-    fillOpacity: 0.28,
+    fillOpacity: isSyntheticZone ? 0.58 : 0.28,
   };
 }
 
@@ -3048,34 +3163,269 @@ function onGeoEachFeature(feature, layer, layerKey) {
     `);
   }
 
+  layer.on('mouseover', () => {
+    highlightMapFeature(layerKey, feature, layer);
+    renderSmartTooltip(feature, layer, layerKey);
+  });
+
+  layer.on('mouseout', () => {
+    if (cartographyState.selectedLayer !== layer) resetHoverMapFeature(layerKey, feature, layer);
+  });
+
   layer.on('click', (event) => {
     if (event?.originalEvent && typeof L !== 'undefined') {
       L.DomEvent.stopPropagation(event.originalEvent);
     }
-    if (cartographyState.selectedLayer && cartographyState.selectedLayer.setStyle) {
-      cartographyState.selectedLayer.setStyle({
-        weight: 2,
-        opacity: 1,
-        fillOpacity: 0.28,
-      });
-    }
-
-    cartographyState.selectedLayer = layer;
-    layer.setStyle({
-      weight: 3,
-      opacity: 1,
-      fillOpacity: 0.4,
-    });
-
-    if (layer.bringToFront) {
-      layer.bringToFront();
-    }
-
+    selectMapFeature(layerKey, feature, layer, { zoom: true, activateContext: true });
     renderFeatureDetails(feature, layerKey);
     if (cartographyState.map?.closePopup) cartographyState.map.closePopup();
     openEntityProfile(layerKey, properties, feature);
     enrichFeatureDetailsFromApi(feature, layerKey);
   });
+
+  layer.on('dblclick', (event) => {
+    if (event?.originalEvent && typeof L !== 'undefined') {
+      L.DomEvent.stopPropagation(event.originalEvent);
+    }
+    openEntityProfile(layerKey, properties, feature);
+  });
+}
+
+function renderSmartTooltip(feature, layer, layerKey) {
+  if (!layer?.bindTooltip) return;
+  const properties = feature?.properties || {};
+  const stats = computeSpatialContextStats(layerKey, properties);
+  layer.bindTooltip(`
+    <div class="map-smart-tooltip">
+      <strong>${escapeHtml(getFeatureProperty(properties, ['nom', 'name', 'libelle']))}</strong>
+      <span>${escapeHtml(getFeatureProperty(properties, ['type', 'niveau', 'type_localite']))}</span>
+      <span>Code FDSU : ${escapeHtml(getFeatureProperty(properties, ['code_province_fdsu', 'code_territoire_fdsu', 'code']))}</span>
+      <span>Zone : ${escapeHtml(getFeatureProperty(properties, ['zone_nom', 'zone_fdsu', 'zone']))}</span>
+      <span>Province : ${escapeHtml(getFeatureProperty(properties, ['province']))}</span>
+      <span>Territoire : ${escapeHtml(getFeatureProperty(properties, ['territoire']))}</span>
+      <span>Subdivisions : ${stats.subdivisions}</span>
+      <span>Localités : ${stats.localites}</span>
+      <span>Sites : ${stats.sites}</span>
+      <span>Score FDSU : ${escapeHtml(getFeatureProperty(properties, ['score_priorite_fdsu', 'score_fdsu', 'qualite']))}</span>
+    </div>
+  `, { sticky: true, direction: 'top', opacity: 0.96 });
+}
+
+function selectMapFeature(layerKey, feature, layer, options = {}) {
+  resetSelectedMapFeatureStyle();
+  if (options.activateContext) activateSpatialContext(layerKey, feature?.properties || {}, feature);
+  const featureId = getFeatureId(feature?.properties || {}, layerKey);
+  const activeLayer = cartographyState.featureLayers[layerKey]?.[featureId] || layer;
+  cartographyState.selectedLayer = activeLayer;
+  cartographyState.selectedFeature = feature;
+  applySelectedMapFeatureStyle(activeLayer, feature);
+  if (options.zoom) fitMapToFeatureLayer(activeLayer);
+  if (activeLayer?.bringToFront) activeLayer.bringToFront();
+  refreshCartographicLayerPresentation();
+  renderSynchronizedLayerList();
+}
+
+function highlightMapFeature(layerKey, feature, layer) {
+  cartographyState.hoveredFeatureId = getFeatureId(feature?.properties || {}, layerKey);
+  if (layer?.setStyle && layer !== cartographyState.selectedLayer) {
+    const baseStyle = getDefaultFeatureStyle(feature, layerKey);
+    layer.setStyle({ ...baseStyle, weight: Math.max(Number(baseStyle.weight) || 1, 2.5), fillOpacity: Math.max(Number(baseStyle.fillOpacity) || 0.18, 0.32) });
+  }
+  highlightSynchronizedListRow(layerKey, cartographyState.hoveredFeatureId);
+}
+
+function resetHoverMapFeature(layerKey, feature, layer) {
+  if (layer?.setStyle && layer !== cartographyState.selectedLayer) {
+    layer.setStyle(getDefaultFeatureStyle(feature, layerKey));
+  }
+  cartographyState.hoveredFeatureId = null;
+  highlightSynchronizedListRow('', '');
+}
+
+function resetSelectedMapFeatureStyle() {
+  const layer = cartographyState.selectedLayer;
+  const feature = cartographyState.selectedFeature || layer?.feature;
+  if (!layer?.setStyle) return;
+  layer.setStyle(getDefaultFeatureStyle(feature, feature?.properties?.layer || ''));
+  layer.getElement?.()?.classList.remove('map-feature-selected');
+}
+
+function applySelectedMapFeatureStyle(layer, feature) {
+  if (!layer?.setStyle) return;
+  const baseStyle = getDefaultFeatureStyle(feature, feature?.properties?.layer || '');
+  layer.setStyle({
+    ...baseStyle,
+    weight: Math.max(Number(baseStyle.weight) || 1, 3),
+    opacity: 1,
+    fillOpacity: Math.max(Number(baseStyle.fillOpacity) || 0.25, 0.42),
+  });
+  layer.getElement?.()?.classList.add('map-feature-selected');
+}
+
+function getDefaultFeatureStyle(feature, layerKey) {
+  if (feature?.properties?.synthetic_zone_layer || layerKey === 'zones') return styleZoneFeature(feature);
+  if (layerKey === 'provinces') return styleProvinceFeature(feature);
+  if (layerKey === 'territoires') return styleTerritoryFeature(feature);
+  if (layerKey === 'collectivites') return styleCollectivitesFeature(feature);
+  return { color: '#38bdf8', weight: 2, opacity: 1, fillColor: '#38bdf8', fillOpacity: 0.28 };
+}
+
+function activateSpatialContext(layerKey, properties = {}, feature = null) {
+  if (layerKey === 'rdcBoundary') {
+    resetMapToNationalView();
+    return;
+  }
+  cartographyState.spatialContext = {
+    layerKey,
+    featureId: getFeatureId(properties, layerKey),
+    properties,
+    feature,
+  };
+  cartographyState.spatialContextTrail = buildSpatialContextTrail(layerKey, properties);
+  refreshVisibleCartographyLayers();
+  renderMapBreadcrumb();
+}
+
+function resetMapToNationalView() {
+  resetSelectedMapFeatureStyle();
+  cartographyState.selectedLayer = null;
+  cartographyState.selectedFeature = null;
+  cartographyState.spatialContext = null;
+  cartographyState.spatialContextTrail = [];
+  refreshVisibleCartographyLayers();
+  renderMapBreadcrumb();
+  fitMapToRdc();
+}
+
+function buildSpatialContextTrail(layerKey, properties = {}) {
+  const trail = [{ layerKey: 'rdc', label: 'RDC', properties: {} }];
+  const zoneCode = properties.zone_fdsu || properties.zone || properties.code;
+  if (zoneCode) trail.push({ layerKey: 'zones', label: getZoneName(zoneCode), properties: { code: zoneCode, zone_fdsu: zoneCode, nom: getZoneName(zoneCode) } });
+  const province = layerKey === 'provinces' ? properties.nom : properties.province;
+  if (province) trail.push({ layerKey: 'provinces', label: province, properties: { nom: province, province, zone_fdsu: zoneCode } });
+  const territoire = layerKey === 'territoires' ? properties.nom : properties.territoire;
+  if (territoire) trail.push({ layerKey: 'territoires', label: territoire, properties: { nom: territoire, territoire, province, zone_fdsu: zoneCode } });
+  const collectivite = layerKey === 'collectivites' ? properties.nom : properties.collectivite;
+  if (collectivite) trail.push({ layerKey: 'collectivites', label: collectivite, properties: { nom: collectivite, collectivite, territoire, province, zone_fdsu: zoneCode } });
+  const groupement = layerKey === 'groupements' ? properties.nom : properties.groupement;
+  if (groupement) trail.push({ layerKey: 'groupements', label: groupement, properties: { nom: groupement, groupement, collectivite, territoire, province, zone_fdsu: zoneCode } });
+  const localite = layerKey === 'villages' ? properties.nom || properties.localite : properties.localite;
+  if (localite) trail.push({ layerKey: 'villages', label: localite, properties: { nom: localite, localite, groupement, collectivite, territoire, province, zone_fdsu: zoneCode } });
+  return trail;
+}
+
+function renderMapBreadcrumb() {
+  const element = cartographyState.breadcrumbElement;
+  if (!element) return;
+  const trail = cartographyState.spatialContextTrail.length > 0
+    ? cartographyState.spatialContextTrail
+    : [{ layerKey: 'rdc', label: 'RDC', properties: {} }];
+  element.innerHTML = trail.map((item, index) => `
+    <button type="button" data-breadcrumb-index="${index}" ${index === trail.length - 1 ? 'aria-current="location"' : ''}>${escapeHtml(item.label)}</button>
+  `).join('<span>&gt;</span>');
+  element.querySelectorAll('button[data-breadcrumb-index]').forEach((button) => {
+    button.addEventListener('click', () => navigateMapBreadcrumb(Number(button.dataset.breadcrumbIndex)));
+  });
+}
+
+function navigateMapBreadcrumb(index) {
+  const item = cartographyState.spatialContextTrail[index];
+  if (!item || item.layerKey === 'rdc') {
+    resetMapToNationalView();
+    return;
+  }
+  cartographyState.spatialContext = {
+    layerKey: item.layerKey,
+    featureId: getFeatureId(item.properties, item.layerKey),
+    properties: item.properties,
+    feature: null,
+  };
+  cartographyState.spatialContextTrail = cartographyState.spatialContextTrail.slice(0, index + 1);
+  refreshVisibleCartographyLayers();
+  renderMapBreadcrumb();
+  fitMapToZonesOrRdc();
+}
+
+function getPrimaryVisibleBusinessLayer(preferredLayer = '') {
+  if (preferredLayer && cartographyState.map?.hasLayer(cartographyState.layers[preferredLayer])) return preferredLayer;
+  return FDSU_LAYER_STACK_ORDER.find((layerKey) => layerKey !== 'rdcBoundary' && cartographyState.map?.hasLayer(cartographyState.layers[layerKey])) || '';
+}
+
+function renderSynchronizedLayerList(preferredLayer = '') {
+  const element = cartographyState.synchronizedListElement;
+  if (!element) return;
+  const layerKey = getPrimaryVisibleBusinessLayer(preferredLayer);
+  if (!layerKey) {
+    element.innerHTML = '<p class="zone-detail-empty">Cochez une couche pour afficher la liste synchronisée.</p>';
+    return;
+  }
+  const rows = asArray(cartographyState.features[layerKey])
+    .filter((feature) => isWithinSpatialContext(layerKey, feature.properties || {}))
+    .slice(0, 200)
+    .map((feature) => ({
+      feature,
+      featureId: getFeatureId(feature.properties || {}, layerKey),
+      label: getFeatureProperty(feature.properties || {}, ['nom', 'name', 'libelle']),
+      type: getFeatureProperty(feature.properties || {}, ['type', 'niveau', 'type_localite']),
+    }));
+  element.innerHTML = `
+    <div class="sync-list-header">
+      <span>${escapeHtml(getLayerDisplayLabel(layerKey))}</span>
+      <strong>${rows.length}</strong>
+    </div>
+    <div class="sync-list-body">
+      ${rows.length > 0
+        ? rows.map((row) => `
+          <button type="button" class="sync-list-item" data-layer="${escapeHtml(layerKey)}" data-feature-id="${escapeHtml(row.featureId)}">
+            <span>${escapeHtml(row.label)}</span>
+            <small>${escapeHtml(row.type)}</small>
+          </button>
+        `).join('')
+        : '<p class="zone-detail-empty">Aucune entite visible pour la couche active.</p>'}
+    </div>
+  `;
+  element.querySelectorAll('.sync-list-item').forEach((button) => {
+    button.addEventListener('mouseenter', () => highlightFeatureFromList(button.dataset.layer, button.dataset.featureId));
+    button.addEventListener('mouseleave', () => clearFeatureHighlightFromList(button.dataset.layer, button.dataset.featureId));
+    button.addEventListener('click', () => focusAttributeFeature(button.dataset.layer, button.dataset.featureId));
+    button.addEventListener('dblclick', () => {
+      const feature = cartographyState.features[button.dataset.layer]?.find((candidate) => getFeatureId(candidate.properties, button.dataset.layer) === button.dataset.featureId);
+      openEntityProfile(button.dataset.layer, feature?.properties || {}, feature);
+    });
+  });
+}
+
+function highlightFeatureFromList(layerKey, featureId) {
+  const layer = cartographyState.featureLayers[layerKey]?.[featureId];
+  const feature = cartographyState.features[layerKey]?.find((candidate) => getFeatureId(candidate.properties, layerKey) === featureId);
+  if (layer && feature) highlightMapFeature(layerKey, feature, layer);
+}
+
+function clearFeatureHighlightFromList(layerKey, featureId) {
+  const layer = cartographyState.featureLayers[layerKey]?.[featureId];
+  const feature = cartographyState.features[layerKey]?.find((candidate) => getFeatureId(candidate.properties, layerKey) === featureId);
+  if (layer && feature && cartographyState.selectedLayer !== layer) resetHoverMapFeature(layerKey, feature, layer);
+}
+
+function highlightSynchronizedListRow(layerKey, featureId) {
+  if (!cartographyState.synchronizedListElement) return;
+  cartographyState.synchronizedListElement.querySelectorAll('.sync-list-item').forEach((item) => {
+    item.classList.toggle('is-hovered', item.dataset.layer === layerKey && item.dataset.featureId === featureId);
+  });
+}
+
+function fitMapToFeatureLayer(layer) {
+  if (!cartographyState.map || !layer) return;
+  if (layer.getBounds) {
+    const bounds = layer.getBounds();
+    if (bounds.isValid()) {
+      cartographyState.map.fitBounds(bounds, { padding: [36, 36] });
+      return;
+    }
+  }
+  if (layer.getLatLng) {
+    cartographyState.map.setView(layer.getLatLng(), Math.max(cartographyState.map.getZoom(), 10));
+  }
 }
 
 function enrichFeatureDetailsFromApi(feature, layerKey) {
@@ -3107,6 +3457,7 @@ function renderFeatureDetails(feature, layerKey) {
     .filter(([, value]) => value !== null && value !== undefined && String(value).trim() !== '')
     .map(([key, value]) => `<div class="detail-row"><span>${escapeHtml(key)}</span><strong>${escapeHtml(formatAttributeValue(value))}</strong></div>`)
     .join('');
+  const contextStats = computeSpatialContextStats(layerKey, properties);
 
   cartographyState.infoElement.innerHTML = `
     <p class="zone-detail-label">Type de couche</p>
@@ -3119,11 +3470,15 @@ function renderFeatureDetails(feature, layerKey) {
     <p class="zone-detail-value">${escapeHtml(provinceCount)}</p>
     <p class="zone-detail-label">Description</p>
     <p class="zone-detail-value">${escapeHtml(description)}</p>
+    ${renderContextStatsHtml(contextStats)}
+    ${renderSmartDecisionPanel(properties)}
+    <button type="button" class="map-profile-button" data-profile-layer="${escapeHtml(layerKey)}" data-profile-id="${escapeHtml(getFeatureId(properties, layerKey))}">Ouvrir la fiche complète</button>
     <div class="detail-attributes">
       <p class="zone-detail-label">Attributs extraits</p>
       ${attributes || '<p class="zone-detail-empty">Non disponible</p>'}
     </div>
   `;
+  bindCartographyProfileButtons();
 }
 
 function renderTerritorialFeatureDetails(properties, layerKey) {
@@ -3154,13 +3509,90 @@ function renderTerritorialFeatureDetails(properties, layerKey) {
     ['Anomalies éventuelles', getFeatureProperty(properties, ['anomalies'])],
   ];
 
+  const contextStats = computeSpatialContextStats(layerKey, properties);
+
   cartographyState.infoElement.innerHTML = `
     <p class="zone-detail-label">Type de couche</p>
     <p class="zone-detail-value">${escapeHtml(layerLabels[layerKey] || layerKey)}</p>
+    ${renderContextStatsHtml(contextStats)}
+    ${renderSmartDecisionPanel(properties)}
+    <button type="button" class="map-profile-button" data-profile-layer="${escapeHtml(layerKey)}" data-profile-id="${escapeHtml(getFeatureId(properties, layerKey))}">Ouvrir la fiche complète</button>
     <div class="detail-attributes">
       ${rows.map(([label, value]) => `<div class="detail-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(formatAttributeValue(value))}</strong></div>`).join('')}
     </div>
   `;
+  bindCartographyProfileButtons();
+}
+
+function computeSpatialContextStats(layerKey, properties = {}) {
+  const context = {
+    layerKey,
+    featureId: getFeatureId(properties, layerKey),
+    properties,
+  };
+  const countLayer = (targetLayer) => asArray(cartographyState.features[targetLayer])
+    .filter((feature) => isWithinSpatialContext(targetLayer, feature.properties || {}, context)).length;
+  const subdivisions = getChildLayers(layerKey).reduce((total, childLayer) => total + countLayer(childLayer), 0);
+  return {
+    subdivisions,
+    territoires: countLayer('territoires'),
+    collectivites: countLayer('collectivites'),
+    groupements: countLayer('groupements'),
+    localites: countLayer('villages'),
+    sites: countLayer('sites'),
+    missions: countLayer('missions'),
+    population: getFeatureProperty(properties, ['population', 'population_totale', 'pop']),
+    superficie: getFeatureProperty(properties, ['superficie', 'area_sqkm', 'surface', 'surface_km2']),
+    chefLieu: getFeatureProperty(properties, ['chef_lieu', 'cheflieu', 'chefLieu']),
+    zoneFdsu: getFeatureProperty(properties, ['zone_nom', 'zone_fdsu', 'zone']),
+  };
+}
+
+function renderContextStatsHtml(stats) {
+  const rows = [
+    ['Subdivisions', stats.subdivisions],
+    ['Territoires', stats.territoires],
+    ['Collectivités', stats.collectivites],
+    ['Groupements', stats.groupements],
+    ['Localités', stats.localites],
+    ['Sites FDSU', stats.sites],
+    ['Missions', stats.missions],
+    ['Population', stats.population],
+    ['Superficie', stats.superficie],
+    ['Chef-lieu', stats.chefLieu],
+    ['Zone FDSU', stats.zoneFdsu],
+  ];
+  return `
+    <div class="context-stats">
+      ${rows.map(([label, value]) => `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(formatAttributeValue(value))}</strong></div>`).join('')}
+    </div>
+  `;
+}
+
+function renderSmartDecisionPanel(properties = {}) {
+  const rows = [
+    ['Activités économiques', getFeatureProperty(properties, ['activites_economiques', 'economic_activities'])],
+    ['Défis', getFeatureProperty(properties, ['defis', 'challenges'])],
+    ['Potentiel', getFeatureProperty(properties, ['potentiel', 'potential', 'potentiel_fdsu'])],
+    ['Sources', getFeatureProperty(properties, ['source'])],
+    ['Documents', getFeatureProperty(properties, ['documents'])],
+  ];
+  return `
+    <div class="smart-side-panel">
+      ${rows.map(([label, value]) => `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(formatAttributeValue(value))}</strong></div>`).join('')}
+    </div>
+  `;
+}
+
+function bindCartographyProfileButtons() {
+  cartographyState.infoElement?.querySelectorAll('.map-profile-button').forEach((button) => {
+    button.addEventListener('click', () => {
+      const layerKey = button.dataset.profileLayer;
+      const featureId = button.dataset.profileId;
+      const feature = cartographyState.features[layerKey]?.find((candidate) => getFeatureId(candidate.properties, layerKey) === featureId);
+      openEntityProfile(layerKey, feature?.properties || {}, feature);
+    });
+  });
 }
 
 function getFeatureId(properties, layerKey) {
@@ -3241,6 +3673,18 @@ function setupLayerControls(layerList) {
       const layer = cartographyState.layers[layerKey];
       if (!layer || !cartographyState.map) return;
 
+      if (checkbox.checked && layer.getLayers().length === 0 && cartographyState.layerStatus[layerKey] === null && WEB_SIG_LAYER_DEFINITIONS[layerKey]) {
+        loadWebSigLayer(layerKey, WEB_SIG_LAYER_DEFINITIONS[layerKey]).then(() => {
+          if (!checkbox.checked || layer.getLayers().length === 0) return;
+          refreshVisibleCartographyLayer(layerKey);
+          layer.addTo(cartographyState.map);
+          refreshCartographicLayerPresentation();
+          renderSynchronizedLayerList(layerKey);
+          fitLayerBounds(layer);
+        });
+        return;
+      }
+
       const hasAttributes = asArray(cartographyState.data[layerKey]).length > 0;
       if (layer.getLayers().length === 0) {
         checkbox.checked = false;
@@ -3251,13 +3695,47 @@ function setupLayerControls(layerList) {
       }
 
       if (checkbox.checked) {
+        refreshVisibleCartographyLayer(layerKey);
         layer.addTo(cartographyState.map);
+        refreshCartographicLayerPresentation();
+        renderSynchronizedLayerList(layerKey);
         fitLayerBounds(layer);
       } else {
         cartographyState.map.removeLayer(layer);
+        refreshCartographicLayerPresentation();
+        renderSynchronizedLayerList();
       }
     });
   });
+}
+
+function setupLeafletLayerControlSync() {
+  if (!cartographyState.map) return;
+  cartographyState.map.on('overlayadd overlayremove', (event) => {
+    const layerKey = getLayerKeyFromLeafletLayer(event.layer);
+    if (!layerKey || layerKey === 'rdcBoundary') return;
+    const checkbox = document.querySelector(`input[data-layer="${layerKey}"]`);
+    if (checkbox) checkbox.checked = event.type === 'overlayadd';
+    refreshCartographicLayerPresentation();
+    renderSynchronizedLayerList(layerKey);
+  });
+}
+
+function getLayerKeyFromLeafletLayer(targetLayer) {
+  return Object.entries(cartographyState.layers).find(([, layer]) => layer === targetLayer)?.[0] || '';
+}
+
+function refreshCartographicLayerPresentation() {
+  if (!cartographyState.map) return;
+  const zonesLayer = cartographyState.layers.zones;
+  if (zonesLayer?.setStyle) zonesLayer.setStyle(styleZoneFeature);
+  FDSU_LAYER_STACK_ORDER.forEach((layerKey) => {
+    const layer = cartographyState.layers[layerKey];
+    if (layer && cartographyState.map.hasLayer(layer) && layer.bringToFront) {
+      layer.bringToFront();
+    }
+  });
+  if (cartographyState.selectedLayer?.bringToFront) cartographyState.selectedLayer.bringToFront();
 }
 
 function fitLayerBounds(layer) {
@@ -3280,11 +3758,15 @@ function setupMapInteractions() {
 function fitMapToZonesOrRdc() {
   if (!cartographyState.map) return;
 
-  if (cartographyState.zonesLayer) {
-    const bounds = cartographyState.zonesLayer.getBounds();
-    if (bounds.isValid()) {
-      cartographyState.map.fitBounds(bounds, { padding: [20, 20] });
-      return;
+  for (const layerKey of FDSU_LAYER_STACK_ORDER) {
+    if (cartographyState.spatialContext && layerKey === 'rdcBoundary') continue;
+    const layer = cartographyState.layers[layerKey];
+    if (layer && cartographyState.map.hasLayer(layer) && layer.getBounds) {
+      const bounds = layer.getBounds();
+      if (bounds.isValid()) {
+        cartographyState.map.fitBounds(bounds, { padding: [20, 20] });
+        return;
+      }
     }
   }
 
@@ -3293,7 +3775,7 @@ function fitMapToZonesOrRdc() {
 
 function fitMapToRdc() {
   if (!cartographyState.map) return;
-  const bounds = L.latLngBounds([[-13.45, 12.2], [5.4, 31.3]]);
+  const bounds = L.latLngBounds(RDC_MAP_BOUNDS);
   cartographyState.map.fitBounds(bounds, { padding: [20, 20] });
 }
 
@@ -3735,15 +4217,20 @@ function applyThematicStyles() {
 }
 
 function getThematicStyle(properties, layerKey) {
-  if (!cartographyState.thematicMode) {
+  if (!cartographyState.thematicMode || cartographyState.thematicMode === 'administrative') {
     if (layerKey === 'provinces') return styleProvinceFeature();
     if (layerKey === 'territoires') return styleTerritoryFeature();
     if (layerKey === 'collectivites') return styleCollectivitesFeature();
+    if (layerKey === 'zones') return styleZoneFeature({ properties });
     return { color: '#0f766e', fillColor: '#14b8a6', fillOpacity: 0.72, weight: 1 };
   }
   const text = buildSearchText(properties);
   const thematicColors = {
     economic: text.includes('commerce') ? '#f97316' : '#16a34a',
+    connectivity: text.includes('faible') || text.includes('absence') ? '#dc2626' : '#2563eb',
+    ccnPriority: text.includes('priorit') ? '#7c3aed' : '#0f766e',
+    dataQuality: text.includes('anomal') || text.includes('incomplet') ? '#f59e0b' : '#16a34a',
+    decision: text.includes('urgent') || text.includes('priorit') ? '#be123c' : '#0891b2',
     agriculture: text.includes('agriculture') ? '#22c55e' : '#84cc16',
     mining: text.includes('mine') || text.includes('minier') ? '#a855f7' : '#64748b',
     network: text.includes('faible') || text.includes('absence') ? '#dc2626' : '#2563eb',
@@ -3927,12 +4414,14 @@ function focusAttributeFeature(layerKey, featureId) {
       layer.addTo(cartographyState.map);
       const checkbox = document.querySelector(`input[data-layer="${layerKey}"]`);
       if (checkbox) checkbox.checked = true;
+      refreshCartographicLayerPresentation();
     }
     if (featureLayer.getBounds) {
       fitLayerBounds(featureLayer);
     } else if (featureLayer.getLatLng) {
       cartographyState.map.setView(featureLayer.getLatLng(), Math.max(cartographyState.map.getZoom(), 9));
     }
+    selectMapFeature(layerKey, feature || { properties: row?.properties || {} }, featureLayer, { zoom: false, activateContext: true });
     renderFeatureDetails(feature || { properties: row?.properties || {} }, layerKey);
     openEntityProfile(layerKey, feature?.properties || row?.properties || {}, feature);
     if (featureLayer.openPopup) featureLayer.openPopup();
@@ -6774,9 +7263,13 @@ function makePlaceholderRows(count, prefix) {
 }
 
 function fetchJson(endpoint) {
+  const localPath = String(endpoint || '');
+  // Le contour RDC et les geodata generes sont servis par FastAPI (/geodata), pas par le serveur statique du dashboard.
+  if (localPath.startsWith('/geodata/')) {
+    return fetchApiJson(localPath).catch(() => null);
+  }
   if (LOCAL_JSON_MODE) {
-    const localPath = String(endpoint || '');
-    if (localPath.endsWith('.json') || localPath.endsWith('.geojson') || localPath.startsWith('/geodata/')) {
+    if (localPath.endsWith('.json') || localPath.endsWith('.geojson')) {
       return fetch(localPath).then((response) => (response.ok ? response.json() : null)).catch(() => null);
     }
     return Promise.resolve(null);
@@ -6857,5 +7350,9 @@ quickActions.forEach((button) => {
 });
 
 window.addEventListener('hashchange', renderRouteFromHash);
+
+// Exposition minimale pour les tests E2E Playwright (lecture seule).
+window.cartographyState = cartographyState;
+window.platformState = platformState;
 
 initializeApplication();

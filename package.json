@@ -1,0 +1,13 @@
+{
+  "name": "sig-fdsu-rdc",
+  "private": true,
+  "description": "Tests E2E Playwright pour le dashboard SIG-FDSU RDC",
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1"
+  }
+}

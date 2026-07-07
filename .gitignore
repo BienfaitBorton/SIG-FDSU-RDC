@@ -45,3 +45,9 @@ pgdata/
 
 # OS generated
 Thumbs.db
+
+# Node / Playwright
+node_modules/
+playwright-report/
+test-results/
+package-lock.json
