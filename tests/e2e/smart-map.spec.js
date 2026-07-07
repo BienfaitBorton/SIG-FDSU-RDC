@@ -415,3 +415,58 @@ test.describe('SIG-FDSU RDC – Cartographie nationale (tableau de bord)', () =>
     expect(errors.filter((e) => !isNonBlockingConsoleError(e))).toEqual([]);
   });
 });
+
+test.describe('SIG-FDSU RDC – Pages analytiques dashboard', () => {
+  test('clic Zones FDSU ouvre une page dédiée sans superposition', async ({ page }) => {
+    await waitForAppReady(page);
+    await page.locator('.summary-card-zones').click();
+
+    await expect(page.locator('#dashboard-detail-view')).toBeVisible();
+    await expect(page.locator('#dashboard-detail-title')).toHaveText('Zones FDSU');
+    await expect(page.locator('#dashboard-main-view')).toHaveClass(/hidden/);
+    await expect(page.locator('#dashboard-workbench')).toHaveClass(/hidden/);
+    await expect(page.locator('#entity-profile-drawer')).not.toHaveClass(/is-open/);
+    await expect(page.locator('#dashboard-detail-map.leaflet-container')).toBeVisible({ timeout: 15_000 });
+  });
+
+  test('clic Provinces ouvre une page dédiée avec carte et liste', async ({ page }) => {
+    await waitForAppReady(page);
+    await page.locator('[data-detail-page="provinces"]').click();
+
+    await expect(page.locator('#dashboard-detail-view')).toBeVisible();
+    await expect(page.locator('#dashboard-detail-title')).toHaveText('Provinces');
+    await page.waitForFunction(() => (window.dashboardViewState?.rows?.length ?? 0) > 0, null, { timeout: 60_000 });
+    await expect(page.locator('#dashboard-detail-map.leaflet-container')).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator('#dashboard-detail-list .dashboard-detail-list-item').first()).toBeVisible({ timeout: 15_000 });
+  });
+
+  test('clic Territoires ouvre une page dédiée avec carte et liste', async ({ page }) => {
+    await waitForAppReady(page);
+    await page.locator('[data-detail-page="territories"]').click();
+
+    await expect(page.locator('#dashboard-detail-view')).toBeVisible();
+    await expect(page.locator('#dashboard-detail-title')).toHaveText('Territoires');
+    await page.waitForFunction(() => window.dashboardViewState?.detailType === 'territories', null, { timeout: 15_000 });
+    await expect(page.locator('#dashboard-detail-map')).toBeVisible();
+    await expect(page.locator('#dashboard-detail-province-filter')).toBeVisible();
+  });
+
+  test('bouton Retour au tableau de bord fonctionne', async ({ page }) => {
+    await waitForAppReady(page);
+    await page.locator('[data-detail-page="provinces"]').click();
+    await expect(page.locator('#dashboard-detail-view')).toBeVisible();
+
+    await page.locator('#dashboard-detail-back').click();
+    await expect(page.locator('#dashboard-main-view')).toBeVisible();
+    await expect(page.locator('#dashboard-detail-view')).toHaveClass(/hidden/);
+    await expect(page.locator('.summary-grid')).toBeVisible();
+  });
+
+  test('aucun panneau workbench ne masque le tableau de bord après clic KPI', async ({ page }) => {
+    await waitForAppReady(page);
+    await page.locator('[data-detail-page="collectivities"]').click();
+    await expect(page.locator('#dashboard-workbench')).toHaveClass(/hidden/);
+    await expect(page.locator('#dashboard-detail-view')).toBeVisible();
+    await expect(page.locator('#dashboard-national-map')).toBeHidden();
+  });
+});

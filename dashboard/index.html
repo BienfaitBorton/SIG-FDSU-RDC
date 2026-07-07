@@ -116,32 +116,37 @@
       <section class="content-area">
         <div class="dashboard-grid" id="dashboard-panel" data-module="dashboard">
           <div class="dashboard-main">
+            <div id="dashboard-main-view" class="dashboard-main-view">
             <div class="summary-grid">
-              <article class="summary-card clickable-summary" data-layer="provinces" tabindex="0">
+              <article class="summary-card clickable-summary summary-card-zones" data-detail-page="zones" tabindex="0">
+                <p class="summary-label">Zones FDSU</p>
+                <p class="summary-value" id="stat-zones">5</p>
+              </article>
+              <article class="summary-card clickable-summary" data-detail-page="provinces" tabindex="0">
                 <p class="summary-label">Provinces</p>
                 <p class="summary-value" id="stat-provinces">—</p>
               </article>
-              <article class="summary-card clickable-summary" data-layer="territoires" tabindex="0">
+              <article class="summary-card clickable-summary" data-detail-page="territories" tabindex="0">
                 <p class="summary-label">Territoires</p>
                 <p class="summary-value" id="stat-territoires">—</p>
               </article>
-              <article class="summary-card clickable-summary" data-layer="collectivites" tabindex="0">
+              <article class="summary-card clickable-summary" data-detail-page="collectivities" tabindex="0">
                 <p class="summary-label">Collectivités</p>
                 <p class="summary-value" id="stat-collectivites">—</p>
               </article>
-              <article class="summary-card clickable-summary" data-layer="groupements" tabindex="0">
+              <article class="summary-card clickable-summary" data-detail-page="groupements" tabindex="0">
                 <p class="summary-label">Groupements</p>
                 <p class="summary-value" id="stat-groupements">—</p>
               </article>
-              <article class="summary-card clickable-summary" data-layer="villages" tabindex="0">
+              <article class="summary-card clickable-summary" data-detail-page="localities" tabindex="0">
                 <p class="summary-label">Localités</p>
                 <p class="summary-value" id="stat-villages">—</p>
               </article>
-              <article class="summary-card clickable-summary" data-layer="sites" tabindex="0">
+              <article class="summary-card clickable-summary" data-detail-page="sites" tabindex="0">
                 <p class="summary-label">Sites FDSU</p>
                 <p class="summary-value" id="stat-sites">—</p>
               </article>
-              <article class="summary-card clickable-summary" data-layer="missions" tabindex="0">
+              <article class="summary-card clickable-summary" data-detail-page="missions" tabindex="0">
                 <p class="summary-label">Missions</p>
                 <p class="summary-value" id="stat-missions">—</p>
               </article>
@@ -150,65 +155,6 @@
                 <p class="summary-value" id="stat-utilisateurs">—</p>
               </article>
             </div>
-
-            <section class="dashboard-workbench hidden" id="dashboard-workbench">
-              <div class="panel-header">
-                <div>
-                  <p class="panel-label" id="dashboard-workbench-label">Navigation métier</p>
-                  <h2 id="dashboard-workbench-title">Liste</h2>
-                </div>
-                <div class="workbench-actions">
-                  <button type="button" id="dashboard-workbench-back" class="table-action-button">Retour au tableau de bord</button>
-                  <button type="button" id="dashboard-workbench-export" class="table-action-button">Exporter</button>
-                  <button type="button" id="dashboard-workbench-print" class="table-action-button">Imprimer</button>
-                  <button type="button" id="dashboard-workbench-map" class="primary-button">Afficher sur la carte</button>
-                  <button type="button" id="dashboard-workbench-referentiel" class="table-action-button">Ouvrir dans le référentiel</button>
-                </div>
-              </div>
-              <div class="attribute-toolbar">
-                <input id="dashboard-workbench-search" type="search" placeholder="Rechercher dans la liste..." aria-label="Recherche liste métier" />
-                <select id="dashboard-workbench-province">
-                  <option value="">Toutes les provinces</option>
-                </select>
-                <select id="dashboard-workbench-territory">
-                  <option value="">Tous les territoires</option>
-                </select>
-                <select id="dashboard-workbench-sort" aria-label="Tri liste métier">
-                  <option value="nom:asc">Nom A-Z</option>
-                  <option value="nom:desc">Nom Z-A</option>
-                  <option value="type:asc">Type A-Z</option>
-                  <option value="province:asc">Province A-Z</option>
-                  <option value="territoire:asc">Territoire A-Z</option>
-                  <option value="qualite:desc">Qualité</option>
-                </select>
-                <select id="dashboard-workbench-page-size" aria-label="Taille de page liste métier">
-                  <option value="10">10 / page</option>
-                  <option value="25" selected>25 / page</option>
-                  <option value="50">50 / page</option>
-                  <option value="100">100 / page</option>
-                </select>
-              </div>
-              <div class="table-frame attribute-table-frame">
-                <table class="governance-table">
-                  <thead>
-                    <tr>
-                      <th>Nom</th>
-                      <th>Type</th>
-                      <th>Province</th>
-                      <th>Territoire</th>
-                      <th>Qualité</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody id="dashboard-workbench-body"></tbody>
-                </table>
-              </div>
-              <div class="attribute-pagination">
-                <button type="button" id="dashboard-workbench-prev">Précédent</button>
-                <span id="dashboard-workbench-page">Page 1 / 1</span>
-                <button type="button" id="dashboard-workbench-next">Suivant</button>
-              </div>
-            </section>
 
             <article class="map-card">
               <div class="panel-header">
@@ -229,6 +175,61 @@
                 <div id="dashboard-map-synchronized-list" class="map-synchronized-list dashboard-national-sync-list"></div>
               </div>
             </article>
+            </div>
+
+            <section id="dashboard-detail-view" class="dashboard-detail-view hidden" aria-hidden="true">
+              <div class="dashboard-detail-header">
+                <button type="button" id="dashboard-detail-back" class="table-action-button">Retour au tableau de bord</button>
+                <div>
+                  <p class="panel-label" id="dashboard-detail-label">Analyse territoriale</p>
+                  <h2 id="dashboard-detail-title">Détail</h2>
+                </div>
+                <p id="dashboard-detail-count" class="dashboard-detail-count"></p>
+              </div>
+              <div class="dashboard-detail-toolbar attribute-toolbar">
+                <input id="dashboard-detail-search" type="search" placeholder="Rechercher..." aria-label="Recherche page analytique" />
+                <select id="dashboard-detail-province-filter" aria-label="Filtre province">
+                  <option value="">Toutes les provinces</option>
+                </select>
+                <select id="dashboard-detail-territory-filter" aria-label="Filtre territoire">
+                  <option value="">Tous les territoires</option>
+                </select>
+              </div>
+              <div class="dashboard-detail-layout">
+                <div id="dashboard-detail-map" class="dashboard-detail-map" role="region" aria-label="Carte analytique"></div>
+                <aside class="dashboard-detail-sidebar">
+                  <div id="dashboard-detail-stats" class="dashboard-detail-stats"></div>
+                  <div id="dashboard-detail-list" class="dashboard-detail-list"></div>
+                </aside>
+              </div>
+            </section>
+
+            <section class="dashboard-workbench hidden" id="dashboard-workbench" aria-hidden="true">
+              <div class="panel-header">
+                <div>
+                  <p class="panel-label" id="dashboard-workbench-label">Navigation métier</p>
+                  <h2 id="dashboard-workbench-title">Liste</h2>
+                </div>
+              </div>
+              <div class="attribute-toolbar">
+                <input id="dashboard-workbench-search" type="search" placeholder="Rechercher..." />
+                <select id="dashboard-workbench-province"><option value="">Toutes les provinces</option></select>
+                <select id="dashboard-workbench-territory"><option value="">Tous les territoires</option></select>
+                <select id="dashboard-workbench-sort"><option value="nom:asc">Nom A-Z</option></select>
+                <select id="dashboard-workbench-page-size"><option value="25" selected>25 / page</option></select>
+              </div>
+              <div class="table-frame attribute-table-frame">
+                <table class="governance-table">
+                  <thead><tr><th>Nom</th><th>Type</th><th>Province</th><th>Territoire</th><th>Qualité</th><th>Action</th></tr></thead>
+                  <tbody id="dashboard-workbench-body"></tbody>
+                </table>
+              </div>
+              <div class="attribute-pagination">
+                <button type="button" id="dashboard-workbench-prev">Précédent</button>
+                <span id="dashboard-workbench-page">Page 1 / 1</span>
+                <button type="button" id="dashboard-workbench-next">Suivant</button>
+              </div>
+            </section>
           </div>
 
           <aside class="dashboard-right-panel">

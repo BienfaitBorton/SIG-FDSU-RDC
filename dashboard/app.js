@@ -100,6 +100,31 @@ const dashboardState = {
   localDataPromise: null,
 };
 
+const DASHBOARD_DETAIL_PAGE_CONFIG = {
+  zones: { title: 'Zones FDSU', layerKey: null, mode: 'zones' },
+  provinces: { title: 'Provinces', layerKey: 'provinces' },
+  territories: { title: 'Territoires', layerKey: 'territoires', showProvinceFilter: true },
+  collectivities: { title: 'Collectivités', layerKey: 'collectivites', showProvinceFilter: true, showTerritoryFilter: true },
+  groupements: { title: 'Groupements', layerKey: 'groupements', showProvinceFilter: true, showTerritoryFilter: true },
+  localities: { title: 'Localités', layerKey: 'villages', showProvinceFilter: true, showTerritoryFilter: true },
+  sites: { title: 'Sites FDSU', layerKey: 'sites', showProvinceFilter: true, showTerritoryFilter: true },
+  missions: { title: 'Missions', layerKey: 'missions', showProvinceFilter: true },
+};
+
+const dashboardViewState = {
+  page: 'main',
+  detailType: '',
+  selectedEntityId: null,
+  selectedZoneCode: null,
+  filters: { search: '', province: '', territory: '' },
+  rows: [],
+  features: [],
+  map: null,
+  layer: null,
+  featureLayers: {},
+  mapInitialized: false,
+};
+
 const referentielState = {
   initialized: false,
   provinces: [],
@@ -680,6 +705,7 @@ function initializeDashboard() {
   getLastImports();
   getZones();
   initializeNationalMapModule();
+  setupDashboardDetailPages();
   dashboardState.initialized = true;
 }
 
@@ -2458,7 +2484,9 @@ function initializePlatformInteractions() {
     if (card.dataset.bound === 'true') return;
     card.dataset.bound = 'true';
     const openLayer = () => {
-      if (card.dataset.layer) {
+      if (card.dataset.detailPage) {
+        openDashboardDetailPage(card.dataset.detailPage);
+      } else if (card.dataset.layer) {
         openDashboardLayerList(card.dataset.layer);
       } else if (card.dataset.route) {
         navigateTo(card.dataset.route);
@@ -2483,7 +2511,7 @@ function setupDashboardZoneShortcuts() {
   document.querySelectorAll('.zone-item[data-zone], .legend-list [data-zone]').forEach((item) => {
     if (item.dataset.bound === 'true') return;
     item.dataset.bound = 'true';
-    const openZone = () => openZoneProvinceList(item.dataset.zone);
+    const openZone = () => openDashboardDetailPage('zones', { zoneCode: item.dataset.zone });
     item.addEventListener('click', openZone);
     item.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') openZone();
@@ -2638,14 +2666,403 @@ function getRelationParentFilter(properties) {
 }
 
 function openZoneProvinceList(zoneCode) {
-  const normalizedZone = String(zoneCode || '').toUpperCase();
-  fetchPlatformLayerData('provinces').then((items) => {
-    const rows = asArray(items)
-      .map((item) => normalizeAttributeRow(item, 'provinces'))
-      .filter((row) => String(row.properties.zone_fdsu || '').toUpperCase() === normalizedZone)
-      .map((row) => ({ ...row, layerKey: 'provinces' }));
-    openDashboardLayerList('provinces', rows, `Provinces de la zone ${normalizedZone}`);
+  openDashboardDetailPage('zones', { zoneCode: String(zoneCode || '').toUpperCase() });
+}
+
+function setupDashboardDetailPages() {
+  document.querySelector('#dashboard-detail-back')?.addEventListener('click', backToDashboard);
+  ['#dashboard-detail-search', '#dashboard-detail-province-filter', '#dashboard-detail-territory-filter'].forEach((selector) => {
+    const element = document.querySelector(selector);
+    if (!element || element.dataset.bound === 'true') return;
+    element.dataset.bound = 'true';
+    element.addEventListener('input', () => {
+      dashboardViewState.filters.search = document.querySelector('#dashboard-detail-search')?.value || '';
+      dashboardViewState.filters.province = document.querySelector('#dashboard-detail-province-filter')?.value || '';
+      dashboardViewState.filters.territory = document.querySelector('#dashboard-detail-territory-filter')?.value || '';
+      dashboardViewState.selectedEntityId = null;
+      renderDashboardDetailPage();
+    });
+    element.addEventListener('change', () => {
+      dashboardViewState.filters.search = document.querySelector('#dashboard-detail-search')?.value || '';
+      dashboardViewState.filters.province = document.querySelector('#dashboard-detail-province-filter')?.value || '';
+      dashboardViewState.filters.territory = document.querySelector('#dashboard-detail-territory-filter')?.value || '';
+      dashboardViewState.selectedEntityId = null;
+      renderDashboardDetailPage();
+    });
   });
+}
+
+function backToDashboard() {
+  dashboardViewState.page = 'main';
+  dashboardViewState.detailType = '';
+  dashboardViewState.selectedEntityId = null;
+  dashboardViewState.selectedZoneCode = null;
+  dashboardViewState.filters = { search: '', province: '', territory: '' };
+  renderDashboardMain();
+  document.querySelector('#dashboard-panel')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+}
+
+function renderDashboardMain() {
+  document.querySelector('#dashboard-main-view')?.classList.remove('hidden');
+  document.querySelector('#dashboard-detail-view')?.classList.add('hidden');
+  document.querySelector('#dashboard-detail-view')?.setAttribute('aria-hidden', 'true');
+  document.querySelector('#dashboard-workbench')?.classList.add('hidden');
+  closeEntityProfile();
+  if (nationalMapState.map) {
+    window.setTimeout(() => nationalMapState.map.invalidateSize(), 0);
+  }
+}
+
+function openDashboardDetailPage(detailType, options = {}) {
+  if (!DASHBOARD_DETAIL_PAGE_CONFIG[detailType]) return;
+  navigateTo('dashboard');
+  dashboardViewState.page = 'detail';
+  dashboardViewState.detailType = detailType;
+  dashboardViewState.selectedEntityId = options.featureId || null;
+  dashboardViewState.selectedZoneCode = options.zoneCode || null;
+  dashboardViewState.filters = {
+    search: '',
+    province: options.provinceFilter || '',
+    territory: options.territoryFilter || '',
+  };
+  document.querySelector('#dashboard-main-view')?.classList.add('hidden');
+  document.querySelector('#dashboard-detail-view')?.classList.remove('hidden');
+  document.querySelector('#dashboard-detail-view')?.setAttribute('aria-hidden', 'false');
+  document.querySelector('#dashboard-workbench')?.classList.add('hidden');
+  closeEntityProfile();
+  const searchInput = document.querySelector('#dashboard-detail-search');
+  const provinceFilter = document.querySelector('#dashboard-detail-province-filter');
+  const territoryFilter = document.querySelector('#dashboard-detail-territory-filter');
+  if (searchInput) searchInput.value = dashboardViewState.filters.search;
+  if (provinceFilter) provinceFilter.value = dashboardViewState.filters.province;
+  if (territoryFilter) territoryFilter.value = dashboardViewState.filters.territory;
+  loadDashboardDetailData(detailType, options).then(() => renderDashboardDetailPage());
+}
+
+function loadDashboardDetailData(detailType, options = {}) {
+  const config = DASHBOARD_DETAIL_PAGE_CONFIG[detailType];
+  if (config.mode === 'zones') {
+    return Promise.all([
+      fetchPlatformLayerData('provinces'),
+      fetchPlatformLayerData('territoires'),
+      fetchPlatformLayerData('collectivites'),
+      fetchPlatformLayerData('groupements'),
+      fetchPlatformLayerData('villages'),
+      fetchPlatformLayerData('sites'),
+    ]).then(() => {
+      dashboardViewState.rows = FDSU_ZONE_CODES.map((zoneCode) => {
+        const stats = computeZoneStats(zoneCode);
+        return {
+          featureId: zoneCode,
+          layerKey: 'zones',
+          nom: getZoneName(zoneCode),
+          type: 'Zone FDSU',
+          zone_fdsu: zoneCode,
+          nb_provinces: stats.provinces.length,
+          territoires: stats.territoires,
+          collectivites: stats.collectivites,
+          groupements: stats.groupements,
+          localites: stats.localites,
+          sites: stats.sites,
+          properties: computeZoneProfileProperties({ code: zoneCode, zone_fdsu: zoneCode, nom: getZoneName(zoneCode) }),
+        };
+      });
+      dashboardViewState.features = buildDashboardZoneFeatures();
+      if (options.presetRows) dashboardViewState.rows = options.presetRows;
+    });
+  }
+  const layerKey = config.layerKey;
+  const dataPromise = options.presetRows
+    ? Promise.resolve(options.presetRows.map((row) => row.properties || row))
+    : fetchPlatformLayerData(layerKey);
+  return dataPromise.then((items) => {
+    const rows = (options.presetRows || asArray(items)).map((item) => (
+      item?.featureId ? item : normalizeAttributeRow(item, layerKey)
+    ));
+    dashboardViewState.rows = rows;
+    dashboardViewState.features = buildFeatureCollection(rows.map((row) => row.properties), layerKey).features;
+  });
+}
+
+function buildDashboardZoneFeatures() {
+  const provinces = asArray(cartographyState.data.provinces).length
+    ? cartographyState.data.provinces
+    : asArray(dashboardViewState.rows);
+  const zones = new Map();
+  asArray(cartographyState.data.provinces)
+    .filter((province) => province.geometry)
+    .forEach((province) => {
+      const officialProvince = enrichFdsuNomenclature(province);
+      const zoneCode = officialProvince.zone_fdsu;
+      if (!FDSU_ZONE_DEFINITIONS[zoneCode]) return;
+      if (!zones.has(zoneCode)) zones.set(zoneCode, { code: zoneCode, polygons: [] });
+      appendGeometryPolygons(zones.get(zoneCode).polygons, province.geometry);
+    });
+  return FDSU_ZONE_CODES
+    .map((zoneCode) => zones.get(zoneCode))
+    .filter((zone) => zone && zone.polygons.length > 0)
+    .map((zone) => ({
+      type: 'Feature',
+      geometry: { type: 'MultiPolygon', coordinates: zone.polygons },
+      properties: {
+        layer: 'zones',
+        code: zone.code,
+        zone_fdsu: zone.code,
+        nom: getZoneName(zone.code),
+        type: 'Zone FDSU',
+        ...computeZoneProfileProperties({ code: zone.code, zone_fdsu: zone.code, nom: getZoneName(zone.code) }),
+      },
+    }));
+}
+
+function renderDashboardDetailPage() {
+  const config = DASHBOARD_DETAIL_PAGE_CONFIG[dashboardViewState.detailType];
+  if (!config) return;
+  document.querySelector('#dashboard-detail-title').textContent = config.title;
+  document.querySelector('#dashboard-detail-label').textContent = 'Page analytique';
+  const provinceFilter = document.querySelector('#dashboard-detail-province-filter');
+  const territoryFilter = document.querySelector('#dashboard-detail-territory-filter');
+  if (provinceFilter) {
+    provinceFilter.classList.toggle('hidden', !config.showProvinceFilter);
+    updateSelectOptions(provinceFilter, dashboardViewState.rows.map((row) => row.province).filter(Boolean), 'Toutes les provinces');
+    provinceFilter.value = dashboardViewState.filters.province;
+  }
+  if (territoryFilter) {
+    territoryFilter.classList.toggle('hidden', !config.showTerritoryFilter);
+    updateSelectOptions(territoryFilter, dashboardViewState.rows.map((row) => row.territoire).filter(Boolean), 'Tous les territoires');
+    territoryFilter.value = dashboardViewState.filters.territory;
+  }
+  const filteredRows = getFilteredDashboardDetailRows();
+  document.querySelector('#dashboard-detail-count').textContent = `${filteredRows.length.toLocaleString('fr-FR')} élément(s)`;
+  renderDashboardDetailMap(filteredRows, config);
+  renderDashboardDetailList(filteredRows, config);
+  renderDashboardDetailStats(filteredRows, config);
+  window.setTimeout(() => dashboardViewState.map?.invalidateSize(), 0);
+}
+
+function getFilteredDashboardDetailRows() {
+  const search = String(dashboardViewState.filters.search || '').trim().toLowerCase();
+  const province = dashboardViewState.filters.province || '';
+  const territory = dashboardViewState.filters.territory || '';
+  let rows = asArray(dashboardViewState.rows);
+  if (dashboardViewState.detailType === 'zones' && dashboardViewState.selectedZoneCode) {
+    rows = rows.filter((row) => String(row.zone_fdsu || row.featureId || '').toUpperCase() === dashboardViewState.selectedZoneCode);
+  }
+  return rows.filter((row) => {
+    const haystack = [row.nom, row.type, row.province, row.territoire, row.collectivite, row.groupement, row.zone_fdsu]
+      .join(' ').toLowerCase();
+    return (!search || haystack.includes(search))
+      && (!province || row.province === province)
+      && (!territory || row.territoire === territory);
+  });
+}
+
+function ensureDashboardDetailMap() {
+  if (typeof L === 'undefined') return null;
+  const mapElement = document.querySelector('#dashboard-detail-map');
+  if (!mapElement) return null;
+  if (!dashboardViewState.map) {
+    dashboardViewState.map = L.map(mapElement, { zoomControl: true, minZoom: 4, maxZoom: 14 }).setView([-2.8, 23.5], 5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 19,
+    }).addTo(dashboardViewState.map);
+    dashboardViewState.layer = L.geoJSON(null);
+    dashboardViewState.mapInitialized = true;
+  }
+  return dashboardViewState.map;
+}
+
+function renderDashboardDetailMap(filteredRows, config) {
+  const map = ensureDashboardDetailMap();
+  if (!map || !dashboardViewState.layer) return;
+  if (dashboardViewState.layer && map.hasLayer(dashboardViewState.layer)) {
+    map.removeLayer(dashboardViewState.layer);
+  }
+  dashboardViewState.featureLayers = {};
+  let features = [];
+  if (config.mode === 'zones') {
+    features = dashboardViewState.selectedZoneCode
+      ? buildFeatureCollection(
+        asArray(cartographyState.data.provinces).filter((item) => getFdsuZoneCodeForItem(item) === dashboardViewState.selectedZoneCode),
+        'provinces',
+      ).features
+      : asArray(dashboardViewState.features);
+    dashboardViewState.layer = L.geoJSON(null, {
+      style: (feature) => styleZoneFeature(feature),
+      onEachFeature: (feature, layer) => bindDashboardDetailFeature(feature, layer, 'zones'),
+    });
+  } else {
+    const layerKey = config.layerKey;
+    features = filteredRows
+      .map((row) => buildFeature(row.properties, layerKey))
+      .filter(Boolean);
+    const isPointLayer = ['groupements', 'villages', 'sites', 'missions'].includes(layerKey);
+    dashboardViewState.layer = L.geoJSON(null, {
+      style: isPointLayer ? undefined : (feature) => getDashboardDetailStyle(feature, layerKey),
+      pointToLayer: isPointLayer ? (_feature, latlng) => makePointMarker(latlng, '#38bdf8', '#7dd3fc') : undefined,
+      onEachFeature: (feature, layer) => bindDashboardDetailFeature(feature, layer, layerKey),
+    });
+  }
+  dashboardViewState.layer.addData({ type: 'FeatureCollection', features });
+  dashboardViewState.layer.addTo(map);
+  const bounds = dashboardViewState.layer.getBounds();
+  if (bounds.isValid()) map.fitBounds(bounds, { padding: [20, 20] });
+  else if (typeof L !== 'undefined') map.fitBounds(L.latLngBounds(RDC_MAP_BOUNDS), { padding: [20, 20] });
+  if (dashboardViewState.selectedEntityId) {
+    highlightDashboardDetailSelection(dashboardViewState.selectedEntityId);
+  }
+}
+
+function getDashboardDetailStyle(feature, layerKey) {
+  if (layerKey === 'provinces') return styleProvinceFeature(feature);
+  if (layerKey === 'territoires') return styleTerritoryFeature(feature);
+  if (layerKey === 'collectivites') return styleCollectivitesFeature(feature);
+  return { color: '#38bdf8', weight: 2, opacity: 1, fillColor: '#38bdf8', fillOpacity: 0.28 };
+}
+
+function bindDashboardDetailFeature(feature, layer, layerKey) {
+  const properties = feature?.properties || {};
+  const featureId = getFeatureId(properties, layerKey);
+  if (!dashboardViewState.featureLayers[layerKey]) dashboardViewState.featureLayers[layerKey] = {};
+  dashboardViewState.featureLayers[layerKey][featureId] = layer;
+  if (layer.bindPopup) {
+    layer.bindPopup(`<strong>${escapeHtml(getFeatureProperty(properties, ['nom', 'name']))}</strong>`);
+  }
+  layer.on('click', () => selectDashboardDetailEntity(featureId, layerKey, properties));
+}
+
+function selectDashboardDetailEntity(featureId, layerKey, properties = {}) {
+  dashboardViewState.selectedEntityId = featureId;
+  if (dashboardViewState.detailType === 'zones' && layerKey === 'zones') {
+    dashboardViewState.selectedZoneCode = String(properties.zone_fdsu || properties.code || featureId).toUpperCase();
+    const provinceRows = asArray(cartographyState.data.provinces)
+      .filter((item) => getFdsuZoneCodeForItem(item) === dashboardViewState.selectedZoneCode)
+      .map((item) => normalizeAttributeRow(item, 'provinces'));
+    dashboardViewState.rows = provinceRows.length ? provinceRows : dashboardViewState.rows;
+  }
+  highlightDashboardDetailSelection(featureId, layerKey);
+  renderDashboardDetailList(getFilteredDashboardDetailRows(), DASHBOARD_DETAIL_PAGE_CONFIG[dashboardViewState.detailType]);
+  renderDashboardDetailStats(getFilteredDashboardDetailRows(), DASHBOARD_DETAIL_PAGE_CONFIG[dashboardViewState.detailType], properties);
+}
+
+function highlightDashboardDetailSelection(featureId, layerKey = dashboardViewState.detailType === 'zones' ? 'zones' : DASHBOARD_DETAIL_PAGE_CONFIG[dashboardViewState.detailType]?.layerKey) {
+  Object.values(dashboardViewState.featureLayers).forEach((group) => {
+    Object.entries(group).forEach(([id, layer]) => {
+      if (layer?.setStyle) layer.setStyle(getDashboardDetailStyle(layer.feature, layerKey));
+    });
+  });
+  const selectedLayer = dashboardViewState.featureLayers[layerKey]?.[featureId];
+  if (selectedLayer?.setStyle) {
+    selectedLayer.setStyle({ color: '#fbbf24', weight: 3, fillColor: '#fde68a', fillOpacity: 0.45 });
+    if (selectedLayer.getBounds) {
+      dashboardViewState.map?.fitBounds(selectedLayer.getBounds(), { padding: [28, 28], maxZoom: 10 });
+    } else if (selectedLayer.getLatLng) {
+      dashboardViewState.map?.setView(selectedLayer.getLatLng(), Math.max(dashboardViewState.map.getZoom(), 9));
+    }
+  }
+}
+
+function renderDashboardDetailList(filteredRows, config) {
+  const listElement = document.querySelector('#dashboard-detail-list');
+  if (!listElement) return;
+  if (config.mode === 'zones' && !dashboardViewState.selectedZoneCode) {
+    listElement.innerHTML = dashboardViewState.rows.map((row) => `
+      <button type="button" class="dashboard-detail-list-item zone-item zone-${String(row.zone_fdsu || row.featureId).toLowerCase()}" data-feature-id="${escapeHtml(row.featureId)}">
+        <span>${escapeHtml(row.nom)}</span>
+        <small>${row.nb_provinces ?? 0} provinces · ${row.territoires ?? 0} territoires · ${row.localites ?? 0} localités</small>
+      </button>
+    `).join('');
+  } else if (filteredRows.length === 0) {
+    listElement.innerHTML = '<p class="zone-detail-empty">Aucun élément ne correspond aux filtres.</p>';
+  } else {
+    listElement.innerHTML = filteredRows.slice(0, 300).map((row) => `
+      <button type="button" class="dashboard-detail-list-item ${row.featureId === dashboardViewState.selectedEntityId ? 'is-selected' : ''}" data-feature-id="${escapeHtml(row.featureId)}" data-layer="${escapeHtml(row.layerKey || config.layerKey || 'zones')}">
+        <span>${escapeHtml(row.nom)}</span>
+        <small>${escapeHtml([row.type, row.province, row.territoire].filter(Boolean).join(' · '))}</small>
+      </button>
+    `).join('');
+  }
+  listElement.querySelectorAll('.dashboard-detail-list-item').forEach((button) => {
+    button.addEventListener('click', () => {
+      const row = filteredRows.find((candidate) => candidate.featureId === button.dataset.featureId)
+        || dashboardViewState.rows.find((candidate) => candidate.featureId === button.dataset.featureId);
+      selectDashboardDetailEntity(button.dataset.featureId, button.dataset.layer || config.layerKey || 'zones', row?.properties || row || {});
+    });
+  });
+}
+
+function renderDashboardDetailStats(filteredRows, config, selectedProperties = null) {
+  const statsElement = document.querySelector('#dashboard-detail-stats');
+  if (!statsElement) return;
+  const selectedRow = filteredRows.find((row) => row.featureId === dashboardViewState.selectedEntityId)
+    || dashboardViewState.rows.find((row) => row.featureId === dashboardViewState.selectedEntityId);
+  const properties = selectedProperties || selectedRow?.properties || {};
+  if (config.mode === 'zones' && dashboardViewState.selectedZoneCode && !selectedRow) {
+    const zoneStats = computeZoneStats(dashboardViewState.selectedZoneCode);
+    statsElement.innerHTML = `
+      <h3>Zone ${escapeHtml(dashboardViewState.selectedZoneCode)}</h3>
+      <ul class="dashboard-detail-stats-list">
+        <li><span>Provinces</span><strong>${zoneStats.provinces.length}</strong></li>
+        <li><span>Territoires</span><strong>${zoneStats.territoires}</strong></li>
+        <li><span>Collectivités</span><strong>${zoneStats.collectivites}</strong></li>
+        <li><span>Groupements</span><strong>${zoneStats.groupements}</strong></li>
+        <li><span>Localités</span><strong>${zoneStats.localites}</strong></li>
+        <li><span>Sites</span><strong>${zoneStats.sites}</strong></li>
+      </ul>
+      <p class="cartography-note">Cliquez une province pour la localiser sur la carte.</p>
+    `;
+    return;
+  }
+  if (!selectedRow) {
+    statsElement.innerHTML = `
+      <h3>${escapeHtml(config.title)}</h3>
+      <p class="cartography-note">${filteredRows.length.toLocaleString('fr-FR')} élément(s) affichés. Sélectionnez une entité dans la liste ou sur la carte.</p>
+    `;
+    return;
+  }
+  const contextStats = computeSpatialContextStats(selectedRow.layerKey || config.layerKey, properties);
+  statsElement.innerHTML = `
+    <h3>${escapeHtml(selectedRow.nom)}</h3>
+    <p class="cartography-note">${escapeHtml(selectedRow.type || config.title)}</p>
+    ${renderContextStatsHtml(contextStats)}
+    <div class="detail-attributes">
+      ${[
+        ['Province', selectedRow.province],
+        ['Territoire', selectedRow.territoire],
+        ['Collectivité', selectedRow.collectivite],
+        ['Zone FDSU', selectedRow.zone_fdsu],
+        ['Qualité', selectedRow.qualite],
+      ].filter(([, value]) => value).map(([label, value]) => `<div class="detail-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(formatAttributeValue(value))}</strong></div>`).join('')}
+    </div>
+  `;
+}
+
+function openDashboardLayerList(layerKey, presetRows = null, title = '') {
+  const pageMap = {
+    provinces: 'provinces',
+    territoires: 'territories',
+    collectivites: 'collectivities',
+    groupements: 'groupements',
+    villages: 'localities',
+    sites: 'sites',
+    missions: 'missions',
+    zones: 'zones',
+  };
+  const detailType = pageMap[layerKey];
+  if (detailType) {
+    openDashboardDetailPage(detailType, { presetRows, title });
+    return;
+  }
+  if (presetRows?.length) {
+    const firstLayer = presetRows.find((row) => row.layerKey)?.layerKey || 'provinces';
+    openDashboardDetailPage(pageMap[firstLayer] || 'provinces', { presetRows, title });
+    return;
+  }
+  navigateTo('dashboard');
+  platformState.workbenchLayer = layerKey;
+  platformState.workbenchPage = 1;
+  document.querySelector('#dashboard-workbench')?.classList.add('hidden');
 }
 
 function setupDashboardWorkbench() {
@@ -2697,11 +3114,7 @@ function setupDashboardWorkbench() {
   }
   if (backButton && backButton.dataset.bound !== 'true') {
     backButton.dataset.bound = 'true';
-    backButton.addEventListener('click', () => {
-      document.querySelector('#dashboard-workbench')?.classList.add('hidden');
-      closeEntityProfile();
-      document.querySelector('#dashboard-panel')?.scrollIntoView({ block: 'start' });
-    });
+    backButton.addEventListener('click', backToDashboard);
   }
   if (mapButton && mapButton.dataset.bound !== 'true') {
     mapButton.dataset.bound = 'true';
@@ -2724,26 +3137,6 @@ function setupDashboardWorkbench() {
     referentielButton.dataset.bound = 'true';
     referentielButton.addEventListener('click', () => navigateTo('referentiel'));
   }
-}
-
-function openDashboardLayerList(layerKey, presetRows = null, title = '') {
-  navigateTo('dashboard');
-  platformState.workbenchLayer = layerKey;
-  platformState.workbenchPage = 1;
-  if (!presetRows) platformState.workbenchSelectedFeatureId = null;
-  const panel = document.querySelector('#dashboard-workbench');
-  panel?.classList.remove('hidden');
-  const dataPromise = presetRows ? Promise.resolve([]) : fetchPlatformLayerData(layerKey);
-  dataPromise.then((items) => {
-    const rows = presetRows || asArray(items).map((item) => normalizeAttributeRow(item, layerKey));
-    platformState.workbenchRows = rows;
-    const titleElement = document.querySelector('#dashboard-workbench-title');
-    const labelElement = document.querySelector('#dashboard-workbench-label');
-  if (titleElement) titleElement.textContent = title || getLayerDisplayLabel(layerKey);
-    if (labelElement) labelElement.textContent = `${rows.length.toLocaleString('fr-FR')} élément(s)`;
-    refreshWorkbenchFilters(rows);
-    renderDashboardWorkbench();
-  });
 }
 
 function refreshWorkbenchFilters(rows) {
@@ -7842,6 +8235,9 @@ window.addEventListener('hashchange', renderRouteFromHash);
 // Exposition minimale pour les tests E2E Playwright (lecture seule).
 window.cartographyState = cartographyState;
 window.nationalMapState = nationalMapState;
+window.dashboardViewState = dashboardViewState;
+window.openDashboardDetailPage = openDashboardDetailPage;
+window.backToDashboard = backToDashboard;
 window.platformState = platformState;
 window.goBackContext = goBackNationalContext;
 window.goBackNationalContext = goBackNationalContext;
