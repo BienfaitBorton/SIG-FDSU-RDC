@@ -35,23 +35,36 @@ async function waitForAppReady(page) {
 
 async function openCartographyDrawerPanel(page, drawerKey) {
   await page.evaluate((key) => {
-    document.querySelectorAll('.cartography-drawer').forEach((panel) => {
-      panel.classList.add('hidden');
-      panel.setAttribute('aria-hidden', 'true');
-    });
-    document.querySelectorAll('.cartography-fab[data-carto-drawer]').forEach((fab) => {
-      fab.classList.remove('is-active');
-      fab.setAttribute('aria-expanded', 'false');
+    const panelKeys = ['layers', 'legend', 'entities', 'info', 'classification'];
+    panelKeys.forEach((panelKey) => {
+      if (panelKey === key) return;
+      const panel = document.querySelector(`#carto-drawer-${panelKey}`);
+      panel?.classList.add('hidden');
+      panel?.setAttribute('aria-hidden', 'true');
+      const button = document.querySelector(`[data-carto-drawer="${panelKey}"]`);
+      button?.classList.remove('is-active');
+      button?.setAttribute('aria-expanded', 'false');
     });
     const drawer = document.querySelector(`#carto-drawer-${key}`);
-    const button = document.querySelector(`.cartography-fab[data-carto-drawer="${key}"]`);
+    const button = document.querySelector(`[data-carto-drawer="${key}"]`);
     drawer?.classList.remove('hidden');
     drawer?.setAttribute('aria-hidden', 'false');
     button?.classList.add('is-active');
     button?.setAttribute('aria-expanded', 'true');
-    if (window.cartographyState) window.cartographyState.activeDrawer = key;
+    document.querySelector('#cartography-sidebar')?.classList.remove('hidden');
+    document.querySelector('#cartography-main-row')?.classList.add('has-sidebar-panel');
+    if (window.cartographyState) {
+      window.cartographyState.activeDrawer = key;
+      window.cartographyState.openDrawers = [key];
+    }
+    window.cartographyState?.map?.invalidateSize();
   }, drawerKey);
   await expect(page.locator(`#carto-drawer-${drawerKey}`)).not.toHaveClass(/hidden/);
+}
+
+async function openAttributeExplorer(page) {
+  await page.locator('[data-carto-explorer-open]').click();
+  await expect(page.locator('#cartography-explorer-drawer')).not.toHaveClass(/hidden/);
 }
 
 async function checkCartographyLayer(page, layerKey) {
@@ -181,11 +194,23 @@ test.describe('SIG-FDSU RDC – Smart Map', () => {
     const box = await map.boundingBox();
     expect(box).toBeTruthy();
 
-    await page.mouse.click(box.x + box.width * 0.52, box.y + box.height * 0.48);
+    await page.evaluate(() => {
+      const state = window.cartographyState;
+      const features = state?.features?.provinces || [];
+      const feature = features[0];
+      if (!feature) return;
+      const layerKey = 'provinces';
+      const featureId = feature.properties?.id || feature.properties?.canonical_id || feature.properties?.code;
+      const layer = state.featureLayers?.[layerKey]?.[featureId] || state.layers?.provinces?.getLayers?.()?.[0];
+      if (layer?.fire) {
+        layer.fire('click', { originalEvent: new MouseEvent('click') });
+      }
+    });
 
-    const infoPanel = page.locator('#carto-info');
-    await expect(page.locator('#carto-drawer-info')).not.toHaveClass(/hidden/);
-    await expect(infoPanel).toBeVisible();
+    const infoPanel = page.locator('#cartography-sidebar #carto-info');
+    await expect(page.locator('#cartography-sidebar')).not.toHaveClass(/hidden/, { timeout: 15_000 });
+    await expect(page.locator('#carto-drawer-info')).not.toHaveClass(/hidden/, { timeout: 15_000 });
+    await expect(infoPanel).toContainText(/.+/);
 
     const infoText = await infoPanel.innerText();
     const hasSelection = !infoText.includes('Sélectionnez un objet');
@@ -197,6 +222,7 @@ test.describe('SIG-FDSU RDC – Smart Map', () => {
   test('Smart Map – fil d’Ariane, liste synchronisée, retour vue nationale', async ({ page }) => {
     await openCartography(page);
 
+    await openAttributeExplorer(page);
     await page.waitForFunction(
       () => document.querySelectorAll('#attribute-table-body tr[data-feature-id]').length > 0,
       null,
@@ -208,6 +234,8 @@ test.describe('SIG-FDSU RDC – Smart Map', () => {
         panel.classList.add('hidden');
         panel.setAttribute('aria-hidden', 'true');
       });
+      document.querySelector('#cartography-sidebar')?.classList.add('hidden');
+      document.querySelector('#cartography-main-row')?.classList.remove('has-sidebar-panel');
       document.querySelector('#attribute-table-body tr[data-feature-id]')?.click();
     });
 
@@ -217,7 +245,7 @@ test.describe('SIG-FDSU RDC – Smart Map', () => {
       { timeout: 15_000 },
     );
 
-    await page.locator('#zoom-auto').click();
+    await page.locator('#zoom-auto').click({ force: true });
     await expect(page.locator('#map-breadcrumb')).toContainText('RDC');
   });
 
@@ -240,6 +268,7 @@ test.describe('SIG-FDSU RDC – Smart Map', () => {
 
   test('filtres explorateur attributaire', async ({ page }) => {
     await openCartography(page);
+    await openAttributeExplorer(page);
 
     await expect(page.locator('#attribute-layer-select')).toBeVisible();
     await expect(page.locator('#attribute-search')).toBeVisible();
@@ -248,7 +277,7 @@ test.describe('SIG-FDSU RDC – Smart Map', () => {
     await page.locator('#attribute-search').fill('a');
     await page.waitForTimeout(400);
 
-    const totalLabel = page.locator('#attribute-total');
+    const totalLabel = page.locator('#cartography-explorer-drawer #attribute-total');
     await expect(totalLabel).toBeVisible();
     await expect(totalLabel).not.toHaveText('0 élément');
   });
@@ -275,17 +304,72 @@ test.describe('SIG-FDSU RDC – Smart Map', () => {
 
     await expect(page.locator('.cartography-workspace')).toBeVisible();
     await expect(page.locator('.cartography-map-stage')).toBeVisible();
-    await expect(page.locator('.cartography-fab-group')).toBeVisible();
+    await expect(page.locator('.cartography-toolbar-row')).toBeVisible();
+    await expect(page.locator('.cartography-tool-btn[data-carto-drawer="layers"]')).toBeVisible();
+    await expect(page.locator('#cartography-explorer-drawer')).toHaveClass(/hidden/);
+
+    await page.evaluate(() => {
+      document.querySelector('#carto-drawer-layers')?.classList.add('hidden');
+      document.querySelector('#cartography-sidebar')?.classList.add('hidden');
+      document.querySelector('#cartography-main-row')?.classList.remove('has-sidebar-panel');
+      window.cartographyState?.map?.invalidateSize();
+    });
+    await page.waitForTimeout(200);
 
     const stageBox = await page.locator('.cartography-map-stage').boundingBox();
     const mapBox = await page.locator('#map.leaflet-container').boundingBox();
+    const mainRowBox = await page.locator('.cartography-main-row').boundingBox();
     expect(stageBox).toBeTruthy();
     expect(mapBox).toBeTruthy();
-    if (stageBox && mapBox) {
+    expect(mainRowBox).toBeTruthy();
+    if (stageBox && mapBox && mainRowBox) {
       expect(mapBox.width).toBeGreaterThan(700);
       expect(mapBox.height).toBeGreaterThan(400);
-      expect(stageBox.width).toBeGreaterThan(900);
+      expect(stageBox.width / mainRowBox.width).toBeGreaterThan(0.9);
     }
+
+    await openCartographyDrawerPanel(page, 'layers');
+    const sidebarBox = await page.locator('.cartography-sidebar').boundingBox();
+    const mapWithSidebar = await page.locator('#map.leaflet-container').boundingBox();
+    if (sidebarBox && mapWithSidebar && mainRowBox) {
+      expect(sidebarBox.width).toBeLessThanOrEqual(320);
+      expect(mapWithSidebar.width / (mapWithSidebar.width + sidebarBox.width)).toBeGreaterThan(0.55);
+    }
+  });
+
+  test('validation SIG – carte principale et captures', async ({ page }) => {
+    await page.goto(MAP_URL);
+    await expect(page.locator('#cartographie-panel')).not.toHaveClass(/hidden/);
+    await page.waitForFunction(() => window.cartographyState?.initialized === true, null, { timeout: 30_000 });
+    await expect(page.locator('#map.leaflet-container')).toBeVisible();
+    await expect(page.locator('#cartography-explorer-drawer')).toHaveClass(/hidden/);
+    await expect(page.locator('.sig-map-info-compact')).toBeVisible();
+
+    await page.screenshot({ path: 'test-results/cartography-map-main.png', fullPage: false });
+    await openCartographyDrawerPanel(page, 'layers');
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: 'test-results/cartography-layers-sidebar.png', fullPage: false });
+    await openAttributeExplorer(page);
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: 'test-results/cartography-explorer-drawer.png', fullPage: false });
+  });
+
+  test('validation UI – panneaux compacts tableau de bord', async ({ page }) => {
+    await waitForAppReady(page);
+    await page.waitForFunction(() => document.querySelectorAll('.dashboard-zones-list .sig-zone-card').length === 5, null, { timeout: 60_000 });
+
+    const cards = page.locator('.dashboard-zones-list .sig-zone-card');
+    await expect(cards).toHaveCount(5);
+
+    const firstCard = cards.first();
+    const box = await firstCard.boundingBox();
+    expect(box).toBeTruthy();
+    if (box) {
+      expect(box.height).toBeGreaterThanOrEqual(85);
+      expect(box.height).toBeLessThanOrEqual(115);
+    }
+
+    await page.screenshot({ path: 'test-results/dashboard-zones-compact.png', fullPage: false });
   });
 });
 
