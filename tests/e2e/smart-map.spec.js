@@ -431,6 +431,37 @@ test.describe('SIG-FDSU RDC – Module Cartographie libre', () => {
       }, layerKey, { timeout: 45_000 });
     }
   });
+
+  test('groupe Sites FDSU et programme Sites 40 affichent 40 points', async ({ page }) => {
+    await openCartography(page);
+
+    await expect(page.locator('.cartography-layer-group-title')).toHaveText('Sites FDSU');
+    await expect(page.locator('#layer-list input[data-layer="sites_all"]')).toBeVisible();
+    await expect(page.locator('#layer-list input[data-layer="sites_40"]')).toBeVisible();
+    await expect(page.locator('#layer-list input[data-layer="sites_300"]')).toBeVisible();
+    await expect(page.locator('#layer-list input[data-layer="sites"]')).toHaveCount(0);
+
+    await checkCartographyLayer(page, 'sites_40');
+    await page.waitForFunction(() => {
+      const state = window.cartographyState;
+      return state?.map?.hasLayer(state.layers.sites_40)
+        && state.layers.sites_40.getLayers().length === 40;
+    }, null, { timeout: 30_000 });
+
+    await expect(page.locator('#zones-message')).not.toContainText('Aucune donnée disponible pour sites_40');
+
+    await checkCartographyLayer(page, 'sites_all');
+    await page.waitForFunction(() => {
+      const state = window.cartographyState;
+      return state?.map?.hasLayer(state.layers.sites_all)
+        && state.layers.sites_all.getLayers().length === 40;
+    }, null, { timeout: 30_000 });
+
+    const tileFilter = await page.evaluate(() => getComputedStyle(document.querySelector('#map .leaflet-tile-pane img') || document.createElement('img')).filter);
+    expect(tileFilter).toBe('none');
+
+    await page.screenshot({ path: 'test-results/cartography-sites-fdsu-group.png', fullPage: false });
+  });
 });
 
 test.describe('SIG-FDSU RDC – Cartographie nationale (tableau de bord)', () => {

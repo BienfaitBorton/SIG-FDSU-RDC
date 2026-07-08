@@ -802,7 +802,7 @@ button {
   border-radius: 20px;
   overflow: hidden;
   border: 1px solid rgba(148, 163, 184, 0.14);
-  background: rgba(15, 23, 42, 0.92);
+  background: #eef2f7;
   box-shadow: var(--shadow);
 }
 
@@ -1155,6 +1155,7 @@ button {
 .legend-groupement-point { background: #a78bfa; border-radius: 999px; }
 .legend-locality-point { background: #14b8a6; border-radius: 999px; }
 .legend-site-point { background: #f59e0b; border-radius: 999px; }
+.legend-site-40-point { background: #c084fc; border-radius: 999px; }
 .legend-mission-point { background: #fb7185; border-radius: 999px; }
 
 .map-breadcrumb {
@@ -1475,6 +1476,14 @@ button {
   filter: grayscale(1) saturate(0.45) brightness(0.62);
 }
 
+.cartography-map-stage .map-canvas .leaflet-tile {
+  filter: none;
+}
+
+.cartography-map-stage.map-canvas--muted .map-canvas .leaflet-tile {
+  filter: grayscale(1) saturate(0.45) brightness(0.62);
+}
+
 .map-feature-selected {
   filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.65));
   animation: selectedFeaturePulse 1.8s ease-in-out infinite;
@@ -1537,6 +1546,35 @@ button {
   align-items: center;
   gap: 12px;
   color: var(--text);
+}
+
+.cartography-layer-group {
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(15, 23, 42, 0.28);
+}
+
+.cartography-layer-group-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.cartography-layer-group-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.cartography-layer-group-list label {
+  font-size: 0.92rem;
 }
 
 .info-body {

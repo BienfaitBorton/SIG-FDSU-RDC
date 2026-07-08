@@ -335,8 +335,14 @@
                       <li><label><input type="checkbox" data-layer="collectivites" /> Collectivités</label></li>
                       <li><label><input type="checkbox" data-layer="groupements" /> Groupements</label></li>
                       <li><label><input type="checkbox" data-layer="villages" /> Localités</label></li>
-                      <li><label><input type="checkbox" data-layer="sites" /> Sites FDSU</label></li>
-                      <li><label><input type="checkbox" data-layer="sites_40" /> Sites 40 FDSU</label></li>
+                      <li class="cartography-layer-group">
+                        <span class="cartography-layer-group-title">Sites FDSU</span>
+                        <ul class="cartography-layer-group-list">
+                          <li><label><input type="checkbox" data-layer="sites_all" /> Tous les sites</label></li>
+                          <li><label><input type="checkbox" data-layer="sites_40" /> Programme Sites 40</label></li>
+                          <li><label><input type="checkbox" data-layer="sites_300" /> Programme Sites 300</label></li>
+                        </ul>
+                      </li>
                       <li><label><input type="checkbox" data-layer="missions" /> Missions</label></li>
                     </ul>
                     <div class="cartography-panel-footer">
@@ -371,7 +377,8 @@
                         <li><span class="legend-swatch legend-collectivity-line"></span>Collectivités</li>
                         <li><span class="legend-swatch legend-groupement-point"></span>Groupements</li>
                         <li><span class="legend-swatch legend-locality-point"></span>Localités</li>
-                        <li><span class="legend-swatch legend-site-point"></span>Sites FDSU</li>
+                        <li><span class="legend-swatch legend-site-point"></span>Tous les sites FDSU</li>
+                        <li><span class="legend-swatch legend-site-40-point"></span>Programme Sites 40</li>
                         <li><span class="legend-swatch legend-mission-point"></span>Missions</li>
                       </ul>
                     </div>
