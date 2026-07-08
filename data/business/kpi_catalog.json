@@ -1,0 +1,206 @@
+{
+  "_meta": {
+    "schema_version": "1.0.0",
+    "title": "Catalogue KPI FDSU",
+    "description": "Indicateurs de performance organisés par programme FDSU. Référentiel descriptif pour les tableaux de bord et le centre de décision.",
+    "source_documents": [
+      "data/strategic/strategie_fdsu_ccn_2026_2030.docx"
+    ],
+    "calculation_enabled": false,
+    "updated_at": "2026-07-08"
+  },
+  "programs": [
+    {
+      "program_id": "connectivity_extension",
+      "program_label": "Extension de la connectivité",
+      "kpis": [
+        {
+          "id": "sites_built",
+          "label": "Sites construits",
+          "description": "Nombre de sites effectivement déployés dans le cadre du programme.",
+          "unit": "count",
+          "aggregation": "sum",
+          "status": "planned"
+        },
+        {
+          "id": "availability",
+          "label": "Disponibilité",
+          "description": "Taux de disponibilité du service sur les sites déployés.",
+          "unit": "percent",
+          "aggregation": "average",
+          "status": "planned"
+        },
+        {
+          "id": "coverage",
+          "label": "Couverture",
+          "description": "Part du territoire ou de la population couverte par le service.",
+          "unit": "percent",
+          "aggregation": "average",
+          "status": "planned"
+        },
+        {
+          "id": "covered_population",
+          "label": "Population couverte",
+          "description": "Population bénéficiant d'un accès effectif au service universel.",
+          "unit": "persons",
+          "aggregation": "sum",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "program_id": "ccn",
+      "program_label": "Centres Communautaires Numériques",
+      "kpis": [
+        {
+          "id": "users",
+          "label": "Utilisateurs",
+          "description": "Nombre d'utilisateurs enregistrés ou actifs sur les CCN.",
+          "unit": "count",
+          "aggregation": "sum",
+          "status": "planned"
+        },
+        {
+          "id": "trainings",
+          "label": "Formations",
+          "description": "Nombre de sessions ou de bénéficiaires formés via les CCN.",
+          "unit": "count",
+          "aggregation": "sum",
+          "status": "planned"
+        },
+        {
+          "id": "services",
+          "label": "Services",
+          "description": "Nombre de services numériques disponibles ou utilisés dans les CCN.",
+          "unit": "count",
+          "aggregation": "sum",
+          "status": "planned"
+        },
+        {
+          "id": "revenue",
+          "label": "Revenus",
+          "description": "Revenus générés ou réinvestis par les CCN pour assurer la viabilité.",
+          "unit": "currency_usd",
+          "aggregation": "sum",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "program_id": "subsidies",
+      "program_label": "Subventions",
+      "kpis": [
+        {
+          "id": "funded_projects",
+          "label": "Projets financés",
+          "description": "Nombre de projets ayant reçu une subvention FDSU.",
+          "unit": "count",
+          "aggregation": "sum",
+          "status": "planned"
+        },
+        {
+          "id": "execution_rate",
+          "label": "Taux d'exécution",
+          "description": "Part des fonds subventionnés effectivement consommés selon le calendrier.",
+          "unit": "percent",
+          "aggregation": "average",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "program_id": "smart_villages",
+      "program_label": "Smart Villages",
+      "kpis": [
+        {
+          "id": "pilot_localities",
+          "label": "Localités pilotes",
+          "description": "Nombre de localités intégrées au programme Smart Villages.",
+          "unit": "count",
+          "aggregation": "sum",
+          "status": "planned"
+        },
+        {
+          "id": "integrated_services",
+          "label": "Services intégrés",
+          "description": "Nombre de services numériques déployés de manière intégrée par localité pilote.",
+          "unit": "count",
+          "aggregation": "average",
+          "status": "planned"
+        },
+        {
+          "id": "community_adoption",
+          "label": "Adoption communautaire",
+          "description": "Indicateur qualitatif d'appropriation des services par les communautés.",
+          "unit": "score",
+          "aggregation": "average",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "program_id": "sites_300",
+      "program_label": "Sites 300",
+      "kpis": [
+        {
+          "id": "deployment_progress",
+          "label": "Avancement déploiement",
+          "description": "Progression du déploiement par rapport au lot national cible.",
+          "unit": "percent",
+          "aggregation": "average",
+          "status": "planned"
+        },
+        {
+          "id": "priority_sites_validated",
+          "label": "Sites prioritaires validés",
+          "description": "Sites prioritaires validés après analyse multicritère.",
+          "unit": "count",
+          "aggregation": "sum",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "program_id": "e_health",
+      "program_label": "e-Santé",
+      "kpis": [
+        {
+          "id": "health_services_active",
+          "label": "Services e-santé actifs",
+          "description": "Services de télémédecine ou de santé numérique opérationnels.",
+          "unit": "count",
+          "aggregation": "sum",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "program_id": "e_education",
+      "program_label": "e-Éducation",
+      "kpis": [
+        {
+          "id": "learners_reached",
+          "label": "Apprenants touchés",
+          "description": "Nombre d'apprenants bénéficiant de services e-éducation via FDSU.",
+          "unit": "count",
+          "aggregation": "sum",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "program_id": "digital_agriculture",
+      "program_label": "Agriculture numérique",
+      "kpis": [
+        {
+          "id": "producers_connected",
+          "label": "Producteurs connectés",
+          "description": "Producteurs agricoles accédant à des services numériques FDSU.",
+          "unit": "count",
+          "aggregation": "sum",
+          "status": "planned"
+        }
+      ]
+    }
+  ]
+}

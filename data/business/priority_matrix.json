@@ -1,0 +1,100 @@
+{
+  "_meta": {
+    "schema_version": "1.0.0",
+    "title": "Matrices de priorisation FDSU",
+    "description": "Seuils et typologies de matrices de priorisation. Structure de référence — les scores effectifs seront calculés dans un sprint ultérieur.",
+    "source_documents": [
+      "data/strategic/matrice_priorisation_300_sites.xlsx"
+    ],
+    "calculation_enabled": false,
+    "updated_at": "2026-07-08"
+  },
+  "priority_levels": [
+    {
+      "id": "critical",
+      "label": "Priorité critique",
+      "rank": 1,
+      "color_token": "priority-critical",
+      "description": "Intervention immédiate requise — déficit majeur et fort impact social attendu.",
+      "threshold": {
+        "min_score": 85,
+        "max_score": 100
+      }
+    },
+    {
+      "id": "high",
+      "label": "Priorité haute",
+      "rank": 2,
+      "color_token": "priority-high",
+      "description": "Intervention prioritaire dans la séquence de déploiement nationale.",
+      "threshold": {
+        "min_score": 70,
+        "max_score": 84
+      }
+    },
+    {
+      "id": "medium",
+      "label": "Priorité moyenne",
+      "rank": 3,
+      "color_token": "priority-medium",
+      "description": "Intervention planifiable selon disponibilité budgétaire et faisabilité.",
+      "threshold": {
+        "min_score": 50,
+        "max_score": 69
+      }
+    },
+    {
+      "id": "low",
+      "label": "Priorité basse",
+      "rank": 4,
+      "color_token": "priority-low",
+      "description": "Intervention différée ou conditionnée à des évolutions territoriales.",
+      "threshold": {
+        "min_score": 0,
+        "max_score": 49
+      }
+    }
+  ],
+  "matrix_types": [
+    {
+      "id": "sites",
+      "label": "Sites",
+      "description": "Matrice de priorisation des sites FDSU (déploiement, extension, relèvement).",
+      "entity_type": "site",
+      "decision_rules_ref": "site_priorisation",
+      "scoring_family_ref": "score_site",
+      "levels_apply": true
+    },
+    {
+      "id": "ccn",
+      "label": "CCN",
+      "description": "Matrice de priorisation des Centres Communautaires Numériques par localité ou site hôte.",
+      "entity_type": "ccn",
+      "decision_rules_ref": "ccn_eligibility",
+      "scoring_family_ref": "score_ccn",
+      "levels_apply": true
+    },
+    {
+      "id": "subsidies",
+      "label": "Subventions",
+      "description": "Matrice de priorisation des projets et bénéficiaires éligibles aux subventions FDSU.",
+      "entity_type": "project",
+      "decision_rules_ref": "investment_simulation",
+      "scoring_family_ref": "score_project",
+      "levels_apply": true
+    },
+    {
+      "id": "partners",
+      "label": "Partenaires",
+      "description": "Matrice de priorisation et d'alignement des partenaires opérationnels et financiers.",
+      "entity_type": "partner",
+      "decision_rules_ref": "investment_simulation",
+      "scoring_family_ref": "score_partner",
+      "levels_apply": true
+    }
+  ],
+  "threshold_notes": {
+    "score_scale": "0-100",
+    "customization": "Les seuils pourront être recalibrés par programme sans modification du code applicatif."
+  }
+}

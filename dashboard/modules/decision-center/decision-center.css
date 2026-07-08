@@ -230,6 +230,106 @@
   text-align: center;
 }
 
+.decision-center-business-architecture {
+  display: grid;
+  gap: 14px;
+  padding: 18px 20px 20px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.decision-center-business-architecture-header h3 {
+  margin: 0;
+}
+
+.decision-center-business-architecture-intro {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.decision-center-business-architecture-intro code {
+  font-size: 0.85em;
+}
+
+.decision-center-program-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.decision-center-program-card {
+  display: grid;
+  gap: 6px;
+  min-height: 96px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(15, 23, 42, 0.42);
+}
+
+.decision-center-program-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.decision-center-program-card-marker {
+  color: var(--accent, #38bdf8);
+  font-size: 0.72rem;
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+
+.decision-center-program-card-title {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.decision-center-program-card-tagline {
+  margin: 0;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
+
+.decision-center-program-card-status {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.decision-center-program-card-status.is-planned {
+  color: #fbbf24;
+}
+
+.decision-center-program-card-status.is-active {
+  color: #34d399;
+}
+
+.decision-center-program-card-status.is-defined {
+  color: #94a3b8;
+}
+
+.decision-center-program-loading,
+.decision-center-program-error {
+  margin: 0;
+  padding: 16px;
+  border-radius: 12px;
+  color: var(--text-muted);
+  background: rgba(15, 23, 42, 0.35);
+  border: 1px dashed rgba(148, 163, 184, 0.22);
+}
+
+.decision-center-program-error {
+  color: #fca5a5;
+}
+
 @media (max-width: 1280px) {
   .decision-center-kpi-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));

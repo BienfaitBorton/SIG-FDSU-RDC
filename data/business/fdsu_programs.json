@@ -1,0 +1,154 @@
+{
+  "_meta": {
+    "schema_version": "1.0.0",
+    "title": "Catalogue des programmes FDSU",
+    "description": "Référentiel extensible des programmes nationaux FDSU. Toute volumétrie ou cible opérationnelle est portée par des attributs dédiés, jamais codée en dur dans l'application.",
+    "source_documents": [
+      "data/strategic/strategie_fdsu_ccn_2026_2030.docx",
+      "data/strategic/matrice_priorisation_300_sites.xlsx"
+    ],
+    "updated_at": "2026-07-08"
+  },
+  "statuses": [
+    { "id": "planned", "label": "Prévu" },
+    { "id": "active", "label": "Actif" },
+    { "id": "paused", "label": "Suspendu" },
+    { "id": "completed", "label": "Clôturé" },
+    { "id": "defined", "label": "Défini" }
+  ],
+  "programs": [
+    {
+      "id": "sites_40",
+      "code": "PROG_SITES_40",
+      "name": "Sites 40",
+      "short_label": "Sites 40",
+      "tagline": "Programme spécifique",
+      "description": "Programme spécifique de déploiement pilote à échelle réduite, articulé autour d'un lot cible défini dans la stratégie FDSU.",
+      "status": "planned",
+      "category": "deployment",
+      "target_scope": "pilot_lot",
+      "related_matrix_types": ["sites"],
+      "kpi_program_ref": "sites_40"
+    },
+    {
+      "id": "sites_300",
+      "code": "PROG_SITES_300",
+      "name": "Sites 300",
+      "short_label": "Sites 300",
+      "tagline": "Programme national",
+      "description": "Programme national de déploiement des sites FDSU, alimenté par la matrice de ciblage et de priorisation officielle.",
+      "status": "active",
+      "category": "deployment",
+      "target_scope": "national",
+      "related_matrix_types": ["sites"],
+      "kpi_program_ref": "sites_300",
+      "strategic_document_ref": "matrice_priorisation_300_sites"
+    },
+    {
+      "id": "connectivity_extension",
+      "code": "PROG_CONNECTIVITY",
+      "name": "Extension de la connectivité",
+      "short_label": "Connectivité",
+      "tagline": "Inclusion numérique territoriale",
+      "description": "Programme d'extension de la couverture réseau et de réduction des déficits de connectivité dans les zones prioritaires FDSU.",
+      "status": "active",
+      "category": "infrastructure",
+      "target_scope": "national",
+      "related_matrix_types": ["sites", "partners"],
+      "kpi_program_ref": "connectivity_extension"
+    },
+    {
+      "id": "ccn",
+      "code": "PROG_CCN",
+      "name": "Centres Communautaires Numériques",
+      "short_label": "CCN",
+      "tagline": "Inclusion numérique communautaire",
+      "description": "Programme de déploiement et de suivi des Centres Communautaires Numériques, avec typologie et indicateurs définis dans le modèle CCN.",
+      "status": "active",
+      "category": "digital_inclusion",
+      "target_scope": "national",
+      "related_matrix_types": ["ccn", "sites"],
+      "kpi_program_ref": "ccn",
+      "model_ref": "ccn_model"
+    },
+    {
+      "id": "subsidies",
+      "code": "PROG_SUBSIDIES",
+      "name": "Subventions",
+      "short_label": "Subventions",
+      "tagline": "Financement du service universel",
+      "description": "Programme de subventions FDSU : critères d'éligibilité, typologie des aides et suivi des phases de décaissement.",
+      "status": "active",
+      "category": "financing",
+      "target_scope": "national",
+      "related_matrix_types": ["subsidies", "partners"],
+      "kpi_program_ref": "subsidies",
+      "rules_ref": "subsidy_rules"
+    },
+    {
+      "id": "smart_villages",
+      "code": "PROG_SMART_VILLAGES",
+      "name": "Smart Villages",
+      "short_label": "Smart Villages",
+      "tagline": "Territoires intelligents",
+      "description": "Programme d'expérimentation et de déploiement de services numériques intégrés au niveau des localités rurales et périurbaines.",
+      "status": "defined",
+      "category": "innovation",
+      "target_scope": "territorial",
+      "related_matrix_types": ["sites", "partners"],
+      "kpi_program_ref": "smart_villages"
+    },
+    {
+      "id": "e_health",
+      "code": "PROG_E_SANTE",
+      "name": "e-Santé",
+      "short_label": "e-Santé",
+      "tagline": "Services de santé numériques",
+      "description": "Programme sectoriel de déploiement de services e-santé via les sites FDSU et les CCN.",
+      "status": "defined",
+      "category": "sector",
+      "target_scope": "sectoral",
+      "related_matrix_types": ["sites", "ccn"],
+      "kpi_program_ref": "e_health"
+    },
+    {
+      "id": "e_education",
+      "code": "PROG_E_EDUCATION",
+      "name": "e-Éducation",
+      "short_label": "e-Éducation",
+      "tagline": "Services éducatifs numériques",
+      "description": "Programme sectoriel de déploiement de services e-éducation et de formation numérique.",
+      "status": "defined",
+      "category": "sector",
+      "target_scope": "sectoral",
+      "related_matrix_types": ["sites", "ccn"],
+      "kpi_program_ref": "e_education"
+    },
+    {
+      "id": "digital_agriculture",
+      "code": "PROG_AGRI_NUM",
+      "name": "Agriculture numérique",
+      "short_label": "Agri numérique",
+      "tagline": "Potentiel économique rural",
+      "description": "Programme sectoriel visant le renforcement du potentiel économique agricole par les services numériques universels.",
+      "status": "defined",
+      "category": "sector",
+      "target_scope": "sectoral",
+      "related_matrix_types": ["sites", "partners"],
+      "kpi_program_ref": "digital_agriculture"
+    },
+    {
+      "id": "other_programs",
+      "code": "PROG_OTHER",
+      "name": "Autres programmes",
+      "short_label": "Autres",
+      "tagline": "Extensions futures",
+      "description": "Conteneur extensible pour les programmes FDSU complémentaires non encore modélisés individuellement.",
+      "status": "defined",
+      "category": "extension",
+      "target_scope": "open",
+      "related_matrix_types": ["sites", "ccn", "subsidies", "partners"],
+      "kpi_program_ref": "other_programs"
+    }
+  ]
+}

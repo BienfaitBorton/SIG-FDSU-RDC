@@ -1,0 +1,145 @@
+{
+  "_meta": {
+    "schema_version": "1.0.0",
+    "title": "Règles de subventions FDSU",
+    "description": "Référentiel des critères, éligibilités, types, phases et indicateurs du programme de subventions. Aucune logique de décaissement implémentée.",
+    "source_documents": [
+      "data/strategic/strategie_fdsu_ccn_2026_2030.docx"
+    ],
+    "calculation_enabled": false,
+    "updated_at": "2026-07-08"
+  },
+  "criteria": [
+    {
+      "id": "alignment_fdsu_mission",
+      "label": "Alignement mission FDSU",
+      "description": "Conformité du projet avec la mission de service universel et la stratégie nationale."
+    },
+    {
+      "id": "territorial_priority",
+      "label": "Priorité territoriale",
+      "description": "Adéquation avec les zones et localités identifiées comme prioritaires."
+    },
+    {
+      "id": "technical_feasibility",
+      "label": "Faisabilité technique",
+      "description": "Capacité du porteur à exécuter le projet dans les délais et standards requis."
+    },
+    {
+      "id": "financial_sustainability",
+      "label": "Viabilité financière",
+      "description": "Capacité à assurer la pérennité après la période de subvention."
+    },
+    {
+      "id": "social_impact",
+      "label": "Impact social",
+      "description": "Bénéfice attendu pour les populations cibles et réduction des inégalités d'accès."
+    }
+  ],
+  "eligibility": [
+    {
+      "id": "operators",
+      "label": "Opérateurs et fournisseurs de services",
+      "description": "Entités habilitées à déployer ou étendre des infrastructures de service universel.",
+      "required_documents": ["dossier_technique", "plan_deploiement", "budget_previsionnel"]
+    },
+    {
+      "id": "local_collectivities",
+      "label": "Collectivités et partenaires locaux",
+      "description": "Structures territoriales ou associatives co-portant des projets d'inclusion numérique.",
+      "required_documents": ["lettre_engagement", "description_projet", "budget_previsionnel"]
+    },
+    {
+      "id": "ccn_managers",
+      "label": "Gestionnaires de CCN",
+      "description": "Porteurs de projets liés à l'équipement, la formation ou l'exploitation de CCN.",
+      "required_documents": ["statuts_structure", "plan_activites", "budget_previsionnel"]
+    }
+  ],
+  "types": [
+    {
+      "id": "capex_support",
+      "label": "Soutien CAPEX",
+      "description": "Subvention au investissement initial (infrastructure, équipements)."
+    },
+    {
+      "id": "opex_support",
+      "label": "Soutien OPEX",
+      "description": "Subvention au fonctionnement et à l'exploitation sur une période définie."
+    },
+    {
+      "id": "viability_grant",
+      "label": "Subvention de viabilité",
+      "description": "Aide transitoire pour garantir la continuité de service après déploiement."
+    },
+    {
+      "id": "innovation_pilot",
+      "label": "Pilote innovation",
+      "description": "Financement de projets expérimentaux (Smart Villages, services sectoriels)."
+    }
+  ],
+  "phases": [
+    {
+      "id": "submission",
+      "label": "Dépôt",
+      "description": "Réception et complétude du dossier de candidature.",
+      "order": 1
+    },
+    {
+      "id": "eligibility_review",
+      "label": "Instruction éligibilité",
+      "description": "Vérification formelle et conformité aux critères d'éligibilité.",
+      "order": 2
+    },
+    {
+      "id": "technical_evaluation",
+      "label": "Évaluation technique",
+      "description": "Analyse de faisabilité, impact et cohérence territoriale.",
+      "order": 3
+    },
+    {
+      "id": "approval",
+      "label": "Approbation",
+      "description": "Décision du comité FDSU et notification au bénéficiaire.",
+      "order": 4
+    },
+    {
+      "id": "disbursement",
+      "label": "Décaissement",
+      "description": "Versements échelonnés selon jalons contractuels.",
+      "order": 5
+    },
+    {
+      "id": "monitoring",
+      "label": "Suivi",
+      "description": "Contrôle d'exécution, indicateurs et rapports d'avancement.",
+      "order": 6
+    }
+  ],
+  "indicators": [
+    {
+      "id": "projects_submitted",
+      "label": "Projets soumis",
+      "unit": "count",
+      "phase_ref": "submission"
+    },
+    {
+      "id": "projects_approved",
+      "label": "Projets approuvés",
+      "unit": "count",
+      "phase_ref": "approval"
+    },
+    {
+      "id": "disbursement_rate",
+      "label": "Taux de décaissement",
+      "unit": "percent",
+      "phase_ref": "disbursement"
+    },
+    {
+      "id": "execution_compliance",
+      "label": "Conformité d'exécution",
+      "unit": "percent",
+      "phase_ref": "monitoring"
+    }
+  ]
+}

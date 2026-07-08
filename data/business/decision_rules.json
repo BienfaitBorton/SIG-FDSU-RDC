@@ -1,0 +1,161 @@
+{
+  "_meta": {
+    "schema_version": "1.0.0",
+    "title": "Référentiel des règles de décision FDSU",
+    "description": "Critères décisionnels issus des documents stratégiques FDSU. Référentiel descriptif uniquement — aucun calcul ni pondération automatique à ce stade.",
+    "source_documents": [
+      "data/strategic/strategie_fdsu_ccn_2026_2030.docx",
+      "data/strategic/matrice_priorisation_300_sites.xlsx"
+    ],
+    "calculation_enabled": false,
+    "updated_at": "2026-07-08"
+  },
+  "criteria": [
+    {
+      "id": "classe_strategique",
+      "label": "Classe stratégique",
+      "description": "Positionnement de la localité ou du site dans la typologie stratégique FDSU (zones, séquences de déploiement, profils territoriaux).",
+      "source": "strategie_fdsu_ccn_2026_2030",
+      "data_type": "ordinal",
+      "direction": "higher_is_better",
+      "applies_to": ["site", "locality", "province", "zone"],
+      "decision_phases": ["priorisation", "simulation", "validation"]
+    },
+    {
+      "id": "deficit_couverture",
+      "label": "Déficit de couverture",
+      "description": "Mesure relative de l'écart entre la couverture réseau existante et le besoin territorial identifié.",
+      "source": "matrice_priorisation_300_sites",
+      "data_type": "numeric",
+      "unit": "score",
+      "direction": "higher_is_better",
+      "applies_to": ["site", "locality"],
+      "decision_phases": ["priorisation", "analyse_multicritere"]
+    },
+    {
+      "id": "population",
+      "label": "Population",
+      "description": "Population résidente ou couverte par la zone d'intervention, utilisée pour estimer l'impact social du déploiement.",
+      "source": "matrice_priorisation_300_sites",
+      "data_type": "numeric",
+      "unit": "persons",
+      "direction": "higher_is_better",
+      "applies_to": ["site", "locality", "province"],
+      "decision_phases": ["priorisation", "simulation"]
+    },
+    {
+      "id": "infrastructures_publiques",
+      "label": "Infrastructures publiques",
+      "description": "Présence et qualité des infrastructures publiques de proximité (écoles, centres de santé, marchés, relais administratifs).",
+      "source": "matrice_priorisation_300_sites",
+      "data_type": "composite",
+      "direction": "higher_is_better",
+      "applies_to": ["site", "locality"],
+      "decision_phases": ["priorisation", "validation"]
+    },
+    {
+      "id": "potentiel_economique",
+      "label": "Potentiel économique",
+      "description": "Capacité de la localité à générer ou absorber des activités économiques numériques et non numériques.",
+      "source": "strategie_fdsu_ccn_2026_2030",
+      "data_type": "ordinal",
+      "direction": "higher_is_better",
+      "applies_to": ["site", "locality", "zone"],
+      "decision_phases": ["priorisation", "analyse_multicritere", "simulation"]
+    },
+    {
+      "id": "faisabilite_technique",
+      "label": "Faisabilité technique",
+      "description": "Faisabilité d'implantation technique (accès, énergie, backhaul, contraintes terrain).",
+      "source": "matrice_priorisation_300_sites",
+      "data_type": "ordinal",
+      "direction": "higher_is_better",
+      "applies_to": ["site", "project"],
+      "decision_phases": ["validation", "simulation"]
+    },
+    {
+      "id": "capex",
+      "label": "CAPEX",
+      "description": "Estimation des investissements en capital requis pour le déploiement ou l'extension.",
+      "source": "strategie_fdsu_ccn_2026_2030",
+      "data_type": "numeric",
+      "unit": "currency_usd",
+      "direction": "lower_is_better",
+      "applies_to": ["site", "project", "program"],
+      "decision_phases": ["simulation", "validation"]
+    },
+    {
+      "id": "impact_social",
+      "label": "Impact social",
+      "description": "Contribution attendue du projet à l'inclusion, à l'accès aux services publics et à la réduction des inégalités territoriales.",
+      "source": "strategie_fdsu_ccn_2026_2030",
+      "data_type": "composite",
+      "direction": "higher_is_better",
+      "applies_to": ["site", "locality", "ccn", "project"],
+      "decision_phases": ["priorisation", "analyse_multicritere", "simulation"]
+    },
+    {
+      "id": "viabilite",
+      "label": "Viabilité",
+      "description": "Capacité de maintien et d'exploitation durable du site, du CCN ou du projet après déploiement.",
+      "source": "strategie_fdsu_ccn_2026_2030",
+      "data_type": "ordinal",
+      "direction": "higher_is_better",
+      "applies_to": ["site", "ccn", "project", "partner"],
+      "decision_phases": ["validation", "simulation"]
+    },
+    {
+      "id": "inclusion_numerique",
+      "label": "Inclusion numérique",
+      "description": "Degré d'inclusion numérique visé et écart actuel d'accès aux services numériques universels.",
+      "source": "strategie_fdsu_ccn_2026_2030",
+      "data_type": "composite",
+      "direction": "higher_is_better",
+      "applies_to": ["site", "locality", "ccn", "zone"],
+      "decision_phases": ["priorisation", "analyse_multicritere"]
+    }
+  ],
+  "rule_sets": [
+    {
+      "id": "site_priorisation",
+      "label": "Priorisation des sites",
+      "description": "Ensemble de règles pour classer les sites FDSU avant déploiement.",
+      "criteria_refs": [
+        "classe_strategique",
+        "deficit_couverture",
+        "population",
+        "infrastructures_publiques",
+        "potentiel_economique",
+        "impact_social",
+        "inclusion_numerique"
+      ],
+      "status": "reference_only"
+    },
+    {
+      "id": "ccn_eligibility",
+      "label": "Éligibilité CCN",
+      "description": "Ensemble de règles pour qualifier une localité ou un site pour un CCN.",
+      "criteria_refs": [
+        "classe_strategique",
+        "infrastructures_publiques",
+        "impact_social",
+        "inclusion_numerique",
+        "viabilite"
+      ],
+      "status": "reference_only"
+    },
+    {
+      "id": "investment_simulation",
+      "label": "Simulation d'investissement",
+      "description": "Ensemble de règles pour comparer des scénarios de déploiement.",
+      "criteria_refs": [
+        "capex",
+        "faisabilite_technique",
+        "potentiel_economique",
+        "impact_social",
+        "viabilite"
+      ],
+      "status": "reference_only"
+    }
+  ]
+}

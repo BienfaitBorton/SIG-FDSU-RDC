@@ -54,6 +54,28 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
     await expect(page.locator('[data-decision-tab-panel="rapports"]')).toContainText('Espace Rapports');
   });
 
+  test('architecture métier FDSU et programmes chargés', async ({ page }) => {
+    await openDecisionCenter(page);
+
+    const architecture = page.locator('#decision-center-business-architecture');
+    await expect(architecture).toBeVisible();
+    await expect(architecture.locator('h3')).toHaveText('Architecture métier FDSU');
+
+    await page.waitForFunction(
+      () => document.querySelectorAll('#decision-center-program-grid .decision-center-program-card').length >= 10,
+      null,
+      { timeout: 15_000 },
+    );
+
+    await expect(page.locator('#decision-center-program-grid .decision-center-program-card')).toHaveCount(10);
+    await expect(page.locator('[data-program-id="sites_300"] .decision-center-program-card-title')).toHaveText('Sites 300');
+    await expect(page.locator('[data-program-id="sites_300"] .decision-center-program-card-status')).toHaveText('Actif');
+    await expect(page.locator('[data-program-id="sites_40"] .decision-center-program-card-status')).toHaveText('Prévu');
+    await expect(page.locator('[data-program-id="ccn"] .decision-center-program-card-title')).toHaveText('Centres Communautaires Numériques');
+
+    await page.screenshot({ path: 'test-results/decision-center-business-architecture.png', fullPage: false });
+  });
+
   test('module Aide à la décision existant inchangé', async ({ page }) => {
     await page.goto(LEGACY_DECISION_URL);
     await expect(page.locator('#decision-panel')).not.toHaveClass(/hidden/);

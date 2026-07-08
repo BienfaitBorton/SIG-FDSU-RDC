@@ -1,4 +1,7 @@
 (function initDecisionCenterModule(global) {
+  const BUSINESS_DATA_BASE = '/business/';
+  const FDSU_PROGRAMS_PATH = `${BUSINESS_DATA_BASE}fdsu_programs.json`;
+
   const DECISION_CENTER_TABS = [
     { id: 'vue-nationale', label: 'Vue nationale' },
     { id: 'priorisation', label: 'Priorisation' },
@@ -24,7 +27,94 @@
     layers: {},
     mapInitialized: false,
     resizeObserver: null,
+    programsLoaded: false,
+    programsLoading: false,
   };
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function fetchBusinessJson(filename) {
+    const path = `${BUSINESS_DATA_BASE}${filename}`;
+    return global.fetch(path).then((response) => {
+      if (!response.ok) {
+        throw new Error(`Impossible de charger ${path}`);
+      }
+      return response.json();
+    });
+  }
+
+  function resolveProgramStatusLabel(program, statusCatalog) {
+    const match = asArray(statusCatalog).find((entry) => entry.id === program?.status);
+    return match?.label || program?.status || 'Non défini';
+  }
+
+  function resolveProgramStatusClass(status) {
+    if (status === 'active') return 'is-active';
+    if (status === 'planned') return 'is-planned';
+    return 'is-defined';
+  }
+
+  function renderProgramCard(program, statusCatalog) {
+    const title = escapeHtml(program?.name || program?.short_label || 'Programme');
+    const tagline = escapeHtml(program?.tagline || program?.description || '');
+    const statusLabel = escapeHtml(resolveProgramStatusLabel(program, statusCatalog));
+    const statusClass = resolveProgramStatusClass(program?.status);
+
+    return `
+      <article class="decision-center-program-card" data-program-id="${escapeHtml(program?.id || '')}">
+        <div class="decision-center-program-card-head">
+          <span class="decision-center-program-card-marker" aria-hidden="true">■</span>
+          <h4 class="decision-center-program-card-title">${title}</h4>
+        </div>
+        ${tagline ? `<p class="decision-center-program-card-tagline">${tagline}</p>` : ''}
+        <p class="decision-center-program-card-status ${statusClass}">${statusLabel}</p>
+      </article>
+    `;
+  }
+
+  function renderBusinessArchitecturePanel(payload) {
+    const container = document.querySelector('#decision-center-program-grid');
+    if (!container) return;
+
+    const programs = asArray(payload?.programs);
+    const statusCatalog = asArray(payload?.statuses);
+
+    if (!programs.length) {
+      container.innerHTML = '<p class="decision-center-program-error">Aucun programme FDSU disponible.</p>';
+      return;
+    }
+
+    container.innerHTML = programs.map((program) => renderProgramCard(program, statusCatalog)).join('');
+    decisionCenterState.programsLoaded = true;
+  }
+
+  function loadBusinessArchitecturePanel(forceReload) {
+    if (decisionCenterState.programsLoading) return Promise.resolve();
+    if (decisionCenterState.programsLoaded && !forceReload) return Promise.resolve();
+
+    const container = document.querySelector('#decision-center-program-grid');
+    if (!container) return Promise.resolve();
+
+    decisionCenterState.programsLoading = true;
+    container.innerHTML = '<p class="decision-center-program-loading">Chargement des programmes FDSU…</p>';
+
+    return fetchBusinessJson('fdsu_programs.json')
+      .then((payload) => {
+        renderBusinessArchitecturePanel(payload);
+      })
+      .catch(() => {
+        container.innerHTML = '<p class="decision-center-program-error">Référentiel métier indisponible (<code>data/business/fdsu_programs.json</code>).</p>';
+      })
+      .finally(() => {
+        decisionCenterState.programsLoading = false;
+      });
+  }
 
   function asArray(value) {
     return Array.isArray(value) ? value : [];
@@ -64,6 +154,7 @@
 
     if (tabId === 'vue-nationale') {
       initializeDecisionCenterNationalMap();
+      loadBusinessArchitecturePanel(false);
     }
   }
 
@@ -162,9 +253,13 @@
 
     if (decisionCenterState.activeTab === 'vue-nationale') {
       initializeDecisionCenterNationalMap();
+      loadBusinessArchitecturePanel(false);
     }
   }
 
   global.decisionCenterState = decisionCenterState;
   global.initializeDecisionCenterModule = initializeDecisionCenterModule;
+  global.loadFdsuBusinessArchitecture = loadBusinessArchitecturePanel;
+  global.FDSU_BUSINESS_DATA_BASE = BUSINESS_DATA_BASE;
+  global.FDSU_PROGRAMS_PATH = FDSU_PROGRAMS_PATH;
 })(window);

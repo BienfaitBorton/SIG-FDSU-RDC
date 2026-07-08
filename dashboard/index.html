@@ -180,18 +180,12 @@
                   <div id="dashboard-national-map" class="dashboard-national-map" role="region" aria-label="Carte nationale interactive"></div>
                   <div id="dashboard-map-synchronized-list" class="map-synchronized-list dashboard-national-sync-list"></div>
                 </div>
-                <aside class="dashboard-zones-sidebar" aria-label="Zones FDSU">
-                  <div class="dashboard-zones-sidebar-header">
+                <aside class="dashboard-zones-sidebar sig-inspector-shell" aria-label="Zones FDSU">
+                  <div class="sig-inspector-header dashboard-zones-sidebar-header">
                     <p class="panel-label">Zones FDSU</p>
                     <h3>Répartition</h3>
                   </div>
-                  <ul class="zone-list dashboard-zones-list">
-                    <li class="zone-item zone-nd" data-zone="ND" tabindex="0"><span>ND</span><strong id="zone-ND">0</strong></li>
-                    <li class="zone-item zone-sd" data-zone="SD" tabindex="0"><span>SD</span><strong id="zone-SD">0</strong></li>
-                    <li class="zone-item zone-ce" data-zone="CE" tabindex="0"><span>CE</span><strong id="zone-CE">0</strong></li>
-                    <li class="zone-item zone-ot" data-zone="OT" tabindex="0"><span>OT</span><strong id="zone-OT">0</strong></li>
-                    <li class="zone-item zone-et" data-zone="ET" tabindex="0"><span>ET</span><strong id="zone-ET">0</strong></li>
-                  </ul>
+                  <ul class="zone-list dashboard-zones-list sig-inspector-body"></ul>
                 </aside>
               </div>
             </article>
@@ -251,7 +245,7 @@
               </div>
               <div class="dashboard-detail-layout">
                 <div id="dashboard-detail-map" class="dashboard-detail-map" role="region" aria-label="Carte analytique"></div>
-                <aside class="dashboard-detail-sidebar">
+                <aside class="dashboard-detail-sidebar sig-inspector-shell">
                   <div id="dashboard-detail-stats" class="dashboard-detail-stats"></div>
                   <div id="dashboard-detail-list" class="dashboard-detail-list"></div>
                 </aside>
@@ -290,123 +284,162 @@
 
         <div class="module-panel hidden cartography-module" id="cartographie-panel" data-module="cartographie">
           <div class="cartography-workspace">
-            <div class="cartography-map-stage">
-              <div id="map" class="map-canvas" role="region" aria-label="Carte SIG FDSU RDC"></div>
+            <div class="cartography-toolbar-row" role="toolbar" aria-label="Outils cartographiques">
+              <button id="zoom-auto" type="button" class="primary-button cartography-chip-button">Vue nationale</button>
+              <button id="carto-free-mode" type="button" class="cartography-tool-btn" aria-pressed="false" title="Navigation libre sans contrainte hiérarchique">Cartographie libre</button>
+              <label class="cartography-search-field">
+                <span class="visually-hidden">Recherche cartographique</span>
+                <input id="carto-map-search" type="search" placeholder="Recherche..." aria-label="Recherche cartographique" autocomplete="off" />
+              </label>
+              <div class="cartography-toolbar-actions">
+                <button type="button" class="cartography-tool-btn" data-carto-drawer="layers" aria-expanded="false" title="Couches cartographiques">Couches</button>
+                <button type="button" class="cartography-tool-btn" data-carto-drawer="legend" aria-expanded="false" title="Légende Zones FDSU">Légende</button>
+                <button type="button" class="cartography-tool-btn" data-carto-drawer="entities" aria-expanded="false" title="Entités visibles">Entités</button>
+                <button type="button" class="cartography-tool-btn" id="carto-print-btn" title="Imprimer la carte">Impression</button>
+                <button type="button" class="cartography-tool-btn" id="carto-fullscreen-btn" title="Plein écran">Plein écran</button>
+              </div>
+            </div>
 
-              <div class="cartography-map-chrome cartography-map-chrome-top">
-                <div class="cartography-map-toolbar">
-                  <button id="zoom-auto" type="button" class="primary-button cartography-chip-button">Vue nationale</button>
-                  <div class="thematic-controls cartography-thematic-controls">
-                    <label for="thematic-layer-select">Thématique</label>
-                    <select id="thematic-layer-select">
-                      <option value="administrative">Mode administratif</option>
-                      <option value="economic">Activités économiques</option>
-                      <option value="agriculture">Potentiel agricole</option>
-                      <option value="mining">Potentiel minier</option>
-                      <option value="network">Couverture réseau</option>
-                      <option value="challenges">Défis</option>
-                      <option value="infrastructure">Infrastructures</option>
-                      <option value="fdsu">Potentiel FDSU</option>
-                    </select>
-                  </div>
-                </div>
-                <nav id="map-breadcrumb" class="map-breadcrumb cartography-map-breadcrumb" aria-label="Fil d'Ariane cartographique"></nav>
-                <p id="zones-message" class="cartography-note cartography-map-message" aria-live="polite"></p>
+            <div class="cartography-main-row" id="cartography-main-row">
+              <div class="cartography-map-stage" id="cartography-map-stage">
+                <div id="map" class="map-canvas" role="region" aria-label="Carte SIG FDSU RDC"></div>
+
+                <nav id="map-breadcrumb" class="map-breadcrumb cartography-breadcrumb-row cartography-map-overlay" aria-label="Fil d'Ariane cartographique"></nav>
+                <p id="zones-message" class="cartography-note cartography-status-message cartography-map-overlay" aria-live="polite"></p>
+
+                <aside id="carto-map-info-panel" class="cartography-map-info-panel sig-map-info-compact" aria-label="Informations cartographiques">
+                  <button type="button" class="cartography-map-info-close sig-map-info-close" data-carto-map-info-close aria-label="Fermer">×</button>
+                  <dl class="sig-map-info-grid">
+                    <div><dt>Système</dt><dd>WGS84</dd></div>
+                    <div><dt>Zoom</dt><dd id="carto-map-zoom">—</dd></div>
+                    <div><dt>Échelle</dt><dd id="carto-map-scale">—</dd></div>
+                    <div><dt>Coordonnées</dt><dd id="carto-map-position">—</dd></div>
+                  </dl>
+                </aside>
               </div>
 
-              <div class="cartography-fab-group" role="toolbar" aria-label="Panneaux cartographiques">
-                <button type="button" class="cartography-fab" data-carto-drawer="layers" aria-expanded="false" title="Couches cartographiques">Couches</button>
-                <button type="button" class="cartography-fab" data-carto-drawer="legend" aria-expanded="false" title="Légende Zones FDSU">Légende</button>
-                <button type="button" class="cartography-fab" data-carto-drawer="entities" aria-expanded="false" title="Entités visibles">Entités</button>
-                <button type="button" class="cartography-fab" data-carto-drawer="info" aria-expanded="false" title="Objet sélectionné">Info</button>
-              </div>
+              <aside class="cartography-sidebar sig-inspector-shell hidden" id="cartography-sidebar" aria-label="Panneau latéral cartographique">
+                <div class="cartography-sidebar-panels">
+                  <aside id="carto-drawer-layers" class="cartography-drawer hidden" aria-hidden="true" data-drawer="layers">
+                    <div class="cartography-drawer-header">
+                      <div>
+                        <p class="panel-label">Couches</p>
+                        <h3>Gestionnaire de couches</h3>
+                      </div>
+                      <button type="button" class="cartography-drawer-close" data-carto-drawer-close aria-label="Fermer">×</button>
+                    </div>
+                    <ul class="layer-list cartography-layer-list" id="layer-list">
+                      <li><label><input type="checkbox" data-layer="zones" /> Zones FDSU</label></li>
+                      <li><label><input type="checkbox" data-layer="provinces" /> Provinces</label></li>
+                      <li><label><input type="checkbox" data-layer="territoires" /> Territoires</label></li>
+                      <li><label><input type="checkbox" data-layer="collectivites" /> Collectivités</label></li>
+                      <li><label><input type="checkbox" data-layer="groupements" /> Groupements</label></li>
+                      <li><label><input type="checkbox" data-layer="villages" /> Localités</label></li>
+                      <li><label><input type="checkbox" data-layer="sites" /> Sites FDSU</label></li>
+                      <li><label><input type="checkbox" data-layer="missions" /> Missions</label></li>
+                    </ul>
+                    <div class="cartography-panel-footer">
+                      <button type="button" class="cartography-link-btn" data-carto-drawer="classification">Classification métier</button>
+                      <button type="button" class="cartography-link-btn" data-carto-explorer-open>Explorateur des couches</button>
+                    </div>
+                  </aside>
 
-              <aside id="carto-drawer-layers" class="cartography-drawer hidden" aria-hidden="true" data-drawer="layers">
-                <div class="cartography-drawer-header">
-                  <div>
-                    <p class="panel-label">Couches cartographiques</p>
-                    <h3>Gestionnaire de couches</h3>
-                  </div>
-                  <button type="button" class="cartography-drawer-close" data-carto-drawer-close aria-label="Fermer">×</button>
-                </div>
-                <ul class="layer-list" id="layer-list">
-                  <li><label><input type="checkbox" data-layer="zones" /> Zones FDSU</label></li>
-                  <li><label><input type="checkbox" data-layer="provinces" /> Provinces</label></li>
-                  <li><label><input type="checkbox" data-layer="territoires" /> Territoires</label></li>
-                  <li><label><input type="checkbox" data-layer="collectivites" /> Collectivités</label></li>
-                  <li><label><input type="checkbox" data-layer="groupements" /> Groupements</label></li>
-                  <li><label><input type="checkbox" data-layer="villages" /> Localités</label></li>
-                  <li><label><input type="checkbox" data-layer="sites" /> Sites FDSU</label></li>
-                  <li><label><input type="checkbox" data-layer="missions" /> Missions</label></li>
-                </ul>
-                <p class="cartography-drawer-hint">Couches futures : réseau mobile, fibre, CCN, couverture radio.</p>
-              </aside>
+                  <aside id="carto-drawer-legend" class="cartography-drawer hidden" aria-hidden="true" data-drawer="legend">
+                    <div class="cartography-drawer-header">
+                      <div>
+                        <p class="panel-label">Légende</p>
+                        <h3>Zones FDSU</h3>
+                      </div>
+                      <button type="button" class="cartography-drawer-close" data-carto-drawer-close aria-label="Fermer">×</button>
+                    </div>
+                    <div class="legend-card cartography-drawer-legend">
+                      <p class="legend-title">Zones FDSU</p>
+                      <ul class="legend-list">
+                        <li data-zone="ND" tabindex="0"><span class="legend-swatch legend-nd"></span>ND - Nord</li>
+                        <li data-zone="OT" tabindex="0"><span class="legend-swatch legend-ot"></span>OT - Ouest</li>
+                        <li data-zone="CE" tabindex="0"><span class="legend-swatch legend-ce"></span>CE - Centre</li>
+                        <li data-zone="SD" tabindex="0"><span class="legend-swatch legend-sd"></span>SD - Sud</li>
+                        <li data-zone="ET" tabindex="0"><span class="legend-swatch legend-et"></span>ET - Est</li>
+                      </ul>
+                      <p class="legend-title legend-title-secondary">Hiérarchie administrative</p>
+                      <ul class="legend-list">
+                        <li><span class="legend-swatch legend-boundary"></span>Contour RDC</li>
+                        <li><span class="legend-swatch legend-zone-fill"></span>Zones FDSU</li>
+                        <li><span class="legend-swatch legend-province-line"></span>Provinces</li>
+                        <li><span class="legend-swatch legend-territory-line"></span>Territoires</li>
+                        <li><span class="legend-swatch legend-collectivity-line"></span>Collectivités</li>
+                        <li><span class="legend-swatch legend-groupement-point"></span>Groupements</li>
+                        <li><span class="legend-swatch legend-locality-point"></span>Localités</li>
+                        <li><span class="legend-swatch legend-site-point"></span>Sites FDSU</li>
+                        <li><span class="legend-swatch legend-mission-point"></span>Missions</li>
+                      </ul>
+                    </div>
+                  </aside>
 
-              <aside id="carto-drawer-legend" class="cartography-drawer hidden" aria-hidden="true" data-drawer="legend">
-                <div class="cartography-drawer-header">
-                  <div>
-                    <p class="panel-label">Légende</p>
-                    <h3>Zones FDSU &amp; symboles</h3>
-                  </div>
-                  <button type="button" class="cartography-drawer-close" data-carto-drawer-close aria-label="Fermer">×</button>
-                </div>
-                <div class="legend-card cartography-drawer-legend">
-                  <p class="legend-title">Zones FDSU</p>
-                  <ul class="legend-list">
-                    <li data-zone="ND" tabindex="0"><span class="legend-swatch legend-nd"></span>ND - Nord</li>
-                    <li data-zone="OT" tabindex="0"><span class="legend-swatch legend-ot"></span>OT - Ouest</li>
-                    <li data-zone="CE" tabindex="0"><span class="legend-swatch legend-ce"></span>CE - Centre</li>
-                    <li data-zone="SD" tabindex="0"><span class="legend-swatch legend-sd"></span>SD - Sud</li>
-                    <li data-zone="ET" tabindex="0"><span class="legend-swatch legend-et"></span>ET - Est</li>
-                  </ul>
-                  <p class="legend-title legend-title-secondary">Hiérarchie administrative</p>
-                  <ul class="legend-list">
-                    <li><span class="legend-swatch legend-boundary"></span>Contour RDC</li>
-                    <li><span class="legend-swatch legend-zone-fill"></span>Zones FDSU</li>
-                    <li><span class="legend-swatch legend-province-line"></span>Provinces</li>
-                    <li><span class="legend-swatch legend-territory-line"></span>Territoires</li>
-                    <li><span class="legend-swatch legend-collectivity-line"></span>Collectivités</li>
-                    <li><span class="legend-swatch legend-groupement-point"></span>Groupements</li>
-                    <li><span class="legend-swatch legend-locality-point"></span>Localités</li>
-                    <li><span class="legend-swatch legend-site-point"></span>Sites FDSU</li>
-                    <li><span class="legend-swatch legend-mission-point"></span>Missions</li>
-                  </ul>
-                </div>
-              </aside>
+                  <aside id="carto-drawer-entities" class="cartography-drawer hidden" aria-hidden="true" data-drawer="entities">
+                    <div class="cartography-drawer-header">
+                      <div>
+                        <p class="panel-label">Entités</p>
+                        <h3>Entités visibles</h3>
+                      </div>
+                      <button type="button" class="cartography-drawer-close" data-carto-drawer-close aria-label="Fermer">×</button>
+                    </div>
+                    <div id="map-synchronized-list" class="map-synchronized-list cartography-drawer-sync-list"></div>
+                  </aside>
 
-              <aside id="carto-drawer-entities" class="cartography-drawer hidden" aria-hidden="true" data-drawer="entities">
-                <div class="cartography-drawer-header">
-                  <div>
-                    <p class="panel-label">Liste synchronisée</p>
-                    <h3>Entités visibles</h3>
-                  </div>
-                  <button type="button" class="cartography-drawer-close" data-carto-drawer-close aria-label="Fermer">×</button>
-                </div>
-                <div id="map-synchronized-list" class="map-synchronized-list cartography-drawer-sync-list"></div>
-              </aside>
+                  <aside id="carto-drawer-info" class="cartography-drawer hidden" aria-hidden="true" data-drawer="info">
+                    <div class="cartography-drawer-header">
+                      <div>
+                        <p class="panel-label">Informations</p>
+                        <h3>Objet sélectionné</h3>
+                      </div>
+                      <button type="button" class="cartography-drawer-close" data-carto-drawer-close aria-label="Fermer">×</button>
+                    </div>
+                    <div class="info-body cartography-drawer-info" id="carto-info">
+                      <p class="zone-detail-empty">Sélectionnez un objet sur la carte pour afficher ses informations.</p>
+                    </div>
+                  </aside>
 
-              <aside id="carto-drawer-info" class="cartography-drawer hidden" aria-hidden="true" data-drawer="info">
-                <div class="cartography-drawer-header">
-                  <div>
-                    <p class="panel-label">Informations</p>
-                    <h3>Objet sélectionné</h3>
-                  </div>
-                  <button type="button" class="cartography-drawer-close" data-carto-drawer-close aria-label="Fermer">×</button>
-                </div>
-                <div class="info-body cartography-drawer-info" id="carto-info">
-                  <p class="zone-detail-empty">Sélectionnez un objet sur la carte pour afficher ses informations.</p>
+                  <aside id="carto-drawer-classification" class="cartography-drawer hidden" aria-hidden="true" data-drawer="classification">
+                    <div class="cartography-drawer-header">
+                      <div>
+                        <p class="panel-label">Classification</p>
+                        <h3>Classification métier</h3>
+                      </div>
+                      <button type="button" class="cartography-drawer-close" data-carto-drawer-close aria-label="Fermer">×</button>
+                    </div>
+                    <div class="cartography-classification-panel">
+                      <div class="thematic-controls cartography-thematic-controls">
+                        <label for="thematic-layer-select">Mode thématique</label>
+                        <select id="thematic-layer-select">
+                          <option value="administrative">Mode administratif</option>
+                          <option value="economic">Activités économiques</option>
+                          <option value="agriculture">Potentiel agricole</option>
+                          <option value="mining">Potentiel minier</option>
+                          <option value="network">Couverture réseau</option>
+                          <option value="challenges">Défis</option>
+                          <option value="infrastructure">Infrastructures</option>
+                          <option value="fdsu">Potentiel FDSU</option>
+                        </select>
+                      </div>
+                      <p class="cartography-note">Applique une symbologie métier sur les entités visibles.</p>
+                    </div>
+                  </aside>
                 </div>
               </aside>
             </div>
           </div>
 
-          <section class="attribute-panel cartography-attribute-panel">
-            <div class="panel-header">
-              <div>
-                <p class="panel-label">Attributaire</p>
-                <h3>Explorateur des couches</h3>
+          <section class="attribute-panel cartography-explorer-drawer hidden" id="cartography-explorer-drawer" aria-label="Explorateur attributaire" aria-hidden="true">
+            <div class="cartography-explorer-header">
+              <div class="panel-header">
+                <div>
+                  <p class="panel-label">Attributaire</p>
+                  <h3>Explorateur des couches</h3>
+                </div>
+                <span class="panel-badge" id="attribute-total">0 élément</span>
               </div>
-              <span class="panel-badge" id="attribute-total">0 élément</span>
+              <button type="button" class="cartography-drawer-close" data-carto-explorer-close aria-label="Fermer l'explorateur">×</button>
             </div>
             <div class="attribute-toolbar">
               <select id="attribute-layer-select" aria-label="Couche attributaire">
@@ -536,6 +569,19 @@
                 </div>
               </aside>
             </div>
+
+            <section class="decision-center-business-architecture" id="decision-center-business-architecture" aria-label="Architecture métier FDSU">
+              <div class="decision-center-business-architecture-header">
+                <div>
+                  <p class="panel-label">Référentiel métier</p>
+                  <h3>Architecture métier FDSU</h3>
+                  <p class="decision-center-business-architecture-intro">Programmes nationaux FDSU — affichage informatif depuis <code>data/business/</code>.</p>
+                </div>
+              </div>
+              <div class="decision-center-program-grid" id="decision-center-program-grid" aria-live="polite">
+                <p class="decision-center-program-loading">Chargement des programmes FDSU…</p>
+              </div>
+            </section>
           </section>
 
           <section class="decision-center-tab-panel" data-decision-tab-panel="priorisation" role="tabpanel" hidden>

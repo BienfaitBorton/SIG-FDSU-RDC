@@ -1,0 +1,75 @@
+{
+  "_meta": {
+    "schema_version": "1.0.0",
+    "title": "Modèle CCN FDSU",
+    "description": "Typologie des Centres Communautaires Numériques et indicateurs futurs associés.",
+    "source_documents": [
+      "data/strategic/strategie_fdsu_ccn_2026_2030.docx"
+    ],
+    "calculation_enabled": false,
+    "updated_at": "2026-07-08"
+  },
+  "categories": [
+    {
+      "id": "ccn_social",
+      "label": "CCN Social",
+      "description": "Centre orienté vers l'inclusion sociale, la cohésion communautaire et l'accès aux services de base.",
+      "primary_services": ["accès_public", "médiation_numérique", "services_sociaux"],
+      "future_indicators": [
+        { "id": "community_sessions", "label": "Sessions communautaires", "unit": "count" },
+        { "id": "vulnerable_users", "label": "Usagers vulnérables", "unit": "count" },
+        { "id": "social_impact_index", "label": "Indice d'impact social", "unit": "score" }
+      ]
+    },
+    {
+      "id": "ccn_educatif",
+      "label": "CCN Éducatif",
+      "description": "Centre dédié à la formation, à l'e-éducation et au renforcement des compétences numériques.",
+      "primary_services": ["formation", "e_learning", "fablab_jeunesse"],
+      "future_indicators": [
+        { "id": "learners", "label": "Apprenants", "unit": "count" },
+        { "id": "certifications", "label": "Certifications délivrées", "unit": "count" },
+        { "id": "training_hours", "label": "Heures de formation", "unit": "hours" }
+      ]
+    },
+    {
+      "id": "ccn_administratif",
+      "label": "CCN Administratif",
+      "description": "Centre facilitant l'accès aux services administratifs et à la e-gouvernance locale.",
+      "primary_services": ["e_gouvernance", "services_publics", "archives_communautaires"],
+      "future_indicators": [
+        { "id": "admin_requests", "label": "Demandes administratives traitées", "unit": "count" },
+        { "id": "digital_procedures", "label": "Procédures numériques disponibles", "unit": "count" },
+        { "id": "processing_time", "label": "Délai moyen de traitement", "unit": "days" }
+      ]
+    },
+    {
+      "id": "ccn_entrepreneurial",
+      "label": "CCN Entrepreneurial",
+      "description": "Centre orienté vers l'entrepreneuriat local, l'innovation et les services aux PME.",
+      "primary_services": ["incubation", "coworking", "services_aux_entreprises"],
+      "future_indicators": [
+        { "id": "supported_businesses", "label": "Entreprises accompagnées", "unit": "count" },
+        { "id": "local_revenue", "label": "Revenus locaux générés", "unit": "currency_usd" },
+        { "id": "jobs_created", "label": "Emplois créés ou maintenus", "unit": "count" }
+      ]
+    },
+    {
+      "id": "ccn_mixte",
+      "label": "CCN Mixte",
+      "description": "Centre polyvalent combinant plusieurs fonctions selon le profil territorial.",
+      "primary_services": ["accès_public", "formation", "e_gouvernance", "services_economiques"],
+      "future_indicators": [
+        { "id": "service_mix_index", "label": "Indice de mixité des services", "unit": "score" },
+        { "id": "monthly_active_users", "label": "Utilisateurs actifs mensuels", "unit": "count" },
+        { "id": "operating_sustainability", "label": "Indice de viabilité opérationnelle", "unit": "score" }
+      ]
+    }
+  ],
+  "cross_cutting_indicators": [
+    { "id": "connectivity_quality", "label": "Qualité de connectivité", "unit": "score" },
+    { "id": "staff_capacity", "label": "Capacité des équipes", "unit": "score" },
+    { "id": "equipment_status", "label": "État des équipements", "unit": "score" },
+    { "id": "financial_sustainability", "label": "Viabilité financière", "unit": "score" }
+  ]
+}

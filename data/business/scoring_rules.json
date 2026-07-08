@@ -1,0 +1,121 @@
+{
+  "_meta": {
+    "schema_version": "1.0.0",
+    "title": "Règles de scoring FDSU",
+    "description": "Familles de scores préparées pour le moteur décisionnel. Structure uniquement — formules et pondérations à implémenter ultérieurement.",
+    "source_documents": [
+      "data/strategic/strategie_fdsu_ccn_2026_2030.docx",
+      "data/strategic/matrice_priorisation_300_sites.xlsx"
+    ],
+    "calculation_enabled": false,
+    "updated_at": "2026-07-08"
+  },
+  "score_scale": {
+    "min": 0,
+    "max": 100,
+    "label": "Score normalisé FDSU"
+  },
+  "families": [
+    {
+      "id": "score_site",
+      "label": "Score Site",
+      "description": "Score composite d'un site FDSU pour la priorisation et le suivi.",
+      "entity_type": "site",
+      "output_field": "fdsu_site_score",
+      "criteria_refs": [
+        "classe_strategique",
+        "deficit_couverture",
+        "population",
+        "infrastructures_publiques",
+        "potentiel_economique",
+        "faisabilite_technique",
+        "impact_social",
+        "inclusion_numerique"
+      ],
+      "priority_matrix_ref": "sites",
+      "formula": null,
+      "weights": null
+    },
+    {
+      "id": "score_ccn",
+      "label": "Score CCN",
+      "description": "Score d'éligibilité et de priorisation d'un Centre Communautaire Numérique.",
+      "entity_type": "ccn",
+      "output_field": "fdsu_ccn_score",
+      "criteria_refs": [
+        "classe_strategique",
+        "infrastructures_publiques",
+        "impact_social",
+        "inclusion_numerique",
+        "viabilite"
+      ],
+      "priority_matrix_ref": "ccn",
+      "formula": null,
+      "weights": null
+    },
+    {
+      "id": "score_project",
+      "label": "Score Projet",
+      "description": "Score d'un projet subventionné ou d'investissement FDSU.",
+      "entity_type": "project",
+      "output_field": "fdsu_project_score",
+      "criteria_refs": [
+        "capex",
+        "faisabilite_technique",
+        "potentiel_economique",
+        "impact_social",
+        "viabilite"
+      ],
+      "priority_matrix_ref": "subsidies",
+      "formula": null,
+      "weights": null
+    },
+    {
+      "id": "score_province",
+      "label": "Score Province",
+      "description": "Score agrégé territorial au niveau provincial pour la planification nationale.",
+      "entity_type": "province",
+      "output_field": "fdsu_province_score",
+      "criteria_refs": [
+        "classe_strategique",
+        "population",
+        "deficit_couverture",
+        "inclusion_numerique"
+      ],
+      "priority_matrix_ref": null,
+      "formula": null,
+      "weights": null
+    },
+    {
+      "id": "score_zone",
+      "label": "Score Zone",
+      "description": "Score agrégé par zone FDSU pour la coordination interprovinciale.",
+      "entity_type": "zone",
+      "output_field": "fdsu_zone_score",
+      "criteria_refs": [
+        "classe_strategique",
+        "deficit_couverture",
+        "potentiel_economique",
+        "inclusion_numerique"
+      ],
+      "priority_matrix_ref": null,
+      "formula": null,
+      "weights": null
+    },
+    {
+      "id": "score_partner",
+      "label": "Score Partenaire",
+      "description": "Score d'alignement et de capacité opérationnelle d'un partenaire FDSU.",
+      "entity_type": "partner",
+      "output_field": "fdsu_partner_score",
+      "criteria_refs": [
+        "viabilite",
+        "potentiel_economique",
+        "impact_social"
+      ],
+      "priority_matrix_ref": "partners",
+      "formula": null,
+      "weights": null
+    }
+  ]
+}
