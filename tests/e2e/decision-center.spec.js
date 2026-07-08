@@ -139,6 +139,47 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
     await page.screenshot({ path: 'test-results/decision-center-sites-300.png', fullPage: false });
   });
 
+  test('référentiel télécom intégré dans le centre de décision', async ({ page }) => {
+    await openDecisionCenter(page);
+
+    const panel = page.locator('#decision-center-telecom-panel');
+    await expect(panel).toBeVisible();
+    await expect(panel.locator('h3')).toHaveText('Référentiel Télécom');
+
+    await page.waitForFunction(
+      () => {
+        const body = document.querySelector('#decision-center-telecom-body');
+        return body && !body.textContent.includes('Chargement du référentiel télécom');
+      },
+      null,
+      { timeout: 15_000 },
+    );
+
+    await expect(panel.locator('#decision-center-telecom-body')).toContainText(/Données télécom disponibles en mode DB|Opérateurs|Sites radio/);
+    await page.screenshot({ path: 'test-results/decision-center-telecom.png', fullPage: false });
+  });
+
+  test('analyse spatiale intégrée dans le centre de décision', async ({ page }) => {
+    await openDecisionCenter(page);
+
+    const panel = page.locator('#decision-center-spatial-panel');
+    await expect(panel).toBeVisible();
+    await expect(panel.locator('h3')).toHaveText('Analyse spatiale');
+    await expect(page.locator('#decision-center-spatial-run-btn')).toHaveText('Analyser les programmes');
+
+    await page.waitForFunction(
+      () => {
+        const body = document.querySelector('#decision-center-spatial-body');
+        return body && !body.textContent.includes("Chargement de l'analyse spatiale");
+      },
+      null,
+      { timeout: 15_000 },
+    );
+
+    await expect(panel.locator('#decision-center-spatial-body')).toContainText(/Analyses spatiales disponibles en mode DB|Sites analysés|Relations calculées/);
+    await page.screenshot({ path: 'test-results/decision-center-spatial-analysis.png', fullPage: false });
+  });
+
   test('module Aide à la décision existant inchangé', async ({ page }) => {
     await page.goto(LEGACY_DECISION_URL);
     await expect(page.locator('#decision-panel')).not.toHaveClass(/hidden/);

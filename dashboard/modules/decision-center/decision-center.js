@@ -35,6 +35,12 @@
     sites40Loading: false,
     sites300Loaded: false,
     sites300Loading: false,
+    telecomLoaded: false,
+    telecomLoading: false,
+    telecomLoadingPromise: null,
+    spatialLoaded: false,
+    spatialLoading: false,
+    spatialLoadingPromise: null,
     programStatusCatalog: null,
     priorityMatrixLoader: null,
   };
@@ -352,6 +358,223 @@
       });
   }
 
+  function loadTelecomReferentialPanel(forceReload) {
+    if (decisionCenterState.telecomLoaded && !forceReload) return Promise.resolve();
+
+    const container = document.querySelector('#decision-center-telecom-body');
+    if (!container) return Promise.resolve();
+    if (decisionCenterState.telecomLoading && !forceReload) {
+      return decisionCenterState.telecomLoadingPromise || Promise.resolve();
+    }
+
+    const shared = getShared();
+    decisionCenterState.telecomLoading = true;
+    container.innerHTML = '<p class="decision-center-program-loading">Chargement du référentiel télécom…</p>';
+
+    const canUseDb = typeof shared.canUseTelecomDbData === 'function' && shared.canUseTelecomDbData();
+    if (!canUseDb) {
+      container.innerHTML = `
+        <div class="decision-center-sites-40-summary">
+          <article class="decision-center-sites-40-stat">
+            <p class="summary-label">Mode</p>
+            <p class="summary-value is-status">JSON</p>
+          </article>
+        </div>
+        <p class="decision-center-program-note">Données télécom disponibles en mode DB.</p>
+      `;
+      decisionCenterState.telecomLoaded = true;
+      decisionCenterState.telecomLoading = false;
+      decisionCenterState.telecomLoadingPromise = null;
+      return Promise.resolve();
+    }
+
+    const fetchPanel = typeof shared.fetchJson === 'function'
+      ? shared.fetchJson('/api/telecom/panel')
+      : global.fetch('http://127.0.0.1:8001/api/telecom/panel').then((response) => (response.ok ? response.json() : null));
+
+    decisionCenterState.telecomLoadingPromise = Promise.race([
+      fetchPanel,
+      new Promise((resolve) => {
+        global.setTimeout(() => resolve(null), 8000);
+      }),
+    ])
+      .then((payload) => {
+        if (!payload?.statistics) {
+          throw new Error('Referentiel telecom indisponible');
+        }
+        const stats = payload.statistics;
+        const operators = asArray(payload.operators);
+        const sources = asArray(stats.by_source_file);
+        container.innerHTML = `
+          <div class="decision-center-sites-40-summary">
+            <article class="decision-center-sites-40-stat">
+              <p class="summary-label">Opérateurs</p>
+              <p class="summary-value">${Number(stats.operator_count || operators.length).toLocaleString('fr-FR')}</p>
+            </article>
+            <article class="decision-center-sites-40-stat">
+              <p class="summary-label">Sites radio</p>
+              <p class="summary-value">${Number(stats.infrastructure_count || 0).toLocaleString('fr-FR')}</p>
+            </article>
+            <article class="decision-center-sites-40-stat">
+              <p class="summary-label">Lignes réseau</p>
+              <p class="summary-value">${Number(stats.network_line_count || 0).toLocaleString('fr-FR')}</p>
+            </article>
+            <article class="decision-center-sites-40-stat">
+              <p class="summary-label">Polygones réseau</p>
+              <p class="summary-value">${Number(stats.coverage_polygon_count || 0).toLocaleString('fr-FR')}</p>
+            </article>
+          </div>
+          <div class="decision-center-sites-40-distributions">
+            ${renderDistributionList('Opérateurs importés', operators.reduce((acc, item) => {
+              acc[item.operator_name || item.operator_code] = 1;
+              return acc;
+            }, {}))}
+            ${renderDistributionList('Sources KMZ intégrées', sources.reduce((acc, item) => {
+              acc[item.source_file] = Number(item.points || 0) + Number(item.lines || 0) + Number(item.polygons || 0);
+              return acc;
+            }, {}))}
+          </div>
+          <p class="decision-center-program-note">Référentiel télécom disponible pour les futures analyses de couverture et de proximité FDSU.</p>
+        `;
+        decisionCenterState.telecomLoaded = true;
+      })
+      .catch(() => {
+        container.innerHTML = `
+          <div class="decision-center-sites-40-summary">
+            <article class="decision-center-sites-40-stat">
+              <p class="summary-label">Mode</p>
+              <p class="summary-value is-status">Indisponible</p>
+            </article>
+          </div>
+          <p class="decision-center-program-note">Données télécom disponibles en mode DB.</p>
+        `;
+        decisionCenterState.telecomLoaded = true;
+      })
+      .finally(() => {
+        decisionCenterState.telecomLoading = false;
+        decisionCenterState.telecomLoadingPromise = null;
+      });
+
+    return decisionCenterState.telecomLoadingPromise;
+  }
+
+  function loadSpatialAnalysisPanel(forceReload) {
+    if (decisionCenterState.spatialLoaded && !forceReload) return Promise.resolve();
+
+    const container = document.querySelector('#decision-center-spatial-body');
+    if (!container) return Promise.resolve();
+    if (decisionCenterState.spatialLoading && !forceReload) {
+      return decisionCenterState.spatialLoadingPromise || Promise.resolve();
+    }
+
+    const shared = getShared();
+    decisionCenterState.spatialLoading = true;
+    container.innerHTML = '<p class="decision-center-program-loading">Chargement de l\'analyse spatiale…</p>';
+
+    const canUseDb = typeof shared.canUseTelecomDbData === 'function' && shared.canUseTelecomDbData();
+    if (!canUseDb) {
+      container.innerHTML = `
+        <div class="decision-center-sites-40-summary">
+          <article class="decision-center-sites-40-stat">
+            <p class="summary-label">Mode</p>
+            <p class="summary-value is-status">JSON</p>
+          </article>
+        </div>
+        <p class="decision-center-program-note">Analyses spatiales disponibles en mode DB.</p>
+      `;
+      decisionCenterState.spatialLoaded = true;
+      decisionCenterState.spatialLoading = false;
+      return Promise.resolve();
+    }
+
+    const fetchPanel = typeof shared.fetchJson === 'function'
+      ? shared.fetchJson('/api/analysis/panel')
+      : Promise.resolve(null);
+
+    decisionCenterState.spatialLoadingPromise = Promise.race([
+      fetchPanel,
+      new Promise((resolve) => { global.setTimeout(() => resolve(null), 8000); }),
+    ])
+      .then((payload) => {
+        if (!payload?.statistics) {
+          throw new Error('Analyse indisponible');
+        }
+        renderSpatialAnalysisPanel(payload.statistics);
+        decisionCenterState.spatialLoaded = true;
+      })
+      .catch(() => {
+        container.innerHTML = `
+          <div class="decision-center-sites-40-summary">
+            <article class="decision-center-sites-40-stat">
+              <p class="summary-label">Mode</p>
+              <p class="summary-value is-status">Indisponible</p>
+            </article>
+          </div>
+          <p class="decision-center-program-note">Analyses spatiales disponibles en mode DB.</p>
+        `;
+        decisionCenterState.spatialLoaded = true;
+      })
+      .finally(() => {
+        decisionCenterState.spatialLoading = false;
+        decisionCenterState.spatialLoadingPromise = null;
+      });
+
+    return decisionCenterState.spatialLoadingPromise;
+  }
+
+  function renderSpatialAnalysisPanel(stats) {
+    const container = document.querySelector('#decision-center-spatial-body');
+    if (!container) return;
+    const lastAnalysis = stats.last_analysis
+      ? new Date(stats.last_analysis).toLocaleString('fr-FR')
+      : 'Aucune analyse';
+    container.innerHTML = `
+      <div class="decision-center-sites-40-summary">
+        <article class="decision-center-sites-40-stat">
+          <p class="summary-label">Sites analysés</p>
+          <p class="summary-value">${Number(stats.sites_analyzed || 0).toLocaleString('fr-FR')}</p>
+        </article>
+        <article class="decision-center-sites-40-stat">
+          <p class="summary-label">Infrastructures</p>
+          <p class="summary-value">${Number(stats.infrastructure_analyzed || 0).toLocaleString('fr-FR')}</p>
+        </article>
+        <article class="decision-center-sites-40-stat">
+          <p class="summary-label">Relations calculées</p>
+          <p class="summary-value">${Number(stats.relations_computed || 0).toLocaleString('fr-FR')}</p>
+        </article>
+        <article class="decision-center-sites-40-stat">
+          <p class="summary-label">Dernière analyse</p>
+          <p class="summary-value is-status">${escapeHtml(lastAnalysis)}</p>
+        </article>
+      </div>
+      <p class="decision-center-program-note">Moteur d'analyse spatiale générique — prêt pour Santé, Éducation, Énergie et futurs référentiels.</p>
+    `;
+  }
+
+  function bindSpatialAnalysisRunButton() {
+    const button = document.querySelector('#decision-center-spatial-run-btn');
+    if (!button || button.dataset.bound === 'true') return;
+    button.dataset.bound = 'true';
+    button.addEventListener('click', () => {
+      const shared = getShared();
+      const container = document.querySelector('#decision-center-spatial-body');
+      if (!container) return;
+      if (typeof shared.canUseTelecomDbData === 'function' && !shared.canUseTelecomDbData()) {
+        container.innerHTML = '<p class="decision-center-program-note">Analyses spatiales disponibles en mode DB.</p>';
+        return;
+      }
+      container.innerHTML = '<p class="decision-center-program-loading">Analyse des programmes Sites 40 et Sites 300 en cours…</p>';
+      const run = typeof shared.fetchApiJson === 'function'
+        ? shared.fetchApiJson('/api/analysis/run/programs', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) })
+        : Promise.reject(new Error('API indisponible'));
+      run
+        .then(() => loadSpatialAnalysisPanel(true))
+        .catch(() => {
+          container.innerHTML = '<p class="decision-center-program-error">Analyse impossible. Vérifiez PostgreSQL et le mode DB.</p>';
+        });
+    });
+  }
+
   function loadBusinessArchitecturePanel(forceReload) {
     if (decisionCenterState.programsLoading) return Promise.resolve();
     if (decisionCenterState.programsLoaded && !forceReload) return Promise.resolve();
@@ -419,6 +642,8 @@
       loadBusinessArchitecturePanel(false);
       loadSites40ProgramPanel(false);
       loadSites300ProgramPanel(false);
+      loadTelecomReferentialPanel(false);
+      loadSpatialAnalysisPanel(false);
     }
   }
 
@@ -509,6 +734,7 @@
 
     bindDecisionCenterTabs();
     bindSites40MapButton();
+    bindSpatialAnalysisRunButton();
 
     if (!decisionCenterState.initialized) {
       setDecisionCenterTab('vue-nationale');
@@ -521,6 +747,8 @@
       loadBusinessArchitecturePanel(false);
       loadSites40ProgramPanel(false);
       loadSites300ProgramPanel(false);
+      loadTelecomReferentialPanel(false);
+      loadSpatialAnalysisPanel(false);
     }
   }
 
@@ -529,6 +757,8 @@
   global.loadFdsuBusinessArchitecture = loadBusinessArchitecturePanel;
   global.loadFdsuSites40Program = loadSites40ProgramPanel;
   global.loadFdsuSites300Program = loadSites300ProgramPanel;
+  global.loadTelecomReferentialPanel = loadTelecomReferentialPanel;
+  global.loadSpatialAnalysisPanel = loadSpatialAnalysisPanel;
   global.loadPriorityMatrix = loadPriorityMatrix;
   global.FDSU_BUSINESS_DATA_BASE = BUSINESS_DATA_BASE;
   global.FDSU_PROGRAMS_DATA_BASE = PROGRAMS_DATA_BASE;

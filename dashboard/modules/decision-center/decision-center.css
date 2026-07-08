@@ -344,6 +344,14 @@
   border-color: rgba(234, 179, 8, 0.35);
 }
 
+.decision-center-telecom-panel {
+  border-color: rgba(56, 189, 248, 0.35);
+}
+
+.decision-center-spatial-panel {
+  border-color: rgba(45, 212, 191, 0.35);
+}
+
 .decision-center-sites-40-stat .summary-value.is-planned-status {
   font-size: 1rem;
   color: #eab308;

@@ -13,7 +13,7 @@ const FDSU_ZONE_DEFINITIONS = {
   ET: { nom: 'Zone Est', colorVar: '--zone-et' },
 };
 const FDSU_ZONE_CODES = ['ND', 'OT', 'CE', 'SD', 'ET'];
-const FDSU_LAYER_STACK_ORDER = ['rdcBoundary', 'zones', 'provinces', 'territoires', 'collectivites', 'groupements', 'villages', 'sites', 'sites_all', 'sites_40', 'sites_300', 'missions'];
+const FDSU_LAYER_STACK_ORDER = ['rdcBoundary', 'zones', 'provinces', 'territoires', 'collectivites', 'groupements', 'villages', 'sites', 'sites_all', 'sites_40', 'sites_300', 'telecom_vodacom', 'telecom_orange', 'telecom_fiber_mw', 'telecom_fiberco', 'telecom_fttx', 'spatial_relations', 'missions'];
 const FDSU_SITES_PROGRAM_LAYERS = {
   sites_all: {
     label: 'Tous les sites',
@@ -31,6 +31,52 @@ const FDSU_SITES_PROGRAM_LAYERS = {
     filePath: '/programs/sites_300/sites_300.geojson',
     apiPath: '/api/programs/sites300',
     panelApiPath: '/api/programs/sites300?format=panel',
+  },
+};
+const TELECOM_LAYERS = {
+  telecom_vodacom: {
+    label: 'Sites Vodacom',
+    apiPath: '/api/telecom/layers/telecom_vodacom',
+    pendingMessage: 'Données télécom disponibles en mode DB',
+    color: '#e11d48',
+    fillColor: '#fb7185',
+  },
+  telecom_orange: {
+    label: 'Infrastructures Orange',
+    apiPath: '/api/telecom/layers/telecom_orange',
+    pendingMessage: 'Données télécom disponibles en mode DB',
+    color: '#ea580c',
+    fillColor: '#fb923c',
+  },
+  telecom_fiber_mw: {
+    label: 'Fibre / MW',
+    apiPath: '/api/telecom/layers/telecom_fiber_mw',
+    pendingMessage: 'Données télécom disponibles en mode DB',
+    color: '#2563eb',
+    fillColor: '#60a5fa',
+  },
+  telecom_fiberco: {
+    label: 'Fiberco',
+    apiPath: '/api/telecom/layers/telecom_fiberco',
+    pendingMessage: 'Données télécom disponibles en mode DB',
+    color: '#0891b2',
+    fillColor: '#22d3ee',
+  },
+  telecom_fttx: {
+    label: 'FTTX',
+    apiPath: '/api/telecom/layers/telecom_fttx',
+    pendingMessage: 'Données télécom disponibles en mode DB',
+    color: '#7c3aed',
+    fillColor: '#a78bfa',
+  },
+};
+const SPATIAL_ANALYSIS_LAYERS = {
+  spatial_relations: {
+    label: 'Relations spatiales',
+    apiPath: '/api/analysis/layers/spatial-relations',
+    pendingMessage: 'Relations spatiales disponibles en mode DB après analyse',
+    color: '#0d9488',
+    fillColor: '#2dd4bf',
   },
 };
 const FDSU_SMART_MAP_MODES = {
@@ -2038,6 +2084,33 @@ function initializeCartographyModule() {
       pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#0369a1', '#38bdf8', 9),
       onEachFeature: (feature, layer) => onFdsuProgramSiteEachFeature(feature, layer, 'sites_300'),
     }),
+    telecom_vodacom: L.geoJSON(null, {
+      pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#e11d48', '#fb7185', 8),
+      onEachFeature: (feature, layer) => onTelecomEachFeature(feature, layer, 'telecom_vodacom'),
+    }),
+    telecom_orange: L.geoJSON(null, {
+      pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#ea580c', '#fb923c', 8),
+      onEachFeature: (feature, layer) => onTelecomEachFeature(feature, layer, 'telecom_orange'),
+    }),
+    telecom_fiber_mw: L.geoJSON(null, {
+      style: (feature) => styleTelecomFeature(feature, 'telecom_fiber_mw'),
+      pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#2563eb', '#60a5fa', 7),
+      onEachFeature: (feature, layer) => onTelecomEachFeature(feature, layer, 'telecom_fiber_mw'),
+    }),
+    telecom_fiberco: L.geoJSON(null, {
+      style: (feature) => styleTelecomFeature(feature, 'telecom_fiberco'),
+      pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#0891b2', '#22d3ee', 7),
+      onEachFeature: (feature, layer) => onTelecomEachFeature(feature, layer, 'telecom_fiberco'),
+    }),
+    telecom_fttx: L.geoJSON(null, {
+      style: (feature) => styleTelecomFeature(feature, 'telecom_fttx'),
+      pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#7c3aed', '#a78bfa', 7),
+      onEachFeature: (feature, layer) => onTelecomEachFeature(feature, layer, 'telecom_fttx'),
+    }),
+    spatial_relations: L.geoJSON(null, {
+      style: () => ({ color: '#0d9488', weight: 2, opacity: 0.75, dashArray: '4 6' }),
+      onEachFeature: (feature, layer) => onSpatialRelationEachFeature(feature, layer),
+    }),
     missions: L.geoJSON(null, {
       pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#be123c', '#fb7185'),
       onEachFeature: (feature, layer) => onGeoEachFeature(feature, layer, 'missions'),
@@ -2309,6 +2382,8 @@ function isFdsuSitesProgramLayer(layerKey) {
 
 function getCartographyLayerLabel(layerKey) {
   if (FDSU_SITES_PROGRAM_LAYERS[layerKey]) return FDSU_SITES_PROGRAM_LAYERS[layerKey].label;
+  if (TELECOM_LAYERS[layerKey]) return TELECOM_LAYERS[layerKey].label;
+  if (SPATIAL_ANALYSIS_LAYERS[layerKey]) return SPATIAL_ANALYSIS_LAYERS[layerKey].label;
   return WEB_SIG_LAYER_DEFINITIONS[layerKey]?.label || layerKey;
 }
 
@@ -2339,6 +2414,205 @@ function rebuildSitesAllLayer() {
 
 function canUseProgramDbData() {
   return !LOCAL_JSON_MODE && API_HEALTH?.mode === 'db' && API_HEALTH?.status === 'ok';
+}
+
+function isSpatialAnalysisLayer(layerKey) {
+  return Boolean(SPATIAL_ANALYSIS_LAYERS[layerKey]);
+}
+
+function resolveSpatialAnalysisDataPath(definition) {
+  if (!definition) return null;
+  if (canUseProgramDbData() && definition.apiPath) return definition.apiPath;
+  return null;
+}
+
+function onSpatialRelationEachFeature(feature, layer) {
+  if (!layer) return;
+  const properties = feature?.properties || {};
+  const distance = properties.distance_m != null ? `${Math.round(properties.distance_m)} m` : '';
+  const lines = [
+    ['strong', properties.infra_name || properties.line_name || 'Relation spatiale'],
+    ['label', 'Type', properties.relation_type],
+    ['label', 'Distance', distance],
+    ['label', 'Opérateur', properties.operator_name || properties.operator_code],
+  ];
+  layer.bindPopup(
+    `<div class="telecom-popup">${lines.map((entry) => {
+      if (entry[0] === 'strong') return entry[1] ? `<strong>${escapeHtml(entry[1])}</strong>` : '';
+      const value = String(entry[2] ?? '').trim();
+      return value ? `${escapeHtml(entry[1])} : ${escapeHtml(value)}` : '';
+    }).filter(Boolean).join('<br>')}</div>`,
+    { maxWidth: 280, className: 'telecom-popup-wrapper' },
+  );
+}
+
+function ensureSpatialAnalysisLayerLoaded(layerKey) {
+  const definition = SPATIAL_ANALYSIS_LAYERS[layerKey];
+  if (!definition) return Promise.resolve([]);
+
+  if (cartographyState.layerLoadPromises[layerKey]) {
+    return cartographyState.layerLoadPromises[layerKey];
+  }
+
+  const layer = cartographyState.layers[layerKey];
+  if ((layer?.getLayers?.().length ?? 0) > 0) {
+    return Promise.resolve(layer.getLayers());
+  }
+
+  const sourcePath = resolveSpatialAnalysisDataPath(definition);
+  if (!sourcePath) {
+    cartographyState.layerStatus[layerKey] = false;
+    cartographyState.features[layerKey] = [];
+    return Promise.resolve([]);
+  }
+
+  cartographyState.layerLoadPromises[layerKey] = fetchJson(sourcePath)
+    .then((geojson) => {
+      if (!layer) return [];
+      if (!geojson || !Array.isArray(geojson.features)) {
+        cartographyState.layerStatus[layerKey] = false;
+        cartographyState.features[layerKey] = [];
+        return [];
+      }
+      layer.clearLayers();
+      cartographyState.featureLayers[layerKey] = {};
+      if (geojson.features.length > 0) {
+        layer.addData(geojson);
+        cartographyState.features[layerKey] = geojson.features;
+        cartographyState.layerStatus[layerKey] = true;
+      } else {
+        cartographyState.features[layerKey] = [];
+        cartographyState.layerStatus[layerKey] = false;
+      }
+      return layer.getLayers();
+    })
+    .catch(() => {
+      cartographyState.layerStatus[layerKey] = false;
+      cartographyState.features[layerKey] = [];
+      return [];
+    })
+    .finally(() => {
+      cartographyState.layerLoadPromises[layerKey] = null;
+    });
+
+  return cartographyState.layerLoadPromises[layerKey];
+}
+
+function isTelecomLayer(layerKey) {
+  return Boolean(TELECOM_LAYERS[layerKey]);
+}
+
+function resolveTelecomDataPath(definition) {
+  if (!definition) return null;
+  if (canUseProgramDbData() && definition.apiPath) return definition.apiPath;
+  return null;
+}
+
+function styleTelecomFeature(feature, layerKey) {
+  const definition = TELECOM_LAYERS[layerKey] || {};
+  const geometryType = feature?.geometry?.type || 'LineString';
+  if (geometryType === 'Polygon' || geometryType === 'MultiPolygon') {
+    return {
+      color: definition.color || '#64748b',
+      weight: 1,
+      opacity: 0.85,
+      fillColor: definition.fillColor || definition.color || '#64748b',
+      fillOpacity: 0.18,
+    };
+  }
+  return {
+    color: definition.color || '#64748b',
+    weight: 2,
+    opacity: 0.85,
+  };
+}
+
+function buildTelecomPopupHtml(properties) {
+  const name = properties.infra_name || properties.line_name || properties.polygon_name || properties.name || 'Infrastructure';
+  const infraType = properties.infra_type || properties.line_type || properties.polygon_type || properties.infra_category || 'Non renseigné';
+  const lines = [
+    ['strong', name],
+    ['label', 'Type', infraType],
+    ['label', 'Opérateur', properties.operator_name || properties.operator_code],
+    ['label', 'Source', properties.source_file],
+  ];
+  if (properties.province) lines.push(['text', properties.province]);
+  if (properties.territoire) lines.push(['text', properties.territoire]);
+  if (properties.technology) lines.push(['label', 'Technologie', properties.technology]);
+
+  return `
+    <div class="telecom-popup">
+      ${lines.map((entry) => {
+        if (entry[0] === 'strong') {
+          const value = String(entry[1] || '').trim();
+          return value ? `<strong>${escapeHtml(value)}</strong>` : '';
+        }
+        if (entry[0] === 'label') {
+          const value = String(entry[2] ?? '').trim();
+          if (!value) return '';
+          return `${escapeHtml(entry[1])} : ${escapeHtml(value)}`;
+        }
+        const value = String(entry[1] || '').trim();
+        return value ? escapeHtml(value) : '';
+      }).filter(Boolean).join('<br>')}
+    </div>
+  `;
+}
+
+function onTelecomEachFeature(feature, layer, layerKey) {
+  if (!layer) return;
+  const properties = feature?.properties || {};
+  const featureId = getFeatureId(properties, layerKey);
+  if (!cartographyState.featureLayers[layerKey]) cartographyState.featureLayers[layerKey] = {};
+  cartographyState.featureLayers[layerKey][featureId] = layer;
+  layer.bindPopup(buildTelecomPopupHtml(properties), { maxWidth: 280, className: 'telecom-popup-wrapper' });
+}
+
+function ensureTelecomLayerLoaded(layerKey) {
+  const definition = TELECOM_LAYERS[layerKey];
+  if (!definition) return Promise.resolve([]);
+
+  if (cartographyState.layerLoadPromises[layerKey]) {
+    return cartographyState.layerLoadPromises[layerKey];
+  }
+
+  const layer = cartographyState.layers[layerKey];
+  if ((layer?.getLayers?.().length ?? 0) > 0) {
+    return Promise.resolve(layer.getLayers());
+  }
+
+  const sourcePath = resolveTelecomDataPath(definition);
+  if (!sourcePath) {
+    cartographyState.layerStatus[layerKey] = false;
+    cartographyState.features[layerKey] = [];
+    return Promise.resolve([]);
+  }
+
+  cartographyState.layerLoadPromises[layerKey] = fetchJson(sourcePath)
+    .then((geojson) => {
+      if (!layer) return [];
+      if (!geojson || !Array.isArray(geojson.features) || geojson.features.length === 0) {
+        cartographyState.layerStatus[layerKey] = false;
+        cartographyState.features[layerKey] = [];
+        return [];
+      }
+      layer.clearLayers();
+      cartographyState.featureLayers[layerKey] = {};
+      layer.addData(geojson);
+      cartographyState.features[layerKey] = geojson.features;
+      cartographyState.layerStatus[layerKey] = true;
+      return layer.getLayers();
+    })
+    .catch(() => {
+      cartographyState.layerStatus[layerKey] = false;
+      cartographyState.features[layerKey] = [];
+      return [];
+    })
+    .finally(() => {
+      cartographyState.layerLoadPromises[layerKey] = null;
+    });
+
+  return cartographyState.layerLoadPromises[layerKey];
 }
 
 function resolveFdsuProgramDataPath(definition, panelFormat) {
@@ -2418,13 +2692,19 @@ function ensureFdsuSitesProgramLayerLoaded(layerKey) {
 }
 
 function isManagedCartographyLayer(layerKey) {
-  return Boolean(WEB_SIG_LAYER_DEFINITIONS[layerKey]) || layerKey === 'zones' || isFdsuSitesProgramLayer(layerKey);
+  return Boolean(WEB_SIG_LAYER_DEFINITIONS[layerKey]) || layerKey === 'zones' || isFdsuSitesProgramLayer(layerKey) || isTelecomLayer(layerKey) || isSpatialAnalysisLayer(layerKey);
 }
 
 function ensureCartographyLayerLoaded(layerKey) {
   if (layerKey === 'rdcBoundary') {
     const layer = cartographyState.layers[layerKey];
     return Promise.resolve(layer?.getLayers?.() || []);
+  }
+  if (isSpatialAnalysisLayer(layerKey)) {
+    return ensureSpatialAnalysisLayerLoaded(layerKey);
+  }
+  if (isTelecomLayer(layerKey)) {
+    return ensureTelecomLayerLoaded(layerKey);
   }
   if (isFdsuSitesProgramLayer(layerKey)) {
     return ensureFdsuSitesProgramLayerLoaded(layerKey);
@@ -2503,8 +2783,18 @@ function setCartographyLayerVisible(layerKey, visible, checkbox) {
     if (featureCount === 0) {
       if (checkbox) checkbox.checked = false;
       const programDefinition = FDSU_SITES_PROGRAM_LAYERS[layerKey];
+      const telecomDefinition = TELECOM_LAYERS[layerKey];
+      const spatialDefinition = SPATIAL_ANALYSIS_LAYERS[layerKey];
       if (programDefinition?.pendingMessage) {
         showZonesMessage(programDefinition.pendingMessage);
+        return false;
+      }
+      if (telecomDefinition?.pendingMessage) {
+        showZonesMessage(telecomDefinition.pendingMessage);
+        return false;
+      }
+      if (spatialDefinition?.pendingMessage) {
+        showZonesMessage(spatialDefinition.pendingMessage);
         return false;
       }
       showZonesMessage(hasAttributes
@@ -8917,6 +9207,12 @@ function fetchJson(endpoint) {
   if (localPath.startsWith('/api/programs/')) {
     return fetchApiJson(localPath).catch(() => null);
   }
+  if (localPath.startsWith('/api/telecom/')) {
+    return fetchApiJson(localPath).catch(() => null);
+  }
+  if (localPath.startsWith('/api/analysis/')) {
+    return fetchApiJson(localPath).catch(() => null);
+  }
   if (localPath.startsWith('/programs/') || localPath.startsWith('/business/')) {
     if (canUseProgramDbData()) {
       if (localPath.endsWith('sites_40/sites_40.geojson')) {
@@ -9088,6 +9384,7 @@ window.SigFdsuShared = {
   fetchApiJson,
   fetchJson,
   canUseProgramDbData,
+  canUseTelecomDbData: canUseProgramDbData,
   styleRdcBoundaryFeature,
   styleProvinceFeature,
   styleTerritoryFeature,

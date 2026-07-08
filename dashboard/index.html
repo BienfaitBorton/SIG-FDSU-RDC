@@ -343,6 +343,22 @@
                           <li><label><input type="checkbox" data-layer="sites_300" /> Programme Sites 300</label></li>
                         </ul>
                       </li>
+                      <li class="cartography-layer-group">
+                        <span class="cartography-layer-group-title">Télécommunications</span>
+                        <ul class="cartography-layer-group-list">
+                          <li><label><input type="checkbox" data-layer="telecom_vodacom" /> Sites Vodacom</label></li>
+                          <li><label><input type="checkbox" data-layer="telecom_orange" /> Infrastructures Orange</label></li>
+                          <li><label><input type="checkbox" data-layer="telecom_fiber_mw" /> Fibre / MW</label></li>
+                          <li><label><input type="checkbox" data-layer="telecom_fiberco" /> Fiberco</label></li>
+                          <li><label><input type="checkbox" data-layer="telecom_fttx" /> FTTX</label></li>
+                        </ul>
+                      </li>
+                      <li class="cartography-layer-group">
+                        <span class="cartography-layer-group-title">Analyse spatiale</span>
+                        <ul class="cartography-layer-group-list">
+                          <li><label><input type="checkbox" data-layer="spatial_relations" /> Relations spatiales</label></li>
+                        </ul>
+                      </li>
                       <li><label><input type="checkbox" data-layer="missions" /> Missions</label></li>
                     </ul>
                     <div class="cartography-panel-footer">
@@ -380,6 +396,9 @@
                         <li><span class="legend-swatch legend-site-point"></span>Tous les sites FDSU</li>
                         <li><span class="legend-swatch legend-site-40-point"></span>Programme Sites 40</li>
                         <li><span class="legend-swatch legend-site-300-point"></span>Programme Sites 300</li>
+                        <li><span class="legend-swatch legend-telecom-vodacom"></span>Sites Vodacom</li>
+                        <li><span class="legend-swatch legend-telecom-orange"></span>Infrastructures Orange</li>
+                        <li><span class="legend-swatch legend-telecom-fiber"></span>Fibre / MW</li>
                         <li><span class="legend-swatch legend-mission-point"></span>Missions</li>
                       </ul>
                     </div>
@@ -614,6 +633,31 @@
               </div>
               <div class="decision-center-sites-40-body" id="decision-center-sites-300-body">
                 <p class="decision-center-program-loading">Chargement du programme Sites 300…</p>
+              </div>
+            </section>
+
+            <section class="decision-center-sites-40-panel decision-center-telecom-panel" id="decision-center-telecom-panel" aria-label="Référentiel Télécom">
+              <div class="decision-center-sites-40-header">
+                <div>
+                  <p class="panel-label">Référentiel sectoriel</p>
+                  <h3>Référentiel Télécom</h3>
+                </div>
+              </div>
+              <div class="decision-center-sites-40-body" id="decision-center-telecom-body">
+                <p class="decision-center-program-loading">Chargement du référentiel télécom…</p>
+              </div>
+            </section>
+
+            <section class="decision-center-sites-40-panel decision-center-spatial-panel" id="decision-center-spatial-panel" aria-label="Analyse spatiale">
+              <div class="decision-center-sites-40-header">
+                <div>
+                  <p class="panel-label">Spatial Intelligence Engine</p>
+                  <h3>Analyse spatiale</h3>
+                </div>
+                <button type="button" class="primary-button" id="decision-center-spatial-run-btn">Analyser les programmes</button>
+              </div>
+              <div class="decision-center-sites-40-body" id="decision-center-spatial-body">
+                <p class="decision-center-program-loading">Chargement de l'analyse spatiale…</p>
               </div>
             </section>
           </section>

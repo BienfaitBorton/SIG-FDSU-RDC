@@ -435,7 +435,7 @@ test.describe('SIG-FDSU RDC – Module Cartographie libre', () => {
   test('groupe Sites FDSU et programme Sites 40 affichent 40 points', async ({ page }) => {
     await openCartography(page);
 
-    await expect(page.locator('.cartography-layer-group-title')).toHaveText('Sites FDSU');
+    await expect(page.locator('.cartography-layer-group-title').filter({ hasText: 'Sites FDSU' })).toBeVisible();
     await expect(page.locator('#layer-list input[data-layer="sites_all"]')).toBeVisible();
     await expect(page.locator('#layer-list input[data-layer="sites_40"]')).toBeVisible();
     await expect(page.locator('#layer-list input[data-layer="sites_300"]')).toBeVisible();
@@ -468,6 +468,44 @@ test.describe('SIG-FDSU RDC – Module Cartographie libre', () => {
     expect(tileFilter).toBe('none');
 
     await page.screenshot({ path: 'test-results/cartography-sites-fdsu-group.png', fullPage: false });
+  });
+
+  test('groupe Télécommunications visible avec sous-couches', async ({ page }) => {
+    await openCartography(page);
+
+    const telecomGroup = page.locator('.cartography-layer-group-title', { hasText: 'Télécommunications' });
+    await expect(telecomGroup).toBeVisible();
+    await expect(page.locator('#layer-list input[data-layer="telecom_vodacom"]')).toBeVisible();
+    await expect(page.locator('#layer-list input[data-layer="telecom_orange"]')).toBeVisible();
+    await expect(page.locator('#layer-list input[data-layer="telecom_fiber_mw"]')).toBeVisible();
+    await expect(page.locator('#layer-list input[data-layer="telecom_fiberco"]')).toBeVisible();
+    await expect(page.locator('#layer-list input[data-layer="telecom_fttx"]')).toBeVisible();
+
+    await page.locator('#layer-list input[data-layer="telecom_vodacom"]').check();
+    await page.waitForFunction(() => {
+      const msg = document.querySelector('#zones-message')?.textContent || '';
+      const count = window.cartographyState?.layers?.telecom_vodacom?.getLayers?.().length || 0;
+      return msg.includes('Données télécom disponibles en mode DB') || count > 0;
+    }, null, { timeout: 30_000 });
+
+    await page.screenshot({ path: 'test-results/cartography-telecom-group.png', fullPage: false });
+  });
+
+  test('groupe Analyse spatiale visible avec sous-couche Relations spatiales', async ({ page }) => {
+    await openCartography(page);
+
+    const spatialGroup = page.locator('.cartography-layer-group-title', { hasText: 'Analyse spatiale' });
+    await expect(spatialGroup).toBeVisible();
+    await expect(page.locator('#layer-list input[data-layer="spatial_relations"]')).toBeVisible();
+
+    await page.locator('#layer-list input[data-layer="spatial_relations"]').check();
+    await page.waitForFunction(() => {
+      const msg = document.querySelector('#zones-message')?.textContent || '';
+      const count = window.cartographyState?.layers?.spatial_relations?.getLayers?.().length || 0;
+      return msg.includes('Relations spatiales disponibles en mode DB') || count > 0;
+    }, null, { timeout: 30_000 });
+
+    await page.screenshot({ path: 'test-results/cartography-spatial-relations.png', fullPage: false });
   });
 });
 
