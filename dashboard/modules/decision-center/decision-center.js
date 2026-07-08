@@ -48,6 +48,22 @@
   }
 
   function fetchProgramJson(relativePath) {
+    const shared = getShared();
+    if (typeof shared?.fetchJson === 'function' && typeof shared?.canUseProgramDbData === 'function' && shared.canUseProgramDbData()) {
+      const apiPathMap = {
+        'sites_40/sites_40.json': '/api/programs/sites40?format=panel',
+        'sites_300/sites_300.json': '/api/programs/sites300?format=panel',
+      };
+      const apiPath = apiPathMap[relativePath];
+      if (apiPath) {
+        return shared.fetchJson(apiPath).then((payload) => {
+          if (!payload) {
+            throw new Error(`Impossible de charger ${apiPath}`);
+          }
+          return payload;
+        });
+      }
+    }
     const path = `${PROGRAMS_DATA_BASE}${relativePath}`;
     return global.fetch(path).then((response) => {
       if (!response.ok) {

@@ -1,6 +1,11 @@
 # SIG-FDSU RDC - Demarrage local (Windows PowerShell)
 # Lance l'API FastAPI (8001) et le dashboard (8000) dans deux fenetres separees.
 
+param(
+    [ValidateSet('json', 'db', 'auto')]
+    [string]$Mode = 'auto'
+)
+
 $ErrorActionPreference = "Stop"
 
 $ProjectRoot = $PSScriptRoot
@@ -39,11 +44,21 @@ if (-not (Test-Path -LiteralPath $apiMain)) {
 Write-Host ""
 Write-Host "SIG-FDSU RDC - Demarrage local" -ForegroundColor Cyan
 Write-Host "Racine du projet : $ProjectRoot"
+
+$dataModeValue = if ($Mode -eq 'db') { 'db' } elseif ($Mode -eq 'json') { 'json' } else { if ($env:DATA_MODE) { $env:DATA_MODE } else { 'json' } }
+$env:DATA_MODE = $dataModeValue
+if ($dataModeValue -eq 'db') {
+    Write-Host "Mode donnees : DB (PostgreSQL/PostGIS)" -ForegroundColor Yellow
+} else {
+    Write-Host "Mode donnees : JSON (fichiers locaux)" -ForegroundColor Yellow
+}
 Write-Host ""
 
 $apiWindowCommand = @"
 Set-Location -LiteralPath '$ProjectRoot'
+`$env:DATA_MODE = '$dataModeValue'
 Write-Host '=== SIG-FDSU RDC - API FastAPI (port 8001) ===' -ForegroundColor Green
+Write-Host "Mode donnees : `$env:DATA_MODE" -ForegroundColor Yellow
 Write-Host 'Documentation : http://127.0.0.1:8001/docs'
 Write-Host ''
 & '$venvPython' -m uvicorn api.main:app --reload --host 127.0.0.1 --port 8001

@@ -30,6 +30,7 @@ from api.routes import (
     territorial_enrichment,
     enrichment,
     knowledge,
+    programs,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -864,6 +865,7 @@ app.include_router(decision.router, prefix="/decision", tags=["Aide a la decisio
 app.include_router(territorial_enrichment.router, prefix="/territorial-enrichment", tags=["Enrichissement territorial"])
 app.include_router(enrichment.router, prefix="/enrichment", tags=["Assistant d'enrichissement"])
 app.include_router(knowledge.router, prefix="/knowledge", tags=["Centre de connaissances"])
+app.include_router(programs.router, prefix="/api/programs", tags=["Programmes FDSU"])
 
 @app.get("/", tags=["Root"])
 def read_root() -> dict[str, str]:

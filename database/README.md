@@ -6,7 +6,9 @@ Ce dossier prépare le passage v0.8.0 du fallback JSON vers une base PostgreSQL/
 
 - `init.sql` : active PostGIS.
 - `schema.sql` : crée les tables géographiques, tables d'import et index.
+- `programs_schema.sql` : schéma `programs` (catalogue FDSU + sites PostGIS).
 - `seed_from_json.py` : lit les rapports JSON locaux et insère les données en base avec `ON CONFLICT DO NOTHING`.
+- `seed_programs_sites.py` : importe Sites 40 / Sites 300 depuis GeoJSON vers `programs.fdsu_*`.
 
 ## Préparation
 

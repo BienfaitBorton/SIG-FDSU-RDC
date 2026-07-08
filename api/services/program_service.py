@@ -1,0 +1,255 @@
+"""Service PostgreSQL/PostGIS pour les programmes FDSU."""
+
+from __future__ import annotations
+
+from typing import Any
+
+from api.config import connect_db
+from psycopg2.extras import RealDictCursor
+
+
+PROGRAM_COLUMNS = """
+    id,
+    program_code,
+    program_name,
+    description,
+    status,
+    start_date,
+    end_date,
+    planned_sites,
+    executed_sites,
+    progress,
+    created_at,
+    updated_at
+"""
+
+SITE_COLUMNS = """
+    s.id,
+    s.program_id,
+    p.program_code,
+    p.program_name,
+    s.site_code,
+    s.site_name,
+    s.province,
+    s.territoire,
+    s.zone,
+    s.status,
+    s.priority_status,
+    s.fdsu_score,
+    s.latitude,
+    s.longitude,
+    s.source,
+    s.created_at,
+    s.updated_at,
+    CASE WHEN s.geom IS NULL THEN NULL ELSE ST_AsGeoJSON(s.geom)::json END AS geometry
+"""
+
+
+def _serialize_row(row: dict[str, Any]) -> dict[str, Any]:
+    payload = dict(row)
+    for key in ("start_date", "end_date", "created_at", "updated_at"):
+        value = payload.get(key)
+        if value is not None and hasattr(value, "isoformat"):
+            payload[key] = value.isoformat()
+    if payload.get("progress") is not None:
+        payload["progress"] = float(payload["progress"])
+    if payload.get("fdsu_score") is not None:
+        payload["fdsu_score"] = float(payload["fdsu_score"])
+    return payload
+
+
+def list_programs() -> list[dict[str, Any]]:
+    query = f"""
+        SELECT {PROGRAM_COLUMNS}
+        FROM programs.fdsu_programs
+        ORDER BY program_code
+    """
+    with connect_db() as conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query)
+            return [_serialize_row(dict(row)) for row in cur.fetchall()]
+
+
+def get_program(program_ref: str) -> dict[str, Any] | None:
+    query = f"""
+        SELECT {PROGRAM_COLUMNS}
+        FROM programs.fdsu_programs
+        WHERE program_code = %s
+           OR CAST(id AS TEXT) = %s
+        LIMIT 1
+    """
+    with connect_db() as conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query, (program_ref, program_ref))
+            row = cur.fetchone()
+            return _serialize_row(dict(row)) if row else None
+
+
+def list_sites(
+    program_code: str | None = None,
+    skip: int = 0,
+    limit: int = 5000,
+) -> list[dict[str, Any]]:
+    filters = []
+    params: list[Any] = []
+    if program_code:
+        filters.append("p.program_code = %s")
+        params.append(program_code)
+    where_clause = f"WHERE {' AND '.join(filters)}" if filters else ""
+    query = f"""
+        SELECT {SITE_COLUMNS}
+        FROM programs.fdsu_sites s
+        JOIN programs.fdsu_programs p ON p.id = s.program_id
+        {where_clause}
+        ORDER BY s.id
+        OFFSET %s LIMIT %s
+    """
+    params.extend([skip, limit])
+    with connect_db() as conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query, tuple(params))
+            return [_serialize_row(dict(row)) for row in cur.fetchall()]
+
+
+def site_to_feature(site: dict[str, Any], feature_id: int) -> dict[str, Any]:
+    geometry = site.get("geometry")
+    if not geometry:
+        longitude = site.get("longitude")
+        latitude = site.get("latitude")
+        if longitude is not None and latitude is not None:
+            geometry = {"type": "Point", "coordinates": [float(longitude), float(latitude)]}
+    properties = {
+        "name": site.get("site_name"),
+        "province": site.get("province"),
+        "territoire": site.get("territoire"),
+        "zone": site.get("zone"),
+        "latitude": site.get("latitude"),
+        "longitude": site.get("longitude"),
+        "programme": site.get("program_name"),
+        "status": site.get("status"),
+        "priority_status": site.get("priority_status"),
+        "fdsu_score": site.get("fdsu_score"),
+        "source": site.get("source"),
+        "site_code": site.get("site_code"),
+    }
+    return {
+        "type": "Feature",
+        "id": feature_id,
+        "geometry": geometry,
+        "properties": {key: value for key, value in properties.items() if value not in (None, "")},
+    }
+
+
+def sites_to_geojson(sites: list[dict[str, Any]]) -> dict[str, Any]:
+    return {
+        "type": "FeatureCollection",
+        "features": [site_to_feature(site, index + 1) for index, site in enumerate(sites)],
+    }
+
+
+def sites_to_panel_payload(program_code: str, sites: list[dict[str, Any]]) -> dict[str, Any]:
+    program = get_program(program_code) or {}
+    deployment_status = "NON_DEMARRE"
+    scoring_status = "A_CALCULER"
+    program_status = program.get("status")
+    if program_code == "PROG_SITES_40":
+        deployment_status = "EN_COURS"
+        scoring_status = "INTEGRE"
+    if program_code == "PROG_SITES_300":
+        deployment_status = "NON_DEMARRE"
+        scoring_status = "A_CALCULER"
+    return {
+        "_meta": {
+            "program": program.get("program_name"),
+            "program_status": program_status,
+            "count": len(sites),
+            "deployment_status": deployment_status,
+            "scoring_status": scoring_status,
+        },
+        "sites": [
+            {
+                "name": site.get("site_name"),
+                "province": site.get("province"),
+                "territoire": site.get("territoire"),
+                "zone": site.get("zone"),
+                "latitude": site.get("latitude"),
+                "longitude": site.get("longitude"),
+                "programme": site.get("program_name"),
+                "status": site.get("status"),
+                "priority_status": site.get("priority_status"),
+                "fdsu_score": site.get("fdsu_score"),
+                "source": site.get("source"),
+            }
+            for site in sites
+        ],
+    }
+
+
+def get_program_sites_geojson(program_code: str) -> dict[str, Any]:
+    return sites_to_geojson(list_sites(program_code=program_code, limit=10000))
+
+
+def get_program_sites_panel(program_code: str) -> dict[str, Any]:
+    return sites_to_panel_payload(program_code, list_sites(program_code=program_code, limit=10000))
+
+
+def get_program_statistics() -> dict[str, Any]:
+    with connect_db() as conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute("SELECT COUNT(*) AS count FROM programs.fdsu_programs")
+            program_count = int(cur.fetchone()["count"])
+
+            cur.execute("SELECT COUNT(*) AS count FROM programs.fdsu_sites")
+            total_sites = int(cur.fetchone()["count"])
+
+            cur.execute(
+                """
+                SELECT COUNT(*) AS count
+                FROM programs.fdsu_sites
+                WHERE LOWER(status) LIKE '%exécution%'
+                   OR LOWER(status) LIKE '%execution%'
+                   OR status IN ('En exécution', 'EN_EXECUTION', 'à qualifier')
+                """
+            )
+            sites_in_execution = int(cur.fetchone()["count"])
+
+            cur.execute(
+                """
+                SELECT COUNT(*) AS count
+                FROM programs.fdsu_sites
+                WHERE LOWER(status) LIKE '%planifi%'
+                   OR status IN ('Planifié', 'PLANIFIE')
+                """
+            )
+            sites_planned = int(cur.fetchone()["count"])
+
+            cur.execute(
+                """
+                SELECT p.program_code, p.program_name, p.status, COUNT(s.id) AS site_count
+                FROM programs.fdsu_programs p
+                LEFT JOIN programs.fdsu_sites s ON s.program_id = p.id
+                GROUP BY p.id, p.program_code, p.program_name, p.status
+                ORDER BY site_count DESC, p.program_code
+                """
+            )
+            by_program = [dict(row) for row in cur.fetchall()]
+
+            cur.execute(
+                """
+                SELECT COALESCE(NULLIF(TRIM(province), ''), 'Non renseigné') AS province,
+                       COUNT(*) AS site_count
+                FROM programs.fdsu_sites
+                GROUP BY 1
+                ORDER BY site_count DESC, province
+                """
+            )
+            by_province = [dict(row) for row in cur.fetchall()]
+
+    return {
+        "program_count": program_count,
+        "total_sites": total_sites,
+        "sites_in_execution": sites_in_execution,
+        "sites_planned": sites_planned,
+        "by_program": by_program,
+        "by_province": by_province,
+    }

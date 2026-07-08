@@ -23,10 +23,14 @@ const FDSU_SITES_PROGRAM_LAYERS = {
   sites_40: {
     label: 'Programme Sites 40',
     filePath: '/programs/sites_40/sites_40.geojson',
+    apiPath: '/api/programs/sites40',
+    panelApiPath: '/api/programs/sites40?format=panel',
   },
   sites_300: {
     label: 'Programme Sites 300',
     filePath: '/programs/sites_300/sites_300.geojson',
+    apiPath: '/api/programs/sites300',
+    panelApiPath: '/api/programs/sites300?format=panel',
   },
 };
 const FDSU_SMART_MAP_MODES = {
@@ -2333,12 +2337,28 @@ function rebuildSitesAllLayer() {
   cartographyState.layerStatus.sites_all = false;
 }
 
+function canUseProgramDbData() {
+  return !LOCAL_JSON_MODE && API_HEALTH?.mode === 'db' && API_HEALTH?.status === 'ok';
+}
+
+function resolveFdsuProgramDataPath(definition, panelFormat) {
+  if (!definition) return null;
+  if (canUseProgramDbData()) {
+    if (panelFormat && definition.panelApiPath) return definition.panelApiPath;
+    if (definition.apiPath) return definition.apiPath;
+  }
+  return definition.filePath || null;
+}
+
 function ensureFdsuSitesProgramLayerLoaded(layerKey) {
   const definition = FDSU_SITES_PROGRAM_LAYERS[layerKey];
   if (!definition) return Promise.resolve([]);
 
   if (definition.virtual) {
-    const programKeys = asArray(definition.programKeys).filter((programKey) => FDSU_SITES_PROGRAM_LAYERS[programKey]?.filePath);
+    const programKeys = asArray(definition.programKeys).filter((programKey) => {
+      const programDefinition = FDSU_SITES_PROGRAM_LAYERS[programKey];
+      return resolveFdsuProgramDataPath(programDefinition, false);
+    });
     if (!programKeys.length) {
       rebuildSitesAllLayer();
       return Promise.resolve(cartographyState.layers.sites_all?.getLayers?.() || []);
@@ -2359,11 +2379,12 @@ function ensureFdsuSitesProgramLayerLoaded(layerKey) {
     return Promise.resolve(layer.getLayers());
   }
 
-  if (!definition.filePath) {
+  const sourcePath = resolveFdsuProgramDataPath(definition, false);
+  if (!sourcePath) {
     return Promise.resolve([]);
   }
 
-  cartographyState.layerLoadPromises[layerKey] = fetchJson(definition.filePath)
+  cartographyState.layerLoadPromises[layerKey] = fetchJson(sourcePath)
     .then((geojson) => {
       if (!layer) return [];
       if (!geojson || !Array.isArray(geojson.features) || geojson.features.length === 0) {
@@ -8893,7 +8914,24 @@ function fetchJson(endpoint) {
   if (localPath.startsWith('/geodata/')) {
     return fetchApiJson(localPath).catch(() => null);
   }
+  if (localPath.startsWith('/api/programs/')) {
+    return fetchApiJson(localPath).catch(() => null);
+  }
   if (localPath.startsWith('/programs/') || localPath.startsWith('/business/')) {
+    if (canUseProgramDbData()) {
+      if (localPath.endsWith('sites_40/sites_40.geojson')) {
+        return fetchApiJson('/api/programs/sites40').catch(() => null);
+      }
+      if (localPath.endsWith('sites_300/sites_300.geojson')) {
+        return fetchApiJson('/api/programs/sites300').catch(() => null);
+      }
+      if (localPath.endsWith('sites_40/sites_40.json')) {
+        return fetchApiJson('/api/programs/sites40?format=panel').catch(() => null);
+      }
+      if (localPath.endsWith('sites_300/sites_300.json')) {
+        return fetchApiJson('/api/programs/sites300?format=panel').catch(() => null);
+      }
+    }
     return fetch(localPath).then((response) => (response.ok ? response.json() : null)).catch(() => null);
   }
   if (LOCAL_JSON_MODE) {
@@ -9049,6 +9087,7 @@ window.SigFdsuShared = {
   API_BASE_URL,
   fetchApiJson,
   fetchJson,
+  canUseProgramDbData,
   styleRdcBoundaryFeature,
   styleProvinceFeature,
   styleTerritoryFeature,
