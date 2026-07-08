@@ -13,7 +13,7 @@ const FDSU_ZONE_DEFINITIONS = {
   ET: { nom: 'Zone Est', colorVar: '--zone-et' },
 };
 const FDSU_ZONE_CODES = ['ND', 'OT', 'CE', 'SD', 'ET'];
-const FDSU_LAYER_STACK_ORDER = ['rdcBoundary', 'zones', 'provinces', 'territoires', 'collectivites', 'groupements', 'villages', 'sites', 'missions'];
+const FDSU_LAYER_STACK_ORDER = ['rdcBoundary', 'zones', 'provinces', 'territoires', 'collectivites', 'groupements', 'villages', 'sites', 'sites_40', 'missions'];
 const FDSU_SMART_MAP_MODES = {
   administrative: 'Mode administratif',
   connectivity: 'Mode connectivité',
@@ -2007,6 +2007,10 @@ function initializeCartographyModule() {
       pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#b45309', '#f59e0b'),
       onEachFeature: (feature, layer) => onGeoEachFeature(feature, layer, 'sites'),
     }),
+    sites_40: L.geoJSON(null, {
+      pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#7e22ce', '#c084fc', 10),
+      onEachFeature: (feature, layer) => onSites40EachFeature(feature, layer),
+    }),
     missions: L.geoJSON(null, {
       pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#be123c', '#fb7185'),
       onEachFeature: (feature, layer) => onGeoEachFeature(feature, layer, 'missions'),
@@ -2027,6 +2031,13 @@ function initializeCartographyModule() {
     emptyMessage: 'Contour RDC non disponible.',
     fallbackMessage: 'Contour RDC non disponible.',
     visibleByDefault: true,
+  });
+  loadGeneratedLayer({
+    layerKey: 'sites_40',
+    filePath: '/programs/sites_40/sites_40.geojson',
+    emptyMessage: 'Sites 40 FDSU non disponibles.',
+    fallbackMessage: 'Sites 40 FDSU non disponibles.',
+    visibleByDefault: false,
   });
   loadWebSigLayers();
   setupAttributeExplorer();
@@ -2273,10 +2284,14 @@ function setupCartographyResizeObserver(mapElement) {
 }
 
 function isManagedCartographyLayer(layerKey) {
-  return Boolean(WEB_SIG_LAYER_DEFINITIONS[layerKey]) || layerKey === 'zones';
+  return Boolean(WEB_SIG_LAYER_DEFINITIONS[layerKey]) || layerKey === 'zones' || layerKey === 'sites_40';
 }
 
 function ensureCartographyLayerLoaded(layerKey) {
+  if (layerKey === 'sites_40' || layerKey === 'rdcBoundary') {
+    const layer = cartographyState.layers[layerKey];
+    return Promise.resolve(layer?.getLayers?.() || []);
+  }
   if (layerKey === 'zones') {
     return ensureCartographyLayerLoaded('provinces').then(() => {
       if (asArray(cartographyState.features.zones).length === 0) {
@@ -3969,9 +3984,9 @@ function extractGeometryCoordinate(geometry) {
   return { lng: cursor[0], lat: cursor[1] };
 }
 
-function makePointMarker(latlng, color, fillColor) {
+function makePointMarker(latlng, color, fillColor, radius = 4) {
   return L.circleMarker(latlng, {
-    radius: 4,
+    radius,
     weight: 1,
     color,
     fillColor,
@@ -4069,6 +4084,45 @@ function getZoneCode(feature) {
   }
 
   return 'ND';
+}
+
+function onSites40EachFeature(feature, layer) {
+  if (!layer) return;
+  const properties = feature?.properties || {};
+  const featureId = getFeatureId(properties, 'sites_40');
+  if (!cartographyState.featureLayers.sites_40) cartographyState.featureLayers.sites_40 = {};
+  cartographyState.featureLayers.sites_40[featureId] = layer;
+
+  const popupHtml = `
+    <div class="sites-40-popup">
+      <strong>${escapeHtml(properties.name || 'Site')}</strong><br>
+      ${escapeHtml(properties.province || '')}<br>
+      ${escapeHtml(properties.territoire || '')}<br>
+      ${escapeHtml(properties.zone || '')}<br>
+      Programme : Sites 40
+    </div>
+  `;
+
+  if (layer.bindPopup) {
+    layer.bindPopup(popupHtml, { maxWidth: 240, className: 'sites-40-leaflet-popup' });
+  }
+
+  layer.on('mouseover', () => {
+    highlightMapFeature('sites_40', feature, layer);
+    renderSmartTooltip(feature, layer, 'sites_40');
+  });
+
+  layer.on('mouseout', () => {
+    if (cartographyState.selectedLayer !== layer) resetHoverMapFeature('sites_40', feature, layer);
+  });
+
+  layer.on('click', (event) => {
+    if (event?.originalEvent && typeof L !== 'undefined') {
+      L.DomEvent.stopPropagation(event.originalEvent);
+    }
+    selectMapFeature('sites_40', feature, layer, { zoom: true });
+    if (cartographyState.map?.closePopup) cartographyState.map.closePopup();
+  });
 }
 
 function onGeoEachFeature(feature, layer, layerKey) {
@@ -4172,6 +4226,7 @@ function getTooltipLayerLabel(layerKey) {
     groupements: 'Groupement',
     villages: 'Localité',
     sites: 'Site FDSU',
+    sites_40: 'Site 40 FDSU',
     missions: 'Mission',
   };
   return labels[layerKey] || 'Entité';
@@ -4186,6 +4241,7 @@ function getTooltipLayerIcon(layerKey) {
     groupements: '📍',
     villages: '📍',
     sites: '📡',
+    sites_40: '🟣',
     missions: '🎯',
   };
   return icons[layerKey] || '📍';
@@ -4235,6 +4291,18 @@ function buildCompactTooltipLines(layerKey, properties, stats) {
     if (isPresentableTooltipValue(groupement)) lines.push(`Groupement : ${groupement}`);
     const population = formatTooltipPopulation(stats.population);
     if (population) lines.push(`Population : ${population}`);
+    return lines;
+  }
+
+  if (layerKey === 'sites_40') {
+    [
+      ['Province', properties.province],
+      ['Territoire', properties.territoire],
+      ['Zone', properties.zone],
+    ].forEach(([label, value]) => {
+      if (isPresentableTooltipValue(value)) lines.push(`${label} : ${value}`);
+    });
+    lines.push('Programme : Sites 40');
     return lines;
   }
 
@@ -8664,6 +8732,9 @@ function fetchJson(endpoint) {
   if (localPath.startsWith('/geodata/')) {
     return fetchApiJson(localPath).catch(() => null);
   }
+  if (localPath.startsWith('/programs/') || localPath.startsWith('/business/')) {
+    return fetch(localPath).then((response) => (response.ok ? response.json() : null)).catch(() => null);
+  }
   if (LOCAL_JSON_MODE) {
     if (localPath.endsWith('.json') || localPath.endsWith('.geojson')) {
       return fetch(localPath).then((response) => (response.ok ? response.json() : null)).catch(() => null);
@@ -8752,6 +8823,31 @@ window.cartographyState = cartographyState;
 window.nationalMapState = nationalMapState;
 window.dashboardViewState = dashboardViewState;
 window.openDashboardDetailPage = openDashboardDetailPage;
+function openSites40ProgramOnMap() {
+  navigateTo('map');
+  const activate = () => {
+    const layer = cartographyState.layers.sites_40;
+    if (!cartographyState.initialized || !cartographyState.map || !layer || (layer.getLayers?.().length ?? 0) === 0) {
+      window.setTimeout(activate, 120);
+      return;
+    }
+    const checkbox = document.querySelector('input[data-layer="sites_40"]');
+    setCartographyLayerVisible('sites_40', true, checkbox).finally(() => {
+      if (checkbox && !checkbox.checked) {
+        checkbox.checked = true;
+      }
+      if (!cartographyState.map.hasLayer(layer)) {
+        layer.addTo(cartographyState.map);
+      }
+      refreshCartographicLayerPresentation();
+      openCartographyDrawerPanel('layers');
+      fitLayerBounds(layer);
+    });
+  };
+  activate();
+}
+
+window.openSites40ProgramOnMap = openSites40ProgramOnMap;
 window.backToDashboard = backToDashboard;
 window.platformState = platformState;
 window.goBackContext = goBackNationalContext;
@@ -8768,6 +8864,7 @@ window.SigFdsuShared = {
   styleTerritoryFeature,
   styleCollectivitesFeature,
   makePointMarker,
+  openSites40ProgramOnMap,
 };
 
 function bootSigFdsuApplication() {

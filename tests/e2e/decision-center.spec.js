@@ -76,6 +76,47 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
     await page.screenshot({ path: 'test-results/decision-center-business-architecture.png', fullPage: false });
   });
 
+  test('programme Sites 40 intégré dans le centre de décision', async ({ page }) => {
+    await openDecisionCenter(page);
+
+    const panel = page.locator('#decision-center-sites-40-panel');
+    await expect(panel).toBeVisible();
+    await expect(panel.locator('h3')).toHaveText('Programme Sites 40');
+
+    await page.waitForFunction(
+      () => document.querySelector('#decision-center-sites-40-body .decision-center-sites-40-summary') !== null,
+      null,
+      { timeout: 15_000 },
+    );
+
+    await expect(panel.locator('.decision-center-sites-40-summary .summary-value').first()).toHaveText('40');
+    await expect(panel).toContainText('Données KMZ intégrées');
+    await expect(panel).toContainText('Répartition par zone FDSU');
+    await expect(panel).toContainText('Centre');
+    await expect(page.locator('#decision-center-sites-40-map-btn')).toBeVisible();
+
+    await page.screenshot({ path: 'test-results/decision-center-sites-40.png', fullPage: false });
+  });
+
+  test('bouton Sites 40 ouvre la cartographie avec la couche activée', async ({ page }) => {
+    await openDecisionCenter(page);
+    await page.waitForFunction(
+      () => document.querySelector('#decision-center-sites-40-body .decision-center-sites-40-summary') !== null,
+      null,
+      { timeout: 15_000 },
+    );
+
+    await page.locator('#decision-center-sites-40-map-btn').click();
+    await expect(page.locator('#cartographie-panel')).not.toHaveClass(/hidden/);
+    await page.waitForFunction(
+      () => (window.cartographyState?.layers?.sites_40?.getLayers?.().length ?? 0) === 40,
+      null,
+      { timeout: 30_000 },
+    );
+    await expect(page.locator('input[data-layer="sites_40"]')).toBeChecked();
+    await page.screenshot({ path: 'test-results/cartography-sites-40-layer.png', fullPage: false });
+  });
+
   test('module Aide à la décision existant inchangé', async ({ page }) => {
     await page.goto(LEGACY_DECISION_URL);
     await expect(page.locator('#decision-panel')).not.toHaveClass(/hidden/);

@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>Sites_FDSU_40</name>
+	<atom:link rel="app" href="https://www.google.com/earth/about/versions/#earth-pro" title="Google Earth Pro 7.3.7.1155"></atom:link>
+	<Placemark>
+		<name>Yengembana-Ext_KOC</name>
+		<description><![CDATA[Province: Kasai<br/>Territoire: Mweka<br/>Zone: Centre]]></description>
+		<Point>
+			<coordinates>21.234712,-4.88069,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Bena-Mukoma-Ext_KOR</name>
+		<description><![CDATA[Province: Kasai Central<br/>Territoire: Dimbelenge<br/>Zone: Centre]]></description>
+		<Point>
+			<coordinates>22.597652,-4.76711,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Musienene-Ext_NKV</name>
+		<description><![CDATA[Province: Nord-Kivu<br/>Territoire: Lubero<br/>Zone: Est]]></description>
+		<Point>
+			<coordinates>29.304473,0.007691,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Muhangi-Ext_NKV</name>
+		<description><![CDATA[Province: Nord-Kivu<br/>Territoire: Lubero<br/>Zone: Est]]></description>
+		<Point>
+			<coordinates>28.924993,0.110427,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Manza-Ext_POR</name>
+		<description><![CDATA[Province: Haut-Uele<br/>Territoire: Faradje<br/>Zone: Nord]]></description>
+		<Point>
+			<coordinates>30.187641,3.241285,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Yuku-Ext_POR</name>
+		<description><![CDATA[Province: Ituri<br/>Territoire: Aru<br/>Zone: Est]]></description>
+		<Point>
+			<coordinates>30.594905,2.941629,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Bulungu-Ext_BDD</name>
+		<description><![CDATA[Province: Kwilu<br/>Territoire: Bulungu<br/>Zone: Ouest]]></description>
+		<Point>
+			<coordinates>18.475223,-4.67962,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Lemfu-Ext_KGC</name>
+		<description><![CDATA[Province: Kongo Central<br/>Territoire: Mbanza-Ngungu<br/>Zone: Ouest]]></description>
+		<Point>
+			<coordinates>15.194849,-5.44155,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Mangi-Ext_HLU</name>
+		<description><![CDATA[Province: Haut-Lomami<br/>Territoire: Malemba-Nkulu<br/>Zone: Sud]]></description>
+		<Point>
+			<coordinates>26.580658,-8.028332000000001,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Kapolowe-Ext_HKT</name>
+		<description><![CDATA[Province: Haut-Katanga<br/>Territoire: Kambove<br/>Zone: Sud]]></description>
+		<Point>
+			<coordinates>27.102276,-10.9457,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Yangambi</name>
+		<description><![CDATA[Province: Tshopo<br/>Territoire: Isangi<br/>Zone: Nord]]></description>
+		<Point>
+			<coordinates>24.4519,0.8199999999999998,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Bonzale-Bobadjoro</name>
+		<description><![CDATA[Province: Sud-Ubangi<br/>Territoire: Gemena<br/>Zone: Nord]]></description>
+		<Point>
+			<coordinates>19.6269,3.0191,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>NYOKA</name>
+		<description><![CDATA[Province: Nord-Kivu<br/>Territoire: Lubero<br/>Zone: Est]]></description>
+		<Point>
+			<coordinates>26.0792,-6.7683,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Buba (Panduru_Ngote)</name>
+		<description><![CDATA[Province: Ituri<br/>Territoire: Djugu<br/>Zone: Est]]></description>
+		<Point>
+			<coordinates>30.7673,2.0309,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Mukoyi</name>
+		<description><![CDATA[Province: Kasai Central<br/>Territoire: Kazumba<br/>Zone: Centre]]></description>
+		<Point>
+			<coordinates>21.9909,-6.7914,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Bena-Mulumba</name>
+		<description><![CDATA[Province: Kasai<br/>Territoire: Ilebo<br/>Zone: Centre]]></description>
+		<Point>
+			<coordinates>20.7143,-4.3462,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Laba Safari</name>
+		<description><![CDATA[Province: Kwilu<br/>Territoire: Idiofa<br/>Zone: Ouest]]></description>
+		<Point>
+			<coordinates>19.6876,-4.5305,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Kimba</name>
+		<description><![CDATA[Province: Haut-Lomami<br/>Territoire: Bukama<br/>Zone: Sud]]></description>
+		<Point>
+			<coordinates>26.3338,-8.8583,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Kakobe</name>
+		<description><![CDATA[Province: Tanganyka<br/>Territoire: Manono<br/>Zone: Sud]]></description>
+		<Point>
+			<coordinates>26.9212,-7.4465,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Mbaka_Nkosi village</name>
+		<description><![CDATA[Province: Kongo Central<br/>Territoire: Lukula<br/>Zone: Ouest]]></description>
+		<Point>
+			<coordinates>12.5648,-5.2997,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Kazumba</name>
+		<description><![CDATA[Province: Kasai-Central<br/>Territoire: Kazumba<br/>Zone: Centre]]></description>
+		<Point>
+			<coordinates>22.0347,-6.4144,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Kadimadiba</name>
+		<description><![CDATA[Province: Kasai-Central<br/>Territoire: Kabeya-Kamwanga<br/>Zone: Centre]]></description>
+		<Point>
+			<coordinates>23.075303,-5.776419,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Kalase</name>
+		<description><![CDATA[Province: Haut-Katanga<br/>Territoire: Kambove<br/>Zone: Sud]]></description>
+		<Point>
+			<coordinates>27.377845,-11.24573,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Musoshi Mine</name>
+		<description><![CDATA[Province: Haut-Katanga<br/>Territoire: Kipushi<br/>Zone: Sud]]></description>
+		<Point>
+			<coordinates>27.52809999999999,-11.9477,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Bozagba</name>
+		<description><![CDATA[Province: Sud-Ubangi<br/>Territoire: Gemena<br/>Zone: Nord]]></description>
+		<Point>
+			<coordinates>19.882227,3.072274,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Bowanga</name>
+		<description><![CDATA[Province: Sud-Ubangi<br/>Territoire: Gemena<br/>Zone: Nord]]></description>
+		<Point>
+			<coordinates>19.82,3.31148,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Mahungu</name>
+		<description><![CDATA[Province: Nord-Kivu<br/>Territoire: Oicha<br/>Zone: Est]]></description>
+		<Point>
+			<coordinates>29.289835,0.415184,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Kalibeiro</name>
+		<description><![CDATA[Province: Nord-Kivu<br/>Territoire: Oicha<br/>Zone: Est]]></description>
+		<Point>
+			<coordinates>29.272897,0.367247,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Village Nsona</name>
+		<description><![CDATA[Province: Kongo-Central<br/>Territoire: Mbanza-Ngungu<br/>Zone: Ouest]]></description>
+		<Point>
+			<coordinates>14.589993,-4.963924,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>BAKI</name>
+		<description><![CDATA[Province: Kongo-Central<br/>Territoire: Moanda<br/>Zone: Ouest]]></description>
+		<Point>
+			<coordinates>12.43504,-5.896159999999999,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Djolu</name>
+		<description><![CDATA[Province: Tshuapa<br/>Territoire: Djolu<br/>Zone: Nord]]></description>
+		<Point>
+			<coordinates>22.45883,0.677125,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Kaveye</name>
+		<description><![CDATA[Province: Haut-Lomami<br/>Territoire: Bukama<br/>Zone: Sud]]></description>
+		<Point>
+			<coordinates>25.876978,-8.575341,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Songwe</name>
+		<description><![CDATA[Province: Haut-Lomami<br/>Territoire: Malemba-Nkulu<br/>Zone: Sud]]></description>
+		<Point>
+			<coordinates>26.946497,-7.840338,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Dumba</name>
+		<description><![CDATA[Province: Kasai Central<br/>Territoire: Demba<br/>Zone: Centre]]></description>
+		<Point>
+			<coordinates>22.020101,-5.459578,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Masonza</name>
+		<description><![CDATA[Province: Lomami<br/>Territoire: Luilu<br/>Zone: Centre]]></description>
+		<Point>
+			<coordinates>23.781627,-7.505956,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Mulopo pelende</name>
+		<description><![CDATA[Province: Kwango<br/>Territoire: Kasongo-Lunda<br/>Zone: Ouest]]></description>
+		<Point>
+			<coordinates>17.337185,-6.460696,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Village MUKONGO</name>
+		<description><![CDATA[Province: Kasai Oriental<br/>Territoire: Tshilenge<br/>Zone: Centre]]></description>
+		<Point>
+			<coordinates>23.529386,-6.427413,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Village Makaw</name>
+		<description><![CDATA[Province: Mai-Ndombe<br/>Territoire: Kutu<br/>Zone: Ouest]]></description>
+		<Point>
+			<coordinates>18.322244,-3.484242,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Village KATENDE</name>
+		<description><![CDATA[Province: Kasai Central<br/>Territoire: Kazumba<br/>Zone: Centre]]></description>
+		<Point>
+			<coordinates>22.398362,-6.322004,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Village KATOKA</name>
+		<description><![CDATA[Province: Lomami<br/>Territoire: Mwene Ditu<br/>Zone: Centre]]></description>
+		<Point>
+			<coordinates>23.546208,-6.965403,0</coordinates>
+		</Point>
+	</Placemark>
+</Document>
+</kml>

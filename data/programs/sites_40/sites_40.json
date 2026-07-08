@@ -1,0 +1,409 @@
+{
+  "_meta": {
+    "program": "Sites 40",
+    "source_kmz": "data/programs/sites_40/raw/Sites_FDSU_40.kmz",
+    "count": 40
+  },
+  "sites": [
+    {
+      "name": "Yengembana-Ext_KOC",
+      "province": "Kasai",
+      "territoire": "Mweka",
+      "zone": "Centre",
+      "latitude": -4.88069,
+      "longitude": 21.234712,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Bena-Mukoma-Ext_KOR",
+      "province": "Kasai Central",
+      "territoire": "Dimbelenge",
+      "zone": "Centre",
+      "latitude": -4.76711,
+      "longitude": 22.597652,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Musienene-Ext_NKV",
+      "province": "Nord-Kivu",
+      "territoire": "Lubero",
+      "zone": "Est",
+      "latitude": 0.007691,
+      "longitude": 29.304473,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Muhangi-Ext_NKV",
+      "province": "Nord-Kivu",
+      "territoire": "Lubero",
+      "zone": "Est",
+      "latitude": 0.110427,
+      "longitude": 28.924993,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Manza-Ext_POR",
+      "province": "Haut-Uele",
+      "territoire": "Faradje",
+      "zone": "Nord",
+      "latitude": 3.241285,
+      "longitude": 30.187641,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Yuku-Ext_POR",
+      "province": "Ituri",
+      "territoire": "Aru",
+      "zone": "Est",
+      "latitude": 2.941629,
+      "longitude": 30.594905,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Bulungu-Ext_BDD",
+      "province": "Kwilu",
+      "territoire": "Bulungu",
+      "zone": "Ouest",
+      "latitude": -4.67962,
+      "longitude": 18.475223,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Lemfu-Ext_KGC",
+      "province": "Kongo Central",
+      "territoire": "Mbanza-Ngungu",
+      "zone": "Ouest",
+      "latitude": -5.44155,
+      "longitude": 15.194849,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Mangi-Ext_HLU",
+      "province": "Haut-Lomami",
+      "territoire": "Malemba-Nkulu",
+      "zone": "Sud",
+      "latitude": -8.028332,
+      "longitude": 26.580658,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Kapolowe-Ext_HKT",
+      "province": "Haut-Katanga",
+      "territoire": "Kambove",
+      "zone": "Sud",
+      "latitude": -10.9457,
+      "longitude": 27.102276,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Yangambi",
+      "province": "Tshopo",
+      "territoire": "Isangi",
+      "zone": "Nord",
+      "latitude": 0.8199999999999998,
+      "longitude": 24.4519,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Bonzale-Bobadjoro",
+      "province": "Sud-Ubangi",
+      "territoire": "Gemena",
+      "zone": "Nord",
+      "latitude": 3.0191,
+      "longitude": 19.6269,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "NYOKA",
+      "province": "Nord-Kivu",
+      "territoire": "Lubero",
+      "zone": "Est",
+      "latitude": -6.7683,
+      "longitude": 26.0792,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Buba (Panduru_Ngote)",
+      "province": "Ituri",
+      "territoire": "Djugu",
+      "zone": "Est",
+      "latitude": 2.0309,
+      "longitude": 30.7673,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Mukoyi",
+      "province": "Kasai Central",
+      "territoire": "Kazumba",
+      "zone": "Centre",
+      "latitude": -6.7914,
+      "longitude": 21.9909,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Bena-Mulumba",
+      "province": "Kasai",
+      "territoire": "Ilebo",
+      "zone": "Centre",
+      "latitude": -4.3462,
+      "longitude": 20.7143,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Laba Safari",
+      "province": "Kwilu",
+      "territoire": "Idiofa",
+      "zone": "Ouest",
+      "latitude": -4.5305,
+      "longitude": 19.6876,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Kimba",
+      "province": "Haut-Lomami",
+      "territoire": "Bukama",
+      "zone": "Sud",
+      "latitude": -8.8583,
+      "longitude": 26.3338,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Kakobe",
+      "province": "Tanganyika",
+      "territoire": "Manono",
+      "zone": "Sud",
+      "latitude": -7.4465,
+      "longitude": 26.9212,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Mbaka_Nkosi village",
+      "province": "Kongo Central",
+      "territoire": "Lukula",
+      "zone": "Ouest",
+      "latitude": -5.2997,
+      "longitude": 12.5648,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Kazumba",
+      "province": "Kasai Central",
+      "territoire": "Kazumba",
+      "zone": "Centre",
+      "latitude": -6.4144,
+      "longitude": 22.0347,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Kadimadiba",
+      "province": "Kasai Central",
+      "territoire": "Kabeya-Kamwanga",
+      "zone": "Centre",
+      "latitude": -5.776419,
+      "longitude": 23.075303,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Kalase",
+      "province": "Haut-Katanga",
+      "territoire": "Kambove",
+      "zone": "Sud",
+      "latitude": -11.24573,
+      "longitude": 27.377845,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Musoshi Mine",
+      "province": "Haut-Katanga",
+      "territoire": "Kipushi",
+      "zone": "Sud",
+      "latitude": -11.9477,
+      "longitude": 27.52809999999999,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Bozagba",
+      "province": "Sud-Ubangi",
+      "territoire": "Gemena",
+      "zone": "Nord",
+      "latitude": 3.072274,
+      "longitude": 19.882227,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Bowanga",
+      "province": "Sud-Ubangi",
+      "territoire": "Gemena",
+      "zone": "Nord",
+      "latitude": 3.31148,
+      "longitude": 19.82,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Mahungu",
+      "province": "Nord-Kivu",
+      "territoire": "Oicha",
+      "zone": "Est",
+      "latitude": 0.415184,
+      "longitude": 29.289835,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Kalibeiro",
+      "province": "Nord-Kivu",
+      "territoire": "Oicha",
+      "zone": "Est",
+      "latitude": 0.367247,
+      "longitude": 29.272897,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Village Nsona",
+      "province": "Kongo Central",
+      "territoire": "Mbanza-Ngungu",
+      "zone": "Ouest",
+      "latitude": -4.963924,
+      "longitude": 14.589993,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "BAKI",
+      "province": "Kongo Central",
+      "territoire": "Moanda",
+      "zone": "Ouest",
+      "latitude": -5.896159999999999,
+      "longitude": 12.43504,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Djolu",
+      "province": "Tshuapa",
+      "territoire": "Djolu",
+      "zone": "Nord",
+      "latitude": 0.677125,
+      "longitude": 22.45883,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Kaveye",
+      "province": "Haut-Lomami",
+      "territoire": "Bukama",
+      "zone": "Sud",
+      "latitude": -8.575341,
+      "longitude": 25.876978,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Songwe",
+      "province": "Haut-Lomami",
+      "territoire": "Malemba-Nkulu",
+      "zone": "Sud",
+      "latitude": -7.840338,
+      "longitude": 26.946497,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Dumba",
+      "province": "Kasai Central",
+      "territoire": "Demba",
+      "zone": "Centre",
+      "latitude": -5.459578,
+      "longitude": 22.020101,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Masonza",
+      "province": "Lomami",
+      "territoire": "Luilu",
+      "zone": "Centre",
+      "latitude": -7.505956,
+      "longitude": 23.781627,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Mulopo pelende",
+      "province": "Kwango",
+      "territoire": "Kasongo-Lunda",
+      "zone": "Ouest",
+      "latitude": -6.460696,
+      "longitude": 17.337185,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Village MUKONGO",
+      "province": "Kasai Oriental",
+      "territoire": "Tshilenge",
+      "zone": "Centre",
+      "latitude": -6.427413,
+      "longitude": 23.529386,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Village Makaw",
+      "province": "Mai-Ndombe",
+      "territoire": "Kutu",
+      "zone": "Ouest",
+      "latitude": -3.484242,
+      "longitude": 18.322244,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Village KATENDE",
+      "province": "Kasai Central",
+      "territoire": "Kazumba",
+      "zone": "Centre",
+      "latitude": -6.322004,
+      "longitude": 22.398362,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    },
+    {
+      "name": "Village KATOKA",
+      "province": "Lomami",
+      "territoire": "Mwene Ditu",
+      "zone": "Centre",
+      "latitude": -6.965403,
+      "longitude": 23.546208,
+      "programme": "Sites 40",
+      "status": "à qualifier"
+    }
+  ]
+}

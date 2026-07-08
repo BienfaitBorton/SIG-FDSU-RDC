@@ -16,6 +16,7 @@ UTF8_CONTENT_TYPES = {
 
 DASHBOARD_DIR = Path(__file__).resolve().parent
 BUSINESS_DATA_DIR = DASHBOARD_DIR.parent / "data" / "business"
+PROGRAMS_DATA_DIR = DASHBOARD_DIR.parent / "data" / "programs"
 
 
 class Utf8StaticHandler(SimpleHTTPRequestHandler):
@@ -28,18 +29,22 @@ class Utf8StaticHandler(SimpleHTTPRequestHandler):
 
     def translate_path(self, path: str) -> str:
         normalized = path.split("?", 1)[0].split("#", 1)[0]
-        if normalized.startswith("/business/"):
-            relative = normalized[len("/business/"):].lstrip("/")
-            if relative and ".." not in Path(relative).parts:
-                business_root = BUSINESS_DATA_DIR.resolve()
-                candidate = (BUSINESS_DATA_DIR / relative).resolve()
-                try:
-                    candidate.relative_to(business_root)
-                except ValueError:
-                    pass
-                else:
-                    if candidate.is_file():
-                        return str(candidate)
+        for prefix, root_dir in (
+            ("/business/", BUSINESS_DATA_DIR),
+            ("/programs/", PROGRAMS_DATA_DIR),
+        ):
+            if normalized.startswith(prefix):
+                relative = normalized[len(prefix):].lstrip("/")
+                if relative and ".." not in Path(relative).parts:
+                    data_root = root_dir.resolve()
+                    candidate = (root_dir / relative).resolve()
+                    try:
+                        candidate.relative_to(data_root)
+                    except ValueError:
+                        pass
+                    else:
+                        if candidate.is_file():
+                            return str(candidate)
         return super().translate_path(path)
 
 
@@ -48,6 +53,7 @@ def main() -> None:
     server = ThreadingHTTPServer(("127.0.0.1", 8000), Utf8StaticHandler)
     print("Dashboard UTF-8 server: http://127.0.0.1:8000")
     print(f"Business data: {BUSINESS_DATA_DIR}")
+    print(f"Programs data: {PROGRAMS_DATA_DIR}")
     server.serve_forever()
 
 

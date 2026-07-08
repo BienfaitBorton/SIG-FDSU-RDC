@@ -1,6 +1,8 @@
 (function initDecisionCenterModule(global) {
   const BUSINESS_DATA_BASE = '/business/';
+  const PROGRAMS_DATA_BASE = '/programs/';
   const FDSU_PROGRAMS_PATH = `${BUSINESS_DATA_BASE}fdsu_programs.json`;
+  const SITES_40_DATA_PATH = `${PROGRAMS_DATA_BASE}sites_40/sites_40.json`;
 
   const DECISION_CENTER_TABS = [
     { id: 'vue-nationale', label: 'Vue nationale' },
@@ -29,6 +31,8 @@
     resizeObserver: null,
     programsLoaded: false,
     programsLoading: false,
+    sites40Loaded: false,
+    sites40Loading: false,
   };
 
   function escapeHtml(value) {
@@ -37,6 +41,106 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
+  }
+
+  function fetchProgramJson(relativePath) {
+    const path = `${PROGRAMS_DATA_BASE}${relativePath}`;
+    return global.fetch(path).then((response) => {
+      if (!response.ok) {
+        throw new Error(`Impossible de charger ${path}`);
+      }
+      return response.json();
+    });
+  }
+
+  function countByField(items, fieldName) {
+    return asArray(items).reduce((acc, item) => {
+      const key = String(item?.[fieldName] || 'Non renseigné').trim() || 'Non renseigné';
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {});
+  }
+
+  function renderDistributionList(title, counts) {
+    const entries = Object.entries(counts).sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0], 'fr'));
+    if (!entries.length) {
+      return `<div class="decision-center-sites-40-block"><h4>${escapeHtml(title)}</h4><p class="decision-center-program-loading">Aucune donnée.</p></div>`;
+    }
+    return `
+      <div class="decision-center-sites-40-block">
+        <h4>${escapeHtml(title)}</h4>
+        <ul class="decision-center-sites-40-distribution">
+          ${entries.map(([label, count]) => `<li><span>${escapeHtml(label)}</span><strong>${count.toLocaleString('fr-FR')}</strong></li>`).join('')}
+        </ul>
+      </div>
+    `;
+  }
+
+  function renderSites40ProgramPanel(payload) {
+    const container = document.querySelector('#decision-center-sites-40-body');
+    if (!container) return;
+
+    const sites = asArray(payload?.sites);
+    const total = payload?._meta?.count || sites.length;
+    const byZone = countByField(sites, 'zone');
+    const byProvince = countByField(sites, 'province');
+
+    container.innerHTML = `
+      <div class="decision-center-sites-40-summary">
+        <article class="decision-center-sites-40-stat">
+          <p class="summary-label">Total sites</p>
+          <p class="summary-value">${Number(total).toLocaleString('fr-FR')}</p>
+        </article>
+        <article class="decision-center-sites-40-stat">
+          <p class="summary-label">Statut</p>
+          <p class="summary-value is-status">Données KMZ intégrées</p>
+        </article>
+      </div>
+      <div class="decision-center-sites-40-distributions">
+        ${renderDistributionList('Répartition par zone FDSU', byZone)}
+        ${renderDistributionList('Répartition par province', byProvince)}
+      </div>
+    `;
+    decisionCenterState.sites40Loaded = true;
+  }
+
+  function bindSites40MapButton() {
+    const button = document.querySelector('#decision-center-sites-40-map-btn');
+    if (!button || button.dataset.bound === 'true') return;
+    button.dataset.bound = 'true';
+    button.addEventListener('click', () => {
+      const shared = getShared();
+      if (typeof shared.openSites40ProgramOnMap === 'function') {
+        shared.openSites40ProgramOnMap();
+        return;
+      }
+      if (typeof global.openSites40ProgramOnMap === 'function') {
+        global.openSites40ProgramOnMap();
+      }
+    });
+  }
+
+  function loadSites40ProgramPanel(forceReload) {
+    if (decisionCenterState.sites40Loading) return Promise.resolve();
+    if (decisionCenterState.sites40Loaded && !forceReload) return Promise.resolve();
+
+    const container = document.querySelector('#decision-center-sites-40-body');
+    if (!container) return Promise.resolve();
+
+    bindSites40MapButton();
+    decisionCenterState.sites40Loading = true;
+    container.innerHTML = '<p class="decision-center-program-loading">Chargement du programme Sites 40…</p>';
+
+    return fetchProgramJson('sites_40/sites_40.json')
+      .then((payload) => {
+        renderSites40ProgramPanel(payload);
+      })
+      .catch(() => {
+        container.innerHTML = '<p class="decision-center-program-error">Programme Sites 40 indisponible (<code>data/programs/sites_40/sites_40.json</code>).</p>';
+      })
+      .finally(() => {
+        decisionCenterState.sites40Loading = false;
+      });
   }
 
   function fetchBusinessJson(filename) {
@@ -155,6 +259,7 @@
     if (tabId === 'vue-nationale') {
       initializeDecisionCenterNationalMap();
       loadBusinessArchitecturePanel(false);
+      loadSites40ProgramPanel(false);
     }
   }
 
@@ -244,6 +349,7 @@
     if (!panel) return;
 
     bindDecisionCenterTabs();
+    bindSites40MapButton();
 
     if (!decisionCenterState.initialized) {
       setDecisionCenterTab('vue-nationale');
@@ -254,12 +360,16 @@
     if (decisionCenterState.activeTab === 'vue-nationale') {
       initializeDecisionCenterNationalMap();
       loadBusinessArchitecturePanel(false);
+      loadSites40ProgramPanel(false);
     }
   }
 
   global.decisionCenterState = decisionCenterState;
   global.initializeDecisionCenterModule = initializeDecisionCenterModule;
   global.loadFdsuBusinessArchitecture = loadBusinessArchitecturePanel;
+  global.loadFdsuSites40Program = loadSites40ProgramPanel;
   global.FDSU_BUSINESS_DATA_BASE = BUSINESS_DATA_BASE;
+  global.FDSU_PROGRAMS_DATA_BASE = PROGRAMS_DATA_BASE;
   global.FDSU_PROGRAMS_PATH = FDSU_PROGRAMS_PATH;
+  global.FDSU_SITES_40_DATA_PATH = SITES_40_DATA_PATH;
 })(window);
