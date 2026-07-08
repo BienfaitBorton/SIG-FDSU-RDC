@@ -21,6 +21,8 @@ L'organisation pivot est le **programme FDSU**, et non une simple liste de sites
 | `scoring_rules.json` | Familles de scores préparées (Site, CCN, Projet, Province, Zone, Partenaire) — structure sans formules. |
 | `ccn_model.json` | Typologie des CCN (Social, Éducatif, Administratif, Entrepreneurial, Mixte) et indicateurs futurs. |
 | `subsidy_rules.json` | Critères, éligibilité, types, phases et indicateurs du programme de subventions. |
+| `program_status_catalog.json` | Statuts de cycle de vie FDSU (Planifié, En exécution, etc.) |
+| `priority_matrix_loader.json` | Architecture de chargement et scoring de la matrice Excel Sites 300 |
 
 Chaque fichier JSON inclut un bloc `_meta` (version, description, sources, date).
 

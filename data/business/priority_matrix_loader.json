@@ -1,0 +1,49 @@
+{
+  "_meta": {
+    "schema_version": "1.0.0",
+    "title": "Chargeur matrice de priorisation FDSU",
+    "description": "Architecture de lecture, normalisation et préparation du scoring FDSU à partir de la matrice officielle Excel.",
+    "calculation_enabled": false,
+    "updated_at": "2026-07-08"
+  },
+  "source": {
+    "program_id": "sites_300",
+    "strategic_copy": "data/programs/sites_300/matrice_priorisation_300_sites.xlsx",
+    "strategic_reference": "data/strategic/matrice_priorisation_300_sites.xlsx",
+    "format": "xlsx"
+  },
+  "pipeline": [
+    {
+      "step": "load_workbook",
+      "description": "Charger le classeur Excel officiel sans transformation destructive."
+    },
+    {
+      "step": "normalize_columns",
+      "description": "Mapper les colonnes Excel vers le référentiel decision_rules.json."
+    },
+    {
+      "step": "join_sites",
+      "description": "Croiser les lignes matrice avec sites_300.geojson par identifiant ou nom normalisé."
+    },
+    {
+      "step": "prepare_scoring",
+      "description": "Préparer les entrées du moteur scoring_rules.json sans calcul final."
+    },
+    {
+      "step": "publish_scores",
+      "description": "Publier fdsu_score et priority_status dans sites_300.json lorsque le scoring sera activé."
+    }
+  ],
+  "output_fields": [
+    "fdsu_score",
+    "priority_status",
+    "priority_level",
+    "decision_justification"
+  ],
+  "status": {
+    "matrix_available": true,
+    "normalization_ready": true,
+    "scoring_ready": false,
+    "message": "Matrice disponible — scoring FDSU à calculer."
+  }
+}

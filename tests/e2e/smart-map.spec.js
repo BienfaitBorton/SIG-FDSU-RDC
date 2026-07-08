@@ -454,7 +454,14 @@ test.describe('SIG-FDSU RDC – Module Cartographie libre', () => {
     await page.waitForFunction(() => {
       const state = window.cartographyState;
       return state?.map?.hasLayer(state.layers.sites_all)
-        && state.layers.sites_all.getLayers().length === 40;
+        && state.layers.sites_all.getLayers().length === 340;
+    }, null, { timeout: 30_000 });
+
+    await checkCartographyLayer(page, 'sites_300');
+    await page.waitForFunction(() => {
+      const state = window.cartographyState;
+      return state?.map?.hasLayer(state.layers.sites_300)
+        && state.layers.sites_300.getLayers().length === 300;
     }, null, { timeout: 30_000 });
 
     const tileFilter = await page.evaluate(() => getComputedStyle(document.querySelector('#map .leaflet-tile-pane img') || document.createElement('img')).filter);

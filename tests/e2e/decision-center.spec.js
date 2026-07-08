@@ -69,8 +69,8 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
 
     await expect(page.locator('#decision-center-program-grid .decision-center-program-card')).toHaveCount(10);
     await expect(page.locator('[data-program-id="sites_300"] .decision-center-program-card-title')).toHaveText('Sites 300');
-    await expect(page.locator('[data-program-id="sites_300"] .decision-center-program-card-status')).toHaveText('Actif');
-    await expect(page.locator('[data-program-id="sites_40"] .decision-center-program-card-status')).toHaveText('Prévu');
+    await expect(page.locator('[data-program-id="sites_300"] .decision-center-program-card-status')).toHaveText('Planifié');
+    await expect(page.locator('[data-program-id="sites_40"] .decision-center-program-card-status')).toHaveText('En exécution');
     await expect(page.locator('[data-program-id="ccn"] .decision-center-program-card-title')).toHaveText('Centres Communautaires Numériques');
 
     await page.screenshot({ path: 'test-results/decision-center-business-architecture.png', fullPage: false });
@@ -115,6 +115,28 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
     );
     await expect(page.locator('input[data-layer="sites_40"]')).toBeChecked();
     await page.screenshot({ path: 'test-results/cartography-sites-40-layer.png', fullPage: false });
+  });
+
+  test('programme Sites 300 planifié intégré dans le centre de décision', async ({ page }) => {
+    await openDecisionCenter(page);
+
+    const panel = page.locator('#decision-center-sites-300-panel');
+    await expect(panel).toBeVisible();
+    await expect(panel.locator('h3')).toHaveText('Programme Sites 300');
+
+    await page.waitForFunction(
+      () => document.querySelector('#decision-center-sites-300-body .decision-center-sites-40-summary') !== null,
+      null,
+      { timeout: 15_000 },
+    );
+
+    await expect(panel).toContainText('🟡 Planifié');
+    await expect(panel).toContainText('300');
+    await expect(panel).toContainText('Non démarré');
+    await expect(panel).toContainText('À calculer');
+    await expect(page.locator('#decision-center-sites-300-map-btn')).toBeVisible();
+
+    await page.screenshot({ path: 'test-results/decision-center-sites-300.png', fullPage: false });
   });
 
   test('module Aide à la décision existant inchangé', async ({ page }) => {

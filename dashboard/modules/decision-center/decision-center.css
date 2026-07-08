@@ -340,6 +340,52 @@
   box-shadow: var(--shadow);
 }
 
+.decision-center-sites-300-panel {
+  border-color: rgba(234, 179, 8, 0.35);
+}
+
+.decision-center-sites-40-stat .summary-value.is-planned-status {
+  font-size: 1rem;
+  color: #eab308;
+}
+
+.decision-center-sites-300-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.decision-center-program-info {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px dashed rgba(148, 163, 184, 0.24);
+  background: rgba(15, 23, 42, 0.32);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.decision-center-program-info.hidden {
+  display: none;
+}
+
+.decision-center-program-note {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.decision-center-program-card-status.is-preparation {
+  color: #f59e0b;
+}
+
+.decision-center-program-card-status.is-followup {
+  color: #38bdf8;
+}
+
+.decision-center-program-card-status.is-completed {
+  color: #94a3b8;
+}
+
 .decision-center-sites-40-header {
   display: flex;
   flex-wrap: wrap;

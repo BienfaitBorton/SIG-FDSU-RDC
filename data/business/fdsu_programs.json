@@ -7,7 +7,8 @@
       "data/strategic/strategie_fdsu_ccn_2026_2030.docx",
       "data/strategic/matrice_priorisation_300_sites.xlsx"
     ],
-    "updated_at": "2026-07-08"
+    "updated_at": "2026-07-08",
+    "status_catalog_ref": "program_status_catalog.json"
   },
   "statuses": [
     { "id": "planned", "label": "Prévu" },
@@ -24,7 +25,9 @@
       "short_label": "Sites 40",
       "tagline": "Programme spécifique",
       "description": "Programme spécifique de déploiement pilote à échelle réduite, articulé autour d'un lot cible défini dans la stratégie FDSU.",
-      "status": "planned",
+      "status": "active",
+      "program_status": "EN_EXECUTION",
+      "site_count_ref": "data/programs/sites_40/sites_40.json",
       "category": "deployment",
       "target_scope": "pilot_lot",
       "related_matrix_types": ["sites"],
@@ -36,13 +39,22 @@
       "name": "Sites 300",
       "short_label": "Sites 300",
       "tagline": "Programme national",
-      "description": "Programme national de déploiement des sites FDSU, alimenté par la matrice de ciblage et de priorisation officielle.",
-      "status": "active",
+      "description": "Programme national de déploiement de 300 sites priorisés selon la stratégie du FDSU.",
+      "status": "planned",
+      "program_status": "PLANIFIE",
+      "site_count": 300,
+      "matrix_available": true,
+      "scoring_status": "A_CALCULER",
+      "deployment_status": "NON_DEMARRE",
       "category": "deployment",
       "target_scope": "national",
       "related_matrix_types": ["sites"],
       "kpi_program_ref": "sites_300",
-      "strategic_document_ref": "matrice_priorisation_300_sites"
+      "strategic_document_ref": "matrice_priorisation_300_sites",
+      "data_ref": "data/programs/sites_300/sites_300.json",
+      "geojson_ref": "data/programs/sites_300/sites_300.geojson",
+      "matrix_ref": "data/programs/sites_300/matrice_priorisation_300_sites.xlsx",
+      "priority_matrix_loader_ref": "priority_matrix_loader.json"
     },
     {
       "id": "connectivity_extension",

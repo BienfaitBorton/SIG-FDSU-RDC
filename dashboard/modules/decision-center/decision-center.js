@@ -33,6 +33,10 @@
     programsLoading: false,
     sites40Loaded: false,
     sites40Loading: false,
+    sites300Loaded: false,
+    sites300Loading: false,
+    programStatusCatalog: null,
+    priorityMatrixLoader: null,
   };
 
   function escapeHtml(value) {
@@ -153,22 +157,30 @@
     });
   }
 
-  function resolveProgramStatusLabel(program, statusCatalog) {
-    const match = asArray(statusCatalog).find((entry) => entry.id === program?.status);
+  function resolveProgramStatusLabel(program, legacyStatusCatalog, lifecycleCatalog) {
+    const lifecycle = asArray(lifecycleCatalog).find((entry) => entry.code === program?.program_status);
+    if (lifecycle?.label) return lifecycle.label;
+    const match = asArray(legacyStatusCatalog).find((entry) => entry.id === program?.status);
     return match?.label || program?.status || 'Non défini';
   }
 
-  function resolveProgramStatusClass(status) {
-    if (status === 'active') return 'is-active';
-    if (status === 'planned') return 'is-planned';
+  function resolveProgramStatusClass(program, lifecycleCatalog) {
+    const lifecycle = asArray(lifecycleCatalog).find((entry) => entry.code === program?.program_status);
+    if (lifecycle?.code === 'PLANIFIE') return 'is-planned';
+    if (lifecycle?.code === 'EN_EXECUTION') return 'is-active';
+    if (lifecycle?.code === 'EN_PREPARATION') return 'is-preparation';
+    if (lifecycle?.code === 'EN_SUIVI') return 'is-followup';
+    if (lifecycle?.code === 'TERMINE') return 'is-completed';
+    if (program?.status === 'active') return 'is-active';
+    if (program?.status === 'planned') return 'is-planned';
     return 'is-defined';
   }
 
-  function renderProgramCard(program, statusCatalog) {
+  function renderProgramCard(program, legacyStatusCatalog, lifecycleCatalog) {
     const title = escapeHtml(program?.name || program?.short_label || 'Programme');
     const tagline = escapeHtml(program?.tagline || program?.description || '');
-    const statusLabel = escapeHtml(resolveProgramStatusLabel(program, statusCatalog));
-    const statusClass = resolveProgramStatusClass(program?.status);
+    const statusLabel = escapeHtml(resolveProgramStatusLabel(program, legacyStatusCatalog, lifecycleCatalog));
+    const statusClass = resolveProgramStatusClass(program, lifecycleCatalog);
 
     return `
       <article class="decision-center-program-card" data-program-id="${escapeHtml(program?.id || '')}">
@@ -182,20 +194,146 @@
     `;
   }
 
-  function renderBusinessArchitecturePanel(payload) {
+  function renderBusinessArchitecturePanel(payload, lifecycleCatalog) {
     const container = document.querySelector('#decision-center-program-grid');
     if (!container) return;
 
     const programs = asArray(payload?.programs);
-    const statusCatalog = asArray(payload?.statuses);
+    const legacyStatusCatalog = asArray(payload?.statuses);
 
     if (!programs.length) {
       container.innerHTML = '<p class="decision-center-program-error">Aucun programme FDSU disponible.</p>';
       return;
     }
 
-    container.innerHTML = programs.map((program) => renderProgramCard(program, statusCatalog)).join('');
+    container.innerHTML = programs.map((program) => renderProgramCard(program, legacyStatusCatalog, lifecycleCatalog)).join('');
     decisionCenterState.programsLoaded = true;
+  }
+
+  function loadPriorityMatrix() {
+    if (decisionCenterState.priorityMatrixLoader) {
+      return Promise.resolve(decisionCenterState.priorityMatrixLoader);
+    }
+    return fetchBusinessJson('priority_matrix_loader.json')
+      .then((payload) => {
+        decisionCenterState.priorityMatrixLoader = payload;
+        return payload;
+      })
+      .catch(() => null);
+  }
+
+  function renderSites300ProgramPanel(payload, matrixLoader) {
+    const container = document.querySelector('#decision-center-sites-300-body');
+    if (!container) return;
+
+    const sites = asArray(payload?.sites);
+    const total = payload?._meta?.count || sites.length;
+    const matrixStatus = matrixLoader?.status?.message || 'Matrice disponible — scoring FDSU à calculer.';
+
+    container.innerHTML = `
+      <div class="decision-center-sites-40-summary">
+        <article class="decision-center-sites-40-stat">
+          <p class="summary-label">Statut programme</p>
+          <p class="summary-value is-planned-status">🟡 Planifié</p>
+        </article>
+        <article class="decision-center-sites-40-stat">
+          <p class="summary-label">Sites</p>
+          <p class="summary-value">${Number(total).toLocaleString('fr-FR')}</p>
+        </article>
+        <article class="decision-center-sites-40-stat">
+          <p class="summary-label">Matrice</p>
+          <p class="summary-value is-status">Disponible</p>
+        </article>
+        <article class="decision-center-sites-40-stat">
+          <p class="summary-label">Score FDSU</p>
+          <p class="summary-value">À calculer</p>
+        </article>
+        <article class="decision-center-sites-40-stat">
+          <p class="summary-label">Déploiement</p>
+          <p class="summary-value">Non démarré</p>
+        </article>
+      </div>
+      <p class="decision-center-program-note">${escapeHtml(matrixStatus)}</p>
+      <div class="decision-center-sites-300-actions">
+        <button type="button" class="primary-button" id="decision-center-sites-300-map-btn">Consulter les sites</button>
+        <button type="button" class="secondary-button" id="decision-center-sites-300-matrix-btn">Voir la matrice</button>
+        <button type="button" class="secondary-button" id="decision-center-sites-300-analysis-btn">Préparer l'analyse</button>
+      </div>
+      <div class="decision-center-program-info hidden" id="decision-center-sites-300-info" aria-live="polite"></div>
+    `;
+    bindSites300ActionButtons();
+    decisionCenterState.sites300Loaded = true;
+  }
+
+  function showSites300Info(message) {
+    const panel = document.querySelector('#decision-center-sites-300-info');
+    if (!panel) return;
+    panel.classList.remove('hidden');
+    panel.innerHTML = `<p>${escapeHtml(message)}</p>`;
+  }
+
+  function bindSites300ActionButtons() {
+    const mapButton = document.querySelector('#decision-center-sites-300-map-btn');
+    if (mapButton && mapButton.dataset.bound !== 'true') {
+      mapButton.dataset.bound = 'true';
+      mapButton.addEventListener('click', () => {
+        const shared = getShared();
+        if (typeof shared.openSites300ProgramOnMap === 'function') {
+          shared.openSites300ProgramOnMap();
+          return;
+        }
+        if (typeof global.openSites300ProgramOnMap === 'function') {
+          global.openSites300ProgramOnMap();
+        }
+      });
+    }
+
+    const matrixButton = document.querySelector('#decision-center-sites-300-matrix-btn');
+    if (matrixButton && matrixButton.dataset.bound !== 'true') {
+      matrixButton.dataset.bound = 'true';
+      matrixButton.addEventListener('click', () => {
+        loadPriorityMatrix().then((loader) => {
+          const source = loader?.source?.strategic_copy || 'data/programs/sites_300/matrice_priorisation_300_sites.xlsx';
+          showSites300Info(`Matrice officielle référencée : ${source}. Le pipeline de normalisation et de scoring est préparé ; le calcul FDSU n'est pas encore activé.`);
+        });
+      });
+    }
+
+    const analysisButton = document.querySelector('#decision-center-sites-300-analysis-btn');
+    if (analysisButton && analysisButton.dataset.bound !== 'true') {
+      analysisButton.dataset.bound = 'true';
+      analysisButton.addEventListener('click', () => {
+        loadPriorityMatrix().then((loader) => {
+          const steps = asArray(loader?.pipeline).map((step) => step.description).join(' ');
+          showSites300Info(`Analyse préparée via data/business/priority_matrix_loader.json. Étapes prévues : ${steps || 'normalisation et scoring à venir.'}`);
+        });
+      });
+    }
+  }
+
+  function loadSites300ProgramPanel(forceReload) {
+    if (decisionCenterState.sites300Loading) return Promise.resolve();
+    if (decisionCenterState.sites300Loaded && !forceReload) return Promise.resolve();
+
+    const container = document.querySelector('#decision-center-sites-300-body');
+    if (!container) return Promise.resolve();
+
+    decisionCenterState.sites300Loading = true;
+    container.innerHTML = '<p class="decision-center-program-loading">Chargement du programme Sites 300…</p>';
+
+    return Promise.all([
+      fetchProgramJson('sites_300/sites_300.json'),
+      loadPriorityMatrix(),
+    ])
+      .then(([payload, matrixLoader]) => {
+        renderSites300ProgramPanel(payload, matrixLoader);
+      })
+      .catch(() => {
+        container.innerHTML = '<p class="decision-center-program-error">Programme Sites 300 indisponible (<code>data/programs/sites_300/sites_300.json</code>).</p>';
+      })
+      .finally(() => {
+        decisionCenterState.sites300Loading = false;
+      });
   }
 
   function loadBusinessArchitecturePanel(forceReload) {
@@ -208,9 +346,13 @@
     decisionCenterState.programsLoading = true;
     container.innerHTML = '<p class="decision-center-program-loading">Chargement des programmes FDSU…</p>';
 
-    return fetchBusinessJson('fdsu_programs.json')
-      .then((payload) => {
-        renderBusinessArchitecturePanel(payload);
+    return Promise.all([
+      fetchBusinessJson('fdsu_programs.json'),
+      fetchBusinessJson('program_status_catalog.json').catch(() => ({ statuses: [] })),
+    ])
+      .then(([payload, lifecyclePayload]) => {
+        decisionCenterState.programStatusCatalog = lifecyclePayload;
+        renderBusinessArchitecturePanel(payload, lifecyclePayload?.statuses);
       })
       .catch(() => {
         container.innerHTML = '<p class="decision-center-program-error">Référentiel métier indisponible (<code>data/business/fdsu_programs.json</code>).</p>';
@@ -260,6 +402,7 @@
       initializeDecisionCenterNationalMap();
       loadBusinessArchitecturePanel(false);
       loadSites40ProgramPanel(false);
+      loadSites300ProgramPanel(false);
     }
   }
 
@@ -361,6 +504,7 @@
       initializeDecisionCenterNationalMap();
       loadBusinessArchitecturePanel(false);
       loadSites40ProgramPanel(false);
+      loadSites300ProgramPanel(false);
     }
   }
 
@@ -368,6 +512,8 @@
   global.initializeDecisionCenterModule = initializeDecisionCenterModule;
   global.loadFdsuBusinessArchitecture = loadBusinessArchitecturePanel;
   global.loadFdsuSites40Program = loadSites40ProgramPanel;
+  global.loadFdsuSites300Program = loadSites300ProgramPanel;
+  global.loadPriorityMatrix = loadPriorityMatrix;
   global.FDSU_BUSINESS_DATA_BASE = BUSINESS_DATA_BASE;
   global.FDSU_PROGRAMS_DATA_BASE = PROGRAMS_DATA_BASE;
   global.FDSU_PROGRAMS_PATH = FDSU_PROGRAMS_PATH;

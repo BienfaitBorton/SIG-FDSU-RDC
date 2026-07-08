@@ -1156,6 +1156,7 @@ button {
 .legend-locality-point { background: #14b8a6; border-radius: 999px; }
 .legend-site-point { background: #f59e0b; border-radius: 999px; }
 .legend-site-40-point { background: #c084fc; border-radius: 999px; }
+.legend-site-300-point { background: #38bdf8; border-radius: 999px; }
 .legend-mission-point { background: #fb7185; border-radius: 999px; }
 
 .map-breadcrumb {

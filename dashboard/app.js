@@ -26,8 +26,7 @@ const FDSU_SITES_PROGRAM_LAYERS = {
   },
   sites_300: {
     label: 'Programme Sites 300',
-    filePath: null,
-    pendingMessage: 'Programme Sites 300 — données à venir.',
+    filePath: '/programs/sites_300/sites_300.geojson',
   },
 };
 const FDSU_SMART_MAP_MODES = {
@@ -2032,7 +2031,7 @@ function initializeCartographyModule() {
       onEachFeature: (feature, layer) => onFdsuProgramSiteEachFeature(feature, layer, 'sites_40'),
     }),
     sites_300: L.geoJSON(null, {
-      pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#64748b', '#94a3b8', 8),
+      pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#0369a1', '#38bdf8', 9),
       onEachFeature: (feature, layer) => onFdsuProgramSiteEachFeature(feature, layer, 'sites_300'),
     }),
     missions: L.geoJSON(null, {
@@ -4208,6 +4207,40 @@ function getZoneCode(feature) {
   return 'ND';
 }
 
+function buildFdsuProgramPopupHtml(properties, layerKey) {
+  const programmeLabel = properties.programme || getCartographyLayerLabel(layerKey);
+  const lines = [
+    ['strong', properties.name || 'Site'],
+    ['text', properties.province],
+    ['text', properties.territoire],
+    ['text', properties.zone],
+    ['label', 'Programme', programmeLabel],
+  ];
+
+  if (layerKey === 'sites_300') {
+    lines.push(['label', 'Statut', properties.status || 'Planifié']);
+    lines.push(['label', 'Score', properties.fdsu_score ?? properties.priority_status ?? 'À calculer']);
+  }
+
+  return `
+    <div class="sites-40-popup">
+      ${lines.map((entry) => {
+        if (entry[0] === 'strong') {
+          const value = String(entry[1] || '').trim();
+          return value ? `<strong>${escapeHtml(value)}</strong>` : '';
+        }
+        if (entry[0] === 'label') {
+          const value = String(entry[2] ?? '').trim();
+          if (!value) return '';
+          return `${escapeHtml(entry[1])} : ${escapeHtml(value)}`;
+        }
+        const value = String(entry[1] || '').trim();
+        return value ? escapeHtml(value) : '';
+      }).filter(Boolean).join('<br>')}
+    </div>
+  `;
+}
+
 function onFdsuProgramSiteEachFeature(feature, layer, layerKey) {
   if (!layer) return;
   const properties = feature?.properties || {};
@@ -4215,14 +4248,15 @@ function onFdsuProgramSiteEachFeature(feature, layer, layerKey) {
   if (!cartographyState.featureLayers[layerKey]) cartographyState.featureLayers[layerKey] = {};
   cartographyState.featureLayers[layerKey][featureId] = layer;
 
-  const programmeLabel = properties.programme || getCartographyLayerLabel(layerKey);
-  const popupHtml = `
+  const popupHtml = layerKey === 'sites_300'
+    ? buildFdsuProgramPopupHtml(properties, layerKey)
+    : `
     <div class="sites-40-popup">
       <strong>${escapeHtml(properties.name || 'Site')}</strong><br>
       ${escapeHtml(properties.province || '')}<br>
       ${escapeHtml(properties.territoire || '')}<br>
       ${escapeHtml(properties.zone || '')}<br>
-      Programme : ${escapeHtml(programmeLabel)}
+      Programme : ${escapeHtml(properties.programme || getCartographyLayerLabel(layerKey))}
     </div>
   `;
 
@@ -8950,6 +8984,32 @@ window.cartographyState = cartographyState;
 window.nationalMapState = nationalMapState;
 window.dashboardViewState = dashboardViewState;
 window.openDashboardDetailPage = openDashboardDetailPage;
+function openSites300ProgramOnMap() {
+  navigateTo('map');
+  const activate = () => {
+    if (!cartographyState.initialized || !cartographyState.map || !cartographyState.layers.sites_300) {
+      window.setTimeout(activate, 120);
+      return;
+    }
+    ensureFdsuSitesProgramLayerLoaded('sites_300').then(() => {
+      const layer = cartographyState.layers.sites_300;
+      if ((layer?.getLayers?.().length ?? 0) === 0) {
+        window.setTimeout(activate, 120);
+        return;
+      }
+      const checkbox = document.querySelector('input[data-layer="sites_300"]');
+      setCartographyLayerVisible('sites_300', true, checkbox).finally(() => {
+        if (checkbox && !checkbox.checked) checkbox.checked = true;
+        if (!cartographyState.map.hasLayer(layer)) layer.addTo(cartographyState.map);
+        refreshCartographicLayerPresentation();
+        openCartographyDrawerPanel('layers');
+        fitLayerBounds(layer);
+      });
+    });
+  };
+  activate();
+}
+
 function openSites40ProgramOnMap() {
   navigateTo('map');
   const activate = () => {
@@ -8977,6 +9037,7 @@ function openSites40ProgramOnMap() {
 }
 
 window.openSites40ProgramOnMap = openSites40ProgramOnMap;
+window.openSites300ProgramOnMap = openSites300ProgramOnMap;
 window.backToDashboard = backToDashboard;
 window.platformState = platformState;
 window.goBackContext = goBackNationalContext;
@@ -8994,6 +9055,7 @@ window.SigFdsuShared = {
   styleCollectivitesFeature,
   makePointMarker,
   openSites40ProgramOnMap,
+  openSites300ProgramOnMap,
 };
 
 function bootSigFdsuApplication() {

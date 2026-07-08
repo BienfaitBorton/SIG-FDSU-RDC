@@ -1,0 +1,40 @@
+{
+  "_meta": {
+    "schema_version": "1.0.0",
+    "title": "Catalogue des statuts de cycle de vie FDSU",
+    "description": "Référentiel unique des statuts applicables à tous les programmes FDSU.",
+    "updated_at": "2026-07-08"
+  },
+  "statuses": [
+    {
+      "code": "PLANIFIE",
+      "label": "Planifié",
+      "color": "#eab308",
+      "description": "Programme validé stratégiquement mais non démarré opérationnellement."
+    },
+    {
+      "code": "EN_PREPARATION",
+      "label": "En préparation",
+      "color": "#f59e0b",
+      "description": "Programme en phase de cadrage, mobilisation ou préparation du déploiement."
+    },
+    {
+      "code": "EN_EXECUTION",
+      "label": "En exécution",
+      "color": "#22c55e",
+      "description": "Programme en cours de déploiement ou d'exécution opérationnelle."
+    },
+    {
+      "code": "EN_SUIVI",
+      "label": "En suivi",
+      "color": "#38bdf8",
+      "description": "Programme déployé et placé sous suivi de performance et de maintenance."
+    },
+    {
+      "code": "TERMINE",
+      "label": "Terminé",
+      "color": "#94a3b8",
+      "description": "Programme clôturé après exécution et bilan."
+    }
+  ]
+}

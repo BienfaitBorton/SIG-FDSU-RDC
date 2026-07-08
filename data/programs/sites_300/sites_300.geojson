@@ -1,0 +1,7205 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 1,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          16.66244300000001,
+          -5.772851999999995
+        ]
+      },
+      "properties": {
+        "name": "Colline Popokabaka_R228",
+        "province": "Kwango",
+        "territoire": "Popokabaka",
+        "zone": "Ouest",
+        "latitude": -5.772851999999995,
+        "longitude": 16.66244300000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 2,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.12586732000002,
+          -3.082425152000012
+        ]
+      },
+      "properties": {
+        "name": "Madjoko",
+        "province": "Mai-Ndombe",
+        "territoire": "Kutu",
+        "zone": "Ouest",
+        "latitude": -3.082425152000012,
+        "longitude": 18.12586732000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 3,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.80201834409452,
+          -4.684719197676603
+        ]
+      },
+      "properties": {
+        "name": "Kingondji",
+        "province": "Kwilu",
+        "territoire": "Masi-Manimba",
+        "zone": "Ouest",
+        "latitude": -4.684719197676603,
+        "longitude": 17.80201834409452,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 4,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.88448542000001,
+          3.580463140999983
+        ]
+      },
+      "properties": {
+        "name": "Arama",
+        "province": "Haut-Uele",
+        "territoire": "Dungu",
+        "zone": "Nord",
+        "latitude": 3.580463140999983,
+        "longitude": 28.88448542000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 5,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.43353941,
+          2.801697481000001
+        ]
+      },
+      "properties": {
+        "name": "Gpwekukobo_Efelone",
+        "province": "Haut-Uele",
+        "territoire": "Watsa",
+        "zone": "Nord",
+        "latitude": 2.801697481000001,
+        "longitude": 29.43353941,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 6,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.2197516690397,
+          2.764243362688363
+        ]
+      },
+      "properties": {
+        "name": "Babeligo",
+        "province": "Ituri",
+        "territoire": "Aru",
+        "zone": "Est",
+        "latitude": 2.764243362688363,
+        "longitude": 30.2197516690397,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 7,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.2672459,
+          2.39115811700001
+        ]
+      },
+      "properties": {
+        "name": "Yamakila_Bohombuli",
+        "province": "Mongala",
+        "territoire": "Bumba",
+        "zone": "Nord",
+        "latitude": 2.39115811700001,
+        "longitude": 22.2672459,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 8,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.37706497999999,
+          1.617609619000002
+        ]
+      },
+      "properties": {
+        "name": "Bangabola",
+        "province": "Mongala",
+        "territoire": "Bongandanga",
+        "zone": "Nord",
+        "latitude": 1.617609619000002,
+        "longitude": 19.37706497999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 9,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.41054188999999,
+          1.461586452000021
+        ]
+      },
+      "properties": {
+        "name": "Bongbaie",
+        "province": "Tshopo",
+        "territoire": "Banalia",
+        "zone": "Nord",
+        "latitude": 1.461586452000021,
+        "longitude": 25.41054188999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 10,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.77455300232051,
+          1.563641716392152
+        ]
+      },
+      "properties": {
+        "name": "Bukulu",
+        "province": "Ituri",
+        "territoire": "Mambasa",
+        "zone": "Est",
+        "latitude": 1.563641716392152,
+        "longitude": 29.77455300232051,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 11,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.51853000000001,
+          4.017821000000001
+        ]
+      },
+      "properties": {
+        "name": "Apindu",
+        "province": "Nord-Ubangi",
+        "territoire": "Yakoma",
+        "zone": "Nord",
+        "latitude": 4.017821000000001,
+        "longitude": 22.51853000000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 12,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.85110757814099,
+          1.31652758248153
+        ]
+      },
+      "properties": {
+        "name": "Duge",
+        "province": "Ituri",
+        "territoire": "Irumu",
+        "zone": "Est",
+        "latitude": 1.31652758248153,
+        "longitude": 29.85110757814099,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 13,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.10145194343879,
+          0.9705581511168448
+        ]
+      },
+      "properties": {
+        "name": "Mapembe",
+        "province": "Ituri",
+        "territoire": "Mambasa",
+        "zone": "Est",
+        "latitude": 0.9705581511168448,
+        "longitude": 29.10145194343879,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 14,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.47296544999999,
+          -0.887506112000005
+        ]
+      },
+      "properties": {
+        "name": "Malimbu",
+        "province": "Maniema",
+        "territoire": "Lubutu",
+        "zone": "Est",
+        "latitude": -0.887506112000005,
+        "longitude": 26.47296544999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 15,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.908323,
+          3.779192999999998
+        ]
+      },
+      "properties": {
+        "name": "Boketa",
+        "province": "Sud-Ubangi",
+        "territoire": "Libenge",
+        "zone": "Nord",
+        "latitude": 3.779192999999998,
+        "longitude": 18.908323,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 16,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.943531613545,
+          -5.035013016593295
+        ]
+      },
+      "properties": {
+        "name": "Bidi-Kindamba",
+        "province": "Kongo Central",
+        "territoire": "Luozi",
+        "zone": "Ouest",
+        "latitude": -5.035013016593295,
+        "longitude": 13.943531613545,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 17,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.33878291,
+          -3.861252607000012
+        ]
+      },
+      "properties": {
+        "name": "Okita-Unia",
+        "province": "Sankuru",
+        "territoire": "Katako-Kombe",
+        "zone": "Centre",
+        "latitude": -3.861252607000012,
+        "longitude": 24.33878291,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 18,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.22951282999999,
+          -4.293201003000011
+        ]
+      },
+      "properties": {
+        "name": "Tete",
+        "province": "Maniema",
+        "territoire": "Kasongo",
+        "zone": "Est",
+        "latitude": -4.293201003000011,
+        "longitude": 26.22951282999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 19,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.85844262738588,
+          -5.037916856092433
+        ]
+      },
+      "properties": {
+        "name": "Gombe-Matadi",
+        "province": "Kongo Central",
+        "territoire": "Mbanza-Ngungu",
+        "zone": "Ouest",
+        "latitude": -5.037916856092433,
+        "longitude": 14.85844262738588,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 20,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.69071689,
+          -5.134711755999999
+        ]
+      },
+      "properties": {
+        "name": "Kitetoro",
+        "province": "Kongo Central",
+        "territoire": "Mbanza-Ngungu",
+        "zone": "Ouest",
+        "latitude": -5.134711755999999,
+        "longitude": 14.69071689,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 21,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.2690587913795,
+          -5.209131450302755
+        ]
+      },
+      "properties": {
+        "name": "Mulumba",
+        "province": "Kwilu",
+        "territoire": "Gungu",
+        "zone": "Ouest",
+        "latitude": -5.209131450302755,
+        "longitude": 19.2690587913795,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 22,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.54560000000001,
+          -5.82485700000001
+        ]
+      },
+      "properties": {
+        "name": "Vila",
+        "province": "Kongo Central",
+        "territoire": "Songololo",
+        "zone": "Ouest",
+        "latitude": -5.82485700000001,
+        "longitude": 14.54560000000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 23,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.66050600000002,
+          -4.983332999999986
+        ]
+      },
+      "properties": {
+        "name": "Nkamba",
+        "province": "Kongo Central",
+        "territoire": "Mbanza-Ngungu",
+        "zone": "Ouest",
+        "latitude": -4.983332999999986,
+        "longitude": 14.66050600000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 24,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.85112076606653,
+          -5.234063248080309
+        ]
+      },
+      "properties": {
+        "name": "Lusoso",
+        "province": "Kasai Central",
+        "territoire": "Dimbelenge",
+        "zone": "Centre",
+        "latitude": -5.234063248080309,
+        "longitude": 22.85112076606653,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 25,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.7734394858093,
+          -5.438183949233119
+        ]
+      },
+      "properties": {
+        "name": "Tshikodika",
+        "province": "Kasai",
+        "territoire": "Ilebo",
+        "zone": "Centre",
+        "latitude": -5.438183949233119,
+        "longitude": 20.7734394858093,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 26,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.76452930982678,
+          -5.519981569583738
+        ]
+      },
+      "properties": {
+        "name": "kABEVA kUEMBE",
+        "province": "Kasai",
+        "territoire": "Luebo",
+        "zone": "Centre",
+        "latitude": -5.519981569583738,
+        "longitude": 21.76452930982678,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 27,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.13534119801661,
+          -5.800875826955007
+        ]
+      },
+      "properties": {
+        "name": "Katembwe",
+        "province": "Kasai Central",
+        "territoire": "Kazumba",
+        "zone": "Centre",
+        "latitude": -5.800875826955007,
+        "longitude": 22.13534119801661,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 28,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.08887427999999,
+          -5.688152822999988
+        ]
+      },
+      "properties": {
+        "name": "Kampunda",
+        "province": "Tanganyika",
+        "territoire": "Kalemie",
+        "zone": "Sud",
+        "latitude": -5.688152822999988,
+        "longitude": 29.08887427999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 29,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.05300535675691,
+          -6.081419745489476
+        ]
+      },
+      "properties": {
+        "name": "Bwania",
+        "province": "Kasai Oriental",
+        "territoire": "Kabeya-Kamwanga",
+        "zone": "Centre",
+        "latitude": -6.081419745489476,
+        "longitude": 23.05300535675691,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 30,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.8628084323281,
+          -6.502224308797187
+        ]
+      },
+      "properties": {
+        "name": "Muyaya",
+        "province": "Kasai Central",
+        "territoire": "Kazumba",
+        "zone": "Centre",
+        "latitude": -6.502224308797187,
+        "longitude": 21.8628084323281,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 31,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.96508248000002,
+          -6.575268641999994
+        ]
+      },
+      "properties": {
+        "name": "Kiabumbuyu",
+        "province": "Tanganyika",
+        "territoire": "Manono",
+        "zone": "Sud",
+        "latitude": -6.575268641999994,
+        "longitude": 26.96508248000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 32,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.45507719835741,
+          -6.817822393159068
+        ]
+      },
+      "properties": {
+        "name": "Bena Tshimenga",
+        "province": "Lomami",
+        "territoire": "Luilu",
+        "zone": "Centre",
+        "latitude": -6.817822393159068,
+        "longitude": 23.45507719835741,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 33,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.6788824969233,
+          -6.828929844614693
+        ]
+      },
+      "properties": {
+        "name": "Mukenge",
+        "province": "Kasai Central",
+        "territoire": "Luiza",
+        "zone": "Centre",
+        "latitude": -6.828929844614693,
+        "longitude": 22.6788824969233,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 34,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.204846198662,
+          -6.866158499683914
+        ]
+      },
+      "properties": {
+        "name": "Kalemba",
+        "province": "Kasai Central",
+        "territoire": "Kazumba",
+        "zone": "Centre",
+        "latitude": -6.866158499683914,
+        "longitude": 22.204846198662,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 35,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.88160541547241,
+          -7.168721029776601
+        ]
+      },
+      "properties": {
+        "name": "Longoie",
+        "province": "Kasai Central",
+        "territoire": "Luiza",
+        "zone": "Centre",
+        "latitude": -7.168721029776601,
+        "longitude": 22.88160541547241,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 36,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.860028,
+          -7.031526000000015
+        ]
+      },
+      "properties": {
+        "name": "Bena-Tshilombo",
+        "province": "Lomami",
+        "territoire": "Luilu",
+        "zone": "Centre",
+        "latitude": -7.031526000000015,
+        "longitude": 23.860028,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 37,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.96421799999997,
+          -3.718819999999998
+        ]
+      },
+      "properties": {
+        "name": "Lungania-Okoko",
+        "province": "Sankuru",
+        "territoire": "Katako-Kombe",
+        "zone": "Centre",
+        "latitude": -3.718819999999998,
+        "longitude": 23.96421799999997,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 38,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.98875402270271,
+          -7.583859090292522
+        ]
+      },
+      "properties": {
+        "name": "Kamalenge_Kasese",
+        "province": "Haut-Lomami",
+        "territoire": "Kaniama",
+        "zone": "Sud",
+        "latitude": -7.583859090292522,
+        "longitude": 23.98875402270271,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 39,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.466747,
+          -6.143529000000001
+        ]
+      },
+      "properties": {
+        "name": "Maleka",
+        "province": "Kasai",
+        "territoire": "Kamonia",
+        "zone": "Centre",
+        "latitude": -6.143529000000001,
+        "longitude": 20.466747,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 40,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.05731197091,
+          -9.936203756761808
+        ]
+      },
+      "properties": {
+        "name": "kayembe",
+        "province": "Lualaba",
+        "territoire": "Sandoa",
+        "zone": "Sud",
+        "latitude": -9.936203756761808,
+        "longitude": 23.05731197091,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 41,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.50980806597051,
+          -10.12934029947169
+        ]
+      },
+      "properties": {
+        "name": "manganda",
+        "province": "Lualaba",
+        "territoire": "Dilolo",
+        "zone": "Sud",
+        "latitude": -10.12934029947169,
+        "longitude": 23.50980806597051,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 42,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.28584519000001,
+          -10.48417685
+        ]
+      },
+      "properties": {
+        "name": "nyangula",
+        "province": "Lualaba",
+        "territoire": "Dilolo",
+        "zone": "Sud",
+        "latitude": -10.48417685,
+        "longitude": 24.28584519000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 43,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.11128999999999,
+          -4.11558800000001
+        ]
+      },
+      "properties": {
+        "name": "Sezo",
+        "province": "Kwilu",
+        "territoire": "Idiofa",
+        "zone": "Ouest",
+        "latitude": -4.11558800000001,
+        "longitude": 19.11128999999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 44,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.65129300000002,
+          -4.651638999999987
+        ]
+      },
+      "properties": {
+        "name": "Laba Makingi village",
+        "province": "Kwilu",
+        "territoire": "Idiofa",
+        "zone": "Ouest",
+        "latitude": -4.651638999999987,
+        "longitude": 19.65129300000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 45,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.81156800000001,
+          -4.193985999999999
+        ]
+      },
+      "properties": {
+        "name": "Banza Lute",
+        "province": "Kwilu",
+        "territoire": "Bagata",
+        "zone": "Ouest",
+        "latitude": -4.193985999999999,
+        "longitude": 17.81156800000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 46,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.73698200000003,
+          -6.151871999999996
+        ]
+      },
+      "properties": {
+        "name": "Muana-Kasua",
+        "province": "Kasai",
+        "territoire": "Kamonia",
+        "zone": "Centre",
+        "latitude": -6.151871999999996,
+        "longitude": 20.73698200000003,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 47,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.672068,
+          -10.649335
+        ]
+      },
+      "properties": {
+        "name": "Kayongo_N39",
+        "province": "Lualaba",
+        "territoire": "Dilolo",
+        "zone": "Sud",
+        "latitude": -10.649335,
+        "longitude": 22.672068,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 48,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.96325,
+          -7.419811000000019
+        ]
+      },
+      "properties": {
+        "name": "Kaniambe",
+        "province": "Tanganyika",
+        "territoire": "Manono",
+        "zone": "Sud",
+        "latitude": -7.419811000000019,
+        "longitude": 26.96325,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 49,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.59024199999998,
+          -8.12338199999999
+        ]
+      },
+      "properties": {
+        "name": "Bayo",
+        "province": "Haut-Lomami",
+        "territoire": "Bukama",
+        "zone": "Sud",
+        "latitude": -8.12338199999999,
+        "longitude": 26.59024199999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 50,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.80507946999999,
+          -4.55465285899998
+        ]
+      },
+      "properties": {
+        "name": "Bantsame ll_Okum",
+        "province": "Kwilu",
+        "territoire": "Idiofa",
+        "zone": "Ouest",
+        "latitude": -4.55465285899998,
+        "longitude": 19.80507946999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 51,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.22110853999999,
+          -5.085090514999995
+        ]
+      },
+      "properties": {
+        "name": "Bodila_Wombo",
+        "province": "Kongo Central",
+        "territoire": "Songololo",
+        "zone": "Ouest",
+        "latitude": -5.085090514999995,
+        "longitude": 14.22110853999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 52,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.43579900000001,
+          -6.366646999999994
+        ]
+      },
+      "properties": {
+        "name": "Kibunge",
+        "province": "Lomami",
+        "territoire": "Kabinda",
+        "zone": "Centre",
+        "latitude": -6.366646999999994,
+        "longitude": 24.43579900000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 53,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.89831700000001,
+          -4.004022999999997
+        ]
+      },
+      "properties": {
+        "name": "Imbo",
+        "province": "Maniema",
+        "territoire": "Kibombo",
+        "zone": "Est",
+        "latitude": -4.004022999999997,
+        "longitude": 25.89831700000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 54,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          16.94080700000001,
+          -2.876066000000002
+        ]
+      },
+      "properties": {
+        "name": "Bompensole",
+        "province": "Mai-Ndombe",
+        "territoire": "Mushie",
+        "zone": "Ouest",
+        "latitude": -2.876066000000002,
+        "longitude": 16.94080700000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 55,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.81695200000002,
+          -6.558437000000003
+        ]
+      },
+      "properties": {
+        "name": "Tshilolo",
+        "province": "Kasai Central",
+        "territoire": "Dibaya",
+        "zone": "Centre",
+        "latitude": -6.558437000000003,
+        "longitude": 22.81695200000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 56,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.31266099999998,
+          -2.391952000000008
+        ]
+      },
+      "properties": {
+        "name": "Inera",
+        "province": "Sankuru",
+        "territoire": "Lomela",
+        "zone": "Centre",
+        "latitude": -2.391952000000008,
+        "longitude": 23.31266099999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 57,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.192393,
+          -2.895000000000001
+        ]
+      },
+      "properties": {
+        "name": "Lumpetu/Yimbo",
+        "province": "Sankuru",
+        "territoire": "Lodja",
+        "zone": "Centre",
+        "latitude": -2.895000000000001,
+        "longitude": 23.192393,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 58,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.78389200000001,
+          -3.676505999999982
+        ]
+      },
+      "properties": {
+        "name": "Eolo",
+        "province": "Kwilu",
+        "territoire": "Bagata",
+        "zone": "Ouest",
+        "latitude": -3.676505999999982,
+        "longitude": 18.78389200000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 59,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.70418000000002,
+          -7.335998999999996
+        ]
+      },
+      "properties": {
+        "name": "Kaketa",
+        "province": "Tanganyika",
+        "territoire": "Moba",
+        "zone": "Sud",
+        "latitude": -7.335998999999996,
+        "longitude": 29.70418000000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 60,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          16.42597299999998,
+          -2.032723000000012
+        ]
+      },
+      "properties": {
+        "name": "Bongende",
+        "province": "Mai-Ndombe",
+        "territoire": "Yumbi",
+        "zone": "Ouest",
+        "latitude": -2.032723000000012,
+        "longitude": 16.42597299999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 61,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.465773,
+          -4.296793000000012
+        ]
+      },
+      "properties": {
+        "name": "Mikwi village",
+        "province": "Kwilu",
+        "territoire": "Bulungu",
+        "zone": "Ouest",
+        "latitude": -4.296793000000012,
+        "longitude": 18.465773,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 62,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.34019100000002,
+          3.420217999999995
+        ]
+      },
+      "properties": {
+        "name": "Gangala",
+        "province": "Haut-Uele",
+        "territoire": "Dungu",
+        "zone": "Nord",
+        "latitude": 3.420217999999995,
+        "longitude": 29.34019100000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 63,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.578694,
+          2.443661999999995
+        ]
+      },
+      "properties": {
+        "name": "Nebobongo",
+        "province": "Haut-Uele",
+        "territoire": "Wamba",
+        "zone": "Nord",
+        "latitude": 2.443661999999995,
+        "longitude": 27.578694,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 64,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.91001499999999,
+          2.050401000000006
+        ]
+      },
+      "properties": {
+        "name": "Dukumane",
+        "province": "Haut-Uele",
+        "territoire": "Wamba",
+        "zone": "Nord",
+        "latitude": 2.050401000000006,
+        "longitude": 27.91001499999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 65,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.4252377,
+          2.768224121999987
+        ]
+      },
+      "properties": {
+        "name": "Bokamba",
+        "province": "Mongala",
+        "territoire": "Lisala",
+        "zone": "Nord",
+        "latitude": 2.768224121999987,
+        "longitude": 21.4252377,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 66,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.11658952,
+          2.475493601999981
+        ]
+      },
+      "properties": {
+        "name": "Ogandra",
+        "province": "Haut-Uele",
+        "territoire": "Wamba",
+        "zone": "Nord",
+        "latitude": 2.475493601999981,
+        "longitude": 28.11658952,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 67,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.07708598999998,
+          2.327259782999969
+        ]
+      },
+      "properties": {
+        "name": "Yalikela_Bokata",
+        "province": "Mongala",
+        "territoire": "Bumba",
+        "zone": "Nord",
+        "latitude": 2.327259782999969,
+        "longitude": 23.07708598999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 68,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.75352699999999,
+          2.096087999999989
+        ]
+      },
+      "properties": {
+        "name": "Ogwaro",
+        "province": "Ituri",
+        "territoire": "Djugu",
+        "zone": "Est",
+        "latitude": 2.096087999999989,
+        "longitude": 30.75352699999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 69,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.84470500000002,
+          -4.268686999999991
+        ]
+      },
+      "properties": {
+        "name": "Lubabo",
+        "province": "Maniema",
+        "territoire": "Kasongo",
+        "zone": "Est",
+        "latitude": -4.268686999999991,
+        "longitude": 26.84470500000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 70,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.89756988000001,
+          -2.550965014000008
+        ]
+      },
+      "properties": {
+        "name": "Isaka_Ngolosengo",
+        "province": "Mai-Ndombe",
+        "territoire": "Kutu",
+        "zone": "Ouest",
+        "latitude": -2.550965014000008,
+        "longitude": 18.89756988000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 71,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.58555853,
+          -4.970878394000002
+        ]
+      },
+      "properties": {
+        "name": "Ngomo_Kalanda",
+        "province": "Sankuru",
+        "territoire": "Lusambo",
+        "zone": "Centre",
+        "latitude": -4.970878394000002,
+        "longitude": 23.58555853,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 72,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.23462052610277,
+          -5.09700502615555
+        ]
+      },
+      "properties": {
+        "name": "Kindambi",
+        "province": "Kwilu",
+        "territoire": "Masi-Manimba",
+        "zone": "Ouest",
+        "latitude": -5.09700502615555,
+        "longitude": 18.23462052610277,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 73,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.86602474999999,
+          1.854811409000026
+        ]
+      },
+      "properties": {
+        "name": "Bafwabe",
+        "province": "Haut-Uele",
+        "territoire": "Wamba",
+        "zone": "Nord",
+        "latitude": 1.854811409000026,
+        "longitude": 27.86602474999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 74,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.0324825,
+          1.68687137600001
+        ]
+      },
+      "properties": {
+        "name": "Boloko",
+        "province": "Tshopo",
+        "territoire": "Yahuma",
+        "zone": "Nord",
+        "latitude": 1.68687137600001,
+        "longitude": 23.0324825,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 75,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.68147399999999,
+          2.844347999999983
+        ]
+      },
+      "properties": {
+        "name": "Malikuta",
+        "province": "Bas-Uele",
+        "territoire": "Buta",
+        "zone": "Nord",
+        "latitude": 2.844347999999983,
+        "longitude": 24.68147399999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 76,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.32266699999998,
+          0.8282340000000055
+        ]
+      },
+      "properties": {
+        "name": "Yafake",
+        "province": "Tshopo",
+        "territoire": "Isangi",
+        "zone": "Nord",
+        "latitude": 0.8282340000000055,
+        "longitude": 24.32266699999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 77,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.61230200000001,
+          0.6663560000000057
+        ]
+      },
+      "properties": {
+        "name": "Baulo",
+        "province": "Tshopo",
+        "territoire": "Isangi",
+        "zone": "Nord",
+        "latitude": 0.6663560000000057,
+        "longitude": 24.61230200000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 78,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.53484015850288,
+          2.099895412808781
+        ]
+      },
+      "properties": {
+        "name": "Kule",
+        "province": "Ituri",
+        "territoire": "Djugu",
+        "zone": "Est",
+        "latitude": 2.099895412808781,
+        "longitude": 30.53484015850288,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 79,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.36354000000001,
+          0.5926739999999731
+        ]
+      },
+      "properties": {
+        "name": "Mugwambuli",
+        "province": "Tshopo",
+        "territoire": "Kisangani",
+        "zone": "Nord",
+        "latitude": 0.5926739999999731,
+        "longitude": 25.36354000000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 80,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.65572600000002,
+          3.626403000000025
+        ]
+      },
+      "properties": {
+        "name": "Angama",
+        "province": "Nord-Ubangi",
+        "territoire": "Yakoma",
+        "zone": "Nord",
+        "latitude": 3.626403000000025,
+        "longitude": 22.65572600000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 81,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.80383520999997,
+          -2.494112109999995
+        ]
+      },
+      "properties": {
+        "name": "Bimpombe",
+        "province": "Maniema",
+        "territoire": "Pangi",
+        "zone": "Est",
+        "latitude": -2.494112109999995,
+        "longitude": 26.80383520999997,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 82,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.04853017,
+          -3.706542033000002
+        ]
+      },
+      "properties": {
+        "name": "Kambelembele",
+        "province": "Maniema",
+        "territoire": "Kasongo",
+        "zone": "Est",
+        "latitude": -3.706542033000002,
+        "longitude": 26.04853017,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 83,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.62656715,
+          -6.487855211000008
+        ]
+      },
+      "properties": {
+        "name": "BALa",
+        "province": "Kwango",
+        "territoire": "Feshi",
+        "zone": "Ouest",
+        "latitude": -6.487855211000008,
+        "longitude": 18.62656715,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 84,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.73123078000001,
+          -4.568345251999999
+        ]
+      },
+      "properties": {
+        "name": "Niamakulia",
+        "province": "Maniema",
+        "territoire": "Kasongo",
+        "zone": "Est",
+        "latitude": -4.568345251999999,
+        "longitude": 26.73123078000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 85,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.7575874681182,
+          -6.955888742824355
+        ]
+      },
+      "properties": {
+        "name": "Shapamba li",
+        "province": "Kasai",
+        "territoire": "Kamonia",
+        "zone": "Centre",
+        "latitude": -6.955888742824355,
+        "longitude": 20.7575874681182,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 86,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.38692321,
+          -6.679603788000009
+        ]
+      },
+      "properties": {
+        "name": "Namakete_Ngungu",
+        "province": "Kwango",
+        "territoire": "Kasongo-Lunda",
+        "zone": "Ouest",
+        "latitude": -6.679603788000009,
+        "longitude": 17.38692321,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 87,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.12096448903619,
+          -7.0081352333571
+        ]
+      },
+      "properties": {
+        "name": "Mudiadia",
+        "province": "Kasai",
+        "territoire": "Kamonia",
+        "zone": "Centre",
+        "latitude": -7.0081352333571,
+        "longitude": 21.12096448903619,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 88,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.18211300000003,
+          -2.979999999999998
+        ]
+      },
+      "properties": {
+        "name": "Owila LOKAMBA",
+        "province": "Sankuru",
+        "territoire": "Lodja",
+        "zone": "Centre",
+        "latitude": -2.979999999999998,
+        "longitude": 23.18211300000003,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 89,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.56385499999998,
+          -4.249322000000002
+        ]
+      },
+      "properties": {
+        "name": "Ilebo_Lac_Maindombe",
+        "province": "Kasai",
+        "territoire": "Ilebo",
+        "zone": "Centre",
+        "latitude": -4.249322000000002,
+        "longitude": 20.56385499999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 90,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.52773800000001,
+          -5.031771999999992
+        ]
+      },
+      "properties": {
+        "name": "Bakwa-Kwanga",
+        "province": "Kasai",
+        "territoire": "Mweka",
+        "zone": "Centre",
+        "latitude": -5.031771999999992,
+        "longitude": 21.52773800000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 91,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.6307653179999,
+          -8.053211336714048
+        ]
+      },
+      "properties": {
+        "name": "pishi",
+        "province": "Lualaba",
+        "territoire": "Kapanga",
+        "zone": "Sud",
+        "latitude": -8.053211336714048,
+        "longitude": 23.6307653179999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 92,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.52618663415949,
+          -8.188968462608813
+        ]
+      },
+      "properties": {
+        "name": "Mwene-Kasaza",
+        "province": "Lualaba",
+        "territoire": "Kapanga",
+        "zone": "Sud",
+        "latitude": -8.188968462608813,
+        "longitude": 23.52618663415949,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 93,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.77389153007391,
+          -8.283910561096091
+        ]
+      },
+      "properties": {
+        "name": "katapakishi",
+        "province": "Lualaba",
+        "territoire": "Kapanga",
+        "zone": "Sud",
+        "latitude": -8.283910561096091,
+        "longitude": 22.77389153007391,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 94,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.91309247000002,
+          -8.341955466000005
+        ]
+      },
+      "properties": {
+        "name": "lukalela_Kafinga",
+        "province": "Haut-Katanga",
+        "territoire": "Pweto",
+        "zone": "Sud",
+        "latitude": -8.341955466000005,
+        "longitude": 28.91309247000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 95,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.3625471,
+          -8.383774569000002
+        ]
+      },
+      "properties": {
+        "name": "ngweji",
+        "province": "Lualaba",
+        "territoire": "Kapanga",
+        "zone": "Sud",
+        "latitude": -8.383774569000002,
+        "longitude": 22.3625471,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 96,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.56670967999999,
+          -9.011412736999997
+        ]
+      },
+      "properties": {
+        "name": "kitwe",
+        "province": "Haut-Lomami",
+        "territoire": "Kamina",
+        "zone": "Sud",
+        "latitude": -9.011412736999997,
+        "longitude": 25.56670967999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 97,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.12288468,
+          -9.07255333
+        ]
+      },
+      "properties": {
+        "name": "kasieke_Gwena",
+        "province": "Haut-Katanga",
+        "territoire": "Pweto",
+        "zone": "Sud",
+        "latitude": -9.07255333,
+        "longitude": 28.12288468,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 98,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.41564727999998,
+          -9.208076234000004
+        ]
+      },
+      "properties": {
+        "name": "kalonga_Kifinga",
+        "province": "Haut-Katanga",
+        "territoire": "Mitwaba",
+        "zone": "Sud",
+        "latitude": -9.208076234000004,
+        "longitude": 27.41564727999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 99,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.37881381999999,
+          -10.2822409
+        ]
+      },
+      "properties": {
+        "name": "kamawe",
+        "province": "Lualaba",
+        "territoire": "Dilolo",
+        "zone": "Sud",
+        "latitude": -10.2822409,
+        "longitude": 23.37881381999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 100,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.02884763000001,
+          -10.44667871000001
+        ]
+      },
+      "properties": {
+        "name": "mungolunga",
+        "province": "Lualaba",
+        "territoire": "Dilolo",
+        "zone": "Sud",
+        "latitude": -10.44667871000001,
+        "longitude": 24.02884763000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 101,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.1601777040476,
+          -10.61896768046402
+        ]
+      },
+      "properties": {
+        "name": "Kabisanga",
+        "province": "Lualaba",
+        "territoire": "Mutshatsha",
+        "zone": "Sud",
+        "latitude": -10.61896768046402,
+        "longitude": 25.1601777040476,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 102,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.54439899999998,
+          -7.179814999999996
+        ]
+      },
+      "properties": {
+        "name": "Ponda",
+        "province": "Tanganyika",
+        "territoire": "Moba",
+        "zone": "Sud",
+        "latitude": -7.179814999999996,
+        "longitude": 29.54439899999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 103,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.28798499999998,
+          -9.233577999999998
+        ]
+      },
+      "properties": {
+        "name": "Shula",
+        "province": "Haut-Katanga",
+        "territoire": "Pweto",
+        "zone": "Sud",
+        "latitude": -9.233577999999998,
+        "longitude": 28.28798499999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 104,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.43543200000001,
+          -7.483325999999996
+        ]
+      },
+      "properties": {
+        "name": "Kanuka",
+        "province": "Haut-Lomami",
+        "territoire": "Malemba-Nkulu",
+        "zone": "Sud",
+        "latitude": -7.483325999999996,
+        "longitude": 27.43543200000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 105,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.058986,
+          3.166509999999989
+        ]
+      },
+      "properties": {
+        "name": "Mogale",
+        "province": "Sud-Ubangi",
+        "territoire": "Kungu",
+        "zone": "Nord",
+        "latitude": 3.166509999999989,
+        "longitude": 19.058986,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 106,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.889724,
+          3.828856999999983
+        ]
+      },
+      "properties": {
+        "name": "Manzi",
+        "province": "Haut-Uele",
+        "territoire": "Niangara",
+        "zone": "Nord",
+        "latitude": 3.828856999999983,
+        "longitude": 27.889724,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 107,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.69371899999999,
+          2.397263000000014
+        ]
+      },
+      "properties": {
+        "name": "Kpolea",
+        "province": "Haut-Uele",
+        "territoire": "Wamba",
+        "zone": "Nord",
+        "latitude": 2.397263000000014,
+        "longitude": 27.69371899999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 108,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.933233,
+          1.337822999999996
+        ]
+      },
+      "properties": {
+        "name": "Kondolole",
+        "province": "Tshopo",
+        "territoire": "Bafwasende",
+        "zone": "Nord",
+        "latitude": 1.337822999999996,
+        "longitude": 25.933233,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 109,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.84158199999997,
+          -3.562207999999998
+        ]
+      },
+      "properties": {
+        "name": "Unga",
+        "province": "Maniema",
+        "territoire": "Pangi",
+        "zone": "Est",
+        "latitude": -3.562207999999998,
+        "longitude": 26.84158199999997,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 110,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.541038,
+          -4.059339000000004
+        ]
+      },
+      "properties": {
+        "name": "Mwanga village",
+        "province": "Maniema",
+        "territoire": "Kasongo",
+        "zone": "Est",
+        "latitude": -4.059339000000004,
+        "longitude": 26.541038,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 111,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.574605,
+          -4.144088000000017
+        ]
+      },
+      "properties": {
+        "name": "Lunkuni",
+        "province": "Kwilu",
+        "territoire": "Bagata",
+        "zone": "Ouest",
+        "latitude": -4.144088000000017,
+        "longitude": 17.574605,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 112,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.065007,
+          -5.644141999999983
+        ]
+      },
+      "properties": {
+        "name": "Manterne village",
+        "province": "Kongo Central",
+        "territoire": "Moanda",
+        "zone": "Ouest",
+        "latitude": -5.644141999999983,
+        "longitude": 13.065007,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 113,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.933971,
+          -6.393234999999995
+        ]
+      },
+      "properties": {
+        "name": "Kalunda",
+        "province": "Kasai Oriental",
+        "territoire": "Katanda",
+        "zone": "Centre",
+        "latitude": -6.393234999999995,
+        "longitude": 23.933971,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 114,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.52024599999998,
+          -6.745184
+        ]
+      },
+      "properties": {
+        "name": "Kaniki_N1 village",
+        "province": "Lomami",
+        "territoire": "Luilu",
+        "zone": "Centre",
+        "latitude": -6.745184,
+        "longitude": 23.52024599999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 115,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.88916800000002,
+          -6.766628000000003
+        ]
+      },
+      "properties": {
+        "name": "Bena-Kaniane",
+        "province": "Lomami",
+        "territoire": "Ngandajika",
+        "zone": "Centre",
+        "latitude": -6.766628000000003,
+        "longitude": 23.88916800000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 116,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.45057600000001,
+          -7.739697000000016
+        ]
+      },
+      "properties": {
+        "name": "Kulunda",
+        "province": "Lomami",
+        "territoire": "Luilu",
+        "zone": "Centre",
+        "latitude": -7.739697000000016,
+        "longitude": 23.45057600000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 117,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.856765,
+          -5.789756000000017
+        ]
+      },
+      "properties": {
+        "name": "Musangana village",
+        "province": "Kasai Central",
+        "territoire": "Dimbelenge",
+        "zone": "Centre",
+        "latitude": -5.789756000000017,
+        "longitude": 22.856765,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 118,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.00848700000002,
+          -6.538103000000016
+        ]
+      },
+      "properties": {
+        "name": "Ndekesha_Villqge",
+        "province": "Kasai Central",
+        "territoire": "Kazumba",
+        "zone": "Centre",
+        "latitude": -6.538103000000016,
+        "longitude": 22.00848700000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 119,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.65114099999998,
+          -6.450500999999996
+        ]
+      },
+      "properties": {
+        "name": "Dibanda II",
+        "province": "Kasai Central",
+        "territoire": "Dibaya",
+        "zone": "Centre",
+        "latitude": -6.450500999999996,
+        "longitude": 22.65114099999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 120,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.464425,
+          -2.816813999999987
+        ]
+      },
+      "properties": {
+        "name": "Loto",
+        "province": "Sankuru",
+        "territoire": "Lomela",
+        "zone": "Centre",
+        "latitude": -2.816813999999987,
+        "longitude": 22.464425,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 121,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.17338000000001,
+          -2.341525999999985
+        ]
+      },
+      "properties": {
+        "name": "Malanga",
+        "province": "Sankuru",
+        "territoire": "Lomela",
+        "zone": "Centre",
+        "latitude": -2.341525999999985,
+        "longitude": 23.17338000000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 122,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.80275999999999,
+          -10.649515
+        ]
+      },
+      "properties": {
+        "name": "Kapatu",
+        "province": "Lualaba",
+        "territoire": "Dilolo",
+        "zone": "Sud",
+        "latitude": -10.649515,
+        "longitude": 22.80275999999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 123,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.61882800000001,
+          -10.636898
+        ]
+      },
+      "properties": {
+        "name": "Kafita's farm",
+        "province": "Lualaba",
+        "territoire": "Mutshatsha",
+        "zone": "Sud",
+        "latitude": -10.636898,
+        "longitude": 25.61882800000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 124,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.626506,
+          -5.834321999999994
+        ]
+      },
+      "properties": {
+        "name": "Kwilu_Ngongo village",
+        "province": "Kongo Central",
+        "territoire": "Songololo",
+        "zone": "Ouest",
+        "latitude": -5.834321999999994,
+        "longitude": 14.626506,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 125,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.11856900000003,
+          -5.787589999999998
+        ]
+      },
+      "properties": {
+        "name": "Lukengo",
+        "province": "Tanganyika",
+        "territoire": "Kalemie",
+        "zone": "Sud",
+        "latitude": -5.787589999999998,
+        "longitude": 29.11856900000003,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 126,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.11591899999999,
+          -5.913027000000004
+        ]
+      },
+      "properties": {
+        "name": "Lufukwe",
+        "province": "Tanganyika",
+        "territoire": "Kalemie",
+        "zone": "Sud",
+        "latitude": -5.913027000000004,
+        "longitude": 29.11591899999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 127,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.95646700000001,
+          -7.317321999999997
+        ]
+      },
+      "properties": {
+        "name": "Mayumba",
+        "province": "Tanganyika",
+        "territoire": "Manono",
+        "zone": "Sud",
+        "latitude": -7.317321999999997,
+        "longitude": 26.95646700000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 128,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.55829499999998,
+          -7.273851999999996
+        ]
+      },
+      "properties": {
+        "name": "Kilombwe",
+        "province": "Tanganyika",
+        "territoire": "Moba",
+        "zone": "Sud",
+        "latitude": -7.273851999999996,
+        "longitude": 29.55829499999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 129,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.49747500000001,
+          -9.72804600000001
+        ]
+      },
+      "properties": {
+        "name": "Mwati",
+        "province": "Haut-Katanga",
+        "territoire": "Kasenga",
+        "zone": "Sud",
+        "latitude": -9.72804600000001,
+        "longitude": 28.49747500000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 130,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.55133699999998,
+          -10.180754
+        ]
+      },
+      "properties": {
+        "name": "Ngando",
+        "province": "Haut-Katanga",
+        "territoire": "Kasenga",
+        "zone": "Sud",
+        "latitude": -10.180754,
+        "longitude": 28.55133699999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 131,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.580773,
+          -11.822453
+        ]
+      },
+      "properties": {
+        "name": "Kamakanga",
+        "province": "Haut-Katanga",
+        "territoire": "Kipushi",
+        "zone": "Sud",
+        "latitude": -11.822453,
+        "longitude": 27.580773,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 132,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.77496183429021,
+          -3.152939114271733
+        ]
+      },
+      "properties": {
+        "name": "Boinanguo",
+        "province": "Kasai",
+        "territoire": "Dekese",
+        "zone": "Centre",
+        "latitude": -3.152939114271733,
+        "longitude": 21.77496183429021,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 133,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.14850934000002,
+          -4.105864166999993
+        ]
+      },
+      "properties": {
+        "name": "Okita-Katshi",
+        "province": "Sankuru",
+        "territoire": "Katako-Kombe",
+        "zone": "Centre",
+        "latitude": -4.105864166999993,
+        "longitude": 24.14850934000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 134,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.76773851000002,
+          -5.688157170000007
+        ]
+      },
+      "properties": {
+        "name": "peshi",
+        "province": "Lomami",
+        "territoire": "Lubao",
+        "zone": "Centre",
+        "latitude": -5.688157170000007,
+        "longitude": 24.76773851000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 135,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.08544751999998,
+          -2.106117694000014
+        ]
+      },
+      "properties": {
+        "name": "Bolinga_Baka",
+        "province": "Mai-Ndombe",
+        "territoire": "Oshwe",
+        "zone": "Ouest",
+        "latitude": -2.106117694000014,
+        "longitude": 20.08544751999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 136,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.57731999999997,
+          -2.656789999999991
+        ]
+      },
+      "properties": {
+        "name": "Bokwankusu",
+        "province": "Mai-Ndombe",
+        "territoire": "Oshwe",
+        "zone": "Ouest",
+        "latitude": -2.656789999999991,
+        "longitude": 19.57731999999997,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 137,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.68959156522509,
+          4.325893189215946
+        ]
+      },
+      "properties": {
+        "name": "Lekabo",
+        "province": "Nord-Ubangi",
+        "territoire": "Mobayi-Mbongo",
+        "zone": "Nord",
+        "latitude": 4.325893189215946,
+        "longitude": 20.68959156522509,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 138,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.98626926000001,
+          4.244167368000005
+        ]
+      },
+      "properties": {
+        "name": "Bosoadu",
+        "province": "Nord-Ubangi",
+        "territoire": "Bosobolo",
+        "zone": "Nord",
+        "latitude": 4.244167368000005,
+        "longitude": 19.98626926000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 139,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.63206311608911,
+          4.138104027511256
+        ]
+      },
+      "properties": {
+        "name": "Pasagba",
+        "province": "Nord-Ubangi",
+        "territoire": "Mobayi-Mbongo",
+        "zone": "Nord",
+        "latitude": 4.138104027511256,
+        "longitude": 20.63206311608911,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 140,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.13082400999999,
+          3.661377132999992
+        ]
+      },
+      "properties": {
+        "name": "Okondo",
+        "province": "Haut-Uele",
+        "territoire": "Niangara",
+        "zone": "Nord",
+        "latitude": 3.661377132999992,
+        "longitude": 28.13082400999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 141,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.18481192999999,
+          3.473923253999982
+        ]
+      },
+      "properties": {
+        "name": "Molambi",
+        "province": "Bas-Uele",
+        "territoire": "Bambesa",
+        "zone": "Nord",
+        "latitude": 3.473923253999982,
+        "longitude": 26.18481192999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 142,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.01196400000001,
+          -2.919139000000008
+        ]
+      },
+      "properties": {
+        "name": "Kama",
+        "province": "Maniema",
+        "territoire": "Kailo",
+        "zone": "Est",
+        "latitude": -2.919139000000008,
+        "longitude": 26.01196400000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 143,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.86697249999998,
+          3.335898356999976
+        ]
+      },
+      "properties": {
+        "name": "Mogaraba",
+        "province": "Sud-Ubangi",
+        "territoire": "Libenge",
+        "zone": "Nord",
+        "latitude": 3.335898356999976,
+        "longitude": 18.86697249999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 144,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.27868519871942,
+          -5.945946112344846
+        ]
+      },
+      "properties": {
+        "name": "kala-Balangi",
+        "province": "Lomami",
+        "territoire": "Kabinda",
+        "zone": "Centre",
+        "latitude": -5.945946112344846,
+        "longitude": 24.27868519871942,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 145,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.18657399999999,
+          -3.066000000000002
+        ]
+      },
+      "properties": {
+        "name": "Owila OLEDI",
+        "province": "Sankuru",
+        "territoire": "Lodja",
+        "zone": "Centre",
+        "latitude": -3.066000000000002,
+        "longitude": 23.18657399999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 146,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.14882292999997,
+          3.272731094999992
+        ]
+      },
+      "properties": {
+        "name": "Karekumbi",
+        "province": "Haut-Uele",
+        "territoire": "Niangara",
+        "zone": "Nord",
+        "latitude": 3.272731094999992,
+        "longitude": 28.14882292999997,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 147,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.64368999999998,
+          -10.67223899999998
+        ]
+      },
+      "properties": {
+        "name": "Mulenga",
+        "province": "Haut-Katanga",
+        "territoire": "Kasenga",
+        "zone": "Sud",
+        "latitude": -10.67223899999998,
+        "longitude": 27.64368999999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 148,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.90330661000004,
+          2.571255486000013
+        ]
+      },
+      "properties": {
+        "name": "Boumbe_",
+        "province": "Mongala",
+        "territoire": "Bumba",
+        "zone": "Nord",
+        "latitude": 2.571255486000013,
+        "longitude": 21.90330661000004,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 149,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.16143172,
+          2.059146572999997
+        ]
+      },
+      "properties": {
+        "name": "Yamotata",
+        "province": "Tshopo",
+        "territoire": "Basoko",
+        "zone": "Nord",
+        "latitude": 2.059146572999997,
+        "longitude": 23.16143172,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 150,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.96338671000001,
+          1.949252515000008
+        ]
+      },
+      "properties": {
+        "name": "Bapele",
+        "province": "Tshopo",
+        "territoire": "Banalia",
+        "zone": "Nord",
+        "latitude": 1.949252515000008,
+        "longitude": 25.96338671000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 151,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.45066801,
+          1.906264308000023
+        ]
+      },
+      "properties": {
+        "name": "lndonga",
+        "province": "Equateur",
+        "territoire": "Bomongo",
+        "zone": "Nord",
+        "latitude": 1.906264308000023,
+        "longitude": 18.45066801,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 152,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.77266397999999,
+          1.726761799999998
+        ]
+      },
+      "properties": {
+        "name": "Bangoli",
+        "province": "Tshopo",
+        "territoire": "Banalia",
+        "zone": "Nord",
+        "latitude": 1.726761799999998,
+        "longitude": 25.77266397999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 153,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.89505586999999,
+          1.055477726999996
+        ]
+      },
+      "properties": {
+        "name": "lfomi_Nkoi-Monene",
+        "province": "Equateur",
+        "territoire": "Basankusu",
+        "zone": "Nord",
+        "latitude": 1.055477726999996,
+        "longitude": 19.89505586999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 154,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.52974634000001,
+          -0.3937541580000059
+        ]
+      },
+      "properties": {
+        "name": "Bolaka",
+        "province": "Equateur",
+        "territoire": "Bikoro",
+        "zone": "Nord",
+        "latitude": -0.3937541580000059,
+        "longitude": 18.52974634000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 155,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.13504682,
+          -0.502007036000014
+        ]
+      },
+      "properties": {
+        "name": "Basekikelemba",
+        "province": "Tshuapa",
+        "territoire": "Bokungu",
+        "zone": "Nord",
+        "latitude": -0.502007036000014,
+        "longitude": 22.13504682,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 156,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.50048182000002,
+          -0.6202515329999936
+        ]
+      },
+      "properties": {
+        "name": "Bongomba_Bokende",
+        "province": "Tshuapa",
+        "territoire": "Bokungu",
+        "zone": "Nord",
+        "latitude": -0.6202515329999936,
+        "longitude": 22.50048182000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 157,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.62724330000002,
+          -0.7104125659999982
+        ]
+      },
+      "properties": {
+        "name": "Ekuku",
+        "province": "Tshuapa",
+        "territoire": "Boende",
+        "zone": "Nord",
+        "latitude": -0.7104125659999982,
+        "longitude": 21.62724330000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 158,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.14918336999999,
+          -0.8664785040000211
+        ]
+      },
+      "properties": {
+        "name": "Lomande",
+        "province": "Tshopo",
+        "territoire": "Ubundu",
+        "zone": "Nord",
+        "latitude": -0.8664785040000211,
+        "longitude": 26.14918336999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 159,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.76651456002903,
+          1.963524315567313
+        ]
+      },
+      "properties": {
+        "name": "Arabi_Bula",
+        "province": "Ituri",
+        "territoire": "Mambasa",
+        "zone": "Est",
+        "latitude": 1.963524315567313,
+        "longitude": 28.76651456002903,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 160,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.49561900000003,
+          -1.419299000000003
+        ]
+      },
+      "properties": {
+        "name": "Wamba",
+        "province": "Tshuapa",
+        "territoire": "Bokungu",
+        "zone": "Nord",
+        "latitude": -1.419299000000003,
+        "longitude": 22.49561900000003,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 161,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.47432699999999,
+          -1.153517999999993
+        ]
+      },
+      "properties": {
+        "name": "Yalosoy",
+        "province": "Tshuapa",
+        "territoire": "Bokungu",
+        "zone": "Nord",
+        "latitude": -1.153517999999993,
+        "longitude": 22.47432699999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 162,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.39744700000001,
+          0.3680359999999938
+        ]
+      },
+      "properties": {
+        "name": "Batiapanga",
+        "province": "Tshopo",
+        "territoire": "Ubundu",
+        "zone": "Nord",
+        "latitude": 0.3680359999999938,
+        "longitude": 25.39744700000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 163,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.30734000000002,
+          4.519420000000007
+        ]
+      },
+      "properties": {
+        "name": "Bososomboko",
+        "province": "Nord-Ubangi",
+        "territoire": "Bosobolo",
+        "zone": "Nord",
+        "latitude": 4.519420000000007,
+        "longitude": 20.30734000000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 164,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.73337714999999,
+          4.370125870999995
+        ]
+      },
+      "properties": {
+        "name": "Digba_Bolindie",
+        "province": "Bas-Uele",
+        "territoire": "Ango",
+        "zone": "Nord",
+        "latitude": 4.370125870999995,
+        "longitude": 25.73337714999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 165,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.56354780000002,
+          4.310829136999996
+        ]
+      },
+      "properties": {
+        "name": "Ngapo",
+        "province": "Nord-Ubangi",
+        "territoire": "Mobayi-Mbongo",
+        "zone": "Nord",
+        "latitude": 4.310829136999996,
+        "longitude": 20.56354780000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 166,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.45429,
+          4.268370000000021
+        ]
+      },
+      "properties": {
+        "name": "Bongonda",
+        "province": "Nord-Ubangi",
+        "territoire": "Mobayi-Mbongo",
+        "zone": "Nord",
+        "latitude": 4.268370000000021,
+        "longitude": 20.45429,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 167,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.13120233000002,
+          4.060274875000021
+        ]
+      },
+      "properties": {
+        "name": "Boyavele",
+        "province": "Nord-Ubangi",
+        "territoire": "Bosobolo",
+        "zone": "Nord",
+        "latitude": 4.060274875000021,
+        "longitude": 20.13120233000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 168,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.75896000000002,
+          3.925129999999979
+        ]
+      },
+      "properties": {
+        "name": "Kule_Tombo",
+        "province": "Bas-Uele",
+        "territoire": "Bondo",
+        "zone": "Nord",
+        "latitude": 3.925129999999979,
+        "longitude": 24.75896000000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 169,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.81647663999999,
+          2.555235446000008
+        ]
+      },
+      "properties": {
+        "name": "Ngale",
+        "province": "Sud-Ubangi",
+        "territoire": "Budjala",
+        "zone": "Nord",
+        "latitude": 2.555235446000008,
+        "longitude": 20.81647663999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 170,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.03997,
+          -2.754529999999984
+        ]
+      },
+      "properties": {
+        "name": "BOSIKI",
+        "province": "Mai-Ndombe",
+        "territoire": "Mushie",
+        "zone": "Ouest",
+        "latitude": -2.754529999999984,
+        "longitude": 17.03997,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 171,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.15416016999999,
+          -2.616285438000008
+        ]
+      },
+      "properties": {
+        "name": "Enga",
+        "province": "Sankuru",
+        "territoire": "Kole",
+        "zone": "Centre",
+        "latitude": -2.616285438000008,
+        "longitude": 22.15416016999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 172,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.24227574000001,
+          -2.70208156900001
+        ]
+      },
+      "properties": {
+        "name": "Luhamba",
+        "province": "Sankuru",
+        "territoire": "Katako-Kombe",
+        "zone": "Centre",
+        "latitude": -2.70208156900001,
+        "longitude": 24.24227574000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 173,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.88106999999999,
+          -2.92602
+        ]
+      },
+      "properties": {
+        "name": "Bekoli-Bekoli_Boleko",
+        "province": "Mai-Ndombe",
+        "territoire": "Oshwe",
+        "zone": "Ouest",
+        "latitude": -2.92602,
+        "longitude": 19.88106999999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 174,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.89549734000001,
+          -4.64360995399999
+        ]
+      },
+      "properties": {
+        "name": "Djadi_Kamana",
+        "province": "Maniema",
+        "territoire": "Kibombo",
+        "zone": "Est",
+        "latitude": -4.64360995399999,
+        "longitude": 24.89549734000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 175,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.53398999999997,
+          -3.830569999999991
+        ]
+      },
+      "properties": {
+        "name": "Motane",
+        "province": "Kwilu",
+        "territoire": "Bagata",
+        "zone": "Ouest",
+        "latitude": -3.830569999999991,
+        "longitude": 17.53398999999997,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 176,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.44905404000001,
+          -5.508390225000007
+        ]
+      },
+      "properties": {
+        "name": "Kiofwe_Muninga",
+        "province": "Tanganyika",
+        "territoire": "Kongolo",
+        "zone": "Sud",
+        "latitude": -5.508390225000007,
+        "longitude": 26.44905404000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 177,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.15206999999999,
+          -3.274049999999986
+        ]
+      },
+      "properties": {
+        "name": "Diaki",
+        "province": "Sankuru",
+        "territoire": "Lodja",
+        "zone": "Centre",
+        "latitude": -3.274049999999986,
+        "longitude": 23.15206999999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 178,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.27374631000002,
+          -5.861598682000002
+        ]
+      },
+      "properties": {
+        "name": "Pofu",
+        "province": "Tanganyika",
+        "territoire": "Kabalo",
+        "zone": "Sud",
+        "latitude": -5.861598682000002,
+        "longitude": 26.27374631000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 179,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.01599,
+          -4.583629999999996
+        ]
+      },
+      "properties": {
+        "name": "Bantshe",
+        "province": "Kasai",
+        "territoire": "Mweka",
+        "zone": "Centre",
+        "latitude": -4.583629999999996,
+        "longitude": 22.01599,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 180,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.90844187,
+          -6.167293201999993
+        ]
+      },
+      "properties": {
+        "name": "Kakuni_Kyayo",
+        "province": "Tanganyika",
+        "territoire": "Kalemie",
+        "zone": "Sud",
+        "latitude": -6.167293201999993,
+        "longitude": 28.90844187,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 181,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.40233732000003,
+          -6.212806624000002
+        ]
+      },
+      "properties": {
+        "name": "Kabaga",
+        "province": "Tanganyika",
+        "territoire": "Kalemie",
+        "zone": "Sud",
+        "latitude": -6.212806624000002,
+        "longitude": 28.40233732000003,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 182,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.29584971999999,
+          -6.322122428000007
+        ]
+      },
+      "properties": {
+        "name": "Mabio_Kabunda",
+        "province": "Tanganyika",
+        "territoire": "Kalemie",
+        "zone": "Sud",
+        "latitude": -6.322122428000007,
+        "longitude": 29.29584971999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 183,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.93151,
+          -4.045639999999997
+        ]
+      },
+      "properties": {
+        "name": "Nkwe",
+        "province": "Kwilu",
+        "territoire": "Bagata",
+        "zone": "Ouest",
+        "latitude": -4.045639999999997,
+        "longitude": 17.93151,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 184,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.22603000000003,
+          -4.90416999999999
+        ]
+      },
+      "properties": {
+        "name": "Kobo_Bango",
+        "province": "Kwango",
+        "territoire": "Kenge",
+        "zone": "Ouest",
+        "latitude": -4.90416999999999,
+        "longitude": 17.22603000000003,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 185,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.14205325849658,
+          -8.148689243602853
+        ]
+      },
+      "properties": {
+        "name": "bwamuyembe",
+        "province": "Lualaba",
+        "territoire": "Kapanga",
+        "zone": "Sud",
+        "latitude": -8.148689243602853,
+        "longitude": 23.14205325849658,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 186,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.68444483999998,
+          -8.671545075000006
+        ]
+      },
+      "properties": {
+        "name": "mubdi",
+        "province": "Haut-Katanga",
+        "territoire": "Pweto",
+        "zone": "Sud",
+        "latitude": -8.671545075000006,
+        "longitude": 27.68444483999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 187,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.64226912000001,
+          -8.696983109000003
+        ]
+      },
+      "properties": {
+        "name": "bule",
+        "province": "Haut-Lomami",
+        "territoire": "Bukama",
+        "zone": "Sud",
+        "latitude": -8.696983109000003,
+        "longitude": 25.64226912000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 188,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.88535877999999,
+          -8.910760662000005
+        ]
+      },
+      "properties": {
+        "name": "komba",
+        "province": "Haut-Lomami",
+        "territoire": "Kamina",
+        "zone": "Sud",
+        "latitude": -8.910760662000005,
+        "longitude": 24.88535877999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 189,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.05741370114711,
+          -9.28434108838207
+        ]
+      },
+      "properties": {
+        "name": "sambala",
+        "province": "Lualaba",
+        "territoire": "Sandoa",
+        "zone": "Sud",
+        "latitude": -9.28434108838207,
+        "longitude": 23.05741370114711,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 190,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.45318968279931,
+          -9.669975629837573
+        ]
+      },
+      "properties": {
+        "name": "samba",
+        "province": "Haut-Katanga",
+        "territoire": "Mitwaba",
+        "zone": "Sud",
+        "latitude": -9.669975629837573,
+        "longitude": 26.45318968279931,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 191,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.63891196864058,
+          -9.670856254724704
+        ]
+      },
+      "properties": {
+        "name": "kabubu",
+        "province": "Haut-Lomami",
+        "territoire": "Kamina",
+        "zone": "Sud",
+        "latitude": -9.670856254724704,
+        "longitude": 24.63891196864058,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 192,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.23798487217509,
+          -9.860440528939014
+        ]
+      },
+      "properties": {
+        "name": "muene Djungu",
+        "province": "Lualaba",
+        "territoire": "Sandoa",
+        "zone": "Sud",
+        "latitude": -9.860440528939014,
+        "longitude": 23.23798487217509,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 193,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.98184000000002,
+          -4.901209999999983
+        ]
+      },
+      "properties": {
+        "name": "Manonwa",
+        "province": "Lomami",
+        "territoire": "Lubao",
+        "zone": "Centre",
+        "latitude": -4.901209999999983,
+        "longitude": 24.98184000000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 194,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.36402000000002,
+          -4.997239999999996
+        ]
+      },
+      "properties": {
+        "name": "Kimuele_Mvula-Muvumbi",
+        "province": "Kwango",
+        "territoire": "Kenge",
+        "zone": "Ouest",
+        "latitude": -4.997239999999996,
+        "longitude": 17.36402000000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 195,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.90026199999999,
+          -9.073373999999996
+        ]
+      },
+      "properties": {
+        "name": "Kananga village",
+        "province": "Lualaba",
+        "territoire": "Sandoa",
+        "zone": "Sud",
+        "latitude": -9.073373999999996,
+        "longitude": 23.90026199999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 196,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.31877700000001,
+          -10.333041
+        ]
+      },
+      "properties": {
+        "name": "Kilomwele",
+        "province": "Lualaba",
+        "territoire": "Lubudi",
+        "zone": "Sud",
+        "latitude": -10.333041,
+        "longitude": 26.31877700000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 197,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          15.93711337,
+          -5.09240413599999
+        ]
+      },
+      "properties": {
+        "name": "Kinguala_Kinsaka",
+        "province": "Kongo Central",
+        "territoire": "Madimba",
+        "zone": "Ouest",
+        "latitude": -5.09240413599999,
+        "longitude": 15.93711337,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 198,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.24910000000001,
+          -5.105930000000001
+        ]
+      },
+      "properties": {
+        "name": "Kizomba_Kinguangu",
+        "province": "Kwango",
+        "territoire": "Kenge",
+        "zone": "Ouest",
+        "latitude": -5.105930000000001,
+        "longitude": 17.24910000000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 199,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.43413000000001,
+          2.499709999999977
+        ]
+      },
+      "properties": {
+        "name": "Yalibongo_Yakaisa",
+        "province": "Mongala",
+        "territoire": "Bumba",
+        "zone": "Nord",
+        "latitude": 2.499709999999977,
+        "longitude": 22.43413000000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 200,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.42834999999998,
+          1.477100000000005
+        ]
+      },
+      "properties": {
+        "name": "Bafwabiobo",
+        "province": "Tshopo",
+        "territoire": "Bafwasende",
+        "zone": "Nord",
+        "latitude": 1.477100000000005,
+        "longitude": 26.42834999999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 201,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.25636801,
+          -0.01088620999998957
+        ]
+      },
+      "properties": {
+        "name": "Bolongama",
+        "province": "Tshuapa",
+        "territoire": "Boende",
+        "zone": "Nord",
+        "latitude": -0.01088620999998957,
+        "longitude": 21.25636801,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 202,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.16023000000001,
+          -5.11528999999999
+        ]
+      },
+      "properties": {
+        "name": "Matamba",
+        "province": "Kongo Central",
+        "territoire": "Seke-Banza",
+        "zone": "Ouest",
+        "latitude": -5.11528999999999,
+        "longitude": 13.16023000000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 203,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          15.77672600999999,
+          -5.162086461000004
+        ]
+      },
+      "properties": {
+        "name": "Mpese Mabaka",
+        "province": "Kongo Central",
+        "territoire": "Madimba",
+        "zone": "Ouest",
+        "latitude": -5.162086461000004,
+        "longitude": 15.77672600999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 204,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.52522,
+          -5.203660000000006
+        ]
+      },
+      "properties": {
+        "name": "Kimvungula_Mukisu",
+        "province": "Kwilu",
+        "territoire": "Masi-Manimba",
+        "zone": "Ouest",
+        "latitude": -5.203660000000006,
+        "longitude": 17.52522,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 205,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.99124699999997,
+          -8.14925700000001
+        ]
+      },
+      "properties": {
+        "name": "Sangwe",
+        "province": "Tanganyika",
+        "territoire": "Manono",
+        "zone": "Sud",
+        "latitude": -8.14925700000001,
+        "longitude": 27.99124699999997,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 206,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.56536923999998,
+          -5.136319070999996
+        ]
+      },
+      "properties": {
+        "name": "Nongo",
+        "province": "Lomami",
+        "territoire": "Lubao",
+        "zone": "Centre",
+        "latitude": -5.136319070999996,
+        "longitude": 25.56536923999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 207,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.08396999999999,
+          -0.5582599999999882
+        ]
+      },
+      "properties": {
+        "name": "Bionga",
+        "province": "Tshuapa",
+        "territoire": "Ikela",
+        "zone": "Nord",
+        "latitude": -0.5582599999999882,
+        "longitude": 23.08396999999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 208,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.16630000000001,
+          -0.6039699999999959
+        ]
+      },
+      "properties": {
+        "name": "Bokondji",
+        "province": "Tshuapa",
+        "territoire": "Boende",
+        "zone": "Nord",
+        "latitude": -0.6039699999999959,
+        "longitude": 21.16630000000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 209,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.23877,
+          -0.653100000000002
+        ]
+      },
+      "properties": {
+        "name": "Belinga_Bomandja",
+        "province": "Tshuapa",
+        "territoire": "Ikela",
+        "zone": "Nord",
+        "latitude": -0.653100000000002,
+        "longitude": 23.23877,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 210,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.51062217999998,
+          -1.322299296000011
+        ]
+      },
+      "properties": {
+        "name": "Moyunga",
+        "province": "Tshopo",
+        "territoire": "Ubundu",
+        "zone": "Nord",
+        "latitude": -1.322299296000011,
+        "longitude": 25.51062217999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 211,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.93653941,
+          -1.376453994999995
+        ]
+      },
+      "properties": {
+        "name": "Bokole",
+        "province": "Tshopo",
+        "territoire": "Opala",
+        "zone": "Nord",
+        "latitude": -1.376453994999995,
+        "longitude": 23.93653941,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 212,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.42728,
+          -0.6354700000000024
+        ]
+      },
+      "properties": {
+        "name": "Bokonkuma",
+        "province": "Equateur",
+        "territoire": "Bikoro",
+        "zone": "Nord",
+        "latitude": -0.6354700000000024,
+        "longitude": 18.42728,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 213,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.62711110999999,
+          2.928528844999989
+        ]
+      },
+      "properties": {
+        "name": "Gamazele",
+        "province": "Bas-Uele",
+        "territoire": "Buta",
+        "zone": "Nord",
+        "latitude": 2.928528844999989,
+        "longitude": 24.62711110999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 214,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.59299395,
+          2.427948183999988
+        ]
+      },
+      "properties": {
+        "name": "Lida",
+        "province": "Sud-Ubangi",
+        "territoire": "Budjala",
+        "zone": "Nord",
+        "latitude": 2.427948183999988,
+        "longitude": 19.59299395,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 215,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.76934767,
+          2.319901423000008
+        ]
+      },
+      "properties": {
+        "name": "Mongupa",
+        "province": "Mongala",
+        "territoire": "Lisala",
+        "zone": "Nord",
+        "latitude": 2.319901423000008,
+        "longitude": 20.76934767,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 216,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.30850248000002,
+          1.381075126999995
+        ]
+      },
+      "properties": {
+        "name": "Bafwapombu",
+        "province": "Tshopo",
+        "territoire": "Bafwasende",
+        "zone": "Nord",
+        "latitude": 1.381075126999995,
+        "longitude": 26.30850248000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 217,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.99918189,
+          3.179291422000015
+        ]
+      },
+      "properties": {
+        "name": "Masuba",
+        "province": "Haut-Uele",
+        "territoire": "Niangara",
+        "zone": "Nord",
+        "latitude": 3.179291422000015,
+        "longitude": 27.99918189,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 218,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.82775443999999,
+          2.462995420999969
+        ]
+      },
+      "properties": {
+        "name": "Dongo",
+        "province": "Sud-Ubangi",
+        "territoire": "Budjala",
+        "zone": "Nord",
+        "latitude": 2.462995420999969,
+        "longitude": 19.82775443999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 219,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.78909586,
+          4.137980903999989
+        ]
+      },
+      "properties": {
+        "name": "Bosobonga",
+        "province": "Nord-Ubangi",
+        "territoire": "Bosobolo",
+        "zone": "Nord",
+        "latitude": 4.137980903999989,
+        "longitude": 19.78909586,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 220,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.91650014000001,
+          4.505744727000005
+        ]
+      },
+      "properties": {
+        "name": "Balo",
+        "province": "Bas-Uele",
+        "territoire": "Bondo",
+        "zone": "Nord",
+        "latitude": 4.505744727000005,
+        "longitude": 24.91650014000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 221,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.62719875,
+          4.066616777000012
+        ]
+      },
+      "properties": {
+        "name": "Bakiwe",
+        "province": "Bas-Uele",
+        "territoire": "Ango",
+        "zone": "Nord",
+        "latitude": 4.066616777000012,
+        "longitude": 26.62719875,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 222,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.98151338000001,
+          4.33554956200001
+        ]
+      },
+      "properties": {
+        "name": "Dada",
+        "province": "Bas-Uele",
+        "territoire": "Ango",
+        "zone": "Nord",
+        "latitude": 4.33554956200001,
+        "longitude": 26.98151338000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 223,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.54929799999998,
+          1.321544999999991
+        ]
+      },
+      "properties": {
+        "name": "Alibuku",
+        "province": "Tshopo",
+        "territoire": "Bafwasende",
+        "zone": "Nord",
+        "latitude": 1.321544999999991,
+        "longitude": 27.54929799999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 224,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.66034200000002,
+          2.540017999999984
+        ]
+      },
+      "properties": {
+        "name": "Bamba",
+        "province": "Sud-Ubangi",
+        "territoire": "Budjala",
+        "zone": "Nord",
+        "latitude": 2.540017999999984,
+        "longitude": 19.66034200000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 225,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.61524400000001,
+          2.857869999999973
+        ]
+      },
+      "properties": {
+        "name": "Bodangania",
+        "province": "Sud-Ubangi",
+        "territoire": "Gemena",
+        "zone": "Nord",
+        "latitude": 2.857869999999973,
+        "longitude": 19.61524400000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 226,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.07707176,
+          -2.059405445999993
+        ]
+      },
+      "properties": {
+        "name": "Yailunga",
+        "province": "Maniema",
+        "territoire": "Kailo",
+        "zone": "Est",
+        "latitude": -2.059405445999993,
+        "longitude": 25.07707176,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 227,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.5832,
+          -5.204270000000017
+        ]
+      },
+      "properties": {
+        "name": "Luembe",
+        "province": "Kwilu",
+        "territoire": "Idiofa",
+        "zone": "Ouest",
+        "latitude": -5.204270000000017,
+        "longitude": 19.5832,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 228,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          15.81639000000003,
+          -5.486660000000001
+        ]
+      },
+      "properties": {
+        "name": "Kimbumba_Kikiongolo",
+        "province": "Kongo Central",
+        "territoire": "Madimba",
+        "zone": "Ouest",
+        "latitude": -5.486660000000001,
+        "longitude": 15.81639000000003,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 229,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.89066999999999,
+          -5.543150000000003
+        ]
+      },
+      "properties": {
+        "name": "MAKUALA mBUNGU",
+        "province": "Kongo Central",
+        "territoire": "Moanda",
+        "zone": "Ouest",
+        "latitude": -5.543150000000003,
+        "longitude": 12.89066999999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 230,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.81756999999998,
+          -5.977509999999999
+        ]
+      },
+      "properties": {
+        "name": "Kabundi",
+        "province": "Kwango",
+        "territoire": "Feshi",
+        "zone": "Ouest",
+        "latitude": -5.977509999999999,
+        "longitude": 17.81756999999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 231,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.60829,
+          -5.622070000000017
+        ]
+      },
+      "properties": {
+        "name": "Basase",
+        "province": "Lomami",
+        "territoire": "Kabinda",
+        "zone": "Centre",
+        "latitude": -5.622070000000017,
+        "longitude": 24.60829,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 232,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.62267309999999,
+          -6.400132593
+        ]
+      },
+      "properties": {
+        "name": "Shawana",
+        "province": "Kwango",
+        "territoire": "Kahemba",
+        "zone": "Ouest",
+        "latitude": -6.400132593,
+        "longitude": 19.62267309999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 233,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.52442000000001,
+          -4.615759999999991
+        ]
+      },
+      "properties": {
+        "name": "Dnmbi",
+        "province": "Sankuru",
+        "territoire": "Lubefu",
+        "zone": "Centre",
+        "latitude": -4.615759999999991,
+        "longitude": 24.52442000000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 234,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.86948913000002,
+          -6.57641077499999
+        ]
+      },
+      "properties": {
+        "name": "Shangulu",
+        "province": "Kwango",
+        "territoire": "Feshi",
+        "zone": "Ouest",
+        "latitude": -6.57641077499999,
+        "longitude": 18.86948913000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 235,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.89995999999998,
+          -5.647820000000006
+        ]
+      },
+      "properties": {
+        "name": "Lubondaie",
+        "province": "Lomami",
+        "territoire": "Lubao",
+        "zone": "Centre",
+        "latitude": -5.647820000000006,
+        "longitude": 24.89995999999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 236,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.95351838000001,
+          -4.797280324000004
+        ]
+      },
+      "properties": {
+        "name": "Djovu",
+        "province": "Maniema",
+        "territoire": "Kibombo",
+        "zone": "Centre",
+        "latitude": -4.797280324000004,
+        "longitude": 24.95351838000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 237,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.32806233000001,
+          -6.591774708000004
+        ]
+      },
+      "properties": {
+        "name": "Mwamundji_Mwatshilombe",
+        "province": "Kwango",
+        "territoire": "Kahemba",
+        "zone": "Ouest",
+        "latitude": -6.591774708000004,
+        "longitude": 19.32806233000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 238,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.96098312000003,
+          -2.875091860999996
+        ]
+      },
+      "properties": {
+        "name": "Manga Djombo",
+        "province": "Kasai",
+        "territoire": "Dekese",
+        "zone": "Centre",
+        "latitude": -2.875091860999996,
+        "longitude": 21.96098312000003,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 239,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.57467080000001,
+          -6.715004807000005
+        ]
+      },
+      "properties": {
+        "name": "Shamangwanga",
+        "province": "Kwango",
+        "territoire": "Feshi",
+        "zone": "Ouest",
+        "latitude": -6.715004807000005,
+        "longitude": 18.57467080000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 240,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.65604061,
+          -6.737276322000012
+        ]
+      },
+      "properties": {
+        "name": "Ka-Luanzo",
+        "province": "Kwango",
+        "territoire": "Kahemba",
+        "zone": "Ouest",
+        "latitude": -6.737276322000012,
+        "longitude": 19.65604061,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 241,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.17421999999999,
+          -4.594820000000002
+        ]
+      },
+      "properties": {
+        "name": "Djamba",
+        "province": "Maniema",
+        "territoire": "Kibombo",
+        "zone": "Est",
+        "latitude": -4.594820000000002,
+        "longitude": 25.17421999999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 242,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.86730950000001,
+          -6.972688006000003
+        ]
+      },
+      "properties": {
+        "name": "Shakatashize",
+        "province": "Kwango",
+        "territoire": "Kahemba",
+        "zone": "Ouest",
+        "latitude": -6.972688006000003,
+        "longitude": 18.86730950000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 243,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          16.86632600999998,
+          -3.137148466000022
+        ]
+      },
+      "properties": {
+        "name": "Kubi",
+        "province": "Mai-Ndombe",
+        "territoire": "Kwamouth",
+        "zone": "Ouest",
+        "latitude": -3.137148466000022,
+        "longitude": 16.86632600999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 244,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.17019382000002,
+          -3.942102502999993
+        ]
+      },
+      "properties": {
+        "name": "Fayala",
+        "province": "Mai-Ndombe",
+        "territoire": "Kwamouth",
+        "zone": "Ouest",
+        "latitude": -3.942102502999993,
+        "longitude": 17.17019382000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 245,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          16.02431430000001,
+          -5.173752100999995
+        ]
+      },
+      "properties": {
+        "name": "Kinsaka",
+        "province": "Kongo Central",
+        "territoire": "Kimvula",
+        "zone": "Ouest",
+        "latitude": -5.173752100999995,
+        "longitude": 16.02431430000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 246,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.15716183000001,
+          -7.325152272999995
+        ]
+      },
+      "properties": {
+        "name": "Balabala",
+        "province": "Kwango",
+        "territoire": "Kasongo-Lunda",
+        "zone": "Ouest",
+        "latitude": -7.325152272999995,
+        "longitude": 18.15716183000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 247,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          16.49535529000001,
+          -5.810854269000012
+        ]
+      },
+      "properties": {
+        "name": "Tsunza",
+        "province": "Kwango",
+        "territoire": "Popokabaka",
+        "zone": "Ouest",
+        "latitude": -5.810854269000012,
+        "longitude": 16.49535529000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 248,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.39609126999999,
+          -5.025163889999997
+        ]
+      },
+      "properties": {
+        "name": "Dumba",
+        "province": "Kongo Central",
+        "territoire": "Mbanza-Ngungu",
+        "zone": "Ouest",
+        "latitude": -5.025163889999997,
+        "longitude": 14.39609126999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 249,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.00343300000001,
+          -4.218726999999996
+        ]
+      },
+      "properties": {
+        "name": "Dunga 2",
+        "province": "Kwilu",
+        "territoire": "Masi-Manimba",
+        "zone": "Ouest",
+        "latitude": -4.218726999999996,
+        "longitude": 18.00343300000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 250,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.22910799999998,
+          -3.854116000000014
+        ]
+      },
+      "properties": {
+        "name": "Fambondo",
+        "province": "Kwilu",
+        "territoire": "Bagata",
+        "zone": "Ouest",
+        "latitude": -3.854116000000014,
+        "longitude": 17.22910799999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 251,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.86702686999998,
+          -6.269172024999987
+        ]
+      },
+      "properties": {
+        "name": "Goy",
+        "province": "Tanganyika",
+        "territoire": "Nyunzu",
+        "zone": "Sud",
+        "latitude": -6.269172024999987,
+        "longitude": 27.86702686999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 252,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          16.69063800000002,
+          -5.824970000000008
+        ]
+      },
+      "properties": {
+        "name": "Kabangu",
+        "province": "Kwango",
+        "territoire": "Popokabaka",
+        "zone": "Ouest",
+        "latitude": -5.824970000000008,
+        "longitude": 16.69063800000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 253,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.66506993999997,
+          -6.608550104999997
+        ]
+      },
+      "properties": {
+        "name": "Mutoma",
+        "province": "Tanganyika",
+        "territoire": "Manono",
+        "zone": "Sud",
+        "latitude": -6.608550104999997,
+        "longitude": 27.66506993999997,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 254,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.94113604,
+          -8.268205913
+        ]
+      },
+      "properties": {
+        "name": "Swana_Nguza",
+        "province": "Lualaba",
+        "territoire": "Kapanga",
+        "zone": "Sud",
+        "latitude": -8.268205913,
+        "longitude": 22.94113604,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 255,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.52089024,
+          -8.278052562999987
+        ]
+      },
+      "properties": {
+        "name": "musanda",
+        "province": "Haut-Lomami",
+        "territoire": "Kamina",
+        "zone": "Sud",
+        "latitude": -8.278052562999987,
+        "longitude": 25.52089024,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 256,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.13373368000001,
+          -8.405596062000004
+        ]
+      },
+      "properties": {
+        "name": "mukunda",
+        "province": "Haut-Katanga",
+        "territoire": "Pweto",
+        "zone": "Sud",
+        "latitude": -8.405596062000004,
+        "longitude": 28.13373368000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 257,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.54361052999999,
+          -8.444590036000001
+        ]
+      },
+      "properties": {
+        "name": "katumbe_kaloanzo",
+        "province": "Haut-Lomami",
+        "territoire": "Kamina",
+        "zone": "Sud",
+        "latitude": -8.444590036000001,
+        "longitude": 25.54361052999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 258,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.18548384,
+          -8.54234230099999
+        ]
+      },
+      "properties": {
+        "name": "luyembe",
+        "province": "Lualaba",
+        "territoire": "Kapanga",
+        "zone": "Sud",
+        "latitude": -8.54234230099999,
+        "longitude": 22.18548384,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 259,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.02313061,
+          -10.09408747
+        ]
+      },
+      "properties": {
+        "name": "katatshi",
+        "province": "Lualaba",
+        "territoire": "Dilolo",
+        "zone": "Sud",
+        "latitude": -10.09408747,
+        "longitude": 23.02313061,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 260,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.97799500000001,
+          3.411324999999996
+        ]
+      },
+      "properties": {
+        "name": "Bomalanga",
+        "province": "Sud-Ubangi",
+        "territoire": "Gemena",
+        "zone": "Nord",
+        "latitude": 3.411324999999996,
+        "longitude": 19.97799500000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 261,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.60172899999999,
+          1.046438299999992
+        ]
+      },
+      "properties": {
+        "name": "Botoku",
+        "province": "Tshuapa",
+        "territoire": "Djolu",
+        "zone": "Nord",
+        "latitude": 1.046438299999992,
+        "longitude": 22.60172899999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 262,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.59805599999998,
+          -3.718696999999993
+        ]
+      },
+      "properties": {
+        "name": "Mowa",
+        "province": "Kwilu",
+        "territoire": "Bagata",
+        "zone": "Ouest",
+        "latitude": -3.718696999999993,
+        "longitude": 17.59805599999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 263,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.957552,
+          3.527804000000021
+        ]
+      },
+      "properties": {
+        "name": "Boyadele",
+        "province": "Sud-Ubangi",
+        "territoire": "Gemena",
+        "zone": "Nord",
+        "latitude": 3.527804000000021,
+        "longitude": 19.957552,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 264,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.89620732000001,
+          2.370652432000004
+        ]
+      },
+      "properties": {
+        "name": "Molanda_Mongombe",
+        "province": "Mongala",
+        "territoire": "Lisala",
+        "zone": "Nord",
+        "latitude": 2.370652432000004,
+        "longitude": 20.89620732000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 265,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          16.69508800999999,
+          -1.965900400000002
+        ]
+      },
+      "properties": {
+        "name": "Yumbi_lkonia",
+        "province": "Equateur",
+        "territoire": "Lukolela",
+        "zone": "Nord",
+        "latitude": -1.965900400000002,
+        "longitude": 16.69508800999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 266,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.33908000000001,
+          2.304609999999978
+        ]
+      },
+      "properties": {
+        "name": "Baso",
+        "province": "Mongala",
+        "territoire": "Bumba",
+        "zone": "Nord",
+        "latitude": 2.304609999999978,
+        "longitude": 22.33908000000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 267,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.9519029818423,
+          4.362867318255454
+        ]
+      },
+      "properties": {
+        "name": "Gbadolite_Vondo",
+        "province": "Nord-Ubangi",
+        "territoire": "Gbadolite",
+        "zone": "Nord",
+        "latitude": 4.362867318255454,
+        "longitude": 20.9519029818423,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 268,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.44968489000004,
+          -7.131803238999987
+        ]
+      },
+      "properties": {
+        "name": "Lusaka",
+        "province": "Tanganyika",
+        "territoire": "Moba",
+        "zone": "Sud",
+        "latitude": -7.131803238999987,
+        "longitude": 29.44968489000004,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 269,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.33815005,
+          -10.65641884999999
+        ]
+      },
+      "properties": {
+        "name": "Lupasha",
+        "province": "Lualaba",
+        "territoire": "Dilolo",
+        "zone": "Sud",
+        "latitude": -10.65641884999999,
+        "longitude": 24.33815005,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 270,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.84806137999999,
+          2.977911678999972
+        ]
+      },
+      "properties": {
+        "name": "Parakondo",
+        "province": "Bas-Uele",
+        "territoire": "Poko",
+        "zone": "Nord",
+        "latitude": 2.977911678999972,
+        "longitude": 26.84806137999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 271,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.82752700000002,
+          2.855225999999993
+        ]
+      },
+      "properties": {
+        "name": "Baruti",
+        "province": "Bas-Uele",
+        "territoire": "Buta",
+        "zone": "Nord",
+        "latitude": 2.855225999999993,
+        "longitude": 24.82752700000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 272,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.00377800000002,
+          -7.39021999999999
+        ]
+      },
+      "properties": {
+        "name": "Kingwangala village 2",
+        "province": "Kwango",
+        "territoire": "Kasongo-Lunda",
+        "zone": "Ouest",
+        "latitude": -7.39021999999999,
+        "longitude": 18.00377800000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 273,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.51662699999999,
+          -1.332243000000015
+        ]
+      },
+      "properties": {
+        "name": "Mondjoku",
+        "province": "Tshuapa",
+        "territoire": "Bokungu",
+        "zone": "Nord",
+        "latitude": -1.332243000000015,
+        "longitude": 22.51662699999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 274,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.44276759,
+          3.94194064200001
+        ]
+      },
+      "properties": {
+        "name": "Nagero_Bwere",
+        "province": "Haut-Uele",
+        "territoire": "Dungu",
+        "zone": "Nord",
+        "latitude": 3.94194064200001,
+        "longitude": 29.44276759,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 275,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.33305128000001,
+          3.767131905000021
+        ]
+      },
+      "properties": {
+        "name": "Nagero_Gangalana Bodio",
+        "province": "Haut-Uele",
+        "territoire": "Dungu",
+        "zone": "Nord",
+        "latitude": 3.767131905000021,
+        "longitude": 29.33305128000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 276,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.01877896999999,
+          0.5169483569999933
+        ]
+      },
+      "properties": {
+        "name": "Monzanga",
+        "province": "Equateur",
+        "territoire": "Bolomba",
+        "zone": "Nord",
+        "latitude": 0.5169483569999933,
+        "longitude": 19.01877896999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 277,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.19799214,
+          -1.859064036000011
+        ]
+      },
+      "properties": {
+        "name": "lsunguma",
+        "province": "Tshuapa",
+        "territoire": "Ikela",
+        "zone": "Nord",
+        "latitude": -1.859064036000011,
+        "longitude": 23.19799214,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 278,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.75050200000001,
+          -0.772276999999999
+        ]
+      },
+      "properties": {
+        "name": "Mondombe",
+        "province": "Tshuapa",
+        "territoire": "Ikela",
+        "zone": "Nord",
+        "latitude": -0.772276999999999,
+        "longitude": 22.75050200000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 279,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.50710599999998,
+          -1.191068
+        ]
+      },
+      "properties": {
+        "name": "Yalikomba",
+        "province": "Tshuapa",
+        "territoire": "Bokungu",
+        "zone": "Nord",
+        "latitude": -1.191068,
+        "longitude": 22.50710599999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 280,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.215029,
+          2.628099999999991
+        ]
+      },
+      "properties": {
+        "name": "Balele",
+        "province": "Bas-Uele",
+        "territoire": "Poko",
+        "zone": "Nord",
+        "latitude": 2.628099999999991,
+        "longitude": 26.215029,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 281,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.41732500000001,
+          2.324431000000007
+        ]
+      },
+      "properties": {
+        "name": "Bongolu",
+        "province": "Mongala",
+        "territoire": "Bumba",
+        "zone": "Nord",
+        "latitude": 2.324431000000007,
+        "longitude": 22.41732500000001,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 282,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.36054445,
+          -1.263876119999989
+        ]
+      },
+      "properties": {
+        "name": "bANAKIRA",
+        "province": "Tshopo",
+        "territoire": "Ubundu",
+        "zone": "Nord",
+        "latitude": -1.263876119999989,
+        "longitude": 25.36054445,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 283,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.50353156,
+          -0.8422851489999927
+        ]
+      },
+      "properties": {
+        "name": "Baringa-Moke",
+        "province": "Tshuapa",
+        "territoire": "Boende",
+        "zone": "Nord",
+        "latitude": -0.8422851489999927,
+        "longitude": 21.50353156,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 284,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.38585573,
+          -0.1524479480000096
+        ]
+      },
+      "properties": {
+        "name": "BOKOLONGO",
+        "province": "Equateur",
+        "territoire": "Bikoro",
+        "zone": "Nord",
+        "latitude": -0.1524479480000096,
+        "longitude": 18.38585573,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 285,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.16155288999999,
+          1.087470620999977
+        ]
+      },
+      "properties": {
+        "name": "Lileko",
+        "province": "Tshopo",
+        "territoire": "Basoko",
+        "zone": "Nord",
+        "latitude": 1.087470620999977,
+        "longitude": 24.16155288999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 286,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.2280413,
+          0.955153206999988
+        ]
+      },
+      "properties": {
+        "name": "Loolo",
+        "province": "Equateur",
+        "territoire": "Basankusu",
+        "zone": "Nord",
+        "latitude": 0.955153206999988,
+        "longitude": 20.2280413,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 287,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.44125711000002,
+          -0.3548639999999859
+        ]
+      },
+      "properties": {
+        "name": "Yalomanga",
+        "province": "Tshopo",
+        "territoire": "Yahuma",
+        "zone": "Nord",
+        "latitude": -0.3548639999999859,
+        "longitude": 23.44125711000002,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 288,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.30235519999999,
+          -1.048106665000004
+        ]
+      },
+      "properties": {
+        "name": "Elipa",
+        "province": "Tshopo",
+        "territoire": "Opala",
+        "zone": "Nord",
+        "latitude": -1.048106665000004,
+        "longitude": 24.30235519999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 289,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          16.40014421000003,
+          -3.422026582999997
+        ]
+      },
+      "properties": {
+        "name": "Ingweme",
+        "province": "Mai-Ndombe",
+        "territoire": "Kwamouth",
+        "zone": "Ouest",
+        "latitude": -3.422026582999997,
+        "longitude": 16.40014421000003,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 290,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.23785039,
+          -5.926407848000006
+        ]
+      },
+      "properties": {
+        "name": "Mukia",
+        "province": "Lomami",
+        "territoire": "Lubao",
+        "zone": "Centre",
+        "latitude": -5.926407848000006,
+        "longitude": 25.23785039,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 291,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.933971,
+          -6.393234999999995
+        ]
+      },
+      "properties": {
+        "name": "Kalunda",
+        "province": "Kasai Oriental",
+        "territoire": "Katanda",
+        "zone": "Centre",
+        "latitude": -6.393234999999995,
+        "longitude": 23.933971,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 292,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.59434699999998,
+          -6.567669999999996
+        ]
+      },
+      "properties": {
+        "name": "Kafita",
+        "province": "Kasai Oriental",
+        "territoire": "Tshilenge",
+        "zone": "Centre",
+        "latitude": -6.567669999999996,
+        "longitude": 23.59434699999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 293,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.59315799999997,
+          -6.686060999999988
+        ]
+      },
+      "properties": {
+        "name": "Bena-Tshitala",
+        "province": "Kasai Oriental",
+        "territoire": "Tshilenge",
+        "zone": "Centre",
+        "latitude": -6.686060999999988,
+        "longitude": 23.59315799999997,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 294,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.65165799999999,
+          -5.734182000000006
+        ]
+      },
+      "properties": {
+        "name": "Bakamba village",
+        "province": "Kasai Oriental",
+        "territoire": "Lupatapata",
+        "zone": "Centre",
+        "latitude": -5.734182000000006,
+        "longitude": 23.65165799999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 295,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.29909299999998,
+          -5.795366000000001
+        ]
+      },
+      "properties": {
+        "name": "Bena-Mpeta Village",
+        "province": "Kasai Oriental",
+        "territoire": "Kabeya-Kamwanga",
+        "zone": "Centre",
+        "latitude": -5.795366000000001,
+        "longitude": 23.29909299999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 296,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.53119699999999,
+          -5.833237999999992
+        ]
+      },
+      "properties": {
+        "name": "Tshilunde Village",
+        "province": "Kasai Oriental",
+        "territoire": "Lupatapata",
+        "zone": "Centre",
+        "latitude": -5.833237999999992,
+        "longitude": 23.53119699999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 297,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.13529199999998,
+          -6.031009000000007
+        ]
+      },
+      "properties": {
+        "name": "Kabeya-Kamwanga village 1",
+        "province": "Kasai Oriental",
+        "territoire": "Kabeya-Kamwanga",
+        "zone": "Centre",
+        "latitude": -6.031009000000007,
+        "longitude": 23.13529199999998,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 298,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.203581,
+          -6.063322999999999
+        ]
+      },
+      "properties": {
+        "name": "Kabeya-Kamwanga village 2",
+        "province": "Kasai Oriental",
+        "territoire": "Kabeya-Kamwanga",
+        "zone": "Centre",
+        "latitude": -6.063322999999999,
+        "longitude": 23.203581,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 299,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.53123999999999,
+          -6.040200000000002
+        ]
+      },
+      "properties": {
+        "name": "Bena-Muamba",
+        "province": "Kasai Oriental",
+        "territoire": "Lupatapata",
+        "zone": "Centre",
+        "latitude": -6.040200000000002,
+        "longitude": 23.53123999999999,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 300,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.45949999999997,
+          0.6762299999999977
+        ]
+      },
+      "properties": {
+        "name": "Yoseki",
+        "province": "Tshuapa",
+        "territoire": "Djolu",
+        "zone": "Nord",
+        "latitude": 0.6762299999999977,
+        "longitude": 22.45949999999997,
+        "programme": "Sites 300",
+        "status": "Planifié",
+        "priority_status": "À calculer",
+        "fdsu_score": null,
+        "source": "KMZ 300 Sites"
+      }
+    }
+  ]
+}
