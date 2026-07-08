@@ -47,7 +47,7 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
 
     await page.locator('[data-decision-tab="priorisation"]').click();
     await expect(page.locator('[data-decision-tab-panel="priorisation"]')).toBeVisible();
-    await expect(page.locator('[data-decision-tab-panel="priorisation"]')).toContainText('Espace Priorisation');
+    await expect(page.locator('[data-decision-tab-panel="priorisation"]')).toContainText('Moteur de décision FDSU');
 
     await page.locator('[data-decision-tab="rapports"]').click();
     await expect(page.locator('[data-decision-tab-panel="rapports"]')).toBeVisible();
@@ -178,6 +178,60 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
 
     await expect(panel.locator('#decision-center-spatial-body')).toContainText(/Analyses spatiales disponibles en mode DB|Sites analysés|Relations calculées/);
     await page.screenshot({ path: 'test-results/decision-center-spatial-analysis.png', fullPage: false });
+  });
+
+  test('moteur de décision FDSU — priorisation visible', async ({ page }) => {
+    await openDecisionCenter(page);
+
+    await page.locator('[data-decision-tab="priorisation"]').click();
+    await expect(page.locator('[data-decision-tab-panel="priorisation"]')).toBeVisible();
+
+    const panel = page.locator('#decision-engine-panel');
+    await expect(panel).toBeVisible();
+    await expect(panel.locator('h3')).toHaveText('Moteur de décision FDSU');
+    await expect(page.locator('#decision-engine-recompute-btn')).toHaveText('Recalculer les scores');
+
+    await page.waitForFunction(
+      () => {
+        const body = document.querySelector('#decision-engine-table-body');
+        return body && !body.textContent.includes('Chargement des scores');
+      },
+      null,
+      { timeout: 15_000 },
+    );
+
+    await expect(panel.locator('#decision-engine-kpi-grid')).toBeVisible();
+    await expect(panel.locator('#decision-engine-kpi-total')).toBeVisible();
+    await expect(panel.locator('#decision-engine-kpi-critical')).toBeVisible();
+    await expect(panel.locator('#decision-engine-kpi-high')).toBeVisible();
+    await expect(panel.locator('#decision-engine-kpi-medium')).toBeVisible();
+    await expect(panel.locator('#decision-engine-kpi-low')).toBeVisible();
+    await expect(panel.locator('#decision-engine-sectorial-note')).toContainText('Score partiel');
+    await expect(panel.locator('#decision-engine-table')).toBeVisible();
+    await expect(panel).toContainText(/Moteur de décision disponible en mode DB|Code|Score|Niveau/);
+
+    await page.screenshot({ path: 'test-results/decision-center-decision-engine.png', fullPage: false });
+  });
+
+  test('moteur de décision FDSU — filtre par priorité', async ({ page }) => {
+    await openDecisionCenter(page);
+    await page.locator('[data-decision-tab="priorisation"]').click();
+
+    await page.waitForFunction(
+      () => {
+        const body = document.querySelector('#decision-engine-table-body');
+        return body && !body.textContent.includes('Chargement des scores');
+      },
+      null,
+      { timeout: 15_000 },
+    );
+
+    await page.locator('[data-priority-filter="critical"]').click();
+    await expect(page.locator('[data-priority-filter="critical"]')).toHaveClass(/is-active/);
+
+    await page.waitForFunction(() => typeof window.L !== 'undefined', null, { timeout: 30_000 });
+    await expect(page.locator('#decision-engine-map')).toBeVisible();
+    await page.screenshot({ path: 'test-results/decision-center-decision-engine-filter.png', fullPage: false });
   });
 
   test('module Aide à la décision existant inchangé', async ({ page }) => {

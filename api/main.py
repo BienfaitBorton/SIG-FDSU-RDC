@@ -33,6 +33,7 @@ from api.routes import (
     programs,
     telecom,
     analysis,
+    decision_engine,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -870,6 +871,7 @@ app.include_router(knowledge.router, prefix="/knowledge", tags=["Centre de conna
 app.include_router(programs.router, prefix="/api/programs", tags=["Programmes FDSU"])
 app.include_router(telecom.router, prefix="/api/telecom", tags=["Referentiel Telecom"])
 app.include_router(analysis.router, prefix="/api/analysis", tags=["Spatial Intelligence Engine"])
+app.include_router(decision_engine.router, prefix="/api/decision", tags=["Moteur de Decision FDSU"])
 
 @app.get("/", tags=["Root"])
 def read_root() -> dict[str, str]:

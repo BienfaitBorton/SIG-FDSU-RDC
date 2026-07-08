@@ -663,10 +663,80 @@
           </section>
 
           <section class="decision-center-tab-panel" data-decision-tab-panel="priorisation" role="tabpanel" hidden>
-            <div class="decision-center-tab-placeholder">
-              <p class="panel-label">Priorisation</p>
-              <h3>Espace Priorisation</h3>
-              <p>Structure prête pour le moteur de priorisation FDSU.</p>
+            <div class="decision-engine-panel" id="decision-engine-panel" aria-label="Moteur de décision FDSU">
+              <div class="decision-engine-header">
+                <div>
+                  <p class="panel-label">Priorisation nationale</p>
+                  <h3>Moteur de décision FDSU</h3>
+                </div>
+                <button type="button" class="secondary-button decision-engine-recompute-btn" id="decision-engine-recompute-btn">Recalculer les scores</button>
+              </div>
+
+              <p class="decision-engine-sectorial-banner" id="decision-engine-sectorial-note">
+                Score partiel — données sectorielles Santé, Éducation, Énergie et Routes à intégrer progressivement.
+              </p>
+
+              <div class="decision-engine-controls">
+                <div class="decision-engine-kpi-grid" id="decision-engine-kpi-grid">
+                  <article class="decision-engine-kpi" data-level="total">
+                    <p class="summary-label">Sites scorés</p>
+                    <p class="summary-value" id="decision-engine-kpi-total">—</p>
+                  </article>
+                  <article class="decision-engine-kpi is-critical" data-level="critical">
+                    <p class="summary-label">Critique</p>
+                    <p class="summary-value" id="decision-engine-kpi-critical">—</p>
+                  </article>
+                  <article class="decision-engine-kpi is-high" data-level="high">
+                    <p class="summary-label">Élevée</p>
+                    <p class="summary-value" id="decision-engine-kpi-high">—</p>
+                  </article>
+                  <article class="decision-engine-kpi is-medium" data-level="medium">
+                    <p class="summary-label">Moyenne</p>
+                    <p class="summary-value" id="decision-engine-kpi-medium">—</p>
+                  </article>
+                  <article class="decision-engine-kpi is-low" data-level="low">
+                    <p class="summary-label">Faible</p>
+                    <p class="summary-value" id="decision-engine-kpi-low">—</p>
+                  </article>
+                </div>
+
+                <div class="decision-engine-toolbar">
+                  <span class="decision-engine-filter-label">Priorité</span>
+                  <div class="decision-engine-filters" id="decision-engine-filters" role="group" aria-label="Filtrer par niveau de priorité">
+                    <button type="button" class="decision-engine-filter is-active" data-priority-filter="">Tous</button>
+                    <button type="button" class="decision-engine-filter filter-critical" data-priority-filter="critical">Critique</button>
+                    <button type="button" class="decision-engine-filter filter-high" data-priority-filter="high">Élevée</button>
+                    <button type="button" class="decision-engine-filter filter-medium" data-priority-filter="medium">Moyenne</button>
+                    <button type="button" class="decision-engine-filter filter-low" data-priority-filter="low">Faible</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="decision-engine-body">
+                <div class="decision-engine-map-column">
+                  <div id="decision-engine-map" class="decision-engine-map" aria-label="Carte des sites priorisés"></div>
+                </div>
+                <div class="decision-engine-table-column">
+                  <div class="decision-engine-table-frame">
+                    <table class="decision-engine-table" id="decision-engine-table">
+                      <thead>
+                        <tr>
+                          <th>Code</th>
+                          <th>Site</th>
+                          <th>Prog.</th>
+                          <th>Localisation</th>
+                          <th>Score</th>
+                          <th>Niveau</th>
+                          <th>Facteurs</th>
+                        </tr>
+                      </thead>
+                      <tbody id="decision-engine-table-body">
+                        <tr><td colspan="7" class="decision-center-program-loading">Chargement des scores…</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
 

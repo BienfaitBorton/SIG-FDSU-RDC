@@ -41,6 +41,13 @@
     spatialLoaded: false,
     spatialLoading: false,
     spatialLoadingPromise: null,
+    decisionEngineLoaded: false,
+    decisionEngineLoading: false,
+    decisionEngineFilter: '',
+    decisionEngineSites: [],
+    decisionEngineMap: null,
+    decisionEngineMarkers: null,
+    decisionEngineSelectedSiteId: null,
     programStatusCatalog: null,
     priorityMatrixLoader: null,
   };
@@ -575,6 +582,315 @@
     });
   }
 
+  const DECISION_ENGINE_PRIORITY_CLASS = {
+    critical: 'is-critical',
+    high: 'is-high',
+    medium: 'is-medium',
+    low: 'is-low',
+  };
+
+  const DECISION_ENGINE_MARKER_COLORS = {
+    critical: '#ef4444',
+    high: '#f97316',
+    medium: '#ca8a04',
+    low: '#4ade80',
+  };
+
+  function humanizeCriteriaLabel(label) {
+    if (!label) return '';
+    let text = String(label);
+    text = text.replace(/Programme Sites 40 — déploiement en exécution/i, 'Programme Sites 40 — en cours');
+    text = text.replace(/Programme Sites 300 — planifié/i, 'Programme Sites 300 — planifié');
+    text = text.replace(/Distance opérateur ([\d.,]+) km — déficit majeur/i, 'Réseau éloigné ($1 km) — besoin urgent');
+    text = text.replace(/Distance opérateur ([\d.,]+) km — déficit élevé/i, 'Réseau éloigné ($1 km) — couverture faible');
+    text = text.replace(/Distance opérateur ([\d.,]+) km — déficit modéré/i, 'Réseau à $1 km — déficit modéré');
+    text = text.replace(/Proximité infrastructure \(([\d.,]+) km\) — déficit faible/i, 'Réseau proche ($1 km)');
+    text = text.replace(/Contexte admin validé PostGIS — /i, 'Zone : ');
+    text = text.replace(/Province et territoire renseignés — /i, 'Zone : ');
+    text = text.replace(/Contexte administratif partiel — /i, 'Zone partielle : ');
+    text = text.replace(/Contexte administratif incomplet/i, 'Localisation à compléter');
+    text = text.replace(/\d+ relations spatiales calculées/i, 'Analyse spatiale complète');
+    text = text.replace(/\d+ relation\(s\) spatiale\(s\) — analyse partielle/i, 'Analyse spatiale partielle');
+    text = text.replace(/Aucune relation spatiale — exécuter l'analyse spatiale/i, 'Lancer l\'analyse spatiale');
+    text = text.replace(/Distance télécom non calculée — lancer l'analyse spatiale/i, 'Couverture réseau à analyser');
+    text = text.replace(/Site en exécution/i, 'Déploiement en cours');
+    text = text.replace(/Site du programme en cours de déploiement/i, 'Site en déploiement actif');
+    if (text.length > 64) return `${text.slice(0, 61)}…`;
+    return text;
+  }
+
+  function formatProgramLabel(site) {
+    const code = String(site?.program_code || '').toUpperCase();
+    if (code.includes('SITES_40')) return 'Sites 40';
+    if (code.includes('SITES_300')) return 'Sites 300';
+    const name = site?.program_name || site?.program_code || '—';
+    return name.length > 14 ? `${name.slice(0, 12)}…` : name;
+  }
+
+  function getDecisionEngineMarkerColor(site) {
+    return DECISION_ENGINE_MARKER_COLORS[site?.priority_level] || DECISION_ENGINE_MARKER_COLORS.low;
+  }
+
+  function renderDecisionEngineKpis(summary) {
+    const total = summary?.total ?? 0;
+    const set = (id, value) => {
+      const node = document.querySelector(id);
+      if (node) node.textContent = Number(value || 0).toLocaleString('fr-FR');
+    };
+    set('#decision-engine-kpi-total', total);
+    set('#decision-engine-kpi-critical', summary?.critical);
+    set('#decision-engine-kpi-high', summary?.high);
+    set('#decision-engine-kpi-medium', summary?.medium);
+    set('#decision-engine-kpi-low', summary?.low);
+  }
+
+  function formatDecisionCriteria(topCriteria) {
+    const items = asArray(topCriteria);
+    if (!items.length) return '—';
+    return items.slice(0, 2).map((item) => escapeHtml(humanizeCriteriaLabel(item?.label || ''))).join(' · ');
+  }
+
+  function renderDecisionEngineTable(sites) {
+    const tbody = document.querySelector('#decision-engine-table-body');
+    if (!tbody) return;
+    const filtered = decisionCenterState.decisionEngineFilter
+      ? sites.filter((site) => site.priority_level === decisionCenterState.decisionEngineFilter)
+      : sites;
+
+    if (!filtered.length) {
+      tbody.innerHTML = '<tr><td colspan="7" class="decision-center-program-loading">Aucun site pour ce filtre.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = filtered.map((site) => {
+      const levelClass = DECISION_ENGINE_PRIORITY_CLASS[site.priority_level] || 'is-low';
+      const selected = decisionCenterState.decisionEngineSelectedSiteId === site.site_id ? ' is-selected' : '';
+      const territory = [site.territoire, site.province].filter(Boolean).join(' / ') || '—';
+      const siteName = site.site_name || '—';
+      const criteriaText = formatDecisionCriteria(site.top_criteria);
+      return `
+        <tr data-site-id="${site.site_id}" class="${selected.trim()}">
+          <td title="${escapeHtml(site.site_code || '—')}">${escapeHtml(site.site_code || '—')}</td>
+          <td title="${escapeHtml(siteName)}">${escapeHtml(siteName)}</td>
+          <td title="${escapeHtml(site.program_name || site.program_code || '—')}">${escapeHtml(formatProgramLabel(site))}</td>
+          <td title="${escapeHtml(territory)}">${escapeHtml(territory)}</td>
+          <td>${Number(site.priority_score || 0).toFixed(1)}</td>
+          <td><span class="decision-engine-priority-badge ${levelClass}">${escapeHtml(site.priority_level_label || site.priority_level)}</span></td>
+          <td><span class="decision-engine-criteria" title="${criteriaText}">${criteriaText}</span></td>
+        </tr>
+      `;
+    }).join('');
+
+    tbody.querySelectorAll('[data-site-id]').forEach((row) => {
+      row.addEventListener('click', () => {
+        selectDecisionEngineSite(Number(row.dataset.siteId));
+      });
+    });
+  }
+
+  function initializeDecisionEngineMap() {
+    const shared = getShared();
+    if (typeof global.L === 'undefined') return;
+
+    const mapElement = document.querySelector('#decision-engine-map');
+    if (!mapElement) return;
+
+    if (decisionCenterState.decisionEngineMap) {
+      global.setTimeout(() => decisionCenterState.decisionEngineMap.invalidateSize(), 0);
+      return;
+    }
+
+    decisionCenterState.decisionEngineMap = global.L.map(mapElement, {
+      zoomControl: true,
+      attributionControl: true,
+      minZoom: 4,
+      maxZoom: 14,
+    }).setView([-2.8, 23.5], 5);
+
+    global.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 19,
+    }).addTo(decisionCenterState.decisionEngineMap);
+
+    decisionCenterState.decisionEngineMarkers = global.L.layerGroup().addTo(decisionCenterState.decisionEngineMap);
+
+    if (shared.fetchApiJson) {
+      shared.fetchApiJson('/map/layers/provinces?limit=5000')
+        .then((payload) => {
+          const features = asArray(payload?.features);
+          if (!features.length) return;
+          global.L.geoJSON({ type: 'FeatureCollection', features }, {
+            style: shared.styleProvinceFeature,
+          }).addTo(decisionCenterState.decisionEngineMap);
+        })
+        .catch(() => {});
+    }
+
+    global.setTimeout(() => decisionCenterState.decisionEngineMap?.invalidateSize(), 0);
+  }
+
+  function updateDecisionEngineMapMarkers(sites) {
+    if (!decisionCenterState.decisionEngineMap || !decisionCenterState.decisionEngineMarkers) return;
+
+    const filtered = decisionCenterState.decisionEngineFilter
+      ? sites.filter((site) => site.priority_level === decisionCenterState.decisionEngineFilter)
+      : sites;
+
+    decisionCenterState.decisionEngineMarkers.clearLayers();
+    const bounds = [];
+
+    filtered.forEach((site) => {
+      const lat = Number(site.latitude);
+      const lng = Number(site.longitude);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+      const color = getDecisionEngineMarkerColor(site);
+      const marker = global.L.circleMarker([lat, lng], {
+        radius: decisionCenterState.decisionEngineSelectedSiteId === site.site_id ? 9 : 6,
+        color,
+        fillColor: color,
+        fillOpacity: 0.85,
+        weight: decisionCenterState.decisionEngineSelectedSiteId === site.site_id ? 3 : 1,
+      });
+      marker.bindPopup(`
+        <strong>${escapeHtml(site.site_name || '')}</strong><br/>
+        Score : ${Number(site.priority_score || 0).toFixed(1)}<br/>
+        ${escapeHtml(site.priority_level_label || '')}
+      `);
+      marker.on('click', () => selectDecisionEngineSite(site.site_id));
+      marker.addTo(decisionCenterState.decisionEngineMarkers);
+      bounds.push([lat, lng]);
+    });
+
+    if (bounds.length > 1) {
+      decisionCenterState.decisionEngineMap.fitBounds(bounds, { padding: [24, 24], maxZoom: 8 });
+    } else if (bounds.length === 1) {
+      decisionCenterState.decisionEngineMap.setView(bounds[0], 8);
+    }
+  }
+
+  function selectDecisionEngineSite(siteId) {
+    decisionCenterState.decisionEngineSelectedSiteId = siteId;
+    renderDecisionEngineTable(decisionCenterState.decisionEngineSites);
+    updateDecisionEngineMapMarkers(decisionCenterState.decisionEngineSites);
+
+    const site = decisionCenterState.decisionEngineSites.find((item) => item.site_id === siteId);
+    if (site && decisionCenterState.decisionEngineMap) {
+      const lat = Number(site.latitude);
+      const lng = Number(site.longitude);
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        decisionCenterState.decisionEngineMap.setView([lat, lng], 10);
+      }
+    }
+  }
+
+  function bindDecisionEngineFilters() {
+    const container = document.querySelector('#decision-engine-filters');
+    if (!container || container.dataset.bound === 'true') return;
+    container.dataset.bound = 'true';
+
+    container.querySelectorAll('[data-priority-filter]').forEach((button) => {
+      button.addEventListener('click', () => {
+        decisionCenterState.decisionEngineFilter = button.dataset.priorityFilter || '';
+        container.querySelectorAll('[data-priority-filter]').forEach((item) => {
+          item.classList.toggle('is-active', item === button);
+        });
+        renderDecisionEngineTable(decisionCenterState.decisionEngineSites);
+        updateDecisionEngineMapMarkers(decisionCenterState.decisionEngineSites);
+      });
+    });
+  }
+
+  function bindDecisionEngineRecomputeButton() {
+    const button = document.querySelector('#decision-engine-recompute-btn');
+    if (!button || button.dataset.bound === 'true') return;
+    button.dataset.bound = 'true';
+
+    button.addEventListener('click', () => {
+      const shared = getShared();
+      const tbody = document.querySelector('#decision-engine-table-body');
+      if (typeof shared.canUseTelecomDbData === 'function' && !shared.canUseTelecomDbData()) {
+        if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="decision-center-program-note">Scores disponibles en mode DB.</td></tr>';
+        return;
+      }
+      if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="decision-center-program-loading">Recalcul des scores en cours…</td></tr>';
+      const run = typeof shared.fetchApiJson === 'function'
+        ? shared.fetchApiJson('/api/decision/recompute-site-scores', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) })
+        : Promise.reject(new Error('API indisponible'));
+      run
+        .then(() => loadDecisionEnginePanel(true))
+        .catch(() => {
+          if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="decision-center-program-error">Recalcul impossible.</td></tr>';
+        });
+    });
+  }
+
+  function loadDecisionEnginePanel(forceReload) {
+    if (decisionCenterState.decisionEngineLoaded && !forceReload) {
+      initializeDecisionEngineMap();
+      updateDecisionEngineMapMarkers(decisionCenterState.decisionEngineSites);
+      global.setTimeout(() => decisionCenterState.decisionEngineMap?.invalidateSize(), 0);
+      return Promise.resolve();
+    }
+    if (decisionCenterState.decisionEngineLoading && !forceReload) return Promise.resolve();
+
+    const tbody = document.querySelector('#decision-engine-table-body');
+    const shared = getShared();
+    bindDecisionEngineFilters();
+    bindDecisionEngineRecomputeButton();
+
+    decisionCenterState.decisionEngineLoading = true;
+    if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="decision-center-program-loading">Chargement des scores…</td></tr>';
+
+    const canUseDb = typeof shared.canUseTelecomDbData === 'function' && shared.canUseTelecomDbData();
+    if (!canUseDb) {
+      renderDecisionEngineKpis({ total: 0, critical: 0, high: 0, medium: 0, low: 0 });
+      if (tbody) {
+        tbody.innerHTML = '<tr><td colspan="7" class="decision-center-program-note">Moteur de décision disponible en mode DB (DATA_MODE=db).</td></tr>';
+      }
+      decisionCenterState.decisionEngineLoaded = true;
+      decisionCenterState.decisionEngineLoading = false;
+      initializeDecisionEngineMap();
+      return Promise.resolve();
+    }
+
+    const fetchScores = typeof shared.fetchJson === 'function'
+      ? shared.fetchJson('/api/decision/site-scores?limit=500')
+      : Promise.reject(new Error('API indisponible'));
+
+    return fetchScores
+      .then((payload) => {
+        if (!payload?.sites) throw new Error('Scores indisponibles');
+        if (payload.summary?.total === 0) {
+          return shared.fetchApiJson('/api/decision/recompute-site-scores', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({}),
+          }).then(() => shared.fetchJson('/api/decision/site-scores?limit=500'));
+        }
+        return payload;
+      })
+      .then((payload) => {
+        decisionCenterState.decisionEngineSites = asArray(payload?.sites);
+        renderDecisionEngineKpis(payload?.summary);
+        renderDecisionEngineTable(decisionCenterState.decisionEngineSites);
+        initializeDecisionEngineMap();
+        updateDecisionEngineMapMarkers(decisionCenterState.decisionEngineSites);
+        decisionCenterState.decisionEngineLoaded = true;
+      })
+      .catch(() => {
+        renderDecisionEngineKpis({ total: 0, critical: 0, high: 0, medium: 0, low: 0 });
+        if (tbody) {
+          tbody.innerHTML = '<tr><td colspan="7" class="decision-center-program-note">Scores disponibles en mode DB après recalcul.</td></tr>';
+        }
+        initializeDecisionEngineMap();
+        decisionCenterState.decisionEngineLoaded = true;
+      })
+      .finally(() => {
+        decisionCenterState.decisionEngineLoading = false;
+        global.setTimeout(() => decisionCenterState.decisionEngineMap?.invalidateSize(), 0);
+      });
+  }
+
   function loadBusinessArchitecturePanel(forceReload) {
     if (decisionCenterState.programsLoading) return Promise.resolve();
     if (decisionCenterState.programsLoaded && !forceReload) return Promise.resolve();
@@ -644,6 +960,13 @@
       loadSites300ProgramPanel(false);
       loadTelecomReferentialPanel(false);
       loadSpatialAnalysisPanel(false);
+    }
+
+    if (tabId === 'priorisation') {
+      loadDecisionEnginePanel(false);
+      global.setTimeout(() => {
+        decisionCenterState.decisionEngineMap?.invalidateSize();
+      }, 120);
     }
   }
 
@@ -735,6 +1058,8 @@
     bindDecisionCenterTabs();
     bindSites40MapButton();
     bindSpatialAnalysisRunButton();
+    bindDecisionEngineFilters();
+    bindDecisionEngineRecomputeButton();
 
     if (!decisionCenterState.initialized) {
       setDecisionCenterTab('vue-nationale');
@@ -759,6 +1084,7 @@
   global.loadFdsuSites300Program = loadSites300ProgramPanel;
   global.loadTelecomReferentialPanel = loadTelecomReferentialPanel;
   global.loadSpatialAnalysisPanel = loadSpatialAnalysisPanel;
+  global.loadDecisionEnginePanel = loadDecisionEnginePanel;
   global.loadPriorityMatrix = loadPriorityMatrix;
   global.FDSU_BUSINESS_DATA_BASE = BUSINESS_DATA_BASE;
   global.FDSU_PROGRAMS_DATA_BASE = PROGRAMS_DATA_BASE;
