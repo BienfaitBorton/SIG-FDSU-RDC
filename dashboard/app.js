@@ -67,6 +67,9 @@ const ROUTE_TO_MODULE = {
   explorateur_sources: 'explorateur_sources',
   sites: 'sites',
   decision: 'decision',
+  'decision-view': 'centre_decision',
+  decision_view: 'centre_decision',
+  centre_decision: 'centre_decision',
   knowledge: 'connaissances',
   connaissances: 'connaissances',
   enrichment: 'enrichissement',
@@ -85,6 +88,7 @@ const MODULE_TO_ROUTE = {
   explorateur_sources: 'sources',
   sites: 'sites',
   decision: 'decision',
+  centre_decision: 'decision-view',
   connaissances: 'knowledge',
   enrichissement: 'enrichment',
   import: 'import',
@@ -256,6 +260,7 @@ const moduleNames = {
   explorateur_sources: 'Explorateur de Sources',
   sites: 'Sites FDSU',
   decision: 'Aide à la décision',
+  centre_decision: 'Centre de Décision FDSU',
   connaissances: 'Centre de connaissances',
   enrichissement: 'Enrichissement territorial',
   import: 'Import',
@@ -608,6 +613,15 @@ function setActiveModule(moduleKey) {
 
   if (normalizedModule === 'sites') {
     initializeSitesModule();
+  }
+
+  if (normalizedModule === 'centre_decision') {
+    if (typeof initializeDecisionCenterModule === 'function') {
+      initializeDecisionCenterModule();
+    }
+    if (window.decisionCenterState?.map) {
+      window.setTimeout(() => window.decisionCenterState.map.invalidateSize(), 0);
+    }
   }
 
   if (normalizedModule === 'decision') {
@@ -8409,4 +8423,23 @@ window.goBackNationalContext = goBackNationalContext;
 window.resetDashboardNationalView = resetDashboardNationalView;
 window.renderNationalContextMap = renderNationalContextMap;
 
-initializeApplication();
+window.SigFdsuShared = {
+  API_BASE_URL,
+  fetchApiJson,
+  fetchJson,
+  styleRdcBoundaryFeature,
+  styleProvinceFeature,
+  styleTerritoryFeature,
+  styleCollectivitesFeature,
+  makePointMarker,
+};
+
+function bootSigFdsuApplication() {
+  initializeApplication();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootSigFdsuApplication);
+} else {
+  bootSigFdsuApplication();
+}

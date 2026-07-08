@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SIG-FDSU RDC - Interface de gestion</title>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="modules/decision-center/decision-center.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 </head>
 <body>
@@ -26,6 +27,10 @@
         <button class="nav-item" data-module="cartographie" data-route="map">
           <span class="nav-icon">🗺️</span>
           <span>Cartographie</span>
+        </button>
+        <button class="nav-item" data-module="centre_decision" data-route="decision-view">
+          <span class="nav-icon">🎯</span>
+          <span>Centre de Décision</span>
         </button>
         <button class="nav-item" data-module="referentiel" data-route="referentiel">
           <span class="nav-icon">🧭</span>
@@ -440,6 +445,136 @@
               <button type="button" id="attribute-prev">Précédent</button>
               <span id="attribute-page-info">Page 1 / 1</span>
               <button type="button" id="attribute-next">Suivant</button>
+            </div>
+          </section>
+        </div>
+
+        <div class="module-panel hidden decision-center-module" id="decision-view-panel" data-module="centre_decision">
+          <header class="decision-center-header">
+            <div class="decision-center-header-copy">
+              <p class="panel-label">Module stratégique</p>
+              <h2>Centre de Décision FDSU</h2>
+              <p>Plateforme nationale d'aide à la décision géospatiale.</p>
+            </div>
+            <div class="decision-center-header-actions" aria-label="Actions du centre de décision">
+              <span class="decision-center-action-slot">Recherche</span>
+              <span class="decision-center-action-slot">Export</span>
+              <span class="decision-center-action-slot">Paramètres</span>
+            </div>
+          </header>
+
+          <nav class="decision-center-tabs" id="decision-center-tabs" role="tablist" aria-label="Onglets du centre de décision">
+            <button type="button" class="decision-center-tab is-active" data-decision-tab="vue-nationale" role="tab" aria-selected="true">Vue nationale</button>
+            <button type="button" class="decision-center-tab" data-decision-tab="priorisation" role="tab" aria-selected="false">Priorisation</button>
+            <button type="button" class="decision-center-tab" data-decision-tab="analyse-multicritere" role="tab" aria-selected="false">Analyse multicritère</button>
+            <button type="button" class="decision-center-tab" data-decision-tab="simulations" role="tab" aria-selected="false">Simulations</button>
+            <button type="button" class="decision-center-tab" data-decision-tab="tableaux-de-bord" role="tab" aria-selected="false">Tableaux de bord</button>
+            <button type="button" class="decision-center-tab" data-decision-tab="rapports" role="tab" aria-selected="false">Rapports</button>
+          </nav>
+
+          <section class="decision-center-tab-panel is-active" data-decision-tab-panel="vue-nationale" role="tabpanel">
+            <div class="decision-center-kpi-grid" id="decision-center-kpi-grid">
+              <article class="decision-center-kpi-card summary-card">
+                <p class="summary-label">Nombre total de sites</p>
+                <p class="summary-value" id="decision-kpi-total-sites">1 248</p>
+              </article>
+              <article class="decision-center-kpi-card summary-card">
+                <p class="summary-label">Sites prioritaires</p>
+                <p class="summary-value" id="decision-kpi-priority-sites">186</p>
+              </article>
+              <article class="decision-center-kpi-card summary-card">
+                <p class="summary-label">Population couverte</p>
+                <p class="summary-value" id="decision-kpi-covered-population">12,4 M</p>
+              </article>
+              <article class="decision-center-kpi-card summary-card">
+                <p class="summary-label">Population non couverte</p>
+                <p class="summary-value" id="decision-kpi-uncovered-population">3,8 M</p>
+              </article>
+              <article class="decision-center-kpi-card summary-card">
+                <p class="summary-label">CCN planifiés</p>
+                <p class="summary-value" id="decision-kpi-planned-ccn">42</p>
+              </article>
+              <article class="decision-center-kpi-card summary-card">
+                <p class="summary-label">Investissement estimé</p>
+                <p class="summary-value" id="decision-kpi-investment">28,6 M USD</p>
+              </article>
+            </div>
+
+            <div class="decision-center-map-row">
+              <div class="decision-center-map-shell">
+                <div class="decision-center-map-chrome">
+                  <div class="decision-center-map-toolbar">
+                    <button type="button" class="primary-button cartography-chip-button" id="decision-center-reset-national" disabled>Vue nationale</button>
+                  </div>
+                </div>
+                <div id="decision-center-national-map" class="decision-center-national-map" role="region" aria-label="Carte nationale du centre de décision"></div>
+              </div>
+              <aside class="decision-center-side-panel" aria-label="Classement des sites">
+                <p class="panel-label">Classement</p>
+                <h3>Classement des sites</h3>
+                <div class="decision-center-placeholder-body">
+                  <p>Le classement des sites prioritaires sera affiché ici.</p>
+                </div>
+              </aside>
+            </div>
+
+            <div class="decision-center-lower-row">
+              <section class="decision-center-placeholder-panel" aria-label="Sites prioritaires">
+                <p class="panel-label">Priorisation</p>
+                <h3>Liste des sites prioritaires</h3>
+                <ul class="decision-center-priority-list" id="decision-center-priority-list">
+                  <li>Site prioritaire A — placeholder</li>
+                  <li>Site prioritaire B — placeholder</li>
+                  <li>Site prioritaire C — placeholder</li>
+                </ul>
+              </section>
+              <aside class="decision-center-placeholder-panel" id="decision-center-decision-sheet" aria-label="Fiche décisionnelle">
+                <p class="panel-label">Analyse</p>
+                <h3>Fiche décisionnelle</h3>
+                <div class="decision-center-placeholder-body">
+                  <p>Sélectionnez un site sur la carte pour afficher son analyse.</p>
+                </div>
+              </aside>
+            </div>
+          </section>
+
+          <section class="decision-center-tab-panel" data-decision-tab-panel="priorisation" role="tabpanel" hidden>
+            <div class="decision-center-tab-placeholder">
+              <p class="panel-label">Priorisation</p>
+              <h3>Espace Priorisation</h3>
+              <p>Structure prête pour le moteur de priorisation FDSU.</p>
+            </div>
+          </section>
+
+          <section class="decision-center-tab-panel" data-decision-tab-panel="analyse-multicritere" role="tabpanel" hidden>
+            <div class="decision-center-tab-placeholder">
+              <p class="panel-label">Analyse multicritère</p>
+              <h3>Espace Analyse multicritère</h3>
+              <p>Structure prête pour les analyses multicritères territoriales.</p>
+            </div>
+          </section>
+
+          <section class="decision-center-tab-panel" data-decision-tab-panel="simulations" role="tabpanel" hidden>
+            <div class="decision-center-tab-placeholder">
+              <p class="panel-label">Simulations</p>
+              <h3>Espace Simulations</h3>
+              <p>Structure prête pour les scénarios et simulations d'investissement.</p>
+            </div>
+          </section>
+
+          <section class="decision-center-tab-panel" data-decision-tab-panel="tableaux-de-bord" role="tabpanel" hidden>
+            <div class="decision-center-tab-placeholder">
+              <p class="panel-label">Tableaux de bord</p>
+              <h3>Espace Tableaux de bord</h3>
+              <p>Structure prête pour les indicateurs décisionnels consolidés.</p>
+            </div>
+          </section>
+
+          <section class="decision-center-tab-panel" data-decision-tab-panel="rapports" role="tabpanel" hidden>
+            <div class="decision-center-tab-placeholder">
+              <p class="panel-label">Rapports</p>
+              <h3>Espace Rapports</h3>
+              <p>Structure prête pour la génération de rapports décisionnels.</p>
             </div>
           </section>
         </div>
@@ -1056,5 +1191,6 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <script src="app.js"></script>
+  <script src="modules/decision-center/decision-center.js"></script>
 </body>
 </html>
