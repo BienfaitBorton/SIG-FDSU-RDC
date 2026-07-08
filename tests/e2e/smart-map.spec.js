@@ -33,6 +33,36 @@ async function waitForAppReady(page) {
   await expect(page.locator('#api-status')).not.toHaveText('Chargement...', { timeout: 30_000 });
 }
 
+async function openCartographyDrawerPanel(page, drawerKey) {
+  await page.evaluate((key) => {
+    document.querySelectorAll('.cartography-drawer').forEach((panel) => {
+      panel.classList.add('hidden');
+      panel.setAttribute('aria-hidden', 'true');
+    });
+    document.querySelectorAll('.cartography-fab[data-carto-drawer]').forEach((fab) => {
+      fab.classList.remove('is-active');
+      fab.setAttribute('aria-expanded', 'false');
+    });
+    const drawer = document.querySelector(`#carto-drawer-${key}`);
+    const button = document.querySelector(`.cartography-fab[data-carto-drawer="${key}"]`);
+    drawer?.classList.remove('hidden');
+    drawer?.setAttribute('aria-hidden', 'false');
+    button?.classList.add('is-active');
+    button?.setAttribute('aria-expanded', 'true');
+    if (window.cartographyState) window.cartographyState.activeDrawer = key;
+  }, drawerKey);
+  await expect(page.locator(`#carto-drawer-${drawerKey}`)).not.toHaveClass(/hidden/);
+}
+
+async function checkCartographyLayer(page, layerKey) {
+  await page.evaluate((key) => {
+    const checkbox = document.querySelector(`#layer-list input[data-layer="${key}"]`);
+    if (!checkbox || checkbox.disabled) return;
+    checkbox.checked = true;
+    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+  }, layerKey);
+}
+
 async function openCartography(page) {
   await page.goto(MAP_URL);
   await expect(page.locator('#cartographie-panel')).not.toHaveClass(/hidden/);
@@ -40,6 +70,7 @@ async function openCartography(page) {
   await page.waitForFunction(() => typeof window.L !== 'undefined', null, { timeout: 45_000 });
   await expect(page.locator('#map.leaflet-container')).toBeVisible({ timeout: 30_000 });
   await page.waitForFunction(() => window.cartographyState?.initialized === true, null, { timeout: 30_000 });
+  await openCartographyDrawerPanel(page, 'layers');
 }
 
 async function waitForNationalMapReady(page) {
@@ -87,13 +118,14 @@ test.describe('SIG-FDSU RDC – Smart Map', () => {
       const checkbox = document.querySelector('#layer-list input[data-layer="provinces"]');
       return checkbox && !checkbox.disabled;
     }, null, { timeout: 60_000 });
-    await provincesCheckbox.check();
+    await checkCartographyLayer(page, 'provinces');
 
     await page.waitForFunction(() => {
       const state = window.cartographyState;
       return state?.layerStatus?.provinces === true || state?.features?.provinces?.length > 0;
     }, null, { timeout: 45_000 });
 
+    await openCartographyDrawerPanel(page, 'entities');
     await expect(page.locator('#map-synchronized-list .sync-list-header, #map-synchronized-list .zone-detail-empty')).toBeVisible();
   });
 
@@ -142,7 +174,7 @@ test.describe('SIG-FDSU RDC – Smart Map', () => {
       const checkbox = document.querySelector('#layer-list input[data-layer="provinces"]');
       return checkbox && !checkbox.disabled;
     }, null, { timeout: 60_000 });
-    await page.locator('#layer-list input[data-layer="provinces"]').check();
+    await checkCartographyLayer(page, 'provinces');
     await page.waitForFunction(() => (window.cartographyState?.features?.provinces?.length ?? 0) > 0, null, { timeout: 45_000 });
 
     const map = page.locator('#map.leaflet-container');
@@ -152,8 +184,8 @@ test.describe('SIG-FDSU RDC – Smart Map', () => {
     await page.mouse.click(box.x + box.width * 0.52, box.y + box.height * 0.48);
 
     const infoPanel = page.locator('#carto-info');
+    await expect(page.locator('#carto-drawer-info')).not.toHaveClass(/hidden/);
     await expect(infoPanel).toBeVisible();
-    await expect(page.locator('.cartography-sidebar')).toBeVisible();
 
     const infoText = await infoPanel.innerText();
     const hasSelection = !infoText.includes('Sélectionnez un objet');
@@ -171,8 +203,13 @@ test.describe('SIG-FDSU RDC – Smart Map', () => {
       { timeout: 60_000 },
     );
 
-    const firstRow = page.locator('#attribute-table-body tr[data-feature-id]').first();
-    await firstRow.click();
+    await page.evaluate(() => {
+      document.querySelectorAll('.cartography-drawer').forEach((panel) => {
+        panel.classList.add('hidden');
+        panel.setAttribute('aria-hidden', 'true');
+      });
+      document.querySelector('#attribute-table-body tr[data-feature-id]')?.click();
+    });
 
     await page.waitForFunction(
       () => !document.querySelector('#carto-info')?.textContent?.includes('Sélectionnez un objet'),
@@ -224,7 +261,7 @@ test.describe('SIG-FDSU RDC – Smart Map', () => {
       const checkbox = document.querySelector('#layer-list input[data-layer="provinces"]');
       return checkbox && !checkbox.disabled;
     }, null, { timeout: 60_000 });
-    await page.locator('#layer-list input[data-layer="provinces"]').check();
+    await checkCartographyLayer(page, 'provinces');
     await page.waitForFunction(() => typeof window.cartographyState !== 'undefined', null, { timeout: 10_000 });
     await page.waitForTimeout(1500);
 
@@ -236,17 +273,18 @@ test.describe('SIG-FDSU RDC – Smart Map', () => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await openCartography(page);
 
-    await expect(page.locator('.cartography-layout')).toBeVisible();
-    await expect(page.locator('.cartography-main')).toBeVisible();
-    await expect(page.locator('.cartography-sidebar')).toBeVisible();
+    await expect(page.locator('.cartography-workspace')).toBeVisible();
+    await expect(page.locator('.cartography-map-stage')).toBeVisible();
+    await expect(page.locator('.cartography-fab-group')).toBeVisible();
 
-    const layoutBox = await page.locator('.cartography-layout').boundingBox();
-    const sidebarBox = await page.locator('.cartography-sidebar').boundingBox();
-    expect(layoutBox).toBeTruthy();
-    expect(sidebarBox).toBeTruthy();
-    if (layoutBox && sidebarBox) {
-      expect(sidebarBox.width).toBeGreaterThan(200);
-      expect(layoutBox.width).toBeGreaterThan(sidebarBox.width);
+    const stageBox = await page.locator('.cartography-map-stage').boundingBox();
+    const mapBox = await page.locator('#map.leaflet-container').boundingBox();
+    expect(stageBox).toBeTruthy();
+    expect(mapBox).toBeTruthy();
+    if (stageBox && mapBox) {
+      expect(mapBox.width).toBeGreaterThan(700);
+      expect(mapBox.height).toBeGreaterThan(400);
+      expect(stageBox.width).toBeGreaterThan(900);
     }
   });
 });
@@ -260,7 +298,7 @@ test.describe('SIG-FDSU RDC – Module Cartographie libre', () => {
       return state?.layerStatus?.provinces === true || (state?.features?.provinces?.length ?? 0) > 0;
     }, null, { timeout: 60_000 });
 
-    await page.locator('#layer-list input[data-layer="provinces"]').check();
+    await checkCartographyLayer(page, 'provinces');
     await page.waitForFunction(() => {
       const state = window.cartographyState;
       return state?.map?.hasLayer(state.layers.provinces)
@@ -268,7 +306,7 @@ test.describe('SIG-FDSU RDC – Module Cartographie libre', () => {
     }, null, { timeout: 30_000 });
 
     await page.waitForFunction(() => (window.cartographyState?.features?.zones?.length ?? 0) > 0, null, { timeout: 30_000 });
-    await page.locator('#layer-list input[data-layer="zones"]').check();
+    await checkCartographyLayer(page, 'zones');
 
     await page.waitForFunction(() => {
       const state = window.cartographyState;
@@ -289,6 +327,25 @@ test.describe('SIG-FDSU RDC – Module Cartographie libre', () => {
     expect(stats.zonesOnMap).toBe(true);
     expect(stats.provincesCount).toBe(stats.totalProvinces);
     expect(stats.zonesCount).toBeGreaterThan(0);
+  });
+
+  test('couches administratives inférieures se chargent et s’affichent', async ({ page }) => {
+    await openCartography(page);
+
+    for (const layerKey of ['territoires', 'collectivites', 'groupements', 'villages']) {
+      await page.waitForFunction((key) => {
+        const checkbox = document.querySelector(`#layer-list input[data-layer="${key}"]`);
+        return checkbox && !checkbox.disabled;
+      }, layerKey, { timeout: 60_000 });
+
+      await checkCartographyLayer(page, layerKey);
+      await page.waitForFunction((key) => {
+        const state = window.cartographyState;
+        return state?.map?.hasLayer(state.layers[key])
+          && (state.layers[key].getLayers().length ?? 0) > 0
+          && (state.features?.[key]?.length ?? 0) > 0;
+      }, layerKey, { timeout: 45_000 });
+    }
   });
 });
 

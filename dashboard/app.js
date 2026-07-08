@@ -277,6 +277,8 @@ const cartographyState = {
   map: null,
   layers: {},
   layerControl: null,
+  layerLoadPromises: {},
+  activeDrawer: null,
   layerStatus: {
     zones: null,
     collectivites: null,
@@ -1900,14 +1902,12 @@ function initializeReferentielModule() {
 }
 
 function initializeCartographyModule() {
-  if (cartographyState.initialized) {
-    return;
-  }
-
   if (typeof L === 'undefined') {
     showZonesMessage('Couche Zones FDSU non disponible.');
     return;
   }
+
+  setupCartographyDrawers();
 
   const mapElement = document.querySelector('#map');
   const layerList = document.querySelector('#layer-list');
@@ -1918,6 +1918,13 @@ function initializeCartographyModule() {
   cartographyState.synchronizedListElement = document.querySelector('#map-synchronized-list');
 
   if (!mapElement || !layerList || !zoomAutoButton || !cartographyState.infoElement || !cartographyState.zonesMessageElement) {
+    return;
+  }
+
+  if (cartographyState.initialized && cartographyState.map) {
+    setupCartographyResizeObserver(mapElement);
+    window.setTimeout(() => cartographyState.map.invalidateSize(), 0);
+    preloadCartographyLayers();
     return;
   }
 
@@ -1982,27 +1989,12 @@ function initializeCartographyModule() {
     }),
   };
 
-  cartographyState.layerControl = L.control.layers(
-    {},
-    {
-      'Zones FDSU': cartographyState.layers.zones,
-      'Provinces': cartographyState.layers.provinces,
-      'Territoires': cartographyState.layers.territoires,
-      'Collectivités': cartographyState.layers.collectivites,
-      'Groupements': cartographyState.layers.groupements,
-      'Localités': cartographyState.layers.villages,
-      'Sites FDSU': cartographyState.layers.sites,
-      'Missions': cartographyState.layers.missions,
-    },
-    { collapsed: false }
-  ).addTo(cartographyState.map);
-
   setupLayerControls(layerList);
   setupMapInteractions();
-  setupLeafletLayerControlSync();
   renderMapBreadcrumb();
   renderSynchronizedLayerList();
   setupThematicControls();
+  setupCartographyResizeObserver(mapElement);
   zoomAutoButton.addEventListener('click', resetMapToNationalView);
   fitMapToRdc();
   loadGeneratedLayer({
@@ -2015,6 +2007,191 @@ function initializeCartographyModule() {
   loadWebSigLayers();
   setupAttributeExplorer();
   cartographyState.initialized = true;
+}
+
+function setupCartographyDrawers() {
+  if (document.body.dataset.cartographyDrawersBound === 'true') return;
+  document.body.dataset.cartographyDrawersBound = 'true';
+
+  const drawerMap = {
+    layers: document.querySelector('#carto-drawer-layers'),
+    legend: document.querySelector('#carto-drawer-legend'),
+    entities: document.querySelector('#carto-drawer-entities'),
+    info: document.querySelector('#carto-drawer-info'),
+  };
+
+  const closeDrawer = () => {
+    Object.values(drawerMap).forEach((drawer) => {
+      drawer?.classList.add('hidden');
+      drawer?.setAttribute('aria-hidden', 'true');
+    });
+    document.querySelectorAll('.cartography-fab[data-carto-drawer]').forEach((button) => {
+      button.classList.remove('is-active');
+      button.setAttribute('aria-expanded', 'false');
+    });
+    cartographyState.activeDrawer = null;
+    window.setTimeout(() => cartographyState.map?.invalidateSize(), 0);
+  };
+
+  document.querySelectorAll('.cartography-fab[data-carto-drawer]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const drawerKey = button.dataset.cartoDrawer;
+      const drawer = drawerMap[drawerKey];
+      if (!drawer) return;
+      const isOpen = !drawer.classList.contains('hidden') && cartographyState.activeDrawer === drawerKey;
+      closeDrawer();
+      if (isOpen) return;
+      drawer.classList.remove('hidden');
+      drawer.setAttribute('aria-hidden', 'false');
+      button.classList.add('is-active');
+      button.setAttribute('aria-expanded', 'true');
+      cartographyState.activeDrawer = drawerKey;
+      window.setTimeout(() => cartographyState.map?.invalidateSize(), 0);
+    });
+  });
+
+  document.querySelectorAll('[data-carto-drawer-close]').forEach((button) => {
+    button.addEventListener('click', closeDrawer);
+  });
+}
+
+function setupCartographyResizeObserver(mapElement) {
+  if (!mapElement || cartographyState.resizeObserver) return;
+  const invalidate = () => {
+    if (cartographyState.map) {
+      window.requestAnimationFrame(() => cartographyState.map.invalidateSize());
+    }
+  };
+  if (typeof ResizeObserver !== 'undefined') {
+    cartographyState.resizeObserver = new ResizeObserver(invalidate);
+    cartographyState.resizeObserver.observe(mapElement);
+  }
+  if (cartographyState.windowResizeBound !== true) {
+    cartographyState.windowResizeBound = true;
+    window.addEventListener('resize', invalidate);
+  }
+}
+
+function isManagedCartographyLayer(layerKey) {
+  return Boolean(WEB_SIG_LAYER_DEFINITIONS[layerKey]) || layerKey === 'zones';
+}
+
+function ensureCartographyLayerLoaded(layerKey) {
+  if (layerKey === 'zones') {
+    return ensureCartographyLayerLoaded('provinces').then(() => {
+      if (asArray(cartographyState.features.zones).length === 0) {
+        buildZoneLayerFromProvinces(asArray(cartographyState.data.provinces));
+      }
+      return asArray(cartographyState.features.zones);
+    });
+  }
+  const definition = WEB_SIG_LAYER_DEFINITIONS[layerKey];
+  if (!definition) return Promise.resolve([]);
+  const layer = cartographyState.layers[layerKey];
+  const hasLayerGraphics = (layer?.getLayers?.().length ?? 0) > 0;
+  if (asArray(cartographyState.features[layerKey]).length > 0 && hasLayerGraphics) {
+    return Promise.resolve(cartographyState.features[layerKey]);
+  }
+  if (asArray(cartographyState.data[layerKey]).length > 0) {
+    hydrateCartographyLayerFromCache(layerKey);
+    if ((layer?.getLayers?.().length ?? 0) > 0) {
+      return Promise.resolve(cartographyState.features[layerKey]);
+    }
+  }
+  if (!cartographyState.layerLoadPromises[layerKey]) {
+    cartographyState.layerLoadPromises[layerKey] = loadWebSigLayer(layerKey, definition)
+      .finally(() => {
+        cartographyState.layerLoadPromises[layerKey] = null;
+      });
+  }
+  return cartographyState.layerLoadPromises[layerKey];
+}
+
+function hydrateCartographyLayerFromCache(layerKey) {
+  const definition = WEB_SIG_LAYER_DEFINITIONS[layerKey];
+  const layer = cartographyState.layers[layerKey];
+  if (!definition || !layer) return false;
+  const filteredItems = asArray(cartographyState.data[layerKey])
+    .filter((item) => !definition.filter || definition.filter(item));
+  const featureCollection = buildFeatureCollection(filteredItems, layerKey);
+  cartographyState.features[layerKey] = featureCollection.features;
+  cartographyState.featureLayers[layerKey] = {};
+  layer.clearLayers();
+  if (featureCollection.features.length > 0) {
+    layer.addData(featureCollection);
+    cartographyState.layerStatus[layerKey] = true;
+    return true;
+  }
+  cartographyState.layerStatus[layerKey] = filteredItems.length > 0 ? 'attributes-only' : false;
+  return false;
+}
+
+function openCartographyDrawer(drawerKey) {
+  const drawer = document.querySelector(`#carto-drawer-${drawerKey}`);
+  const button = document.querySelector(`.cartography-fab[data-carto-drawer="${drawerKey}"]`);
+  if (!drawer) return;
+  document.querySelectorAll('.cartography-drawer').forEach((panel) => {
+    panel.classList.add('hidden');
+    panel.setAttribute('aria-hidden', 'true');
+  });
+  document.querySelectorAll('.cartography-fab[data-carto-drawer]').forEach((fab) => {
+    fab.classList.remove('is-active');
+    fab.setAttribute('aria-expanded', 'false');
+  });
+  drawer.classList.remove('hidden');
+  drawer.setAttribute('aria-hidden', 'false');
+  if (button) {
+    button.classList.add('is-active');
+    button.setAttribute('aria-expanded', 'true');
+  }
+  cartographyState.activeDrawer = drawerKey;
+  window.setTimeout(() => cartographyState.map?.invalidateSize(), 0);
+}
+
+function setCartographyLayerVisible(layerKey, visible, checkbox) {
+  const layer = cartographyState.layers[layerKey];
+  if (!layer || !cartographyState.map) return Promise.resolve(false);
+
+  if (!visible) {
+    cartographyState.map.removeLayer(layer);
+    if (checkbox) checkbox.checked = false;
+    refreshCartographicLayerPresentation();
+    renderSynchronizedLayerList();
+    updateLayerAvailabilityMessage();
+    return Promise.resolve(true);
+  }
+
+  return ensureCartographyLayerLoaded(layerKey).then(() => {
+    refreshVisibleCartographyLayer(layerKey);
+    const featureCount = layer.getLayers().length;
+    const hasAttributes = asArray(cartographyState.data[layerKey]).length > 0;
+
+    if (featureCount === 0) {
+      if (checkbox) checkbox.checked = false;
+      showZonesMessage(hasAttributes
+        ? `${WEB_SIG_LAYER_DEFINITIONS[layerKey]?.label || layerKey} : données attributaires disponibles, géométrie absente.`
+        : `Aucune donnée disponible pour ${WEB_SIG_LAYER_DEFINITIONS[layerKey]?.label || layerKey}.`);
+      return false;
+    }
+
+    layer.addTo(cartographyState.map);
+    if (checkbox) checkbox.checked = true;
+    refreshCartographicLayerPresentation();
+    renderSynchronizedLayerList(layerKey);
+    fitLayerBounds(layer);
+    updateLayerAvailabilityMessage();
+    return true;
+  });
+}
+
+function preloadCartographyLayers() {
+  const managedKeys = Object.keys(WEB_SIG_LAYER_DEFINITIONS);
+  return Promise.all(managedKeys.map((layerKey) => ensureCartographyLayerLoaded(layerKey).catch(() => [])))
+    .then(() => {
+      updateLayerAvailabilityMessage();
+      renderAttributeExplorer();
+      refreshGlobalSearchIndex();
+    });
 }
 
 function loadGeneratedLayer({ layerKey, filePath, emptyMessage, fallbackMessage, visibleByDefault }) {
@@ -2199,7 +2376,7 @@ const WEB_SIG_LAYER_DEFINITIONS = {
 };
 
 function loadWebSigLayers() {
-  loadWebSigLayer('provinces', WEB_SIG_LAYER_DEFINITIONS.provinces);
+  preloadCartographyLayers();
 }
 
 function loadWebSigLayer(layerKey, definition) {
@@ -2215,7 +2392,7 @@ function loadWebSigLayer(layerKey, definition) {
       cartographyState.features[layerKey] = featureCollection.features;
       cartographyState.featureLayers[layerKey] = {};
 
-      if (!layer) return;
+      if (!layer) return filteredItems;
       layer.clearLayers();
       if (featureCollection.features.length > 0) {
         layer.addData(featureCollection);
@@ -2230,13 +2407,6 @@ function loadWebSigLayer(layerKey, definition) {
       const checkbox = document.querySelector(`input[data-layer="${layerKey}"]`);
       if (checkbox) {
         checkbox.disabled = filteredItems.length === 0;
-        checkbox.checked = Boolean(definition.visibleByDefault && featureCollection.features.length > 0);
-      }
-
-      if (definition.visibleByDefault && featureCollection.features.length > 0) {
-        layer.addTo(cartographyState.map);
-        refreshCartographicLayerPresentation();
-        fitLayerBounds(layer);
       }
 
       if (layerKey === 'provinces') {
@@ -2246,13 +2416,16 @@ function loadWebSigLayer(layerKey, definition) {
       renderAttributeExplorer();
       refreshGlobalSearchIndex();
       updateLayerAvailabilityMessage();
+      return filteredItems;
     })
-    .catch(() => {
+    .catch((error) => {
+      console.error(`Erreur chargement couche ${layerKey}`, error);
       cartographyState.data[layerKey] = [];
       cartographyState.features[layerKey] = [];
       cartographyState.layerStatus[layerKey] = false;
       updateLayerAvailabilityMessage();
       renderAttributeExplorer();
+      return [];
     });
 }
 
@@ -4143,6 +4316,7 @@ function enrichFeatureDetailsFromApi(feature, layerKey) {
 
 function renderFeatureDetails(feature, layerKey) {
   if (!cartographyState.infoElement) return;
+  openCartographyDrawer('info');
 
   const properties = feature?.properties || {};
   if (['provinces', 'villages', 'collectivites', 'groupements', 'territoires', 'sites', 'missions'].includes(layerKey)) {
@@ -4369,47 +4543,17 @@ function formatAttributeValue(value) {
 }
 
 function setupLayerControls(layerList) {
+  if (layerList.dataset.bound === 'true') return;
+  layerList.dataset.bound = 'true';
+
   layerList.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
     checkbox.addEventListener('change', () => {
       const layerKey = checkbox.dataset.layer;
-      const layer = cartographyState.layers[layerKey];
-      if (!layer || !cartographyState.map) return;
-
-      if (checkbox.checked && layer.getLayers().length === 0 && cartographyState.layerStatus[layerKey] === null && WEB_SIG_LAYER_DEFINITIONS[layerKey]) {
-        loadWebSigLayer(layerKey, WEB_SIG_LAYER_DEFINITIONS[layerKey]).then(() => {
-          if (!checkbox.checked || layer.getLayers().length === 0) return;
-          refreshVisibleCartographyLayer(layerKey);
-          layer.addTo(cartographyState.map);
-          refreshCartographicLayerPresentation();
-          renderSynchronizedLayerList(layerKey);
-          fitLayerBounds(layer);
-        });
-        return;
-      }
-
-      const hasAttributes = asArray(cartographyState.data[layerKey]).length > 0;
-      if (checkbox.checked && layer.getLayers().length === 0 && asArray(cartographyState.features[layerKey]).length > 0) {
-        refreshVisibleCartographyLayer(layerKey);
-      }
-      if (layer.getLayers().length === 0) {
+      if (!isManagedCartographyLayer(layerKey)) {
         checkbox.checked = false;
-        showZonesMessage(hasAttributes
-          ? 'Couche disponible en attributaire uniquement, géométrie manquante.'
-          : 'Aucune donnée disponible pour cette couche.');
         return;
       }
-
-      if (checkbox.checked) {
-        refreshVisibleCartographyLayer(layerKey);
-        layer.addTo(cartographyState.map);
-        refreshCartographicLayerPresentation();
-        renderSynchronizedLayerList(layerKey);
-        fitLayerBounds(layer);
-      } else {
-        cartographyState.map.removeLayer(layer);
-        refreshCartographicLayerPresentation();
-        renderSynchronizedLayerList();
-      }
+      setCartographyLayerVisible(layerKey, checkbox.checked, checkbox);
     });
   });
 }
