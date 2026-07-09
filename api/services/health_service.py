@@ -548,3 +548,55 @@ def get_panel_payload() -> dict[str, Any]:
         "geojson_empty_message": None if data_available else "Aucune donnée santé géolocalisée disponible",
         "table_empty_message": None if data_available else "Les données santé seront intégrées depuis une source officielle.",
     }
+
+
+def get_decision_summary() -> dict[str, Any]:
+    """Synthèse Santé orientée décision FDSU (valeur + explication)."""
+    stats = get_statistics()
+    quality = get_quality_dashboard()
+    details = stats.get("details") or {}
+    total = int(stats.get("total_facilities") or 0)
+    with_geom = int(stats.get("facilities_with_geometry") or 0)
+    hospitals = int(stats.get("hospitals") or 0)
+    centers = int(stats.get("health_centers") or 0)
+
+    with connect_db() as conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(
+                """
+                SELECT COUNT(*) AS c
+                FROM analysis.spatial_relations
+                WHERE relation_type IN ('nearest_hgr', 'nearest_health_center', 'nearest_health_facility')
+                """
+            )
+            proximity_relations = int(cur.fetchone()["c"])
+
+    return {
+        "_meta": {
+            "title": "Synthèse décisionnelle — Référentiel Santé",
+            "strategic_references": [
+                "data/strategic/strategie_fdsu_ccn_2026_2030.docx",
+            ],
+        },
+        "label": "Référentiel Santé",
+        "value": total,
+        "total_facilities": total,
+        "hospitals": hospitals,
+        "health_centers": centers,
+        "facilities_with_geometry": with_geom,
+        "quality_score": quality.get("quality_score") or details.get("quality_score"),
+        "proximity_relations": proximity_relations,
+        "definition": "Établissements sanitaires importés pour croiser sites FDSU et infrastructures sociales à connecter.",
+        "source_table": "health.health_facilities",
+        "calculation_method": "COUNT(*) + agrégats type/géométrie + relations spatiales nearest_hgr/nearest_health_center.",
+        "last_updated": stats.get("computed_at"),
+        "limitations": (
+            None
+            if total > 0
+            else "Aucune donnée santé disponible."
+        ),
+        "recommended_action": "Voir la carte Santé",
+        "by_type": details.get("by_type") or {},
+        "by_province": details.get("by_province") or {},
+        "available": total > 0,
+    }

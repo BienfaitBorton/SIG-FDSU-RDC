@@ -8,7 +8,7 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
 from api.config import DATA_MODE
-from api.services import decision_engine_service
+from api.services import decision_demo_service, decision_engine_service
 
 router = APIRouter()
 
@@ -66,3 +66,24 @@ def decision_panel() -> dict[str, Any]:
 def national_panel() -> dict[str, Any]:
     _ensure_db_mode()
     return decision_engine_service.get_national_panel_payload()
+
+
+@router.get("/explain-kpi", summary="KPI explicables du Centre de Décision")
+def explain_kpi(kpi_key: str | None = Query(None, description="Clé KPI optionnelle")) -> dict[str, Any]:
+    _ensure_db_mode()
+    payload = decision_demo_service.get_explain_kpi_payload(kpi_key)
+    if payload.get("error"):
+        raise HTTPException(status_code=404, detail=payload["error"])
+    return payload
+
+
+@router.get("/decision-intents", summary="Questions métier — Que voulez-vous décider aujourd’hui ?")
+def decision_intents() -> dict[str, Any]:
+    _ensure_db_mode()
+    return decision_demo_service.get_decision_intents()
+
+
+@router.get("/demo-scenarios", summary="Mode démonstration — scénarios superviseur")
+def demo_scenarios() -> dict[str, Any]:
+    _ensure_db_mode()
+    return decision_demo_service.get_demo_scenarios()

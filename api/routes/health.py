@@ -97,6 +97,12 @@ def health_panel() -> dict[str, Any]:
     return health_service.get_panel_payload()
 
 
+@router.get("/decision-summary", summary="Synthèse décisionnelle Santé pour le Centre de Décision")
+def health_decision_summary() -> dict[str, Any]:
+    _ensure_db_mode()
+    return health_service.get_decision_summary()
+
+
 @router.get("/layers/facilities", summary="Couche cartographique structures sanitaires")
 def health_facilities_layer(limit: int = Query(5000, gt=0, le=50000)) -> dict[str, Any]:
     _ensure_db_mode()

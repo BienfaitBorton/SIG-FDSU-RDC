@@ -684,8 +684,15 @@ function setActiveModule(moduleKey) {
   }
 
   if (normalizedModule === 'centre_decision') {
-    if (typeof initializeDecisionCenterModule === 'function') {
-      initializeDecisionCenterModule();
+    if (typeof window.initializeDecisionCenterModule === 'function') {
+      window.initializeDecisionCenterModule();
+    } else {
+      // Module chargé après app.js : réessayer dès que decision-center.js est prêt.
+      window.setTimeout(() => {
+        if (typeof window.initializeDecisionCenterModule === 'function') {
+          window.initializeDecisionCenterModule();
+        }
+      }, 0);
     }
     if (window.decisionCenterState?.map) {
       window.setTimeout(() => window.decisionCenterState.map.invalidateSize(), 0);
@@ -2530,18 +2537,22 @@ function styleTelecomFeature(feature, layerKey) {
 function buildTelecomPopupHtml(properties) {
   const name = properties.infra_name || properties.line_name || properties.polygon_name || properties.name || 'Infrastructure';
   const infraType = properties.infra_type || properties.line_type || properties.polygon_type || properties.infra_category || 'Non renseigné';
+  const distance = properties.distance_to_selected_site_m != null
+    ? `${Math.round(properties.distance_to_selected_site_m)} m`
+    : (properties.distance_m != null ? `${Math.round(properties.distance_m)} m` : '');
   const lines = [
     ['strong', name],
     ['label', 'Type', infraType],
     ['label', 'Opérateur', properties.operator_name || properties.operator_code],
+    ['label', 'Technologie', properties.technology],
+    ['label', 'Distance au site sélectionné', distance],
     ['label', 'Source', properties.source_file],
   ];
   if (properties.province) lines.push(['text', properties.province]);
   if (properties.territoire) lines.push(['text', properties.territoire]);
-  if (properties.technology) lines.push(['label', 'Technologie', properties.technology]);
 
   return `
-    <div class="telecom-popup">
+    <div class="telecom-popup decision-map-popup">
       ${lines.map((entry) => {
         if (entry[0] === 'strong') {
           const value = String(entry[1] || '').trim();
@@ -4521,20 +4532,23 @@ function getZoneCode(feature) {
 function buildFdsuProgramPopupHtml(properties, layerKey) {
   const programmeLabel = properties.programme || getCartographyLayerLabel(layerKey);
   const lines = [
-    ['strong', properties.name || 'Site'],
+    ['strong', properties.name || properties.site_name || 'Site FDSU'],
+    ['label', 'Code', properties.site_code || properties.code || properties.official_code],
+    ['label', 'Localité', properties.localite || properties.locality_name || properties.name],
     ['text', properties.province],
     ['text', properties.territoire],
     ['text', properties.zone],
     ['label', 'Programme', programmeLabel],
+    ['label', 'Statut opérationnel', properties.status || properties.operational_status || 'À renseigner'],
+    ['label', 'Score de priorité', properties.priority_score ?? properties.fdsu_score ?? properties.priority_status ?? 'À calculer'],
+    ['label', 'Niveau de priorité', properties.priority_level_label || properties.priority_level || properties.priority_status],
+    ['label', 'Critères principaux', Array.isArray(properties.top_criteria) ? properties.top_criteria.join(', ') : properties.top_criteria],
+    ['label', 'Distance HGR', properties.distance_hgr_m != null ? `${Math.round(properties.distance_hgr_m)} m` : properties.nearest_hgr],
+    ['label', 'Distance Centre de Santé', properties.distance_health_center_m != null ? `${Math.round(properties.distance_health_center_m)} m` : properties.nearest_health_center],
   ];
 
-  if (layerKey === 'sites_300') {
-    lines.push(['label', 'Statut', properties.status || 'Planifié']);
-    lines.push(['label', 'Score', properties.fdsu_score ?? properties.priority_status ?? 'À calculer']);
-  }
-
   return `
-    <div class="sites-40-popup">
+    <div class="sites-40-popup decision-map-popup">
       ${lines.map((entry) => {
         if (entry[0] === 'strong') {
           const value = String(entry[1] || '').trim();
@@ -4548,6 +4562,7 @@ function buildFdsuProgramPopupHtml(properties, layerKey) {
         const value = String(entry[1] || '').trim();
         return value ? escapeHtml(value) : '';
       }).filter(Boolean).join('<br>')}
+      <br><span class="map-popup-action">Voir fiche site</span>
     </div>
   `;
 }
@@ -4602,10 +4617,16 @@ function onGeoEachFeature(feature, layer, layerKey) {
 
   if (layer.bindPopup) {
     layer.bindPopup(`
-      <strong>${escapeHtml(getFeatureProperty(properties, ['nom', 'name', 'libelle']))}</strong><br>
-      ${escapeHtml(getFeatureProperty(properties, ['type', 'niveau']))}<br>
-      <span>Voir fiche détaillée</span>
-    `);
+      <div class="decision-map-popup">
+        <strong>${escapeHtml(getFeatureProperty(properties, ['nom', 'name', 'libelle']))}</strong><br>
+        Niveau : ${escapeHtml(getFeatureProperty(properties, ['type', 'niveau']) || getCartographyLayerLabel(layerKey))}<br>
+        Parent : ${escapeHtml(getFeatureProperty(properties, ['parent_name', 'province', 'territoire', 'parent']) || '—')}<br>
+        Sites FDSU : ${escapeHtml(properties.fdsu_sites_count ?? properties.sites_count ?? '—')}<br>
+        Établissements santé : ${escapeHtml(properties.health_facilities_count ?? '—')}<br>
+        Indicateurs : ${escapeHtml(properties.available_indicators || 'Référentiel administratif')}<br>
+        <span class="map-popup-action">Voir fiche territoriale</span>
+      </div>
+    `, { maxWidth: 280, className: 'decision-map-popup-wrapper' });
   }
 
   layer.on('mouseover', () => {
@@ -4728,6 +4749,8 @@ function buildCompactTooltipLines(layerKey, properties, stats) {
     if (stats.territoires > 0) lines.push(`${stats.territoires.toLocaleString('fr-FR')} territoires`);
     const population = formatTooltipPopulation(stats.population);
     if (population) lines.push(`Population : ${population}`);
+    if (properties.fdsu_sites_count != null) lines.push(`Sites FDSU : ${properties.fdsu_sites_count}`);
+    if (properties.health_facilities_count != null) lines.push(`Établissements santé : ${properties.health_facilities_count}`);
     return lines;
   }
 
@@ -4739,6 +4762,8 @@ function buildCompactTooltipLines(layerKey, properties, stats) {
     if (stats.localites > 0) lines.push(`${stats.localites.toLocaleString('fr-FR')} localités`);
     const population = formatTooltipPopulation(stats.population);
     if (population) lines.push(`Population : ${population}`);
+    if (properties.fdsu_sites_count != null) lines.push(`Sites FDSU : ${properties.fdsu_sites_count}`);
+    if (properties.health_facilities_count != null) lines.push(`Établissements santé : ${properties.health_facilities_count}`);
     return lines;
   }
 
@@ -4767,14 +4792,20 @@ function buildCompactTooltipLines(layerKey, properties, stats) {
   }
 
   if (layerKey === 'sites_40' || layerKey === 'sites_all' || layerKey === 'sites_300') {
+    const programme = properties.programme
+      || (layerKey === 'sites_300' ? 'Sites 300' : 'Sites 40');
     [
+      ['Code', properties.site_code || properties.code || properties.official_code],
+      ['Programme', programme],
+      ['Statut', properties.status || properties.operational_status || 'À renseigner'],
+      ['Score', properties.priority_score ?? properties.fdsu_score ?? properties.priority_status],
+      ['Niveau', properties.priority_level_label || properties.priority_level],
       ['Province', properties.province],
       ['Territoire', properties.territoire],
       ['Zone', properties.zone],
     ].forEach(([label, value]) => {
       if (isPresentableTooltipValue(value)) lines.push(`${label} : ${value}`);
     });
-    lines.push('Programme : Sites 40');
     return lines;
   }
 

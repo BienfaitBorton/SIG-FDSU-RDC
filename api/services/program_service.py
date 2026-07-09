@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from typing import Any
 
 from api.config import connect_db
@@ -252,4 +253,188 @@ def get_program_statistics() -> dict[str, Any]:
         "sites_planned": sites_planned,
         "by_program": by_program,
         "by_province": by_province,
+    }
+
+
+STATUS_TO_FILL = "Statuts opérationnels à renseigner"
+PENDING_CCN = "Données en cours d'intégration"
+
+
+def _status_bucket_template(labels: list[str]) -> dict[str, Any]:
+    return {label: None for label in labels}
+
+
+def _program_site_status_breakdown(program_code: str) -> dict[str, Any]:
+    with connect_db() as conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(
+                """
+                SELECT COUNT(*) AS total
+                FROM programs.fdsu_sites s
+                JOIN programs.fdsu_programs p ON p.id = s.program_id
+                WHERE p.program_code = %s
+                """,
+                (program_code,),
+            )
+            total = int(cur.fetchone()["total"])
+            cur.execute(
+                """
+                SELECT COALESCE(NULLIF(TRIM(s.status), ''), 'Non renseigné') AS status, COUNT(*) AS count
+                FROM programs.fdsu_sites s
+                JOIN programs.fdsu_programs p ON p.id = s.program_id
+                WHERE p.program_code = %s
+                GROUP BY 1
+                ORDER BY count DESC, status
+                """,
+                (program_code,),
+            )
+            by_status = [dict(row) for row in cur.fetchall()]
+            cur.execute(
+                """
+                SELECT p.program_code, p.program_name, p.status AS program_status,
+                       p.planned_sites, p.executed_sites, p.progress
+                FROM programs.fdsu_programs p
+                WHERE p.program_code = %s
+                LIMIT 1
+                """,
+                (program_code,),
+            )
+            program = dict(cur.fetchone() or {})
+
+    detailed_statuses_present = any(
+        str(row.get("status") or "").lower()
+        in {
+            "installé",
+            "installe",
+            "opérationnel",
+            "operationnel",
+            "bloqué",
+            "bloque",
+            "en cours d'installation",
+            "non démarré",
+            "non demarre",
+            "en étude",
+            "en etude",
+            "prêt à déployer",
+            "pret a deployer",
+            "priorisé",
+            "priorise",
+        }
+        for row in by_status
+    )
+
+    return {
+        "program_code": program_code,
+        "program_name": program.get("program_name"),
+        "program_status": program.get("program_status"),
+        "total": total,
+        "by_raw_status": by_status,
+        "detailed_statuses_available": detailed_statuses_present,
+        "status_message": None if detailed_statuses_present else STATUS_TO_FILL,
+        "planned_sites": program.get("planned_sites"),
+        "executed_sites": program.get("executed_sites"),
+        "progress": program.get("progress"),
+    }
+
+
+def get_status_summary() -> dict[str, Any]:
+    stats = get_program_statistics()
+    return {
+        "_meta": {
+            "title": "Synthèse des statuts programmes FDSU",
+            "last_updated": datetime.now(timezone.utc).isoformat(),
+        },
+        "program_count": stats["program_count"],
+        "total_sites": stats["total_sites"],
+        "sites_in_execution": stats["sites_in_execution"],
+        "sites_planned": stats["sites_planned"],
+        "by_program": stats["by_program"],
+        "limitations": STATUS_TO_FILL,
+        "recommended_action": "Renseigner les statuts opérationnels détaillés des sites.",
+    }
+
+
+def get_sites_followup() -> dict[str, Any]:
+    sites_40 = _program_site_status_breakdown("PROG_SITES_40")
+    sites_300 = _program_site_status_breakdown("PROG_SITES_300")
+
+    sites_40_followup = {
+        **sites_40,
+        "metrics": {
+            "total_sites": sites_40["total"],
+            "installes": None,
+            "en_cours_installation": None,
+            "operationnels": None,
+            "non_demarres": None,
+            "bloques": None,
+            "taux_avancement": None,
+        },
+        "metrics_status": STATUS_TO_FILL,
+        "raw_status_available": sites_40["by_raw_status"],
+        "definition": "Suivi opérationnel du programme pilote Sites 40.",
+        "source_table": "programs.fdsu_sites",
+        "calculation_method": "Agrégation par statut opérationnel (champs détaillés à renseigner).",
+        "recommended_action": "Suivre les 40 sites pilotes",
+    }
+
+    sites_300_followup = {
+        **sites_300,
+        "metrics": {
+            "total": sites_300["total"],
+            "planifies": sites_300["total"] if sites_300["total"] else None,
+            "priorises": None,
+            "en_etude": None,
+            "prets_a_deployer": None,
+            "bloques": None,
+            "taux_preparation": None,
+        },
+        "metrics_status": STATUS_TO_FILL,
+        "raw_status_available": sites_300["by_raw_status"],
+        "definition": "Suivi de préparation du programme Sites 300 (matrice de priorisation).",
+        "source_table": "programs.fdsu_sites",
+        "calculation_method": "Agrégation par statut de préparation (champs détaillés à renseigner).",
+        "recommended_action": "Suivre les 300 sites planifiés",
+        "strategic_reference": "data/strategic/matrice_priorisation_300_sites.xlsx",
+    }
+
+    ccn_followup = {
+        "program_code": "PROG_CCN",
+        "program_name": "Centres Communautaires Numériques",
+        "metrics": {
+            "ccn_planifies": None,
+            "ccn_installes": None,
+            "ccn_operationnels": None,
+        },
+        "metrics_status": PENDING_CCN,
+        "display": PENDING_CCN,
+        "definition": "Suivi CCN selon la stratégie FDSU–CCN 2026–2030.",
+        "source_table": "programme CCN (non intégré opérationnellement)",
+        "calculation_method": "Non calculable sans inventaire CCN.",
+        "recommended_action": "Planifier les CCN",
+        "strategic_reference": "data/strategic/strategie_fdsu_ccn_2026_2030.docx",
+        "available": False,
+    }
+
+    return {
+        "_meta": {
+            "title": "Suivi opérationnel des programmes FDSU",
+            "architecture": "extensible",
+            "last_updated": datetime.now(timezone.utc).isoformat(),
+        },
+        "sites_40": sites_40_followup,
+        "sites_300": sites_300_followup,
+        "ccn": ccn_followup,
+        "global_limitations": (
+            "Les statuts opérationnels détaillés (installé, bloqué, opérationnel, etc.) "
+            "ne sont pas encore renseignés de façon homogène dans programs.fdsu_sites.status. "
+            f"{STATUS_TO_FILL}."
+        ),
+        "recommended_action": "Activer le suivi en direct après renseignement des statuts.",
+        "extensible_fields": [
+            "operational_status",
+            "installation_started_at",
+            "operational_at",
+            "blocked_reason",
+            "preparation_stage",
+        ],
     }

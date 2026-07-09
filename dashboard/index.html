@@ -515,10 +515,10 @@
             <div class="decision-center-header-copy">
               <p class="panel-label">Module stratégique</p>
               <h2>Centre de Décision FDSU</h2>
-              <p>Plateforme nationale d'aide à la décision géospatiale.</p>
+              <p>Plateforme nationale d'aide à la décision géospatiale — alignée stratégie FDSU–CCN 2026–2030 et matrice de priorisation 300 sites.</p>
             </div>
             <div class="decision-center-header-actions" aria-label="Actions du centre de décision">
-              <span class="decision-center-action-slot">Recherche</span>
+              <button type="button" class="primary-button" id="decision-center-demo-mode-btn">Mode démonstration</button>
               <span class="decision-center-action-slot">Export</span>
               <span class="decision-center-action-slot">Paramètres</span>
             </div>
@@ -535,86 +535,182 @@
           </nav>
 
           <section class="decision-center-tab-panel is-active" data-decision-tab-panel="vue-nationale" role="tabpanel">
-            <div class="decision-center-kpi-grid" id="decision-center-kpi-grid" aria-live="polite">
-              <article class="decision-center-kpi-card summary-card" data-kpi-key="sites_fdsu">
+            <section class="decision-intent-panel" id="decision-intent-panel" aria-label="Questions métier">
+              <div class="decision-intent-header">
+                <p class="panel-label">Aide à la décision</p>
+                <h3>Que voulez-vous décider aujourd’hui ?</h3>
+                <p class="decision-intent-intro">Choisissez une question métier FDSU. Chaque action s’appuie sur les données PostgreSQL/PostGIS et les documents stratégiques intégrés.</p>
+              </div>
+              <div class="decision-intent-grid" id="decision-intent-grid" aria-live="polite">
+                <p class="decision-center-program-loading">Chargement des questions métier…</p>
+              </div>
+            </section>
+
+            <section class="decision-demo-panel" id="decision-demo-panel" aria-label="Mode démonstration" hidden>
+              <div class="decision-demo-header">
+                <div>
+                  <p class="panel-label">Présentation superviseur</p>
+                  <h3>Mode démonstration</h3>
+                  <p>Trois scénarios prêts à cliquer — sans explication technique.</p>
+                </div>
+                <button type="button" class="secondary-button" id="decision-demo-close-btn">Fermer</button>
+              </div>
+              <div class="decision-demo-scenario-nav" id="decision-demo-scenario-nav" role="tablist" aria-label="Scénarios de démonstration"></div>
+              <div class="decision-demo-scenario-body" id="decision-demo-scenario-body" aria-live="polite">
+                <p class="decision-center-program-loading">Chargement des scénarios…</p>
+              </div>
+            </section>
+
+            <div class="decision-center-kpi-grid decision-explainable-kpi-grid" id="decision-center-kpi-grid" aria-live="polite">
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_fdsu">
                 <p class="summary-label">Sites FDSU</p>
                 <p class="summary-value" id="decision-kpi-sites-fdsu">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Nombre total de sites enregistrés dans les programmes FDSU.</p>
+                <p class="kpi-meta"><span data-kpi-field="source">programs.fdsu_sites</span></p>
+                <p class="kpi-meta"><span data-kpi-field="calculation">Sites 40 + Sites 300</span></p>
+                <p class="kpi-meta"><span data-kpi-field="updated">—</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_fdsu">Voir le détail</button>
               </article>
-              <article class="decision-center-kpi-card summary-card" data-kpi-key="sites_priority">
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_priority">
                 <p class="summary-label">Sites prioritaires</p>
                 <p class="summary-value" id="decision-kpi-sites-priority">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Sites avec niveau critique ou élevé.</p>
+                <p class="kpi-meta"><span data-kpi-field="source">decision.fdsu_site_scores</span></p>
+                <p class="kpi-meta"><span data-kpi-field="calculation">critical + high</span></p>
+                <p class="kpi-meta"><span data-kpi-field="updated">—</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_priority">Voir le détail</button>
               </article>
-              <article class="decision-center-kpi-card summary-card" data-kpi-key="sites_critical">
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_critical">
                 <p class="summary-label">Sites critiques</p>
                 <p class="summary-value" id="decision-kpi-sites-critical">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Intervention immédiate requise.</p>
+                <p class="kpi-meta"><span data-kpi-field="source">decision.fdsu_site_scores</span></p>
+                <p class="kpi-meta"><span data-kpi-field="calculation">priority_level = critical</span></p>
+                <p class="kpi-meta"><span data-kpi-field="updated">—</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_critical">Voir le détail</button>
               </article>
-              <article class="decision-center-kpi-card summary-card" data-kpi-key="sites_high">
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_high">
                 <p class="summary-label">Sites à priorité élevée</p>
                 <p class="summary-value" id="decision-kpi-sites-high">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Déploiement prioritaire dans la séquence nationale.</p>
+                <p class="kpi-meta"><span data-kpi-field="source">decision.fdsu_site_scores</span></p>
+                <p class="kpi-meta"><span data-kpi-field="calculation">priority_level = high</span></p>
+                <p class="kpi-meta"><span data-kpi-field="updated">—</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_high">Voir le détail</button>
               </article>
-              <article class="decision-center-kpi-card summary-card" data-kpi-key="referentials_active">
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="referentials_active">
                 <p class="summary-label">Référentiels actifs</p>
                 <p class="summary-value" id="decision-kpi-referentials-active">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Référentiels sectoriels opérationnels.</p>
+                <p class="kpi-meta"><span data-kpi-field="source">reference.reference_catalog</span></p>
+                <p class="kpi-meta"><span data-kpi-field="calculation">status = active</span></p>
+                <p class="kpi-meta"><span data-kpi-field="updated">—</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="referentials_active">Voir le détail</button>
               </article>
-              <article class="decision-center-kpi-card summary-card" data-kpi-key="referentials_planned">
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="referentials_planned">
                 <p class="summary-label">Référentiels planifiés</p>
                 <p class="summary-value" id="decision-kpi-referentials-planned">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Référentiels encore planifiés.</p>
+                <p class="kpi-meta"><span data-kpi-field="source">reference.reference_catalog</span></p>
+                <p class="kpi-meta"><span data-kpi-field="calculation">status = planned</span></p>
+                <p class="kpi-meta"><span data-kpi-field="updated">—</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="referentials_planned">Voir le détail</button>
               </article>
             </div>
 
-            <div class="decision-center-kpi-secondary" id="decision-center-kpi-secondary" aria-label="Indicateurs opérationnels nationaux">
-              <article class="decision-center-kpi-card summary-card" data-kpi-key="sites_40">
+            <div class="decision-center-kpi-secondary decision-explainable-kpi-grid" id="decision-center-kpi-secondary" aria-label="Indicateurs opérationnels nationaux">
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_40">
                 <p class="summary-label">Sites 40</p>
                 <p class="summary-value" id="decision-kpi-sites-40">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Programme pilote en exécution.</p>
+                <p class="kpi-meta"><span data-kpi-field="source">programs.fdsu_sites</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_40">Voir le détail</button>
               </article>
-              <article class="decision-center-kpi-card summary-card" data-kpi-key="sites_300">
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_300">
                 <p class="summary-label">Sites 300</p>
                 <p class="summary-value" id="decision-kpi-sites-300">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Programme planifié (matrice 300 sites).</p>
+                <p class="kpi-meta"><span data-kpi-field="source">programs.fdsu_sites</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_300">Voir le détail</button>
               </article>
-              <article class="decision-center-kpi-card summary-card" data-kpi-key="sites_scored">
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_scored">
                 <p class="summary-label">Sites scorés</p>
                 <p class="summary-value" id="decision-kpi-sites-scored">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Sites scorés par le moteur de décision.</p>
+                <p class="kpi-meta"><span data-kpi-field="source">decision.fdsu_site_scores</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_scored">Voir le détail</button>
               </article>
-              <article class="decision-center-kpi-card summary-card" data-kpi-key="referentials_in_progress">
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="health_facilities">
+                <p class="summary-label">Référentiel Santé</p>
+                <p class="summary-value" id="decision-kpi-health-facilities">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Établissements sanitaires importés (KMZ national).</p>
+                <p class="kpi-meta"><span data-kpi-field="source">health.health_facilities</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="health_facilities">Voir la carte Santé</button>
+              </article>
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="referentials_in_progress">
                 <p class="summary-label">Référentiels en cours</p>
                 <p class="summary-value" id="decision-kpi-referentials-in-progress">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Référentiels en consolidation.</p>
+                <p class="kpi-meta"><span data-kpi-field="source">reference.reference_catalog</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="referentials_in_progress">Voir le détail</button>
               </article>
-              <article class="decision-center-kpi-card summary-card" data-kpi-key="telecom_objects">
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="telecom_objects">
                 <p class="summary-label">Objets télécoms</p>
                 <p class="summary-value" id="decision-kpi-telecom-objects">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Infrastructures télécom nationales.</p>
+                <p class="kpi-meta"><span data-kpi-field="source">telecom.infrastructure</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="telecom_objects">Voir le détail</button>
               </article>
-              <article class="decision-center-kpi-card summary-card" data-kpi-key="provinces">
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="provinces">
                 <p class="summary-label">Provinces</p>
                 <p class="summary-value" id="decision-kpi-provinces">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Référentiel administratif.</p>
+                <p class="kpi-meta"><span data-kpi-field="source">provinces</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="provinces">Voir le détail</button>
               </article>
-              <article class="decision-center-kpi-card summary-card" data-kpi-key="territoires">
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="territoires">
                 <p class="summary-label">Territoires</p>
                 <p class="summary-value" id="decision-kpi-territoires">—</p>
-              </article>
-              <article class="decision-center-kpi-card summary-card" data-kpi-key="localites">
-                <p class="summary-label">Localités</p>
-                <p class="summary-value" id="decision-kpi-localites">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Référentiel territorial.</p>
+                <p class="kpi-meta"><span data-kpi-field="source">territoires</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="territoires">Voir le détail</button>
               </article>
             </div>
 
-            <div class="decision-center-kpi-pending" id="decision-center-kpi-pending" aria-label="Indicateurs prospectifs">
-              <article class="decision-center-kpi-card summary-card is-pending" data-kpi-key="population_covered">
+            <div class="decision-center-kpi-pending decision-explainable-kpi-grid" id="decision-center-kpi-pending" aria-label="Indicateurs prospectifs">
+              <article class="decision-center-kpi-card decision-explainable-kpi is-pending" data-kpi-key="population_covered">
                 <p class="summary-label">Population couverte</p>
-                <p class="summary-value is-pending-value" id="decision-kpi-covered-population">Données en cours d'intégration</p>
+                <p class="summary-value is-pending-value" id="decision-kpi-covered-population">Donnée non encore calculée — nécessite référentiel Population / CCN / Budget.</p>
+                <p class="kpi-definition">Indicateur stratégique FDSU non calculable sans référentiel Population.</p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="population_covered">Voir le détail</button>
               </article>
-              <article class="decision-center-kpi-card summary-card is-pending" data-kpi-key="population_uncovered">
+              <article class="decision-center-kpi-card decision-explainable-kpi is-pending" data-kpi-key="population_uncovered">
                 <p class="summary-label">Population non couverte</p>
-                <p class="summary-value is-pending-value" id="decision-kpi-uncovered-population">Données en cours d'intégration</p>
+                <p class="summary-value is-pending-value" id="decision-kpi-uncovered-population">Donnée non encore calculée — nécessite référentiel Population / CCN / Budget.</p>
+                <p class="kpi-definition">Indicateur stratégique FDSU non calculable sans référentiel Population.</p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="population_uncovered">Voir le détail</button>
               </article>
-              <article class="decision-center-kpi-card summary-card is-pending" data-kpi-key="planned_ccn">
+              <article class="decision-center-kpi-card decision-explainable-kpi is-pending" data-kpi-key="planned_ccn">
                 <p class="summary-label">CCN planifiés</p>
-                <p class="summary-value is-pending-value" id="decision-kpi-planned-ccn">Données en cours d'intégration</p>
+                <p class="summary-value is-pending-value" id="decision-kpi-planned-ccn">Donnée non encore calculée — nécessite référentiel Population / CCN / Budget.</p>
+                <p class="kpi-definition">Inventaire CCN non encore intégré opérationnellement.</p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="planned_ccn">Voir le détail</button>
               </article>
-              <article class="decision-center-kpi-card summary-card is-pending" data-kpi-key="estimated_investment">
+              <article class="decision-center-kpi-card decision-explainable-kpi is-pending" data-kpi-key="estimated_investment">
                 <p class="summary-label">Investissement estimé</p>
-                <p class="summary-value is-pending-value" id="decision-kpi-investment">Données en cours d'intégration</p>
+                <p class="summary-value is-pending-value" id="decision-kpi-investment">Donnée non encore calculée — nécessite référentiel Population / CCN / Budget.</p>
+                <p class="kpi-definition">Référentiel Budget non branché.</p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="estimated_investment">Voir le détail</button>
               </article>
             </div>
+
+            <aside class="decision-kpi-detail-drawer" id="decision-kpi-detail-drawer" hidden aria-label="Détail KPI">
+              <div class="decision-kpi-detail-header">
+                <h4 id="decision-kpi-detail-title">Détail indicateur</h4>
+                <button type="button" class="secondary-button" id="decision-kpi-detail-close">Fermer</button>
+              </div>
+              <div id="decision-kpi-detail-body" class="decision-kpi-detail-body"></div>
+            </aside>
 
             <div class="decision-center-map-row">
               <div class="decision-center-map-shell">
@@ -652,6 +748,30 @@
                 </div>
               </aside>
             </div>
+
+            <section class="decision-program-followup" id="decision-program-followup" aria-label="Suivi opérationnel des programmes">
+              <div class="decision-program-followup-header">
+                <div>
+                  <p class="panel-label">Pilotage opérationnel</p>
+                  <h3>Suivi opérationnel des programmes</h3>
+                  <p>Sites 40, Sites 300 et CCN — architecture extensible pour le suivi en direct des projets FDSU.</p>
+                </div>
+              </div>
+              <div class="decision-program-followup-grid" id="decision-program-followup-grid" aria-live="polite">
+                <article class="decision-followup-card" id="decision-followup-sites-40">
+                  <h4>Sites 40</h4>
+                  <p class="decision-center-program-loading">Chargement…</p>
+                </article>
+                <article class="decision-followup-card" id="decision-followup-sites-300">
+                  <h4>Sites 300</h4>
+                  <p class="decision-center-program-loading">Chargement…</p>
+                </article>
+                <article class="decision-followup-card" id="decision-followup-ccn">
+                  <h4>CCN</h4>
+                  <p class="decision-center-program-loading">Chargement…</p>
+                </article>
+              </div>
+            </section>
 
             <section class="decision-center-business-architecture" id="decision-center-business-architecture" aria-label="Architecture métier FDSU">
               <div class="decision-center-business-architecture-header">
@@ -1539,7 +1659,8 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-  <script src="app.js"></script>
+  <!-- decision-center.js avant app.js : app.js boot immédiat (readyState interactive) sinon rate l'init des onglets -->
   <script src="modules/decision-center/decision-center.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

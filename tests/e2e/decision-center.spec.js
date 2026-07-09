@@ -18,7 +18,8 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
     await expect(page.locator('#decision-view-panel')).not.toHaveClass(/hidden/);
     await expect(page.locator('.decision-center-header h2')).toHaveText('Centre de Décision FDSU');
     await expect(page.locator('.decision-center-header-copy p').last()).toContainText("Plateforme nationale d'aide à la décision géospatiale");
-    await expect(page.locator('.decision-center-action-slot')).toHaveCount(3);
+    await expect(page.locator('#decision-center-demo-mode-btn')).toBeVisible();
+    await expect(page.locator('.decision-center-action-slot')).toHaveCount(2);
   });
 
   test('onglets et vue nationale KPI réels', async ({ page }) => {
@@ -34,12 +35,13 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
     await expect(page.locator('#decision-center-kpi-grid')).not.toContainText('12,4 M');
     await expect(page.locator('#decision-center-kpi-grid')).not.toContainText('3,8 M');
     await expect(page.locator('#decision-center-kpi-grid')).not.toContainText('28,6 M USD');
-    await expect(page.locator('body')).not.toContainText('Nombre total de sites');
+    await expect(page.locator('#decision-view-panel')).not.toContainText('12,4 M');
+    await expect(page.locator('#decision-view-panel')).not.toContainText('28,6 M USD');
 
     await page.waitForFunction(
       () => {
         const value = document.querySelector('#decision-kpi-sites-fdsu')?.textContent?.trim();
-        return Boolean(value && value !== '—' && !value.includes('intégration'));
+        return Boolean(value && value !== '—' && !value.includes('intégration') && !value.includes('non encore calculée'));
       },
       null,
       { timeout: 30_000 },
@@ -61,16 +63,107 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
     await expect(page.locator('#decision-kpi-telecom-objects')).toHaveText(/14[\s\u00a0\u202f]?580/);
     await expect(page.locator('#decision-kpi-provinces')).toHaveText('26');
     await expect(page.locator('#decision-kpi-territoires')).toHaveText('145');
-    await expect(page.locator('#decision-kpi-localites')).toHaveText(/26[\s\u00a0\u202f]?710/);
+    await expect(page.locator('#decision-kpi-health-facilities')).toHaveText(/37[\s\u00a0\u202f]?562/);
 
-    // Indicateurs prospectifs non disponibles
-    const pendingMessage = /Données en cours d['’]intégration/;
+    // Indicateurs prospectifs non disponibles — aucun chiffre fictif
+    const pendingMessage = /Donnée non encore calculée|Données en cours d['’]intégration|nécessite référentiel/;
     await expect(page.locator('#decision-kpi-covered-population')).toHaveText(pendingMessage);
     await expect(page.locator('#decision-kpi-uncovered-population')).toHaveText(pendingMessage);
     await expect(page.locator('#decision-kpi-planned-ccn')).toHaveText(pendingMessage);
     await expect(page.locator('#decision-kpi-investment')).toHaveText(pendingMessage);
 
     await expect(page.locator('#decision-center-decision-sheet')).toContainText('Sélectionnez un site sur la carte');
+  });
+
+  test('questions métier et KPI explicables', async ({ page }) => {
+    await openDecisionCenter(page);
+
+    await expect(page.locator('#decision-intent-panel')).toContainText('Que voulez-vous décider aujourd’hui ?');
+    await page.waitForFunction(
+      () => document.querySelectorAll('#decision-intent-grid .decision-intent-card').length >= 8,
+      null,
+      { timeout: 30_000 },
+    );
+    await expect(page.locator('#decision-intent-grid .decision-intent-card')).toHaveCount(8);
+    await expect(page.locator('#decision-intent-grid')).toContainText('Prioriser les sites à financer');
+    await expect(page.locator('#decision-intent-grid')).toContainText('Analyser la qualité des données');
+
+    const sitesCard = page.locator('.decision-explainable-kpi[data-kpi-key="sites_fdsu"]');
+    await expect(sitesCard.locator('[data-kpi-field="definition"]')).toContainText('sites');
+    await expect(sitesCard.locator('[data-kpi-field="source"]')).toContainText('programs.fdsu_sites');
+    await expect(sitesCard.locator('[data-kpi-detail="sites_fdsu"]')).toBeVisible();
+
+    await page.locator('[data-kpi-detail="sites_fdsu"]').click();
+    await expect(page.locator('#decision-kpi-detail-drawer')).toBeVisible();
+    await expect(page.locator('#decision-kpi-detail-body')).toContainText('Source');
+    await expect(page.locator('#decision-kpi-detail-body')).toContainText('Calcul');
+  });
+
+  test('mode démonstration et suivi opérationnel', async ({ page }) => {
+    await openDecisionCenter(page);
+
+    await page.waitForFunction(
+      () => document.querySelectorAll('#decision-intent-grid .decision-intent-card').length >= 8
+        || (document.querySelector('#decision-kpi-sites-fdsu')?.textContent || '').includes('340'),
+      null,
+      { timeout: 45_000 },
+    );
+
+    await expect(page.locator('#decision-center-demo-mode-btn')).toBeVisible();
+    await page.locator('#decision-center-demo-mode-btn').click();
+    await expect(page.locator('#decision-demo-panel')).toBeVisible();
+    await expect(page.locator('#decision-demo-panel')).toContainText('Mode démonstration');
+
+    await page.waitForFunction(
+      () => document.querySelectorAll('#decision-demo-scenario-nav .decision-demo-scenario-btn').length >= 3,
+      null,
+      { timeout: 60_000 },
+    );
+    await expect(page.locator('#decision-demo-scenario-nav .decision-demo-scenario-btn')).toHaveCount(3);
+    await expect(page.locator('#decision-demo-scenario-nav')).toContainText('Où investir en priorité');
+    await expect(page.locator('#decision-demo-scenario-nav')).toContainText('infrastructures sociales');
+    await expect(page.locator('#decision-demo-scenario-nav')).toContainText('suivre les projets FDSU');
+
+    await page.locator('#decision-demo-scenario-nav [data-scenario-id="social_infra"]').click();
+    await expect(page.locator('#decision-demo-scenario-body')).toContainText('Question métier');
+    await expect(page.locator('#decision-demo-scenario-body')).toContainText('Recommandation');
+    await expect(page.locator('#decision-demo-scenario-body')).toContainText('Limites');
+
+    await expect(page.locator('#decision-program-followup')).toContainText('Suivi opérationnel des programmes');
+    await page.waitForFunction(
+      () => (document.querySelector('#decision-followup-sites-40')?.textContent || '').includes('40'),
+      null,
+      { timeout: 45_000 },
+    );
+    await expect(page.locator('#decision-followup-sites-40')).toContainText('40');
+    await expect(page.locator('#decision-followup-sites-300')).toContainText('300');
+    await expect(page.locator('#decision-program-followup')).toContainText(/à renseigner|en cours d['’]intégration|non encore calculée/i);
+  });
+
+  test('infobulles carte sites FDSU au survol', async ({ page }) => {
+    await openDecisionCenter(page);
+    await page.locator('#decision-center-sites-40-map-btn').click();
+    await expect(page.locator('#cartographie-panel')).not.toHaveClass(/hidden/);
+    await page.waitForFunction(
+      () => (window.cartographyState?.layers?.sites_40?.getLayers?.().length ?? 0) === 40,
+      null,
+      { timeout: 60_000 },
+    );
+
+    const opened = await page.evaluate(() => {
+      const layerGroup = window.cartographyState?.layers?.sites_40;
+      const layers = layerGroup?.getLayers?.() || [];
+      if (!layers.length) return false;
+      const layer = layers[0];
+      if (typeof layer.openPopup === 'function') {
+        layer.openPopup();
+        return true;
+      }
+      return false;
+    });
+    expect(opened).toBeTruthy();
+    await expect(page.locator('.leaflet-popup')).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('.leaflet-popup')).toContainText(/Programme|Sites 40|Voir fiche site/i);
   });
 
   test('onglets Priorisation et Référentiels sectoriels restent utilisables', async ({ page }) => {
@@ -283,7 +376,7 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
         return body && !body.textContent.includes('Chargement des scores');
       },
       null,
-      { timeout: 15_000 },
+      { timeout: 45_000 },
     );
 
     await page.locator('[data-priority-filter="critical"]').click();

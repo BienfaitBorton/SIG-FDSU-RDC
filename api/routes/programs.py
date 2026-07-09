@@ -32,6 +32,18 @@ def program_statistics() -> dict[str, Any]:
     return program_service.get_program_statistics()
 
 
+@router.get("/status-summary", summary="Synthèse des statuts programmes FDSU")
+def program_status_summary() -> dict[str, Any]:
+    _ensure_db_mode()
+    return program_service.get_status_summary()
+
+
+@router.get("/sites-followup", summary="Suivi opérationnel Sites 40 / Sites 300 / CCN")
+def program_sites_followup() -> dict[str, Any]:
+    _ensure_db_mode()
+    return program_service.get_sites_followup()
+
+
 @router.get("/sites", summary="Lister les sites FDSU")
 def list_sites(
     program_code: str | None = Query(None, description="Filtrer par code programme (ex. PROG_SITES_40)"),

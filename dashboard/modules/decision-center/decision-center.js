@@ -29,11 +29,11 @@
     { key: 'sites_40', elementId: 'decision-kpi-sites-40' },
     { key: 'sites_300', elementId: 'decision-kpi-sites-300' },
     { key: 'sites_scored', elementId: 'decision-kpi-sites-scored' },
+    { key: 'health_facilities', elementId: 'decision-kpi-health-facilities' },
     { key: 'referentials_in_progress', elementId: 'decision-kpi-referentials-in-progress' },
     { key: 'telecom_objects', elementId: 'decision-kpi-telecom-objects' },
     { key: 'provinces', elementId: 'decision-kpi-provinces' },
     { key: 'territoires', elementId: 'decision-kpi-territoires' },
-    { key: 'localites', elementId: 'decision-kpi-localites' },
   ];
 
   const NATIONAL_PENDING_KPI_BINDINGS = [
@@ -42,6 +42,9 @@
     { key: 'planned_ccn', elementId: 'decision-kpi-planned-ccn' },
     { key: 'estimated_investment', elementId: 'decision-kpi-investment' },
   ];
+
+  const NOT_CALCULATED_MESSAGE = 'Donnée non encore calculée — nécessite référentiel Population / CCN / Budget.';
+  const STATUS_TO_FILL_MESSAGE = 'Statuts opérationnels à renseigner';
 
   const decisionCenterState = {
     initialized: false,
@@ -52,6 +55,14 @@
     resizeObserver: null,
     nationalPanelLoaded: false,
     nationalPanelLoading: false,
+    explainKpis: {},
+    intentsLoaded: false,
+    followupLoaded: false,
+    demoScenarios: [],
+    demoActiveScenarioId: null,
+    demoVisible: false,
+    businessPanelsLoading: false,
+    businessPanelsPromise: null,
     programsLoaded: false,
     programsLoading: false,
     sites40Loaded: false,
@@ -109,7 +120,7 @@
   function resolveKpiDisplay(kpi) {
     if (!kpi || kpi.available === false || kpi.value == null) {
       return {
-        text: kpi?.display || NATIONAL_PANEL_PENDING_MESSAGE,
+        text: kpi?.display || kpi?.limitations || NOT_CALCULATED_MESSAGE || NATIONAL_PANEL_PENDING_MESSAGE,
         pending: true,
       };
     }
@@ -119,11 +130,37 @@
     };
   }
 
-  function renderNationalPanelKpis(payload) {
+  function applyExplainableKpiCard(key, kpi) {
+    const card = document.querySelector(`.decision-explainable-kpi[data-kpi-key="${key}"]`);
+    if (!card || !kpi) return;
+    const definition = card.querySelector('[data-kpi-field="definition"]');
+    const source = card.querySelector('[data-kpi-field="source"]');
+    const calculation = card.querySelector('[data-kpi-field="calculation"]');
+    const updated = card.querySelector('[data-kpi-field="updated"]');
+    if (definition && kpi.definition) definition.textContent = kpi.definition;
+    if (source && kpi.source_table) source.textContent = kpi.source_table;
+    if (calculation && kpi.calculation_method) calculation.textContent = kpi.calculation_method;
+    if (updated) {
+      const stamp = kpi.last_updated ? String(kpi.last_updated).slice(0, 19).replace('T', ' ') : '—';
+      updated.textContent = `Mise à jour : ${stamp}`;
+    }
+    card.classList.toggle('is-pending', kpi.available === false);
+  }
+
+  function renderNationalPanelKpis(payload, explainPayload) {
     const kpis = payload?.kpis || {};
     const synthesis = payload?.synthesis || {};
+    const explained = explainPayload?.kpis || decisionCenterState.explainKpis || {};
+    decisionCenterState.explainKpis = explained;
 
     NATIONAL_SYNTHESIS_KPI_BINDINGS.forEach((binding) => {
+      const explainedKpi = explained[binding.key];
+      if (explainedKpi) {
+        const resolved = resolveKpiDisplay(explainedKpi);
+        setNationalKpiElement(binding.elementId, resolved.text, resolved.pending);
+        applyExplainableKpiCard(binding.key, explainedKpi);
+        return;
+      }
       const fromSynthesis = synthesis[binding.synthesisKey];
       if (fromSynthesis != null) {
         setNationalKpiElement(binding.elementId, formatNationalKpiNumber(fromSynthesis), false);
@@ -134,13 +171,17 @@
     });
 
     NATIONAL_OPERATIONAL_KPI_BINDINGS.forEach((binding) => {
-      const resolved = resolveKpiDisplay(kpis[binding.key]);
+      const explainedKpi = explained[binding.key] || kpis[binding.key];
+      const resolved = resolveKpiDisplay(explainedKpi);
       setNationalKpiElement(binding.elementId, resolved.text, resolved.pending);
+      if (explained[binding.key]) applyExplainableKpiCard(binding.key, explained[binding.key]);
     });
 
     NATIONAL_PENDING_KPI_BINDINGS.forEach((binding) => {
-      const resolved = resolveKpiDisplay(kpis[binding.key]);
-      setNationalKpiElement(binding.elementId, resolved.text || NATIONAL_PANEL_PENDING_MESSAGE, true);
+      const explainedKpi = explained[binding.key] || kpis[binding.key];
+      const resolved = resolveKpiDisplay(explainedKpi);
+      setNationalKpiElement(binding.elementId, resolved.text || NOT_CALCULATED_MESSAGE, true);
+      if (explained[binding.key]) applyExplainableKpiCard(binding.key, explained[binding.key]);
     });
   }
 
@@ -150,8 +191,252 @@
       setNationalKpiElement(binding.elementId, pendingMessage, true);
     });
     NATIONAL_PENDING_KPI_BINDINGS.forEach((binding) => {
-      setNationalKpiElement(binding.elementId, NATIONAL_PANEL_PENDING_MESSAGE, true);
+      setNationalKpiElement(binding.elementId, NOT_CALCULATED_MESSAGE, true);
     });
+  }
+
+  function openKpiDetail(kpiKey) {
+    const drawer = document.querySelector('#decision-kpi-detail-drawer');
+    const title = document.querySelector('#decision-kpi-detail-title');
+    const body = document.querySelector('#decision-kpi-detail-body');
+    const kpi = decisionCenterState.explainKpis?.[kpiKey];
+    if (!drawer || !body) return;
+    if (!kpi) {
+      body.innerHTML = `<p>${escapeHtml(NATIONAL_PANEL_PENDING_MESSAGE)}</p>`;
+    } else {
+      if (title) title.textContent = kpi.label || kpiKey;
+      body.innerHTML = `
+        <p><strong>Valeur :</strong> ${escapeHtml(kpi.available === false ? (kpi.display || NOT_CALCULATED_MESSAGE) : formatNationalKpiNumber(kpi.value))}</p>
+        <p><strong>Définition :</strong> ${escapeHtml(kpi.definition || '—')}</p>
+        <p><strong>Source :</strong> ${escapeHtml(kpi.source_table || '—')}</p>
+        <p><strong>Calcul :</strong> ${escapeHtml(kpi.calculation_method || '—')}</p>
+        <p><strong>Mise à jour :</strong> ${escapeHtml(kpi.last_updated || '—')}</p>
+        <p><strong>Limites :</strong> ${escapeHtml(kpi.limitations || 'Aucune limite signalée.')}</p>
+        <p><strong>Action recommandée :</strong> ${escapeHtml(kpi.recommended_action || '—')}</p>
+      `;
+    }
+    drawer.hidden = false;
+    drawer.removeAttribute('hidden');
+  }
+
+  function closeKpiDetail() {
+    const drawer = document.querySelector('#decision-kpi-detail-drawer');
+    if (!drawer) return;
+    drawer.hidden = true;
+    drawer.setAttribute('hidden', '');
+  }
+
+  function renderDecisionIntents(payload) {
+    const grid = document.querySelector('#decision-intent-grid');
+    if (!grid) return;
+    const intents = asArray(payload?.intents);
+    if (!intents.length) {
+      grid.innerHTML = '<p class="decision-center-program-note">Questions métier indisponibles.</p>';
+      return;
+    }
+    grid.innerHTML = intents.map((intent) => `
+      <button type="button" class="decision-intent-card" data-intent-id="${escapeHtml(intent.id)}" data-target-tab="${escapeHtml(intent.target_tab || 'vue-nationale')}" data-scenario-id="${escapeHtml(intent.scenario_id || '')}">
+        <h4>${escapeHtml(intent.title)}</h4>
+        <p>${escapeHtml(intent.explanation || '')}</p>
+        <p class="intent-data">Données : ${escapeHtml(asArray(intent.data_used).slice(0, 2).join(' · ') || '—')}</p>
+        <span class="intent-action">${escapeHtml(intent.primary_action || 'Analyser')}</span>
+      </button>
+    `).join('');
+  }
+
+  function renderFollowupCard(containerId, programPayload, metricOrder) {
+    const card = document.querySelector(containerId);
+    if (!card) return;
+    const metrics = programPayload?.metrics || {};
+    const rows = metricOrder.map(([key, label]) => {
+      const value = metrics[key];
+      const display = value == null
+        ? (programPayload?.metrics_status || programPayload?.display || STATUS_TO_FILL_MESSAGE)
+        : formatNationalKpiNumber(value);
+      return `<li><span>${escapeHtml(label)}</span><strong>${escapeHtml(display)}</strong></li>`;
+    }).join('');
+    const note = programPayload?.status_message || programPayload?.metrics_status || programPayload?.display;
+    card.innerHTML = `
+      <h4>${escapeHtml(programPayload?.program_name || programPayload?.label || 'Programme')}</h4>
+      <ul class="decision-followup-metrics">${rows}</ul>
+      ${note ? `<p class="decision-followup-note">${escapeHtml(note)}</p>` : ''}
+    `;
+  }
+
+  function renderProgramFollowup(payload) {
+    renderFollowupCard('#decision-followup-sites-40', payload?.sites_40, [
+      ['total_sites', 'Total sites'],
+      ['installes', 'Installés'],
+      ['en_cours_installation', "En cours d'installation"],
+      ['operationnels', 'Opérationnels'],
+      ['non_demarres', 'Non démarrés'],
+      ['bloques', 'Bloqués'],
+      ['taux_avancement', "Taux d'avancement"],
+    ]);
+    renderFollowupCard('#decision-followup-sites-300', payload?.sites_300, [
+      ['total', 'Total'],
+      ['planifies', 'Planifiés'],
+      ['priorises', 'Priorisés'],
+      ['en_etude', 'En étude'],
+      ['prets_a_deployer', 'Prêts à déployer'],
+      ['bloques', 'Bloqués'],
+      ['taux_preparation', 'Taux de préparation'],
+    ]);
+    renderFollowupCard('#decision-followup-ccn', {
+      ...(payload?.ccn || {}),
+      program_name: 'CCN',
+      metrics: {
+        ccn_planifies: null,
+        ccn_installes: null,
+        ccn_operationnels: null,
+      },
+      metrics_status: payload?.ccn?.display || NOT_CALCULATED_MESSAGE,
+    }, [
+      ['ccn_planifies', 'CCN planifiés'],
+      ['ccn_installes', 'CCN installés'],
+      ['ccn_operationnels', 'CCN opérationnels'],
+    ]);
+  }
+
+  function renderDemoScenario(scenario) {
+    const body = document.querySelector('#decision-demo-scenario-body');
+    if (!body || !scenario) return;
+    const actions = asArray(scenario.actions).map((action) => `
+      <button type="button" class="secondary-button decision-demo-action" data-target-tab="${escapeHtml(action.target_tab || '')}" data-demo-action="${escapeHtml(action.action || '')}">
+        ${escapeHtml(action.label || 'Action')}
+      </button>
+    `).join('');
+    const kpiEntries = Object.entries(scenario.kpis || {}).slice(0, 4);
+    let tableRows = kpiEntries.map(([key, kpi]) => {
+      const value = kpi?.available === false
+        ? (kpi.display || NOT_CALCULATED_MESSAGE)
+        : formatNationalKpiNumber(kpi?.value);
+      return `<tr><td>${escapeHtml(kpi?.label || key)}</td><td>${escapeHtml(value)}</td><td>${escapeHtml(kpi?.source_table || '—')}</td></tr>`;
+    }).join('');
+    if (!tableRows && scenario.followup) {
+      const followupRows = [
+        ['Sites 40 — total', scenario.followup?.sites_40?.metrics?.total_sites, scenario.followup?.sites_40?.source_table],
+        ['Sites 40 — statuts', scenario.followup?.sites_40?.status_message || STATUS_TO_FILL_MESSAGE, scenario.followup?.sites_40?.source_table],
+        ['Sites 300 — total', scenario.followup?.sites_300?.metrics?.total, scenario.followup?.sites_300?.source_table],
+        ['CCN', scenario.followup?.ccn?.display || NOT_CALCULATED_MESSAGE, scenario.followup?.ccn?.source_table],
+      ];
+      tableRows = followupRows.map(([label, value, source]) => `
+        <tr><td>${escapeHtml(label)}</td><td>${escapeHtml(value == null ? STATUS_TO_FILL_MESSAGE : String(value))}</td><td>${escapeHtml(source || '—')}</td></tr>
+      `).join('');
+    }
+    const mapLabel = scenario.map_focus === 'priorisation'
+      ? 'Carte priorisation (sites critiques / élevés)'
+      : scenario.map_focus === 'referentiels-sectoriels'
+        ? 'Carte Santé + sites FDSU'
+        : 'Carte nationale / suivi programmes';
+    body.innerHTML = `
+      <h4>${escapeHtml(scenario.title)}</h4>
+      <p><strong>Question métier :</strong> ${escapeHtml(scenario.business_question || '')}</p>
+      <p><strong>Réponse synthétique :</strong> ${escapeHtml(scenario.synthetic_answer || '')}</p>
+      <p><strong>Données utilisées :</strong> ${escapeHtml(asArray(scenario.data_used).join(' · '))}</p>
+      <p><strong>Carte :</strong> ${escapeHtml(mapLabel)}</p>
+      <div class="decision-demo-table-wrap">
+        <table class="decision-demo-table">
+          <thead><tr><th>Indicateur</th><th>Valeur</th><th>Source</th></tr></thead>
+          <tbody>${tableRows || '<tr><td colspan="3">Tableau de suivi programmes (voir section opérationnelle)</td></tr>'}</tbody>
+        </table>
+      </div>
+      <p><strong>Recommandation :</strong> ${escapeHtml(scenario.recommendation || '')}</p>
+      <p><strong>Limites :</strong> ${escapeHtml(scenario.limitations || 'Aucune')}</p>
+      <div class="decision-demo-actions">${actions}</div>
+    `;
+  }
+
+  function renderDemoScenarios(payload) {
+    const nav = document.querySelector('#decision-demo-scenario-nav');
+    const scenarios = asArray(payload?.scenarios);
+    decisionCenterState.demoScenarios = scenarios;
+    if (!nav) return;
+    if (!scenarios.length) {
+      nav.innerHTML = '';
+      document.querySelector('#decision-demo-scenario-body').innerHTML = '<p>Aucun scénario disponible.</p>';
+      return;
+    }
+    nav.innerHTML = scenarios.map((scenario, index) => `
+      <button type="button" class="decision-demo-scenario-btn ${index === 0 ? 'is-active' : ''}" data-scenario-id="${escapeHtml(scenario.id)}">
+        ${escapeHtml(scenario.title)}
+      </button>
+    `).join('');
+    decisionCenterState.demoActiveScenarioId = scenarios[0].id;
+    renderDemoScenario(scenarios[0]);
+  }
+
+  function setDemoModeVisible(visible) {
+    const panel = document.querySelector('#decision-demo-panel');
+    if (!panel) return;
+    decisionCenterState.demoVisible = Boolean(visible);
+    panel.hidden = !visible;
+    if (visible) panel.removeAttribute('hidden');
+    else panel.setAttribute('hidden', '');
+  }
+
+  function loadDecisionBusinessPanels(forceReload) {
+    const shared = getShared();
+    const canUseDb = typeof shared.canUseProgramDbData === 'function' && shared.canUseProgramDbData();
+    if (!canUseDb) {
+      renderDecisionIntents({ intents: [] });
+      return Promise.resolve();
+    }
+    if (decisionCenterState.businessPanelsLoading) {
+      return decisionCenterState.businessPanelsPromise || Promise.resolve();
+    }
+    if (decisionCenterState.intentsLoaded && decisionCenterState.demoScenarios.length && decisionCenterState.followupLoaded && !forceReload) {
+      return Promise.resolve();
+    }
+
+    const fetchJson = shared.fetchJson.bind(shared);
+    decisionCenterState.businessPanelsLoading = true;
+
+    // Chargement progressif : intents (léger) d'abord, puis followup / demos / health
+    decisionCenterState.businessPanelsPromise = fetchJson('/api/decision/decision-intents')
+      .then((intents) => {
+        if (intents) {
+          renderDecisionIntents(intents);
+          decisionCenterState.intentsLoaded = true;
+        }
+        return Promise.all([
+          fetchJson('/api/programs/sites-followup'),
+          fetchJson('/api/decision/demo-scenarios'),
+          fetchJson('/api/health/decision-summary'),
+          decisionCenterState.explainKpis && Object.keys(decisionCenterState.explainKpis).length
+            ? Promise.resolve({ kpis: decisionCenterState.explainKpis })
+            : fetchJson('/api/decision/explain-kpi'),
+        ]);
+      })
+      .then(([followup, demos, healthSummary, explain]) => {
+        if (explain?.kpis) decisionCenterState.explainKpis = explain.kpis;
+        if (followup) {
+          renderProgramFollowup(followup);
+          decisionCenterState.followupLoaded = true;
+        }
+        if (demos) renderDemoScenarios(demos);
+        if (healthSummary?.value != null) {
+          setNationalKpiElement('decision-kpi-health-facilities', formatNationalKpiNumber(healthSummary.value), false);
+          applyExplainableKpiCard('health_facilities', {
+            definition: healthSummary.definition,
+            source_table: healthSummary.source_table,
+            calculation_method: healthSummary.calculation_method,
+            last_updated: healthSummary.last_updated,
+            available: true,
+          });
+        }
+      })
+      .catch(() => {
+        const body = document.querySelector('#decision-demo-scenario-body');
+        if (body && !decisionCenterState.demoScenarios.length) {
+          body.innerHTML = '<p class="decision-center-program-note">Scénarios temporairement indisponibles — réessayez Mode démonstration.</p>';
+        }
+      })
+      .finally(() => {
+        decisionCenterState.businessPanelsLoading = false;
+      });
+
+    return decisionCenterState.businessPanelsPromise;
   }
 
   function loadNationalPanel(forceReload) {
@@ -170,15 +455,19 @@
     const fetchPanel = typeof shared.fetchJson === 'function'
       ? shared.fetchJson('/api/decision/national-panel')
       : global.fetch('/api/decision/national-panel').then((response) => (response.ok ? response.json() : null));
+    const fetchExplain = typeof shared.fetchJson === 'function'
+      ? shared.fetchJson('/api/decision/explain-kpi')
+      : Promise.resolve(null);
 
-    Promise.resolve(fetchPanel)
-      .then((payload) => {
+    Promise.all([Promise.resolve(fetchPanel), Promise.resolve(fetchExplain)])
+      .then(([payload, explainPayload]) => {
         if (!payload || !payload.kpis) {
           renderNationalPanelUnavailable(NATIONAL_PANEL_PENDING_MESSAGE);
           return;
         }
-        renderNationalPanelKpis(payload);
+        renderNationalPanelKpis(payload, explainPayload);
         decisionCenterState.nationalPanelLoaded = true;
+        loadDecisionBusinessPanels(forceReload);
       })
       .catch(() => {
         renderNationalPanelUnavailable(NATIONAL_PANEL_PENDING_MESSAGE);
@@ -186,6 +475,76 @@
       .finally(() => {
         decisionCenterState.nationalPanelLoading = false;
       });
+  }
+
+  function bindDecisionBusinessInteractions() {
+    const root = document.querySelector('#decision-view-panel');
+    if (!root || root.dataset.businessBound === 'true') return;
+    root.dataset.businessBound = 'true';
+
+    root.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof global.HTMLElement)) return;
+
+      const intentCard = target.closest('[data-intent-id]');
+      if (intentCard) {
+        const tab = intentCard.getAttribute('data-target-tab');
+        const scenarioId = intentCard.getAttribute('data-scenario-id');
+        if (scenarioId) {
+          setDemoModeVisible(true);
+          const scenario = decisionCenterState.demoScenarios.find((item) => item.id === scenarioId);
+          if (scenario) {
+            decisionCenterState.demoActiveScenarioId = scenarioId;
+            document.querySelectorAll('.decision-demo-scenario-btn').forEach((btn) => {
+              btn.classList.toggle('is-active', btn.getAttribute('data-scenario-id') === scenarioId);
+            });
+            renderDemoScenario(scenario);
+          }
+        }
+        if (tab) setDecisionCenterTab(tab);
+        return;
+      }
+
+      const detailBtn = target.closest('[data-kpi-detail]');
+      if (detailBtn) {
+        openKpiDetail(detailBtn.getAttribute('data-kpi-detail'));
+        return;
+      }
+
+      if (target.id === 'decision-kpi-detail-close') {
+        closeKpiDetail();
+        return;
+      }
+
+      if (target.id === 'decision-center-demo-mode-btn') {
+        setDemoModeVisible(true);
+        loadDecisionBusinessPanels(!decisionCenterState.demoScenarios.length);
+        return;
+      }
+
+      if (target.id === 'decision-demo-close-btn') {
+        setDemoModeVisible(false);
+        return;
+      }
+
+      const scenarioBtn = target.closest('[data-scenario-id].decision-demo-scenario-btn');
+      if (scenarioBtn) {
+        const scenarioId = scenarioBtn.getAttribute('data-scenario-id');
+        const scenario = decisionCenterState.demoScenarios.find((item) => item.id === scenarioId);
+        document.querySelectorAll('.decision-demo-scenario-btn').forEach((btn) => {
+          btn.classList.toggle('is-active', btn === scenarioBtn);
+        });
+        decisionCenterState.demoActiveScenarioId = scenarioId;
+        renderDemoScenario(scenario);
+        return;
+      }
+
+      const demoAction = target.closest('.decision-demo-action');
+      if (demoAction) {
+        const tab = demoAction.getAttribute('data-target-tab');
+        if (tab) setDecisionCenterTab(tab);
+      }
+    });
   }
 
   function fetchProgramJson(relativePath) {
@@ -1183,11 +1542,24 @@
       }),
       onEachFeature: (feature, featureLayer) => {
         const props = feature?.properties || {};
+        const quality = props.quality_score != null ? `${props.quality_score} %` : (props.data_quality || 'Import KMZ');
         featureLayer.bindPopup(`
-          <strong>${escapeHtml(props.name || 'Structure sanitaire')}</strong><br>
-          ${escapeHtml(props.facility_type_name || props.facility_type_code || '')}<br>
-          ${escapeHtml(props.province_name || '')}
-        `);
+          <div class="decision-map-popup">
+            <strong>${escapeHtml(props.name || 'Structure sanitaire')}</strong><br>
+            Type : ${escapeHtml(props.facility_type_name || props.facility_type_code || '')}<br>
+            Province : ${escapeHtml(props.province_name || '')}<br>
+            Zone de santé : ${escapeHtml(props.properties?.zonesante || props.zonesante || '')}<br>
+            Aire de santé : ${escapeHtml(props.properties?.airesante || props.airesante || '')}<br>
+            Localité : ${escapeHtml(props.locality_name || '')}<br>
+            Source : ${escapeHtml(props.data_source || 'RDC_ESS_Santé_01042026.csv.kmz')}<br>
+            Qualité donnée : ${escapeHtml(quality)}<br>
+            <span class="map-popup-action">Voir fiche établissement</span>
+          </div>
+        `, { maxWidth: 280 });
+        featureLayer.bindTooltip(`
+          <strong>${escapeHtml(props.name || 'Structure')}</strong><br>
+          ${escapeHtml(props.facility_type_name || props.facility_type_code || '')}
+        `, { sticky: true, direction: 'top', opacity: 1, className: 'sig-map-tooltip' });
       },
     }).addTo(decisionCenterState.healthMap);
     decisionCenterState.healthFacilitiesLayer = layer;
@@ -1339,7 +1711,13 @@
     document.querySelectorAll('[data-decision-tab-panel]').forEach((panel) => {
       const isActive = panel.dataset.decisionTabPanel === tabId;
       panel.classList.toggle('is-active', isActive);
-      panel.hidden = !isActive;
+      if (isActive) {
+        panel.hidden = false;
+        panel.removeAttribute('hidden');
+      } else {
+        panel.hidden = true;
+        panel.setAttribute('hidden', '');
+      }
     });
 
     if (tabId === 'vue-nationale') {
@@ -1453,6 +1831,7 @@
     if (!panel) return;
 
     bindDecisionCenterTabs();
+    bindDecisionBusinessInteractions();
     bindSites40MapButton();
     bindSpatialAnalysisRunButton();
     bindDecisionEngineFilters();
@@ -1490,4 +1869,19 @@
   global.FDSU_PROGRAMS_DATA_BASE = PROGRAMS_DATA_BASE;
   global.FDSU_PROGRAMS_PATH = FDSU_PROGRAMS_PATH;
   global.FDSU_SITES_40_DATA_PATH = SITES_40_DATA_PATH;
+
+  // Secours : si le Centre de Décision est déjà affiché (hash #decision-view) avant le boot app.js,
+  // lier immédiatement les onglets pour que « Référentiels sectoriels » / Santé restent accessibles.
+  function ensureDecisionCenterReady() {
+    const panel = document.querySelector('#decision-view-panel');
+    if (!panel || panel.classList.contains('hidden')) return;
+    if (decisionCenterState.initialized) return;
+    initializeDecisionCenterModule();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', ensureDecisionCenterReady);
+  } else {
+    ensureDecisionCenterReady();
+  }
 })(window);
