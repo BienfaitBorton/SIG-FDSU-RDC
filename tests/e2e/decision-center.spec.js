@@ -21,14 +21,74 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
     await expect(page.locator('.decision-center-action-slot')).toHaveCount(3);
   });
 
-  test('onglets et vue nationale placeholder', async ({ page }) => {
+  test('onglets et vue nationale KPI réels', async ({ page }) => {
     await openDecisionCenter(page);
 
     await expect(page.locator('#decision-center-tabs .decision-center-tab')).toHaveCount(7);
     await expect(page.locator('[data-decision-tab-panel="vue-nationale"]')).toBeVisible();
     await expect(page.locator('#decision-center-kpi-grid .decision-center-kpi-card')).toHaveCount(6);
-    await expect(page.locator('#decision-kpi-total-sites')).toHaveText('1 248');
+
+    // Anciens KPI fictifs absents
+    await expect(page.locator('#decision-kpi-total-sites')).toHaveCount(0);
+    await expect(page.locator('#decision-center-kpi-grid')).not.toContainText('1 248');
+    await expect(page.locator('#decision-center-kpi-grid')).not.toContainText('12,4 M');
+    await expect(page.locator('#decision-center-kpi-grid')).not.toContainText('3,8 M');
+    await expect(page.locator('#decision-center-kpi-grid')).not.toContainText('28,6 M USD');
+    await expect(page.locator('body')).not.toContainText('Nombre total de sites');
+
+    await page.waitForFunction(
+      () => {
+        const value = document.querySelector('#decision-kpi-sites-fdsu')?.textContent?.trim();
+        return Boolean(value && value !== '—' && !value.includes('intégration'));
+      },
+      null,
+      { timeout: 30_000 },
+    );
+
+    // Synthèse nationale réelle
+    await expect(page.locator('#decision-kpi-sites-fdsu')).toHaveText('340');
+    await expect(page.locator('#decision-kpi-sites-priority')).not.toHaveText('—');
+    await expect(page.locator('#decision-kpi-sites-critical')).not.toHaveText('—');
+    await expect(page.locator('#decision-kpi-sites-high')).not.toHaveText('—');
+    await expect(page.locator('#decision-kpi-referentials-active')).not.toHaveText('—');
+    await expect(page.locator('#decision-kpi-referentials-planned')).not.toHaveText('—');
+
+    // KPI opérationnels réels
+    await expect(page.locator('#decision-kpi-sites-40')).toHaveText('40');
+    await expect(page.locator('#decision-kpi-sites-300')).toHaveText('300');
+    await expect(page.locator('#decision-kpi-sites-scored')).toHaveText('340');
+    await expect(page.locator('#decision-kpi-referentials-in-progress')).toHaveText('1');
+    await expect(page.locator('#decision-kpi-telecom-objects')).toHaveText(/14[\s\u00a0\u202f]?580/);
+    await expect(page.locator('#decision-kpi-provinces')).toHaveText('26');
+    await expect(page.locator('#decision-kpi-territoires')).toHaveText('145');
+    await expect(page.locator('#decision-kpi-localites')).toHaveText(/26[\s\u00a0\u202f]?710/);
+
+    // Indicateurs prospectifs non disponibles
+    const pendingMessage = /Données en cours d['’]intégration/;
+    await expect(page.locator('#decision-kpi-covered-population')).toHaveText(pendingMessage);
+    await expect(page.locator('#decision-kpi-uncovered-population')).toHaveText(pendingMessage);
+    await expect(page.locator('#decision-kpi-planned-ccn')).toHaveText(pendingMessage);
+    await expect(page.locator('#decision-kpi-investment')).toHaveText(pendingMessage);
+
     await expect(page.locator('#decision-center-decision-sheet')).toContainText('Sélectionnez un site sur la carte');
+  });
+
+  test('onglets Priorisation et Référentiels sectoriels restent utilisables', async ({ page }) => {
+    await openDecisionCenter(page);
+
+    await page.locator('[data-decision-tab="priorisation"]').click();
+    await expect(page.locator('[data-decision-tab-panel="priorisation"]')).toBeVisible();
+    await expect(page.locator('[data-decision-tab-panel="priorisation"]')).toContainText('Moteur de décision FDSU');
+    await expect(page.locator('#decision-engine-kpi-grid')).toBeVisible();
+
+    await page.locator('[data-decision-tab="referentiels-sectoriels"]').click();
+    await expect(page.locator('[data-decision-tab-panel="referentiels-sectoriels"]')).toBeVisible();
+    await page.waitForFunction(
+      () => document.querySelectorAll('#sectorial-catalog-grid .sectorial-catalog-card').length >= 1
+        || (document.querySelector('#sectorial-catalog-grid')?.textContent || '').length > 20,
+      null,
+      { timeout: 30_000 },
+    );
   });
 
   test('carte nationale réutilisée dans le centre de décision', async ({ page }) => {

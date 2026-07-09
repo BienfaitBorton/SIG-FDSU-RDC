@@ -60,3 +60,9 @@ def recompute_site_scores(_payload: RecomputePayload | None = None) -> dict[str,
 def decision_panel() -> dict[str, Any]:
     _ensure_db_mode()
     return decision_engine_service.get_panel_payload()
+
+
+@router.get("/national-panel", summary="Panneau national du Centre de Décision — KPI réels")
+def national_panel() -> dict[str, Any]:
+    _ensure_db_mode()
+    return decision_engine_service.get_national_panel_payload()

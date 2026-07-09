@@ -601,3 +601,136 @@ def get_panel_payload() -> dict[str, Any]:
         "summary": summary,
         "needs_recompute": False,
     }
+
+
+PENDING_INTEGRATION_MESSAGE = "Données en cours d'intégration"
+
+
+def _kpi_available(value: int | float | None, label: str) -> dict[str, Any]:
+    return {
+        "label": label,
+        "value": value,
+        "available": True,
+        "display": None,
+    }
+
+
+def _kpi_pending(label: str) -> dict[str, Any]:
+    return {
+        "label": label,
+        "value": None,
+        "available": False,
+        "display": PENDING_INTEGRATION_MESSAGE,
+    }
+
+
+def _safe_count(cur, query: str, params: tuple[Any, ...] | None = None) -> int:
+    try:
+        cur.execute("SAVEPOINT national_panel_count")
+        cur.execute(query, params or ())
+        row = cur.fetchone()
+        cur.execute("RELEASE SAVEPOINT national_panel_count")
+        if row is None:
+            return 0
+        if isinstance(row, dict):
+            return int(next(iter(row.values())))
+        return int(row[0])
+    except Exception:
+        try:
+            cur.execute("ROLLBACK TO SAVEPOINT national_panel_count")
+        except Exception:
+            pass
+        return 0
+
+
+def get_national_panel_payload() -> dict[str, Any]:
+    """Synthèse nationale du Centre de Décision — KPI réels PostgreSQL/PostGIS."""
+    scores = get_scores_summary()
+    sites_critical = int(scores.get("critical", 0))
+    sites_high = int(scores.get("high", 0))
+    sites_scored = int(scores.get("total", 0))
+    sites_priority = sites_critical + sites_high
+
+    with connect_db() as conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            sites_fdsu_total = _safe_count(cur, "SELECT COUNT(*) AS c FROM programs.fdsu_sites")
+            sites_40 = _safe_count(
+                cur,
+                """
+                SELECT COUNT(*) AS c
+                FROM programs.fdsu_sites s
+                JOIN programs.fdsu_programs p ON p.id = s.program_id
+                WHERE p.program_code = %s
+                """,
+                ("PROG_SITES_40",),
+            )
+            sites_300 = _safe_count(
+                cur,
+                """
+                SELECT COUNT(*) AS c
+                FROM programs.fdsu_sites s
+                JOIN programs.fdsu_programs p ON p.id = s.program_id
+                WHERE p.program_code = %s
+                """,
+                ("PROG_SITES_300",),
+            )
+
+            referentials_active = _safe_count(
+                cur,
+                "SELECT COUNT(*) AS c FROM reference.reference_catalog WHERE status = %s",
+                ("active",),
+            )
+            referentials_in_progress = _safe_count(
+                cur,
+                "SELECT COUNT(*) AS c FROM reference.reference_catalog WHERE status = %s",
+                ("in_progress",),
+            )
+            referentials_planned = _safe_count(
+                cur,
+                "SELECT COUNT(*) AS c FROM reference.reference_catalog WHERE status = %s",
+                ("planned",),
+            )
+
+            telecom_objects = _safe_count(cur, "SELECT COUNT(*) AS c FROM telecom.infrastructure")
+            provinces = _safe_count(cur, "SELECT COUNT(*) AS c FROM provinces")
+            territoires = _safe_count(cur, "SELECT COUNT(*) AS c FROM territoires")
+            localites = _safe_count(cur, "SELECT COUNT(*) AS c FROM localites")
+
+    kpis = {
+        "sites_fdsu_total": _kpi_available(sites_fdsu_total, "Sites FDSU"),
+        "sites_40": _kpi_available(sites_40, "Sites 40"),
+        "sites_300": _kpi_available(sites_300, "Sites 300"),
+        "sites_scored": _kpi_available(sites_scored, "Sites scorés"),
+        "sites_priority": _kpi_available(sites_priority, "Sites prioritaires"),
+        "sites_critical": _kpi_available(sites_critical, "Sites critiques"),
+        "sites_high": _kpi_available(sites_high, "Sites à priorité élevée"),
+        "referentials_active": _kpi_available(referentials_active, "Référentiels actifs"),
+        "referentials_in_progress": _kpi_available(referentials_in_progress, "Référentiels en cours"),
+        "referentials_planned": _kpi_available(referentials_planned, "Référentiels planifiés"),
+        "telecom_objects": _kpi_available(telecom_objects, "Objets télécoms"),
+        "provinces": _kpi_available(provinces, "Provinces"),
+        "territoires": _kpi_available(territoires, "Territoires"),
+        "localites": _kpi_available(localites, "Localités"),
+        "population_covered": _kpi_pending("Population couverte"),
+        "population_uncovered": _kpi_pending("Population non couverte"),
+        "planned_ccn": _kpi_pending("CCN planifiés"),
+        "estimated_investment": _kpi_pending("Investissement estimé"),
+    }
+
+    return {
+        "_meta": {
+            "title": "Centre de Décision FDSU — Panneau national",
+            "source": "PostgreSQL/PostGIS",
+            "pending_message": PENDING_INTEGRATION_MESSAGE,
+        },
+        "synthesis": {
+            "sites_fdsu": sites_fdsu_total,
+            "sites_priority": sites_priority,
+            "sites_critical": sites_critical,
+            "sites_high": sites_high,
+            "referentials_active": referentials_active,
+            "referentials_planned": referentials_planned,
+        },
+        "kpis": kpis,
+        "decision_summary": scores,
+    }

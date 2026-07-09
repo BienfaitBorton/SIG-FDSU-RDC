@@ -14,13 +14,33 @@
     { id: 'rapports', label: 'Rapports' },
   ];
 
-  const DECISION_CENTER_KPIS = [
-    { id: 'total-sites', label: 'Nombre total de sites', value: '1 248' },
-    { id: 'priority-sites', label: 'Sites prioritaires', value: '186' },
-    { id: 'covered-population', label: 'Population couverte', value: '12,4 M' },
-    { id: 'uncovered-population', label: 'Population non couverte', value: '3,8 M' },
-    { id: 'planned-ccn', label: 'CCN planifiés', value: '42' },
-    { id: 'investment', label: 'Investissement estimé', value: '28,6 M USD' },
+  const NATIONAL_PANEL_PENDING_MESSAGE = "Données en cours d'intégration";
+
+  const NATIONAL_SYNTHESIS_KPI_BINDINGS = [
+    { key: 'sites_fdsu', elementId: 'decision-kpi-sites-fdsu', synthesisKey: 'sites_fdsu' },
+    { key: 'sites_priority', elementId: 'decision-kpi-sites-priority', synthesisKey: 'sites_priority' },
+    { key: 'sites_critical', elementId: 'decision-kpi-sites-critical', synthesisKey: 'sites_critical' },
+    { key: 'sites_high', elementId: 'decision-kpi-sites-high', synthesisKey: 'sites_high' },
+    { key: 'referentials_active', elementId: 'decision-kpi-referentials-active', synthesisKey: 'referentials_active' },
+    { key: 'referentials_planned', elementId: 'decision-kpi-referentials-planned', synthesisKey: 'referentials_planned' },
+  ];
+
+  const NATIONAL_OPERATIONAL_KPI_BINDINGS = [
+    { key: 'sites_40', elementId: 'decision-kpi-sites-40' },
+    { key: 'sites_300', elementId: 'decision-kpi-sites-300' },
+    { key: 'sites_scored', elementId: 'decision-kpi-sites-scored' },
+    { key: 'referentials_in_progress', elementId: 'decision-kpi-referentials-in-progress' },
+    { key: 'telecom_objects', elementId: 'decision-kpi-telecom-objects' },
+    { key: 'provinces', elementId: 'decision-kpi-provinces' },
+    { key: 'territoires', elementId: 'decision-kpi-territoires' },
+    { key: 'localites', elementId: 'decision-kpi-localites' },
+  ];
+
+  const NATIONAL_PENDING_KPI_BINDINGS = [
+    { key: 'population_covered', elementId: 'decision-kpi-covered-population' },
+    { key: 'population_uncovered', elementId: 'decision-kpi-uncovered-population' },
+    { key: 'planned_ccn', elementId: 'decision-kpi-planned-ccn' },
+    { key: 'estimated_investment', elementId: 'decision-kpi-investment' },
   ];
 
   const decisionCenterState = {
@@ -30,6 +50,8 @@
     layers: {},
     mapInitialized: false,
     resizeObserver: null,
+    nationalPanelLoaded: false,
+    nationalPanelLoading: false,
     programsLoaded: false,
     programsLoading: false,
     sites40Loaded: false,
@@ -62,6 +84,106 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
+  }
+
+  function formatNationalKpiNumber(value) {
+    if (value == null || Number.isNaN(Number(value))) {
+      return NATIONAL_PANEL_PENDING_MESSAGE;
+    }
+    return Number(value).toLocaleString('fr-FR');
+  }
+
+  function setNationalKpiElement(elementId, displayValue, isPending) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    element.textContent = displayValue;
+    element.classList.toggle('is-pending-value', Boolean(isPending));
+    const card = element.closest('.decision-center-kpi-card');
+    if (card) {
+      card.classList.toggle('is-pending', Boolean(isPending));
+    }
+  }
+
+  function resolveKpiDisplay(kpi) {
+    if (!kpi || kpi.available === false || kpi.value == null) {
+      return {
+        text: kpi?.display || NATIONAL_PANEL_PENDING_MESSAGE,
+        pending: true,
+      };
+    }
+    return {
+      text: formatNationalKpiNumber(kpi.value),
+      pending: false,
+    };
+  }
+
+  function renderNationalPanelKpis(payload) {
+    const kpis = payload?.kpis || {};
+    const synthesis = payload?.synthesis || {};
+
+    NATIONAL_SYNTHESIS_KPI_BINDINGS.forEach((binding) => {
+      const fromSynthesis = synthesis[binding.synthesisKey];
+      if (fromSynthesis != null) {
+        setNationalKpiElement(binding.elementId, formatNationalKpiNumber(fromSynthesis), false);
+        return;
+      }
+      const resolved = resolveKpiDisplay(kpis[binding.key]);
+      setNationalKpiElement(binding.elementId, resolved.text, resolved.pending);
+    });
+
+    NATIONAL_OPERATIONAL_KPI_BINDINGS.forEach((binding) => {
+      const resolved = resolveKpiDisplay(kpis[binding.key]);
+      setNationalKpiElement(binding.elementId, resolved.text, resolved.pending);
+    });
+
+    NATIONAL_PENDING_KPI_BINDINGS.forEach((binding) => {
+      const resolved = resolveKpiDisplay(kpis[binding.key]);
+      setNationalKpiElement(binding.elementId, resolved.text || NATIONAL_PANEL_PENDING_MESSAGE, true);
+    });
+  }
+
+  function renderNationalPanelUnavailable(message) {
+    const pendingMessage = message || NATIONAL_PANEL_PENDING_MESSAGE;
+    [...NATIONAL_SYNTHESIS_KPI_BINDINGS, ...NATIONAL_OPERATIONAL_KPI_BINDINGS].forEach((binding) => {
+      setNationalKpiElement(binding.elementId, pendingMessage, true);
+    });
+    NATIONAL_PENDING_KPI_BINDINGS.forEach((binding) => {
+      setNationalKpiElement(binding.elementId, NATIONAL_PANEL_PENDING_MESSAGE, true);
+    });
+  }
+
+  function loadNationalPanel(forceReload) {
+    if (decisionCenterState.nationalPanelLoading) return;
+    if (decisionCenterState.nationalPanelLoaded && !forceReload) return;
+
+    const shared = getShared();
+    const canUseDb = typeof shared.canUseProgramDbData === 'function' && shared.canUseProgramDbData();
+    if (!canUseDb) {
+      renderNationalPanelUnavailable(NATIONAL_PANEL_PENDING_MESSAGE);
+      decisionCenterState.nationalPanelLoaded = true;
+      return;
+    }
+
+    decisionCenterState.nationalPanelLoading = true;
+    const fetchPanel = typeof shared.fetchJson === 'function'
+      ? shared.fetchJson('/api/decision/national-panel')
+      : global.fetch('/api/decision/national-panel').then((response) => (response.ok ? response.json() : null));
+
+    Promise.resolve(fetchPanel)
+      .then((payload) => {
+        if (!payload || !payload.kpis) {
+          renderNationalPanelUnavailable(NATIONAL_PANEL_PENDING_MESSAGE);
+          return;
+        }
+        renderNationalPanelKpis(payload);
+        decisionCenterState.nationalPanelLoaded = true;
+      })
+      .catch(() => {
+        renderNationalPanelUnavailable(NATIONAL_PANEL_PENDING_MESSAGE);
+      })
+      .finally(() => {
+        decisionCenterState.nationalPanelLoading = false;
+      });
   }
 
   function fetchProgramJson(relativePath) {
@@ -1134,6 +1256,7 @@
     });
 
     if (tabId === 'vue-nationale') {
+      loadNationalPanel(false);
       initializeDecisionCenterNationalMap();
       loadBusinessArchitecturePanel(false);
       loadSites40ProgramPanel(false);
@@ -1255,6 +1378,7 @@
     }
 
     if (decisionCenterState.activeTab === 'vue-nationale') {
+      loadNationalPanel(false);
       initializeDecisionCenterNationalMap();
       loadBusinessArchitecturePanel(false);
       loadSites40ProgramPanel(false);
@@ -1266,6 +1390,7 @@
 
   global.decisionCenterState = decisionCenterState;
   global.initializeDecisionCenterModule = initializeDecisionCenterModule;
+  global.loadNationalPanel = loadNationalPanel;
   global.loadFdsuBusinessArchitecture = loadBusinessArchitecturePanel;
   global.loadFdsuSites40Program = loadSites40ProgramPanel;
   global.loadFdsuSites300Program = loadSites300ProgramPanel;
