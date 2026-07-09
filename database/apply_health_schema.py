@@ -19,21 +19,35 @@ SCHEMA_SQL = PROJECT_ROOT / "database" / "health_schema.sql"
 
 FACILITY_TYPES = [
     ("HGR", "Hôpital Général de Référence", "Hôpital de référence", "hospital", {"color": "#dc2626", "icon": "hospital"}),
+    ("HOSPITAL", "Hôpital", "Hôpital", "hospital", {"color": "#b91c1c", "icon": "hospital"}),
+    ("CH", "Centre Hospitalier", "Centre hospitalier", "hospital", {"color": "#ef4444", "icon": "hospital"}),
     ("CS", "Centre de Santé", "Centre de santé de proximité", "health_center", {"color": "#ea580c", "icon": "clinic"}),
     ("CSR", "Centre de Santé de Référence", "Centre de santé de référence", "health_center", {"color": "#f97316", "icon": "clinic"}),
     ("PS", "Poste de Santé", "Poste de santé communautaire", "health_post", {"color": "#eab308", "icon": "health-post"}),
-    ("MAT", "Maternité", "Structure maternelle", "maternity", {"color": "#ec4899", "icon": "maternity"}),
+    ("CM", "Centre Médical", "Centre médical", "clinic", {"color": "#a855f7", "icon": "clinic"}),
     ("CLINIC", "Clinique", "Clinique privée ou associée", "clinic", {"color": "#8b5cf6", "icon": "clinic"}),
+    ("POLYCLINIC", "Polyclinique", "Polyclinique", "clinic", {"color": "#7c3aed", "icon": "clinic"}),
+    ("DISP", "Dispensaire", "Dispensaire", "health_post", {"color": "#ca8a04", "icon": "health-post"}),
+    ("SSC", "Site Soin Communautaire", "Site de soin communautaire", "community", {"color": "#16a34a", "icon": "community"}),
+    ("BCZS", "Bureau Central de la Zone de Santé", "Bureau central de zone de santé", "admin", {"color": "#0f766e", "icon": "admin"}),
+    ("MAT", "Maternité", "Structure maternelle", "maternity", {"color": "#ec4899", "icon": "maternity"}),
     ("OTHER", "Autre structure sanitaire", "Autre type de structure", "other", {"color": "#64748b", "icon": "other"}),
 ]
 
 HEALTH_OBJECT_TYPES = [
     ("HGR", "Hôpital Général de Référence", "Hôpital de référence", {"color": "#dc2626"}),
+    ("HOSPITAL", "Hôpital", "Hôpital", {"color": "#b91c1c"}),
+    ("CH", "Centre Hospitalier", "Centre hospitalier", {"color": "#ef4444"}),
     ("CS", "Centre de Santé", "Centre de santé", {"color": "#ea580c"}),
     ("CSR", "Centre de Santé de Référence", "CSR", {"color": "#f97316"}),
     ("PS", "Poste de Santé", "Poste de santé", {"color": "#eab308"}),
-    ("MAT", "Maternité", "Maternité", {"color": "#ec4899"}),
+    ("CM", "Centre Médical", "Centre médical", {"color": "#a855f7"}),
     ("CLINIC", "Clinique", "Clinique", {"color": "#8b5cf6"}),
+    ("POLYCLINIC", "Polyclinique", "Polyclinique", {"color": "#7c3aed"}),
+    ("DISP", "Dispensaire", "Dispensaire", {"color": "#ca8a04"}),
+    ("SSC", "Site Soin Communautaire", "Site de soin communautaire", {"color": "#16a34a"}),
+    ("BCZS", "Bureau Central de la Zone de Santé", "BCZS", {"color": "#0f766e"}),
+    ("MAT", "Maternité", "Maternité", {"color": "#ec4899"}),
     ("OTHER", "Autre structure sanitaire", "Autre", {"color": "#64748b"}),
 ]
 

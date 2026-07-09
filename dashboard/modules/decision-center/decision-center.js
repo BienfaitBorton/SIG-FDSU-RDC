@@ -74,6 +74,8 @@
     sectorialLoaded: false,
     sectorialLoading: false,
     healthMap: null,
+    healthFacilitiesLayer: null,
+    healthGeojson: null,
     programStatusCatalog: null,
     priorityMatrixLoader: null,
   };
@@ -1051,7 +1053,7 @@
     }).join('');
   }
 
-  function renderSectorialHealthKpis(stats) {
+  function renderSectorialHealthKpis(stats, quality) {
     const set = (id, value) => {
       const node = document.querySelector(id);
       if (node) node.textContent = Number(value || 0).toLocaleString('fr-FR');
@@ -1061,6 +1063,11 @@
     set('#sectorial-health-kpi-centers', stats?.health_centers);
     set('#sectorial-health-kpi-posts', stats?.health_posts);
     set('#sectorial-health-kpi-geo', stats?.facilities_with_geometry);
+    const qualityNode = document.querySelector('#sectorial-health-kpi-quality');
+    if (qualityNode) {
+      const score = quality?.quality_score ?? stats?.details?.quality_score;
+      qualityNode.textContent = score == null ? '—' : `${Number(score).toLocaleString('fr-FR')} %`;
+    }
   }
 
   function renderSectorialHealthTable(facilities, emptyMessage) {
@@ -1081,47 +1088,123 @@
     `).join('');
   }
 
-  function initializeSectorialHealthMap() {
+  function renderHealthDistributionList(containerId, distribution, emptyLabel) {
+    const container = document.querySelector(containerId);
+    if (!container) return;
+    const entries = Object.entries(distribution || {}).sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0], 'fr'));
+    if (!entries.length) {
+      container.innerHTML = `<li>${escapeHtml(emptyLabel || 'Aucune donnée.')}</li>`;
+      return;
+    }
+    container.innerHTML = entries.slice(0, 12).map(([label, count]) => `
+      <li><span>${escapeHtml(label)}</span><strong>${Number(count).toLocaleString('fr-FR')}</strong></li>
+    `).join('');
+  }
+
+  function renderSectorialHealthQuality(payload) {
+    const list = document.querySelector('#sectorial-health-quality-list');
+    const stats = payload?.statistics || {};
+    const quality = payload?.quality || {};
+    const details = stats.details || quality.details || {};
+    if (list) {
+      const items = [
+        ['Score qualité', `${Number(quality.quality_score ?? details.quality_score ?? 0).toLocaleString('fr-FR')} %`],
+        ['Géolocalisées', Number(stats.facilities_with_geometry || 0).toLocaleString('fr-FR')],
+        ['Non géolocalisées', Number(stats.facilities_without_geometry || 0).toLocaleString('fr-FR')],
+        ['Noms manquants', Number(details.missing_names || quality.missing_names || 0).toLocaleString('fr-FR')],
+        ['Types manquants', Number(details.missing_types || quality.missing_types || 0).toLocaleString('fr-FR')],
+        ['Doublons potentiels', Number(details.potential_duplicates || quality.potential_duplicates || 0).toLocaleString('fr-FR')],
+      ];
+      list.innerHTML = items.map(([label, value]) => `<li><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></li>`).join('');
+    }
+    renderHealthDistributionList('#sectorial-health-by-type', payload?.by_type || details.by_type || {}, 'Aucune répartition type.');
+    renderHealthDistributionList('#sectorial-health-by-province', payload?.by_province || details.by_province || {}, 'Aucune répartition province.');
+  }
+
+  function setSectorialHealthMapMessage(message, visible) {
+    const node = document.querySelector('#sectorial-health-map-message');
+    if (!node) return;
+    node.hidden = !visible;
+    node.textContent = message || '';
+  }
+
+  function initializeSectorialHealthMap(geojsonPayload) {
     const shared = getShared();
     if (typeof global.L === 'undefined') return;
     const mapElement = document.querySelector('#sectorial-health-map');
     if (!mapElement) return;
 
-    if (decisionCenterState.healthMap) {
-      global.setTimeout(() => decisionCenterState.healthMap.invalidateSize(), 0);
+    if (!decisionCenterState.healthMap) {
+      decisionCenterState.healthMap = global.L.map(mapElement, {
+        zoomControl: true,
+        attributionControl: true,
+        minZoom: 4,
+        maxZoom: 14,
+      }).setView([-2.8, 23.5], 5);
+
+      global.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19,
+      }).addTo(decisionCenterState.healthMap);
+
+      if (shared.fetchApiJson) {
+        shared.fetchApiJson('/map/layers/provinces?limit=5000')
+          .then((payload) => {
+            const features = asArray(payload?.features);
+            if (!features.length) return;
+            global.L.geoJSON({ type: 'FeatureCollection', features }, {
+              style: shared.styleProvinceFeature,
+            }).addTo(decisionCenterState.healthMap);
+          })
+          .catch(() => {});
+      }
+    }
+
+    if (decisionCenterState.healthFacilitiesLayer) {
+      decisionCenterState.healthMap.removeLayer(decisionCenterState.healthFacilitiesLayer);
+      decisionCenterState.healthFacilitiesLayer = null;
+    }
+
+    const features = asArray(geojsonPayload?.features);
+    if (!features.length) {
+      setSectorialHealthMapMessage(geojsonPayload?._meta?.message || 'Aucune donnée santé géolocalisée disponible', true);
+      global.setTimeout(() => decisionCenterState.healthMap?.invalidateSize(), 0);
       return;
     }
 
-    decisionCenterState.healthMap = global.L.map(mapElement, {
-      zoomControl: true,
-      attributionControl: true,
-      minZoom: 4,
-      maxZoom: 14,
-    }).setView([-2.8, 23.5], 5);
-
-    global.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors',
-      maxZoom: 19,
+    setSectorialHealthMapMessage('', false);
+    const layer = global.L.geoJSON({ type: 'FeatureCollection', features }, {
+      pointToLayer: (feature, latlng) => global.L.circleMarker(latlng, {
+        radius: 3,
+        color: '#b91c1c',
+        weight: 1,
+        fillColor: '#ef4444',
+        fillOpacity: 0.75,
+      }),
+      onEachFeature: (feature, featureLayer) => {
+        const props = feature?.properties || {};
+        featureLayer.bindPopup(`
+          <strong>${escapeHtml(props.name || 'Structure sanitaire')}</strong><br>
+          ${escapeHtml(props.facility_type_name || props.facility_type_code || '')}<br>
+          ${escapeHtml(props.province_name || '')}
+        `);
+      },
     }).addTo(decisionCenterState.healthMap);
-
-    if (shared.fetchApiJson) {
-      shared.fetchApiJson('/map/layers/provinces?limit=5000')
-        .then((payload) => {
-          const features = asArray(payload?.features);
-          if (!features.length) return;
-          global.L.geoJSON({ type: 'FeatureCollection', features }, {
-            style: shared.styleProvinceFeature,
-          }).addTo(decisionCenterState.healthMap);
-        })
-        .catch(() => {});
+    decisionCenterState.healthFacilitiesLayer = layer;
+    try {
+      const bounds = layer.getBounds();
+      if (bounds?.isValid()) {
+        decisionCenterState.healthMap.fitBounds(bounds, { padding: [16, 16], maxZoom: 7 });
+      }
+    } catch (_error) {
+      // ignore invalid bounds
     }
-
     global.setTimeout(() => decisionCenterState.healthMap?.invalidateSize(), 0);
   }
 
   function loadSectorialReferentialsPanel(forceReload) {
     if (decisionCenterState.sectorialLoaded && !forceReload) {
-      initializeSectorialHealthMap();
+      initializeSectorialHealthMap(decisionCenterState.healthGeojson || null);
       global.setTimeout(() => decisionCenterState.healthMap?.invalidateSize(), 0);
       return Promise.resolve();
     }
@@ -1144,9 +1227,10 @@
         { code: 'ROADS', name: 'Référentiel Routes', status: 'planned' },
         { code: 'POPULATION', name: 'Référentiel Population', status: 'planned' },
       ]);
-      renderSectorialHealthKpis({});
+      renderSectorialHealthKpis({}, {});
       renderSectorialHealthTable([], 'Les données santé seront intégrées depuis une source officielle.');
-      initializeSectorialHealthMap();
+      renderSectorialHealthQuality({});
+      initializeSectorialHealthMap(null);
       decisionCenterState.sectorialLoaded = true;
       decisionCenterState.sectorialLoading = false;
       return Promise.resolve();
@@ -1154,37 +1238,40 @@
 
     const fetchReference = typeof shared.fetchJson === 'function'
       ? shared.fetchJson('/api/reference/panel')
-      : Promise.reject(new Error('API indisponible'));
+      : Promise.resolve(null);
     const fetchHealth = typeof shared.fetchJson === 'function'
       ? shared.fetchJson('/api/health/panel')
-      : Promise.reject(new Error('API indisponible'));
+      : Promise.resolve(null);
+    const fetchHealthLayer = typeof shared.fetchJson === 'function'
+      ? shared.fetchJson('/api/health/layers/facilities?limit=2500')
+      : Promise.resolve(null);
 
-    const timeout = new Promise((_, reject) => {
-      global.setTimeout(() => reject(new Error('Timeout')), 8000);
-    });
+    return Promise.allSettled([fetchReference, fetchHealth, fetchHealthLayer])
+      .then(([referenceResult, healthResult, layerResult]) => {
+        const referencePayload = referenceResult.status === 'fulfilled' ? referenceResult.value : null;
+        const healthPayload = healthResult.status === 'fulfilled' ? healthResult.value : null;
+        const healthLayer = layerResult.status === 'fulfilled' ? layerResult.value : null;
 
-    return Promise.race([Promise.all([fetchReference, fetchHealth]), timeout])
-      .then(([referencePayload, healthPayload]) => {
-        renderSectorialCatalogCards(referencePayload?.sectorial_referentials || referencePayload?.catalog || []);
-        renderSectorialHealthKpis(healthPayload?.statistics || {});
+        if (referencePayload?.sectorial_referentials || referencePayload?.catalog) {
+          renderSectorialCatalogCards(referencePayload.sectorial_referentials || referencePayload.catalog || []);
+        } else {
+          renderSectorialCatalogCards([
+            { code: 'HEALTH', name: 'Référentiel Santé', status: healthPayload?.statistics?.data_available ? 'active' : 'in_progress' },
+            { code: 'EDUCATION', name: 'Référentiel Éducation', status: 'planned' },
+            { code: 'ENERGY', name: 'Référentiel Énergie', status: 'planned' },
+            { code: 'ROADS', name: 'Référentiel Routes', status: 'planned' },
+            { code: 'POPULATION', name: 'Référentiel Population', status: 'planned' },
+          ]);
+        }
+
+        renderSectorialHealthKpis(healthPayload?.statistics || {}, healthPayload?.quality || {});
         renderSectorialHealthTable(
           healthPayload?.facilities || [],
-          healthPayload?.table_empty_message,
+          healthPayload?.table_empty_message || (healthPayload?.statistics?.data_available ? null : 'Les données santé seront intégrées depuis une source officielle.'),
         );
-        initializeSectorialHealthMap();
-        decisionCenterState.sectorialLoaded = true;
-      })
-      .catch(() => {
-        renderSectorialCatalogCards([
-          { code: 'HEALTH', name: 'Référentiel Santé', status: 'in_progress' },
-          { code: 'EDUCATION', name: 'Référentiel Éducation', status: 'planned' },
-          { code: 'ENERGY', name: 'Référentiel Énergie', status: 'planned' },
-          { code: 'ROADS', name: 'Référentiel Routes', status: 'planned' },
-          { code: 'POPULATION', name: 'Référentiel Population', status: 'planned' },
-        ]);
-        renderSectorialHealthKpis({});
-        renderSectorialHealthTable([], 'Les données santé seront intégrées depuis une source officielle.');
-        initializeSectorialHealthMap();
+        renderSectorialHealthQuality(healthPayload || {});
+        decisionCenterState.healthGeojson = healthLayer;
+        initializeSectorialHealthMap(healthLayer);
         decisionCenterState.sectorialLoaded = true;
       })
       .finally(() => {

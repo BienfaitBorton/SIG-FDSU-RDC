@@ -78,15 +78,21 @@ def _count_health_objects(cur) -> dict[str, int]:
 
 def _count_admin_objects(cur) -> dict[str, int]:
     counts = {"total": 0, "with_geometry": 0, "without_geometry": 0, "with_admin_link": 0, "without_admin_link": 0}
-    for table in ("provinces", "territoires", "collectivites", "groupements", "villages"):
+    for table in ("provinces", "territoires", "collectivites", "groupements", "localites", "villages"):
         try:
+            cur.execute("SAVEPOINT admin_count")
             cur.execute(f"SELECT COUNT(*) AS c FROM {table}")
             total = int(cur.fetchone()["c"])
             cur.execute(f"SELECT COUNT(*) AS c FROM {table} WHERE geom IS NOT NULL")
             with_geom = int(cur.fetchone()["c"])
+            cur.execute("RELEASE SAVEPOINT admin_count")
             counts["total"] += total
             counts["with_geometry"] += with_geom
         except Exception:
+            try:
+                cur.execute("ROLLBACK TO SAVEPOINT admin_count")
+            except Exception:
+                pass
             continue
     counts["without_geometry"] = counts["total"] - counts["with_geometry"]
     counts["with_admin_link"] = counts["total"]
@@ -238,8 +244,9 @@ def list_object_types(reference_code: str) -> list[dict[str, Any]]:
             return [_serialize_row(dict(row)) for row in cur.fetchall()]
 
 
-def get_quality_indicators(reference_code: str | None = None) -> list[dict[str, Any]]:
-    compute_quality_indicators(reference_code)
+def get_quality_indicators(reference_code: str | None = None, refresh: bool = False) -> list[dict[str, Any]]:
+    if refresh:
+        compute_quality_indicators(reference_code)
     filters: list[str] = []
     params: list[Any] = []
     if reference_code:
@@ -258,12 +265,16 @@ def get_quality_indicators(reference_code: str | None = None) -> list[dict[str, 
     with connect_db() as conn:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(query, tuple(params))
-            return [_serialize_row(dict(row)) for row in cur.fetchall()]
+            rows = [_serialize_row(dict(row)) for row in cur.fetchall()]
+    if not rows and not refresh:
+        return get_quality_indicators(reference_code=reference_code, refresh=True)
+    return rows
 
 
 def get_panel_payload() -> dict[str, Any]:
     catalog = list_catalog()
-    quality = get_quality_indicators()
+    # Lecture seule des indicateurs déjà calculés — évite un recalcul lourd à chaque ouverture UI.
+    quality = get_quality_indicators(refresh=False)
     quality_by_code = {item["reference_code"]: item for item in quality}
     sectorial = [item for item in catalog if item.get("category") == "sectorial" or item.get("code") == "HEALTH"]
     return {

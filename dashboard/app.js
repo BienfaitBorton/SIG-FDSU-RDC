@@ -9216,6 +9216,12 @@ function fetchJson(endpoint) {
   if (localPath.startsWith('/api/decision/')) {
     return fetchApiJson(localPath).catch(() => null);
   }
+  if (localPath.startsWith('/api/health/')) {
+    return fetchApiJson(localPath).catch(() => null);
+  }
+  if (localPath.startsWith('/api/reference/')) {
+    return fetchApiJson(localPath).catch(() => null);
+  }
   if (localPath.startsWith('/programs/') || localPath.startsWith('/business/')) {
     if (canUseProgramDbData()) {
       if (localPath.endsWith('sites_40/sites_40.geojson')) {

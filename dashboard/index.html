@@ -838,12 +838,16 @@
                     <p class="summary-label">Géolocalisées</p>
                     <p class="summary-value" id="sectorial-health-kpi-geo">0</p>
                   </article>
+                  <article class="sectorial-health-kpi">
+                    <p class="summary-label">Score qualité</p>
+                    <p class="summary-value" id="sectorial-health-kpi-quality">—</p>
+                  </article>
                 </div>
 
                 <div class="sectorial-health-body">
                   <div class="sectorial-health-map-column">
                     <div id="sectorial-health-map" class="sectorial-health-map" aria-label="Carte des structures sanitaires"></div>
-                    <p class="sectorial-empty-message" id="sectorial-health-map-message">Aucune donnée santé géolocalisée disponible</p>
+                    <p class="sectorial-empty-message" id="sectorial-health-map-message" hidden></p>
                   </div>
                   <div class="sectorial-health-table-column">
                     <div class="sectorial-health-table-frame">
@@ -857,10 +861,34 @@
                           </tr>
                         </thead>
                         <tbody id="sectorial-health-table-body">
-                          <tr><td colspan="4" class="decision-center-program-note">Les données santé seront intégrées depuis une source officielle.</td></tr>
+                          <tr><td colspan="4" class="decision-center-program-note">Chargement des structures sanitaires…</td></tr>
                         </tbody>
                       </table>
                     </div>
+                  </div>
+                </div>
+
+                <div class="sectorial-health-quality" id="sectorial-health-quality" aria-label="Qualité des données santé">
+                  <div>
+                    <p class="panel-label">Qualité</p>
+                    <h4>Qualité des données</h4>
+                    <ul class="sectorial-health-quality-list" id="sectorial-health-quality-list">
+                      <li>En attente d’import…</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p class="panel-label">Répartition</p>
+                    <h4>Par type</h4>
+                    <ul class="sectorial-health-distribution" id="sectorial-health-by-type">
+                      <li>En attente d’import…</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p class="panel-label">Répartition</p>
+                    <h4>Par province</h4>
+                    <ul class="sectorial-health-distribution" id="sectorial-health-by-province">
+                      <li>En attente d’import…</li>
+                    </ul>
                   </div>
                 </div>
               </section>

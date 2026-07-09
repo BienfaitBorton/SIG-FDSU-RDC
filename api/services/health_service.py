@@ -8,9 +8,9 @@ from typing import Any
 from api.config import connect_db
 from psycopg2.extras import Json, RealDictCursor
 
-HOSPITAL_TYPES = ("HGR",)
-HEALTH_CENTER_TYPES = ("CS", "CSR", "CLINIC")
-HEALTH_POST_TYPES = ("PS", "MAT")
+HOSPITAL_TYPES = ("HGR", "HOSPITAL", "CH")
+HEALTH_CENTER_TYPES = ("CS", "CSR", "CM", "CLINIC", "POLYCLINIC")
+HEALTH_POST_TYPES = ("PS", "DISP", "SSC", "MAT")
 
 
 def _serialize_row(row: dict[str, Any]) -> dict[str, Any]:
@@ -208,6 +208,91 @@ def _count_facilities_with_geometry() -> int:
             return int(cur.fetchone()[0])
 
 
+def _distribution_counts(cur) -> tuple[dict[str, int], dict[str, int]]:
+    cur.execute(
+        """
+        SELECT COALESCE(facility_type_code, 'OTHER') AS code, COUNT(*) AS count
+        FROM health.health_facilities
+        GROUP BY 1
+        ORDER BY count DESC, code
+        """
+    )
+    by_type = {row["code"]: int(row["count"]) for row in cur.fetchall()}
+    cur.execute(
+        """
+        SELECT COALESCE(NULLIF(TRIM(province_name), ''), 'Non renseigné') AS province, COUNT(*) AS count
+        FROM health.health_facilities
+        GROUP BY 1
+        ORDER BY count DESC, province
+        """
+    )
+    by_province = {row["province"]: int(row["count"]) for row in cur.fetchall()}
+    return by_type, by_province
+
+
+def _quality_metrics(cur, total: int, with_geom: int) -> dict[str, Any]:
+    cur.execute(
+        """
+        SELECT COUNT(*) AS count
+        FROM health.health_facilities
+        WHERE name IS NULL OR TRIM(name) = '' OR name = 'Structure sans nom'
+        """
+    )
+    missing_names = int(cur.fetchone()["count"])
+    cur.execute(
+        """
+        SELECT COUNT(*) AS count
+        FROM health.health_facilities
+        WHERE facility_type_code IS NULL OR facility_type_code = 'OTHER'
+        """
+    )
+    missing_types = int(cur.fetchone()["count"])
+    cur.execute(
+        """
+        SELECT COUNT(*) AS count
+        FROM (
+            SELECT ROUND(ST_X(geom)::numeric, 5), ROUND(ST_Y(geom)::numeric, 5), lower(trim(name))
+            FROM health.health_facilities
+            WHERE geom IS NOT NULL
+            GROUP BY 1, 2, 3
+            HAVING COUNT(*) > 1
+        ) duplicates
+        """
+    )
+    duplicate_groups = int(cur.fetchone()["count"])
+    cur.execute(
+        """
+        SELECT COALESCE(SUM(cnt - 1), 0) AS count
+        FROM (
+            SELECT COUNT(*) AS cnt
+            FROM health.health_facilities
+            WHERE geom IS NOT NULL
+            GROUP BY ROUND(ST_X(geom)::numeric, 5), ROUND(ST_Y(geom)::numeric, 5), lower(trim(name))
+            HAVING COUNT(*) > 1
+        ) duplicates
+        """
+    )
+    potential_duplicates = int(cur.fetchone()["count"])
+    if total <= 0:
+        quality_score = 0.0
+    else:
+        geom_ratio = with_geom / total
+        named_ratio = (total - missing_names) / total
+        typed_ratio = (total - missing_types) / total
+        duplicate_penalty = min(potential_duplicates / total, 0.2)
+        quality_score = round(
+            max(0.0, (geom_ratio * 0.5 + named_ratio * 0.25 + typed_ratio * 0.25 - duplicate_penalty) * 100),
+            2,
+        )
+    return {
+        "missing_names": missing_names,
+        "missing_types": missing_types,
+        "duplicate_groups": duplicate_groups,
+        "potential_duplicates": potential_duplicates,
+        "quality_score": quality_score,
+    }
+
+
 def compute_statistics(scope_type: str = "national", scope_name: str = "RDC") -> dict[str, Any]:
     query = """
         SELECT
@@ -228,10 +313,23 @@ def compute_statistics(scope_type: str = "national", scope_name: str = "RDC") ->
                 (list(HOSPITAL_TYPES), list(HEALTH_CENTER_TYPES), list(HEALTH_POST_TYPES)),
             )
             stats = dict(cur.fetchone())
+            by_type, by_province = _distribution_counts(cur)
+            quality = _quality_metrics(
+                cur,
+                int(stats["total_facilities"]),
+                int(stats["facilities_with_geometry"]),
+            )
             details = {
+                "status": "imported" if int(stats["total_facilities"]) > 0 else "empty",
                 "hospital_types": list(HOSPITAL_TYPES),
                 "health_center_types": list(HEALTH_CENTER_TYPES),
                 "health_post_types": list(HEALTH_POST_TYPES),
+                "by_type": by_type,
+                "by_province": by_province,
+                "missing_names": quality["missing_names"],
+                "missing_types": quality["missing_types"],
+                "potential_duplicates": quality["potential_duplicates"],
+                "quality_score": quality["quality_score"],
                 "import_ready": True,
                 "formats": ["csv", "excel", "geojson", "kmz"],
             }
@@ -255,6 +353,46 @@ def compute_statistics(scope_type: str = "national", scope_name: str = "RDC") ->
                     int(stats["facilities_without_geometry"]),
                     int(stats["facilities_with_electricity"]),
                     int(stats["facilities_with_internet"]),
+                    Json(details),
+                ),
+            )
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS health.health_quality_dashboard (
+                    id BIGSERIAL PRIMARY KEY,
+                    scope_type VARCHAR(64) NOT NULL DEFAULT 'national',
+                    scope_name VARCHAR(255) NOT NULL DEFAULT 'RDC',
+                    quality_score NUMERIC(6,2) NOT NULL DEFAULT 0,
+                    total_facilities INTEGER NOT NULL DEFAULT 0,
+                    facilities_with_geometry INTEGER NOT NULL DEFAULT 0,
+                    facilities_without_geometry INTEGER NOT NULL DEFAULT 0,
+                    missing_names INTEGER NOT NULL DEFAULT 0,
+                    missing_types INTEGER NOT NULL DEFAULT 0,
+                    potential_duplicates INTEGER NOT NULL DEFAULT 0,
+                    details JSONB NOT NULL DEFAULT '{}'::jsonb,
+                    computed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+                """
+            )
+            cur.execute(
+                """
+                INSERT INTO health.health_quality_dashboard (
+                    scope_type, scope_name, quality_score, total_facilities,
+                    facilities_with_geometry, facilities_without_geometry,
+                    missing_names, missing_types, potential_duplicates, details, computed_at
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+                """,
+                (
+                    scope_type,
+                    scope_name,
+                    quality["quality_score"],
+                    int(stats["total_facilities"]),
+                    int(stats["facilities_with_geometry"]),
+                    int(stats["facilities_without_geometry"]),
+                    quality["missing_names"],
+                    quality["missing_types"],
+                    quality["potential_duplicates"],
                     Json(details),
                 ),
             )
@@ -310,15 +448,29 @@ def facilities_geojson(limit: int = 5000) -> dict[str, Any]:
                 "data_available": False,
             },
         }
-    rows = list_facilities(skip=0, limit=limit)
+    query = """
+        SELECT
+            f.id, f.official_code, f.name, f.facility_type_code,
+            t.name AS facility_type_name,
+            f.province_name, f.locality_name, f.data_source, f.properties,
+            ST_AsGeoJSON(f.geom)::json AS geometry
+        FROM health.health_facilities f
+        LEFT JOIN health.health_facility_types t ON t.code = f.facility_type_code
+        WHERE f.geom IS NOT NULL
+        ORDER BY f.id
+        LIMIT %s
+    """
+    with connect_db() as conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query, (limit,))
+            rows = [_serialize_row(dict(row)) for row in cur.fetchall()]
+
     features = []
-    for index, row in enumerate(rows, start=1):
-        if not row.get("geometry"):
-            continue
+    for row in rows:
         features.append(
             {
                 "type": "Feature",
-                "id": index,
+                "id": row["id"],
                 "geometry": row["geometry"],
                 "properties": {
                     key: value
@@ -330,24 +482,69 @@ def facilities_geojson(limit: int = 5000) -> dict[str, Any]:
     return {
         "type": "FeatureCollection",
         "features": features,
-        "_meta": {"data_available": True, "count": len(features)},
+        "_meta": {
+            "data_available": True,
+            "count": len(features),
+            "total_geolocated": total_geom,
+        },
     }
 
 
+def get_quality_dashboard(scope_type: str = "national", scope_name: str = "RDC") -> dict[str, Any]:
+    query = """
+        SELECT
+            id, scope_type, scope_name, quality_score, total_facilities,
+            facilities_with_geometry, facilities_without_geometry,
+            missing_names, missing_types, potential_duplicates, details, computed_at
+        FROM health.health_quality_dashboard
+        WHERE scope_type = %s AND scope_name = %s
+        ORDER BY computed_at DESC
+        LIMIT 1
+    """
+    with connect_db() as conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(
+                """
+                SELECT to_regclass('health.health_quality_dashboard') AS table_name
+                """
+            )
+            exists = cur.fetchone()["table_name"]
+            if not exists:
+                return {"data_available": False, "quality_score": 0}
+            cur.execute(query, (scope_type, scope_name))
+            row = cur.fetchone()
+            if not row:
+                return {"data_available": False, "quality_score": 0}
+            payload = _serialize_row(dict(row))
+            payload["data_available"] = True
+            if payload.get("quality_score") is not None:
+                payload["quality_score"] = float(payload["quality_score"])
+            return payload
+
+
 def get_panel_payload() -> dict[str, Any]:
-    stats = compute_statistics()
+    stats = get_statistics()
+    if not stats.get("data_available"):
+        stats = compute_statistics()
     types = list_facility_types()
-    facilities = list_facilities(limit=50)
+    facilities = list_facilities(limit=100)
+    quality = get_quality_dashboard()
+    details = stats.get("details") or {}
+    data_available = bool(stats.get("data_available"))
     return {
         "_meta": {
             "title": "Référentiel Santé",
             "version": "1.0.0",
-            "status": "in_progress",
+            "status": "active" if data_available else "in_progress",
+            "data_available": data_available,
         },
         "statistics": stats,
+        "quality": quality,
+        "by_type": details.get("by_type") or {},
+        "by_province": details.get("by_province") or {},
         "facility_types": types,
         "facilities": facilities,
-        "facilities_count": len(facilities),
-        "geojson_empty_message": "Aucune donnée santé géolocalisée disponible",
-        "table_empty_message": "Les données santé seront intégrées depuis une source officielle.",
+        "facilities_count": int(stats.get("total_facilities") or 0),
+        "geojson_empty_message": None if data_available else "Aucune donnée santé géolocalisée disponible",
+        "table_empty_message": None if data_available else "Les données santé seront intégrées depuis une source officielle.",
     }

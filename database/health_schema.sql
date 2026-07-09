@@ -69,3 +69,21 @@ CREATE INDEX IF NOT EXISTS idx_health_facilities_official_code
 
 CREATE INDEX IF NOT EXISTS idx_health_statistics_scope
     ON health.health_statistics (scope_type, scope_name);
+
+CREATE TABLE IF NOT EXISTS health.health_quality_dashboard (
+    id                              BIGSERIAL PRIMARY KEY,
+    scope_type                      VARCHAR(64) NOT NULL DEFAULT 'national',
+    scope_name                      VARCHAR(255) NOT NULL DEFAULT 'RDC',
+    quality_score                   NUMERIC(6,2) NOT NULL DEFAULT 0,
+    total_facilities                INTEGER NOT NULL DEFAULT 0,
+    facilities_with_geometry        INTEGER NOT NULL DEFAULT 0,
+    facilities_without_geometry     INTEGER NOT NULL DEFAULT 0,
+    missing_names                   INTEGER NOT NULL DEFAULT 0,
+    missing_types                   INTEGER NOT NULL DEFAULT 0,
+    potential_duplicates            INTEGER NOT NULL DEFAULT 0,
+    details                         JSONB NOT NULL DEFAULT '{}'::jsonb,
+    computed_at                     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_health_quality_dashboard_scope
+    ON health.health_quality_dashboard (scope_type, scope_name, computed_at DESC);

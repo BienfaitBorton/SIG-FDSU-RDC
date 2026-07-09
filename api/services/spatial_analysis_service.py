@@ -27,7 +27,7 @@ REL_NEAREST_HGR = "nearest_hgr"
 REL_NEAREST_HEALTH_CENTER = "nearest_health_center"
 
 FIBER_OPERATOR_CODES = ("FIBER_MW", "FIBERCO", "FTTX")
-HEALTH_CENTER_TYPE_CODES = ("CS", "CSR", "CLINIC")
+HEALTH_CENTER_TYPE_CODES = ("CS", "CSR", "CM", "CLINIC", "POLYCLINIC")
 HGR_TYPE_CODE = "HGR"
 DEFAULT_NEARBY_RADIUS_M = 10_000.0
 
@@ -93,14 +93,21 @@ def list_program_sites(program_code: str) -> list[dict[str, Any]]:
 
 
 def clear_site_relations(site_id: int) -> None:
+    """Supprime les relations télécom/admin d'un site sans toucher aux relations santé."""
     with connect_db() as conn:
         with conn.cursor() as cur:
             cur.execute(
                 """
                 DELETE FROM analysis.spatial_relations
-                WHERE source_type = %s AND source_id = %s
+                WHERE source_type = %s
+                  AND source_id = %s
+                  AND relation_type <> ALL(%s)
                 """,
-                (SOURCE_TYPE_FDSU_SITE, site_id),
+                (
+                    SOURCE_TYPE_FDSU_SITE,
+                    site_id,
+                    [REL_NEAREST_HEALTH, REL_NEAREST_HGR, REL_NEAREST_HEALTH_CENTER],
+                ),
             )
         conn.commit()
 
@@ -661,7 +668,7 @@ def _compute_nearest_health_facility(
 
 
 def get_site_health_proximity(site_id: int) -> dict[str, Any]:
-    """Extension Santé — préparée pour relations spatiales futures."""
+    """Extension Santé — proximité Site FDSU → structures sanitaires."""
     site = get_fdsu_site(site_id)
     if not site:
         return {
@@ -693,6 +700,60 @@ def get_site_health_proximity(site_id: int) -> dict[str, Any]:
         "nearest_health_facility": nearest_any,
         "nearest_hgr": nearest_hgr,
         "nearest_health_center": nearest_center,
-        "architecture": "prepared",
+        "architecture": "active",
     }
+
+
+def clear_site_health_relations(site_id: int) -> None:
+    """Supprime uniquement les relations santé d'un site (préserve télécom/admin)."""
+    with connect_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                DELETE FROM analysis.spatial_relations
+                WHERE source_type = %s
+                  AND source_id = %s
+                  AND relation_type = ANY(%s)
+                """,
+                (
+                    SOURCE_TYPE_FDSU_SITE,
+                    site_id,
+                    [REL_NEAREST_HEALTH, REL_NEAREST_HGR, REL_NEAREST_HEALTH_CENTER],
+                ),
+            )
+        conn.commit()
+
+
+def persist_site_health_relations(site_id: int) -> dict[str, Any]:
+    """Persiste Site → HGR / Centre de Santé / structure sanitaire la plus proche."""
+    proximity = get_site_health_proximity(site_id)
+    if proximity.get("analysis_status") != "completed":
+        return proximity
+
+    clear_site_health_relations(site_id)
+
+    mapping = (
+        (proximity.get("nearest_health_facility"), REL_NEAREST_HEALTH),
+        (proximity.get("nearest_hgr"), REL_NEAREST_HGR),
+        (proximity.get("nearest_health_center"), REL_NEAREST_HEALTH_CENTER),
+    )
+    for facility, relation_type in mapping:
+        if not facility or facility.get("id") is None:
+            continue
+        save_relation(
+            site_id,
+            TARGET_HEALTH_FACILITY,
+            int(facility["id"]),
+            relation_type,
+            float(facility["distance_m"]) if facility.get("distance_m") is not None else None,
+            {
+                "facility_name": facility.get("name"),
+                "facility_type_code": facility.get("facility_type_code"),
+                "facility_type_name": facility.get("facility_type_name"),
+                "official_code": facility.get("official_code"),
+            },
+        )
+
+    proximity["persisted"] = True
+    return proximity
 
