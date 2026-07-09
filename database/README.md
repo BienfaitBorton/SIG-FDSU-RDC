@@ -10,8 +10,12 @@ Ce dossier prépare le passage v0.8.0 du fallback JSON vers une base PostgreSQL/
 - `telecom_schema.sql` : schéma `telecom` (opérateurs, infrastructures, lignes, polygones).
 - `analysis_schema.sql` : schéma `analysis` (Spatial Intelligence Engine — relations spatiales génériques).
 - `decision_schema.sql` : schéma `decision` (Moteur de Décision FDSU — scores de priorité).
+- `reference_schema.sql` : schéma `reference` (National Reference Framework).
+- `health_schema.sql` : schéma `health` (Référentiel Santé v1.0).
 - `apply_analysis_schema.py` : applique le schéma `analysis`.
 - `apply_decision_schema.py` : applique le schéma `decision`.
+- `apply_reference_schema.py` : applique le schéma `reference` et initialise le catalogue.
+- `apply_health_schema.py` : applique le schéma `health` et les types initiaux.
 - `seed_from_json.py` : lit les rapports JSON locaux et insère les données en base avec `ON CONFLICT DO NOTHING`.
 - `seed_programs_sites.py` : importe Sites 40 / Sites 300 depuis GeoJSON vers `programs.fdsu_*`.
 - `seed_telecom.py` : importe le référentiel télécom national depuis les KMZ vers `telecom.*`.
@@ -51,6 +55,8 @@ Appliquer le moteur d'analyse spatiale :
 ```powershell
 python database/apply_analysis_schema.py
 python database/apply_decision_schema.py
+python database/apply_reference_schema.py
+python database/apply_health_schema.py
 ```
 
 Le seed ne supprime rien, ignore les doublons et produit un rapport `inserted / ignored / errors`.

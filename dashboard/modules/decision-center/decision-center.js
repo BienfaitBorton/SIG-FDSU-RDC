@@ -7,6 +7,7 @@
   const DECISION_CENTER_TABS = [
     { id: 'vue-nationale', label: 'Vue nationale' },
     { id: 'priorisation', label: 'Priorisation' },
+    { id: 'referentiels-sectoriels', label: 'Référentiels sectoriels' },
     { id: 'analyse-multicritere', label: 'Analyse multicritère' },
     { id: 'simulations', label: 'Simulations' },
     { id: 'tableaux-de-bord', label: 'Tableaux de bord' },
@@ -48,6 +49,9 @@
     decisionEngineMap: null,
     decisionEngineMarkers: null,
     decisionEngineSelectedSiteId: null,
+    sectorialLoaded: false,
+    sectorialLoading: false,
+    healthMap: null,
     programStatusCatalog: null,
     priorityMatrixLoader: null,
   };
@@ -891,6 +895,182 @@
       });
   }
 
+  const SECTORIAL_CARD_CODES = ['HEALTH', 'EDUCATION', 'ENERGY', 'ROADS', 'POPULATION'];
+  const REFERENTIAL_STATUS_LABELS = {
+    active: 'Actif',
+    in_progress: 'En cours',
+    planned: 'Planifié',
+  };
+  const REFERENTIAL_STATUS_CLASS = {
+    active: 'is-active',
+    in_progress: 'is-progress',
+    planned: 'is-planned',
+  };
+
+  function renderSectorialCatalogCards(catalog) {
+    const container = document.querySelector('#sectorial-catalog-grid');
+    if (!container) return;
+    const items = asArray(catalog).filter((item) => SECTORIAL_CARD_CODES.includes(item.code));
+    if (!items.length) {
+      container.innerHTML = '<p class="decision-center-program-note">Catalogue sectoriel indisponible.</p>';
+      return;
+    }
+    container.innerHTML = items.map((item) => {
+      const status = item.status || 'planned';
+      const statusClass = REFERENTIAL_STATUS_CLASS[status] || 'is-planned';
+      const statusLabel = REFERENTIAL_STATUS_LABELS[status] || status;
+      return `
+        <article class="sectorial-catalog-card ${statusClass}" data-reference-code="${escapeHtml(item.code)}">
+          <p class="summary-label">${escapeHtml(item.code)}</p>
+          <h4>${escapeHtml(item.name || item.code)}</h4>
+          <p class="sectorial-catalog-status">${escapeHtml(statusLabel)}</p>
+        </article>
+      `;
+    }).join('');
+  }
+
+  function renderSectorialHealthKpis(stats) {
+    const set = (id, value) => {
+      const node = document.querySelector(id);
+      if (node) node.textContent = Number(value || 0).toLocaleString('fr-FR');
+    };
+    set('#sectorial-health-kpi-total', stats?.total_facilities);
+    set('#sectorial-health-kpi-hospitals', stats?.hospitals);
+    set('#sectorial-health-kpi-centers', stats?.health_centers);
+    set('#sectorial-health-kpi-posts', stats?.health_posts);
+    set('#sectorial-health-kpi-geo', stats?.facilities_with_geometry);
+  }
+
+  function renderSectorialHealthTable(facilities, emptyMessage) {
+    const tbody = document.querySelector('#sectorial-health-table-body');
+    if (!tbody) return;
+    const rows = asArray(facilities);
+    if (!rows.length) {
+      tbody.innerHTML = `<tr><td colspan="4" class="decision-center-program-note">${escapeHtml(emptyMessage || 'Les données santé seront intégrées depuis une source officielle.')}</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = rows.map((item) => `
+      <tr>
+        <td>${escapeHtml(item.official_code || '—')}</td>
+        <td>${escapeHtml(item.name || '—')}</td>
+        <td>${escapeHtml(item.facility_type_name || item.facility_type_code || '—')}</td>
+        <td>${escapeHtml(item.province_name || '—')}</td>
+      </tr>
+    `).join('');
+  }
+
+  function initializeSectorialHealthMap() {
+    const shared = getShared();
+    if (typeof global.L === 'undefined') return;
+    const mapElement = document.querySelector('#sectorial-health-map');
+    if (!mapElement) return;
+
+    if (decisionCenterState.healthMap) {
+      global.setTimeout(() => decisionCenterState.healthMap.invalidateSize(), 0);
+      return;
+    }
+
+    decisionCenterState.healthMap = global.L.map(mapElement, {
+      zoomControl: true,
+      attributionControl: true,
+      minZoom: 4,
+      maxZoom: 14,
+    }).setView([-2.8, 23.5], 5);
+
+    global.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 19,
+    }).addTo(decisionCenterState.healthMap);
+
+    if (shared.fetchApiJson) {
+      shared.fetchApiJson('/map/layers/provinces?limit=5000')
+        .then((payload) => {
+          const features = asArray(payload?.features);
+          if (!features.length) return;
+          global.L.geoJSON({ type: 'FeatureCollection', features }, {
+            style: shared.styleProvinceFeature,
+          }).addTo(decisionCenterState.healthMap);
+        })
+        .catch(() => {});
+    }
+
+    global.setTimeout(() => decisionCenterState.healthMap?.invalidateSize(), 0);
+  }
+
+  function loadSectorialReferentialsPanel(forceReload) {
+    if (decisionCenterState.sectorialLoaded && !forceReload) {
+      initializeSectorialHealthMap();
+      global.setTimeout(() => decisionCenterState.healthMap?.invalidateSize(), 0);
+      return Promise.resolve();
+    }
+    if (decisionCenterState.sectorialLoading && !forceReload) return Promise.resolve();
+
+    decisionCenterState.sectorialLoading = true;
+    const catalogContainer = document.querySelector('#sectorial-catalog-grid');
+    const shared = getShared();
+    const canUseDb = typeof shared.canUseTelecomDbData === 'function' && shared.canUseTelecomDbData();
+
+    if (catalogContainer) {
+      catalogContainer.innerHTML = '<p class="decision-center-program-loading">Chargement du catalogue…</p>';
+    }
+
+    if (!canUseDb) {
+      renderSectorialCatalogCards([
+        { code: 'HEALTH', name: 'Référentiel Santé', status: 'in_progress' },
+        { code: 'EDUCATION', name: 'Référentiel Éducation', status: 'planned' },
+        { code: 'ENERGY', name: 'Référentiel Énergie', status: 'planned' },
+        { code: 'ROADS', name: 'Référentiel Routes', status: 'planned' },
+        { code: 'POPULATION', name: 'Référentiel Population', status: 'planned' },
+      ]);
+      renderSectorialHealthKpis({});
+      renderSectorialHealthTable([], 'Les données santé seront intégrées depuis une source officielle.');
+      initializeSectorialHealthMap();
+      decisionCenterState.sectorialLoaded = true;
+      decisionCenterState.sectorialLoading = false;
+      return Promise.resolve();
+    }
+
+    const fetchReference = typeof shared.fetchJson === 'function'
+      ? shared.fetchJson('/api/reference/panel')
+      : Promise.reject(new Error('API indisponible'));
+    const fetchHealth = typeof shared.fetchJson === 'function'
+      ? shared.fetchJson('/api/health/panel')
+      : Promise.reject(new Error('API indisponible'));
+
+    const timeout = new Promise((_, reject) => {
+      global.setTimeout(() => reject(new Error('Timeout')), 8000);
+    });
+
+    return Promise.race([Promise.all([fetchReference, fetchHealth]), timeout])
+      .then(([referencePayload, healthPayload]) => {
+        renderSectorialCatalogCards(referencePayload?.sectorial_referentials || referencePayload?.catalog || []);
+        renderSectorialHealthKpis(healthPayload?.statistics || {});
+        renderSectorialHealthTable(
+          healthPayload?.facilities || [],
+          healthPayload?.table_empty_message,
+        );
+        initializeSectorialHealthMap();
+        decisionCenterState.sectorialLoaded = true;
+      })
+      .catch(() => {
+        renderSectorialCatalogCards([
+          { code: 'HEALTH', name: 'Référentiel Santé', status: 'in_progress' },
+          { code: 'EDUCATION', name: 'Référentiel Éducation', status: 'planned' },
+          { code: 'ENERGY', name: 'Référentiel Énergie', status: 'planned' },
+          { code: 'ROADS', name: 'Référentiel Routes', status: 'planned' },
+          { code: 'POPULATION', name: 'Référentiel Population', status: 'planned' },
+        ]);
+        renderSectorialHealthKpis({});
+        renderSectorialHealthTable([], 'Les données santé seront intégrées depuis une source officielle.');
+        initializeSectorialHealthMap();
+        decisionCenterState.sectorialLoaded = true;
+      })
+      .finally(() => {
+        decisionCenterState.sectorialLoading = false;
+        global.setTimeout(() => decisionCenterState.healthMap?.invalidateSize(), 0);
+      });
+  }
+
   function loadBusinessArchitecturePanel(forceReload) {
     if (decisionCenterState.programsLoading) return Promise.resolve();
     if (decisionCenterState.programsLoaded && !forceReload) return Promise.resolve();
@@ -966,6 +1146,13 @@
       loadDecisionEnginePanel(false);
       global.setTimeout(() => {
         decisionCenterState.decisionEngineMap?.invalidateSize();
+      }, 120);
+    }
+
+    if (tabId === 'referentiels-sectoriels') {
+      loadSectorialReferentialsPanel(false);
+      global.setTimeout(() => {
+        decisionCenterState.healthMap?.invalidateSize();
       }, 120);
     }
   }
@@ -1085,6 +1272,7 @@
   global.loadTelecomReferentialPanel = loadTelecomReferentialPanel;
   global.loadSpatialAnalysisPanel = loadSpatialAnalysisPanel;
   global.loadDecisionEnginePanel = loadDecisionEnginePanel;
+  global.loadSectorialReferentialsPanel = loadSectorialReferentialsPanel;
   global.loadPriorityMatrix = loadPriorityMatrix;
   global.FDSU_BUSINESS_DATA_BASE = BUSINESS_DATA_BASE;
   global.FDSU_PROGRAMS_DATA_BASE = PROGRAMS_DATA_BASE;

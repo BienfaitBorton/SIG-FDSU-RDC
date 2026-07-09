@@ -527,6 +527,7 @@
           <nav class="decision-center-tabs" id="decision-center-tabs" role="tablist" aria-label="Onglets du centre de décision">
             <button type="button" class="decision-center-tab is-active" data-decision-tab="vue-nationale" role="tab" aria-selected="true">Vue nationale</button>
             <button type="button" class="decision-center-tab" data-decision-tab="priorisation" role="tab" aria-selected="false">Priorisation</button>
+            <button type="button" class="decision-center-tab" data-decision-tab="referentiels-sectoriels" role="tab" aria-selected="false">Référentiels sectoriels</button>
             <button type="button" class="decision-center-tab" data-decision-tab="analyse-multicritere" role="tab" aria-selected="false">Analyse multicritère</button>
             <button type="button" class="decision-center-tab" data-decision-tab="simulations" role="tab" aria-selected="false">Simulations</button>
             <button type="button" class="decision-center-tab" data-decision-tab="tableaux-de-bord" role="tab" aria-selected="false">Tableaux de bord</button>
@@ -737,6 +738,78 @@
                   </div>
                 </div>
               </div>
+            </div>
+          </section>
+
+          <section class="decision-center-tab-panel" data-decision-tab-panel="referentiels-sectoriels" role="tabpanel" hidden>
+            <div class="sectorial-referentials-panel" id="sectorial-referentials-panel" aria-label="Référentiels sectoriels">
+              <div class="sectorial-referentials-header">
+                <div>
+                  <p class="panel-label">National Reference Framework</p>
+                  <h3>Référentiels sectoriels</h3>
+                </div>
+              </div>
+
+              <div class="sectorial-catalog-grid" id="sectorial-catalog-grid">
+                <p class="decision-center-program-loading">Chargement du catalogue…</p>
+              </div>
+
+              <section class="sectorial-health-panel" id="sectorial-health-panel" aria-label="Référentiel Santé">
+                <div class="sectorial-health-header">
+                  <div>
+                    <p class="panel-label">Référentiel sectoriel v1.0</p>
+                    <h3>Santé</h3>
+                  </div>
+                  <button type="button" class="secondary-button" id="sectorial-health-import-btn" disabled title="Import futur CSV/Excel/GeoJSON/KMZ">Importer données santé</button>
+                </div>
+
+                <div class="sectorial-health-kpi-grid" id="sectorial-health-kpi-grid">
+                  <article class="sectorial-health-kpi">
+                    <p class="summary-label">Structures</p>
+                    <p class="summary-value" id="sectorial-health-kpi-total">0</p>
+                  </article>
+                  <article class="sectorial-health-kpi">
+                    <p class="summary-label">Hôpitaux</p>
+                    <p class="summary-value" id="sectorial-health-kpi-hospitals">0</p>
+                  </article>
+                  <article class="sectorial-health-kpi">
+                    <p class="summary-label">Centres de santé</p>
+                    <p class="summary-value" id="sectorial-health-kpi-centers">0</p>
+                  </article>
+                  <article class="sectorial-health-kpi">
+                    <p class="summary-label">Postes de santé</p>
+                    <p class="summary-value" id="sectorial-health-kpi-posts">0</p>
+                  </article>
+                  <article class="sectorial-health-kpi">
+                    <p class="summary-label">Géolocalisées</p>
+                    <p class="summary-value" id="sectorial-health-kpi-geo">0</p>
+                  </article>
+                </div>
+
+                <div class="sectorial-health-body">
+                  <div class="sectorial-health-map-column">
+                    <div id="sectorial-health-map" class="sectorial-health-map" aria-label="Carte des structures sanitaires"></div>
+                    <p class="sectorial-empty-message" id="sectorial-health-map-message">Aucune donnée santé géolocalisée disponible</p>
+                  </div>
+                  <div class="sectorial-health-table-column">
+                    <div class="sectorial-health-table-frame">
+                      <table class="sectorial-health-table" id="sectorial-health-table">
+                        <thead>
+                          <tr>
+                            <th>Code</th>
+                            <th>Structure</th>
+                            <th>Type</th>
+                            <th>Province</th>
+                          </tr>
+                        </thead>
+                        <tbody id="sectorial-health-table-body">
+                          <tr><td colspan="4" class="decision-center-program-note">Les données santé seront intégrées depuis une source officielle.</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </section>
             </div>
           </section>
 

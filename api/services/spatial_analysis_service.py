@@ -14,6 +14,7 @@ TARGET_NETWORK_LINE = "telecom_network_line"
 TARGET_OPERATOR = "telecom_operator"
 TARGET_PROVINCE = "admin_province"
 TARGET_TERRITOIRE = "admin_territoire"
+TARGET_HEALTH_FACILITY = "health_facility"
 
 REL_NEAREST_INFRASTRUCTURE = "nearest_infrastructure"
 REL_NEAREST_FIBER = "nearest_fiber"
@@ -21,8 +22,13 @@ REL_NEAREST_OPERATOR = "nearest_operator"
 REL_NEARBY_OPERATOR = "nearby_operator"
 REL_ADMIN_PROVINCE = "administrative_province"
 REL_ADMIN_TERRITOIRE = "administrative_territoire"
+REL_NEAREST_HEALTH = "nearest_health_facility"
+REL_NEAREST_HGR = "nearest_hgr"
+REL_NEAREST_HEALTH_CENTER = "nearest_health_center"
 
 FIBER_OPERATOR_CODES = ("FIBER_MW", "FIBERCO", "FTTX")
+HEALTH_CENTER_TYPE_CODES = ("CS", "CSR", "CLINIC")
+HGR_TYPE_CODE = "HGR"
 DEFAULT_NEARBY_RADIUS_M = 10_000.0
 
 
@@ -612,3 +618,81 @@ def spatial_relations_geojson(limit: int = 5000) -> dict[str, Any]:
             "description": "Lignes site FDSU vers infrastructure la plus proche",
         },
     }
+
+
+def _health_facilities_available() -> bool:
+    with connect_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT COUNT(*) FROM health.health_facilities WHERE geom IS NOT NULL")
+            return int(cur.fetchone()[0]) > 0
+
+
+def _compute_nearest_health_facility(
+    site_id: int,
+    facility_type_codes: tuple[str, ...] | None = None,
+) -> dict[str, Any] | None:
+    if not _health_facilities_available():
+        return None
+    type_filter = ""
+    params: list[Any] = [site_id]
+    if facility_type_codes:
+        type_filter = "AND f.facility_type_code = ANY(%s)"
+        params.append(list(facility_type_codes))
+    query = f"""
+        SELECT
+            f.id,
+            f.official_code,
+            f.name,
+            f.facility_type_code,
+            t.name AS facility_type_name,
+            ST_Distance(s.geom::geography, f.geom::geography) AS distance_m
+        FROM programs.fdsu_sites s
+        JOIN health.health_facilities f ON f.geom IS NOT NULL
+        LEFT JOIN health.health_facility_types t ON t.code = f.facility_type_code
+        WHERE s.id = %s AND s.geom IS NOT NULL {type_filter}
+        ORDER BY s.geom::geography <-> f.geom::geography
+        LIMIT 1
+    """
+    with connect_db() as conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(query, tuple(params))
+            row = cur.fetchone()
+            return _serialize_row(dict(row)) if row else None
+
+
+def get_site_health_proximity(site_id: int) -> dict[str, Any]:
+    """Extension Santé — préparée pour relations spatiales futures."""
+    site = get_fdsu_site(site_id)
+    if not site:
+        return {
+            "site_id": site_id,
+            "analysis_status": "not_found",
+            "message": "Site FDSU introuvable.",
+        }
+    if not _health_facilities_available():
+        return {
+            "site_id": site_id,
+            "site": site.get("site_name"),
+            "analysis_status": "unavailable",
+            "message": "aucune donnée santé disponible",
+            "nearest_health_facility": None,
+            "nearest_hgr": None,
+            "nearest_health_center": None,
+            "architecture": "prepared",
+        }
+
+    nearest_any = _compute_nearest_health_facility(site_id)
+    nearest_hgr = _compute_nearest_health_facility(site_id, (HGR_TYPE_CODE,))
+    nearest_center = _compute_nearest_health_facility(site_id, HEALTH_CENTER_TYPE_CODES)
+
+    return {
+        "site_id": site_id,
+        "site": site.get("site_name"),
+        "analysis_status": "completed",
+        "message": None,
+        "nearest_health_facility": nearest_any,
+        "nearest_hgr": nearest_hgr,
+        "nearest_health_center": nearest_center,
+        "architecture": "prepared",
+    }
+

@@ -90,3 +90,9 @@ def nearby_analysis(
         radius_m=radius_m,
         limit=limit,
     )
+
+
+@router.get("/health/site/{site_id}", summary="Proximité santé d'un site FDSU (extension)")
+def site_health_proximity(site_id: int) -> dict[str, Any]:
+    _ensure_db_mode()
+    return spatial_analysis_service.get_site_health_proximity(site_id)

@@ -24,7 +24,7 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
   test('onglets et vue nationale placeholder', async ({ page }) => {
     await openDecisionCenter(page);
 
-    await expect(page.locator('#decision-center-tabs .decision-center-tab')).toHaveCount(6);
+    await expect(page.locator('#decision-center-tabs .decision-center-tab')).toHaveCount(7);
     await expect(page.locator('[data-decision-tab-panel="vue-nationale"]')).toBeVisible();
     await expect(page.locator('#decision-center-kpi-grid .decision-center-kpi-card')).toHaveCount(6);
     await expect(page.locator('#decision-kpi-total-sites')).toHaveText('1 248');
@@ -232,6 +232,60 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
     await page.waitForFunction(() => typeof window.L !== 'undefined', null, { timeout: 30_000 });
     await expect(page.locator('#decision-engine-map')).toBeVisible();
     await page.screenshot({ path: 'test-results/decision-center-decision-engine-filter.png', fullPage: false });
+  });
+
+  test('référentiels sectoriels — catalogue visible', async ({ page }) => {
+    await openDecisionCenter(page);
+    await page.locator('[data-decision-tab="referentiels-sectoriels"]').click();
+    await expect(page.locator('[data-decision-tab-panel="referentiels-sectoriels"]')).toBeVisible();
+
+    const panel = page.locator('#sectorial-referentials-panel');
+    await expect(panel).toBeVisible();
+    await expect(panel.locator('h3').first()).toHaveText('Référentiels sectoriels');
+
+    await page.waitForFunction(
+      () => {
+        const grid = document.querySelector('#sectorial-catalog-grid');
+        return grid && !grid.textContent.includes('Chargement du catalogue');
+      },
+      null,
+      { timeout: 15_000 },
+    );
+
+    await expect(panel.locator('[data-reference-code="HEALTH"]')).toBeVisible();
+    await expect(panel.locator('[data-reference-code="HEALTH"]')).toContainText('En cours');
+    await expect(panel.locator('[data-reference-code="EDUCATION"]')).toContainText('Planifié');
+    await expect(panel.locator('[data-reference-code="ENERGY"]')).toContainText('Planifié');
+    await expect(panel.locator('[data-reference-code="ROADS"]')).toContainText('Planifié');
+    await expect(panel.locator('[data-reference-code="POPULATION"]')).toContainText('Planifié');
+
+    await page.screenshot({ path: 'test-results/decision-center-sectorial-catalog.png', fullPage: false });
+  });
+
+  test('référentiel Santé — KPI et messages vides', async ({ page }) => {
+    await openDecisionCenter(page);
+    await page.locator('[data-decision-tab="referentiels-sectoriels"]').click();
+
+    await page.waitForFunction(
+      () => document.querySelector('#sectorial-health-kpi-total') !== null,
+      null,
+      { timeout: 15_000 },
+    );
+
+    const healthPanel = page.locator('#sectorial-health-panel');
+    await expect(healthPanel).toBeVisible();
+    await expect(healthPanel.locator('h3')).toHaveText('Santé');
+    await expect(page.locator('#sectorial-health-kpi-total')).toHaveText('0');
+    await expect(page.locator('#sectorial-health-kpi-hospitals')).toHaveText('0');
+    await expect(page.locator('#sectorial-health-kpi-centers')).toHaveText('0');
+    await expect(page.locator('#sectorial-health-kpi-posts')).toHaveText('0');
+    await expect(page.locator('#sectorial-health-kpi-geo')).toHaveText('0');
+    await expect(page.locator('#sectorial-health-map-message')).toContainText('Aucune donnée santé géolocalisée disponible');
+    await expect(page.locator('#sectorial-health-table-body')).toContainText('Les données santé seront intégrées depuis une source officielle.');
+    await expect(page.locator('#sectorial-health-import-btn')).toBeVisible();
+    await expect(page.locator('#sectorial-health-map')).toBeVisible();
+
+    await page.screenshot({ path: 'test-results/decision-center-health-referential.png', fullPage: false });
   });
 
   test('module Aide à la décision existant inchangé', async ({ page }) => {
