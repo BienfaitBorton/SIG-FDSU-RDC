@@ -141,6 +141,10 @@ const ROUTE_TO_MODULE = {
   enrichissement: 'enrichissement',
   geocoding: 'geocodage',
   ccn: 'ccn',
+  'territorial-intelligence': 'territorial_intelligence',
+  territorial_intelligence: 'territorial_intelligence',
+  'salle-pilotage': 'salle_pilotage',
+  salle_pilotage: 'salle_pilotage',
   geocodage: 'geocodage',
   import: 'import',
   export: 'export',
@@ -161,6 +165,8 @@ const MODULE_TO_ROUTE = {
   enrichissement: 'enrichment',
   geocodage: 'geocoding',
   ccn: 'ccn',
+  territorial_intelligence: 'territorial-intelligence',
+  salle_pilotage: 'salle-pilotage',
   import: 'import',
   export: 'export',
   statistiques: 'statistiques',
@@ -335,6 +341,8 @@ const moduleNames = {
   enrichissement: 'Enrichissement territorial',
   geocodage: 'Géocodage FDSU',
   ccn: 'Centres Communautaires',
+  territorial_intelligence: 'Territorial Intelligence',
+  salle_pilotage: 'Salle de Pilotage DG',
   import: 'Import',
   export: 'Export',
   statistiques: 'Statistiques',
@@ -676,6 +684,8 @@ function setActiveModule(moduleKey) {
     if (cartographyState.map) {
       window.setTimeout(() => cartographyState.map.invalidateSize(), 0);
     }
+  } else if (typeof isCartographyFocusMode === 'function' && isCartographyFocusMode()) {
+    setCartographyFocusMode(false);
   }
 
   if (normalizedModule === 'explorateur_sources') {
@@ -733,6 +743,24 @@ function setActiveModule(moduleKey) {
     }
     if (window.ccnState?.map) {
       window.setTimeout(() => window.ccnState.map.invalidateSize(), 0);
+    }
+  }
+
+  if (normalizedModule === 'territorial_intelligence') {
+    if (typeof window.initializeTerritorialIntelligenceModule === 'function') {
+      window.initializeTerritorialIntelligenceModule();
+    }
+    if (window.tiState?.map) {
+      window.setTimeout(() => window.tiState.map.invalidateSize(), 0);
+    }
+  }
+
+  if (normalizedModule === 'salle_pilotage') {
+    if (typeof window.initializeExecutiveCockpitModule === 'function') {
+      window.initializeExecutiveCockpitModule();
+    }
+    if (window.Edvs?.state?.map) {
+      window.setTimeout(() => window.Edvs.state.map.invalidateSize(), 0);
     }
   }
 
@@ -2368,16 +2396,92 @@ function setupCartographyMapInfo() {
 }
 
 function setupCartographyFullscreen() {
-  if (document.body.dataset.cartographyFullscreenBound === 'true') return;
-  document.body.dataset.cartographyFullscreenBound = 'true';
+  // Conservé comme alias historique — le Mode Focus remplace le plein écran.
+  setupCartographyFocusMode();
+}
 
+function isCartographyFocusMode() {
+  return document.body.classList.contains('cartography-focus-mode');
+}
+
+function setCartographyFocusMode(enabled) {
+  const focusBtn = document.querySelector('#carto-focus-btn');
+  const focusBar = document.querySelector('#cartography-focus-bar');
   const stage = document.querySelector('#cartography-map-stage');
-  const button = document.querySelector('#carto-fullscreen-btn');
-  button?.addEventListener('click', () => {
-    if (!stage) return;
-    const isFullscreen = stage.classList.toggle('is-fullscreen');
-    button.textContent = isFullscreen ? 'Quitter plein écran' : 'Plein écran';
-    window.setTimeout(() => cartographyState.map?.invalidateSize(), 0);
+  const entering = Boolean(enabled);
+
+  // Interdit : fullscreen natif navigateur (impasse UX sans contrôle visible).
+  if (document.fullscreenElement && document.exitFullscreen) {
+    document.exitFullscreen().catch(() => {});
+  }
+
+  document.body.classList.toggle('cartography-focus-mode', entering);
+
+  if (focusBar) {
+    focusBar.hidden = !entering;
+    if (entering) focusBar.removeAttribute('hidden');
+    else focusBar.setAttribute('hidden', '');
+  }
+
+  if (focusBtn) {
+    focusBtn.textContent = entering ? 'Mode Focus actif' : 'Mode Focus';
+    focusBtn.setAttribute('aria-pressed', entering ? 'true' : 'false');
+    focusBtn.title = entering
+      ? 'Mode Focus actif — utilisez Quitter ou ESC'
+      : 'Mode Focus — agrandir la carte dans l\'application';
+  }
+
+  if (entering) {
+    // Masquer les tiroirs latéraux carto pour maximiser la carte
+    document.querySelectorAll('#cartographie-panel .cartography-drawer:not(.hidden)').forEach((drawer) => {
+      drawer.classList.add('hidden');
+    });
+    document.querySelectorAll('#cartographie-panel [data-carto-drawer][aria-expanded="true"]').forEach((btn) => {
+      btn.setAttribute('aria-expanded', 'false');
+    });
+    document.querySelector('#cartography-main-row')?.classList.remove('has-sidebar-panel');
+  }
+
+  // Conserver zoom/centre : on ne recrée pas la carte, on recalcule seulement la taille.
+  window.setTimeout(() => {
+    cartographyState.map?.invalidateSize({ animate: false });
+  }, 0);
+  window.setTimeout(() => {
+    cartographyState.map?.invalidateSize({ animate: false });
+  }, 120);
+
+  if (stage) {
+    stage.classList.remove('is-fullscreen');
+  }
+}
+
+function setupCartographyFocusMode() {
+  if (document.body.dataset.cartographyFocusBound === 'true') return;
+  document.body.dataset.cartographyFocusBound = 'true';
+
+  const enterOrToggle = () => {
+    setCartographyFocusMode(!isCartographyFocusMode());
+  };
+  const exitFocus = () => {
+    if (isCartographyFocusMode()) setCartographyFocusMode(false);
+  };
+
+  document.querySelector('#carto-focus-btn')?.addEventListener('click', enterOrToggle);
+  document.querySelector('#carto-focus-exit')?.addEventListener('click', exitFocus);
+  document.querySelector('#carto-focus-back')?.addEventListener('click', exitFocus);
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && isCartographyFocusMode()) {
+      event.preventDefault();
+      exitFocus();
+    }
+  });
+
+  // Si l'utilisateur quitte le module cartographie, sortir du Mode Focus.
+  document.querySelectorAll('.nav-item[data-module]').forEach((item) => {
+    item.addEventListener('click', () => {
+      if (item.getAttribute('data-module') !== 'cartographie') exitFocus();
+    });
   });
 }
 

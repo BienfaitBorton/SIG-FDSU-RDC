@@ -806,14 +806,116 @@ button {
   box-shadow: var(--shadow);
 }
 
-.cartography-map-stage.is-fullscreen {
-  position: fixed;
-  inset: 0;
-  z-index: 2000;
-  width: 100vw;
-  height: 100vh;
-  max-height: 100vh;
-  border-radius: 0;
+/* Mode Focus : immersion dans l'app — jamais de fullscreen natif navigateur */
+.cartography-focus-bar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.92);
+  color: #f8fafc;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.cartography-focus-bar[hidden] {
+  display: none !important;
+}
+
+body.cartography-focus-mode .cartography-focus-bar {
+  display: flex !important;
+}
+
+.cartography-focus-title {
+  margin: 0;
+  flex: 1;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.cartography-focus-back,
+.cartography-focus-exit {
+  white-space: nowrap;
+}
+
+.cartography-focus-back {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(30, 41, 59, 0.9);
+  color: #f8fafc;
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 0.88rem;
+}
+
+body.cartography-focus-mode .sidebar,
+body.cartography-focus-mode .topbar {
+  display: none !important;
+}
+
+body.cartography-focus-mode .app-shell {
+  display: block;
+  min-height: 100vh;
+}
+
+body.cartography-focus-mode .main-content {
+  width: 100%;
+  min-height: 100vh;
+}
+
+body.cartography-focus-mode .content-area {
+  padding: 12px;
+  max-width: none;
+  width: 100%;
+  min-height: calc(100vh - 24px);
+}
+
+body.cartography-focus-mode #cartographie-panel {
+  display: flex !important;
+  flex-direction: column;
+  gap: 10px;
+  min-height: calc(100vh - 24px);
+}
+
+body.cartography-focus-mode .cartography-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+}
+
+body.cartography-focus-mode .cartography-main-row {
+  flex: 1;
+  min-height: 0;
+  grid-template-columns: 1fr !important;
+}
+
+body.cartography-focus-mode .cartography-sidebar,
+body.cartography-focus-mode .cartography-main-row.has-sidebar-panel .cartography-sidebar {
+  display: none !important;
+}
+
+body.cartography-focus-mode .cartography-map-stage {
+  position: relative;
+  inset: auto;
+  z-index: auto;
+  width: 100%;
+  height: 100%;
+  min-height: calc(100vh - 160px);
+  max-height: none;
+  border-radius: 16px;
+}
+
+body.cartography-focus-mode #carto-focus-btn {
+  border-color: rgba(56, 189, 248, 0.55);
+  background: rgba(14, 165, 233, 0.18);
 }
 
 .cartography-map-stage .map-canvas {

@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="modules/decision-center/decision-center.css" />
   <link rel="stylesheet" href="modules/geocoding/geocoding.css" />
   <link rel="stylesheet" href="modules/ccn/ccn.css" />
+  <link rel="stylesheet" href="modules/territorial-intelligence/territorial-intelligence.css" />
+  <link rel="stylesheet" href="modules/shared/executive-dashboard/executive-dashboard.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 </head>
 <body>
@@ -33,6 +35,14 @@
         <button class="nav-item" data-module="centre_decision" data-route="decision-view">
           <span class="nav-icon">🎯</span>
           <span>Centre de Décision</span>
+        </button>
+        <button class="nav-item" data-module="salle_pilotage" data-route="salle-pilotage">
+          <span class="nav-icon">DG</span>
+          <span>Salle de Pilotage DG</span>
+        </button>
+        <button class="nav-item" data-module="territorial_intelligence" data-route="territorial-intelligence">
+          <span class="nav-icon">TI</span>
+          <span>Territorial Intelligence</span>
         </button>
         <button class="nav-item" data-module="ccn" data-route="ccn">
           <span class="nav-icon">CCN</span>
@@ -294,6 +304,12 @@
 
         <div class="module-panel hidden cartography-module" id="cartographie-panel" data-module="cartographie">
           <div class="cartography-workspace">
+            <div id="cartography-focus-bar" class="cartography-focus-bar" hidden>
+              <button type="button" class="cartography-focus-back" id="carto-focus-back" title="Quitter le Mode Focus">← Retour</button>
+              <p class="cartography-focus-title">Cartographie — Mode Focus</p>
+              <button type="button" class="primary-button cartography-focus-exit" id="carto-focus-exit">Quitter le Mode Focus</button>
+            </div>
+
             <div class="cartography-toolbar-row" role="toolbar" aria-label="Outils cartographiques">
               <button id="zoom-auto" type="button" class="primary-button cartography-chip-button">Vue nationale</button>
               <button id="carto-free-mode" type="button" class="cartography-tool-btn" aria-pressed="false" title="Navigation libre sans contrainte hiérarchique">Cartographie libre</button>
@@ -306,7 +322,7 @@
                 <button type="button" class="cartography-tool-btn" data-carto-drawer="legend" aria-expanded="false" title="Légende Zones FDSU">Légende</button>
                 <button type="button" class="cartography-tool-btn" data-carto-drawer="entities" aria-expanded="false" title="Entités visibles">Entités</button>
                 <button type="button" class="cartography-tool-btn" id="carto-print-btn" title="Imprimer la carte">Impression</button>
-                <button type="button" class="cartography-tool-btn" id="carto-fullscreen-btn" title="Plein écran">Plein écran</button>
+                <button type="button" class="cartography-tool-btn" id="carto-focus-btn" title="Mode Focus — agrandir la carte dans l'application" aria-pressed="false">Mode Focus</button>
               </div>
             </div>
 
@@ -528,6 +544,9 @@
               <p>Plateforme nationale d'aide à la décision géospatiale — alignée stratégie FDSU–CCN 2026–2030 et matrice de priorisation 300 sites.</p>
             </div>
             <div class="decision-center-header-actions" aria-label="Actions du centre de décision">
+              <button type="button" class="secondary-button" id="decision-open-ti-btn" data-route="territorial-intelligence">Territorial Intelligence</button>
+              <button type="button" class="secondary-button" id="decision-open-edvs-btn" data-route="salle-pilotage">Salle de Pilotage DG</button>
+              <span id="decision-edvs-presentation-slot"></span>
               <button type="button" class="primary-button" id="decision-center-demo-mode-btn">Mode démonstration</button>
               <span class="decision-center-action-slot">Export</span>
               <span class="decision-center-action-slot">Paramètres</span>
@@ -546,6 +565,7 @@
           </nav>
 
           <section class="decision-center-tab-panel is-active" data-decision-tab-panel="vue-nationale" role="tabpanel">
+            <div id="decision-edvs-kpi-host" class="edvs-kpi-grid" style="margin-bottom:12px"></div>
             <section class="decision-intent-panel" id="decision-intent-panel" aria-label="Questions métier">
               <div class="decision-intent-header">
                 <p class="panel-label">Aide à la décision</p>
@@ -1656,13 +1676,72 @@
           </section>
         </div>
 
+        <div class="module-panel hidden edvs-module" id="salle-pilotage-panel" data-module="salle_pilotage">
+          <p class="ti-banner" id="edvs-cockpit-banner">Salle de Pilotage DG — EDVS</p>
+          <div id="edvs-cockpit-root" class="edvs-shell" aria-live="polite"></div>
+        </div>
+
+        <div class="module-panel hidden ti-module" id="territorial-intelligence-panel" data-module="territorial_intelligence">
+          <div class="ti-header">
+            <div>
+              <p class="panel-label">Phase 3 — Territorial Intelligence Explorer v1</p>
+              <h2 id="ti-territory-title">Intelligence Territoriale FDSU</h2>
+              <p>Que sait le FDSU d’un territoire, quels besoins numériques, quelles interventions prioriser ?</p>
+            </div>
+            <div class="ti-toolbar">
+              <button type="button" class="secondary-button" id="ti-back-national">Retour Centre de Décision</button>
+              <button type="button" class="secondary-button" id="ti-open-ccn">Module CCN</button>
+              <span id="ti-edvs-presentation-slot"></span>
+            </div>
+          </div>
+
+          <p class="ti-banner" id="ti-banner">Sélectionnez un territoire. Cas de démonstration prioritaire : Dungu (logique générique).</p>
+
+          <div class="ti-toolbar">
+            <label>Recherche <input type="search" id="ti-search" placeholder="Dungu, Haut-Uele…" /></label>
+            <label>Province <input type="text" id="ti-filter-province" placeholder="HAUT-UELE" /></label>
+            <label>Zone
+              <select id="ti-filter-zone">
+                <option value="">Toutes</option>
+                <option>ND</option><option>SD</option><option>CE</option><option>OT</option><option>ET</option>
+              </select>
+            </label>
+            <label>Territoire <select id="ti-territory-select"><option value="">Chargement…</option></select></label>
+            <button type="button" class="primary-button" id="ti-search-btn">Filtrer</button>
+          </div>
+
+          <div class="ti-kpi-grid" id="ti-edvs-kpi-host" hidden></div>
+          <div class="ti-kpi-grid" id="ti-kpi-legacy">
+            <article class="ti-kpi"><p class="summary-label">Population</p><p class="summary-value" id="ti-kpi-pop">—</p><span class="ti-status" id="ti-kpi-pop-status"></span></article>
+            <article class="ti-kpi"><p class="summary-label">Sites 20 476</p><p class="summary-value" id="ti-kpi-sites">—</p><span class="ti-status" id="ti-kpi-sites-status"></span></article>
+            <article class="ti-kpi"><p class="summary-label">Sites 300</p><p class="summary-value" id="ti-kpi-sites300">—</p><span class="ti-status" id="ti-kpi-sites300-status"></span></article>
+            <article class="ti-kpi"><p class="summary-label">CCN</p><p class="summary-value" id="ti-kpi-ccn">—</p><span class="ti-status" id="ti-kpi-ccn-status"></span></article>
+            <article class="ti-kpi"><p class="summary-label">Santé</p><p class="summary-value" id="ti-kpi-health">—</p><span class="ti-status" id="ti-kpi-health-status"></span></article>
+            <article class="ti-kpi"><p class="summary-label">Score territorial</p><p class="summary-value" id="ti-kpi-score">—</p><span class="ti-status" id="ti-kpi-score-status"></span></article>
+            <article class="ti-kpi"><p class="summary-label">Confiance</p><p class="summary-value" id="ti-kpi-conf">—</p><span class="ti-status" id="ti-kpi-conf-status"></span></article>
+          </div>
+
+          <div class="ti-main">
+            <section>
+              <div id="ti-map" class="ti-map" aria-label="Carte territoriale"></div>
+              <p class="ti-map-legend">Limite · Sites FDSU · CCN · Santé</p>
+            </section>
+            <section id="ti-sections" class="ti-sections">
+              <p>Chargement des sections territoriales…</p>
+            </section>
+          </div>
+        </div>
+
         <div class="module-panel hidden ccn-module" id="ccn-panel" data-module="ccn">
           <div class="panel-header">
             <div>
               <p class="panel-label">Capability 02 — Module opérationnel v1</p>
               <h2>Centres Communautaires Numériques</h2>
             </div>
-            <span class="panel-badge">DEMO — Doctrine CCN v1</span>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <span class="panel-badge">DEMO — Doctrine CCN v1</span>
+              <span id="ccn-edvs-presentation-slot"></span>
+            </div>
           </div>
 
           <p class="ccn-demo-banner">
@@ -1670,6 +1749,7 @@
             Pondérations issues de la doctrine versionnée (non hardcodées).
           </p>
 
+          <div class="ccn-kpi-grid" id="ccn-edvs-kpi-host" hidden></div>
           <div class="ccn-kpi-grid" id="ccn-kpi-grid">
             <article class="ccn-kpi"><p class="summary-label">Total CCN</p><p class="summary-value" id="ccn-kpi-total">—</p></article>
             <article class="ccn-kpi"><p class="summary-label">Planifiés</p><p class="summary-value" id="ccn-kpi-planned">—</p></article>
@@ -1933,7 +2013,16 @@
   <!-- decision-center.js avant app.js : app.js boot immédiat (readyState interactive) sinon rate l'init des onglets -->
   <script src="modules/decision-center/decision-center.js"></script>
   <script src="modules/geocoding/geocoding.js"></script>
+  <script src="modules/shared/executive-dashboard/executive-colors.js"></script>
+  <script src="modules/shared/executive-dashboard/executive-icons.js"></script>
+  <script src="modules/shared/executive-dashboard/executive-utils.js"></script>
+  <script src="modules/shared/executive-dashboard/executive-kpi.js"></script>
+  <script src="modules/shared/executive-dashboard/executive-cards.js"></script>
+  <script src="modules/shared/executive-dashboard/executive-charts.js"></script>
+  <script src="modules/shared/executive-dashboard/executive-layout.js"></script>
+  <script src="modules/shared/executive-dashboard/executive-dashboard.js"></script>
   <script src="modules/ccn/ccn.js"></script>
+  <script src="modules/territorial-intelligence/territorial-intelligence.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
