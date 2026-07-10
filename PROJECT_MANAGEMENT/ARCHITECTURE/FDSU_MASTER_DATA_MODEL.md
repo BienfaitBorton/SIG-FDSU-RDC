@@ -4,6 +4,10 @@
 
 Le **Référentiel National des Actifs FDSU** est la source officielle de vérité de la plateforme SIG-FDSU RDC.
 
+Il **applique** le modèle métier d’entreprise défini dans
+[`FDSU_ENTERPRISE_BUSINESS_MODEL.md`](./FDSU_ENTERPRISE_BUSINESS_MODEL.md)
+(entités, relations, cycles de vie, gouvernance, Business Code Registry).
+
 Aucun module futur (Sites, Géocodage, Priorisation, Télécom, Santé, Cartographie, Missions, Programmes, Décision) ne doit contourner ce référentiel.
 
 ## 2. Nomenclature officielle des sites
@@ -171,3 +175,15 @@ Préfixe : `/api/master`
 ## 10. Intégration progressive
 
 Les modules Sites, Géocodage, Priorisation, Télécom, Santé, Cartographie, Missions, Programmes et Décision doivent progressivement résoudre leurs objets via `business_id` master, sans créer de nomenclatures parallèles. Tous s’appuient sur la même source officielle : `data/raw/FDSU Structure code Territoire zones.xlsx`.
+
+## 11. Lien avec l’Enterprise Business Model
+
+Le présent document décrit **comment** le Référentiel National stocke et gouverne les actifs.
+
+Le document
+[`FDSU_ENTERPRISE_BUSINESS_MODEL.md`](./FDSU_ENTERPRISE_BUSINESS_MODEL.md)
+définit **quoi** sont les entités métier, leurs relations, cycles de vie et règles de gouvernance.
+
+Artefact technique léger associé : `api/models/business_entities.py`.
+
+Capability CCN (Phase 2) : [`FDSU_CCN_BUSINESS_MODEL.md`](./FDSU_CCN_BUSINESS_MODEL.md).

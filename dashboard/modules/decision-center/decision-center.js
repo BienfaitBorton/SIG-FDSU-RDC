@@ -85,6 +85,7 @@
     decisionEngineSelectedSiteId: null,
     masterRegistryLoaded: false,
     masterRegistryLoading: false,
+    ccnExtensionsLoaded: false,
     sectorialLoaded: false,
     sectorialLoading: false,
     healthMap: null,
@@ -1499,6 +1500,35 @@
     `).join('');
   }
 
+  function loadCcnDecisionExtensions(forceReload) {
+    if (decisionCenterState.ccnExtensionsLoaded && !forceReload) return Promise.resolve();
+    const list = document.querySelector('#decision-ccn-extensions-list');
+    const shared = getShared();
+    if (typeof shared.fetchJson !== 'function') return Promise.resolve();
+
+    return shared.fetchJson('/api/ccn/decision-extensions')
+      .then((payload) => {
+        const extensions = asArray(payload?.extensions);
+        if (list && extensions.length) {
+          list.innerHTML = extensions.map((ext) => `
+            <li>
+              <strong>${escapeHtml(ext.label || ext.code)}</strong>
+              — ${escapeHtml(ext.description || 'Extension préparée')}
+              <span class="decision-center-program-note">(${ext.ui_ready ? 'UI prête' : 'UI non branchée'})</span>
+            </li>
+          `).join('');
+        }
+        decisionCenterState.ccnExtensionsLoaded = true;
+      })
+      .catch(() => {
+        /* Fondations uniquement : silence si API indisponible */
+      });
+  }
+
+  function getCcnDecisionExtensions() {
+    return loadCcnDecisionExtensions(true);
+  }
+
   function loadMasterRegistryPanel(forceReload) {
     if (decisionCenterState.masterRegistryLoaded && !forceReload) return Promise.resolve();
     if (decisionCenterState.masterRegistryLoading && !forceReload) return Promise.resolve();
@@ -1902,6 +1932,7 @@
       loadSites300ProgramPanel(false);
       loadTelecomReferentialPanel(false);
       loadSpatialAnalysisPanel(false);
+      loadCcnDecisionExtensions(false);
     }
 
     if (tabId === 'priorisation') {
@@ -2043,6 +2074,7 @@
   global.loadDecisionEnginePanel = loadDecisionEnginePanel;
   global.loadSectorialReferentialsPanel = loadSectorialReferentialsPanel;
   global.loadPriorityMatrix = loadPriorityMatrix;
+  global.getCcnDecisionExtensions = getCcnDecisionExtensions;
   global.FDSU_BUSINESS_DATA_BASE = BUSINESS_DATA_BASE;
   global.FDSU_PROGRAMS_DATA_BASE = PROGRAMS_DATA_BASE;
   global.FDSU_PROGRAMS_PATH = FDSU_PROGRAMS_PATH;

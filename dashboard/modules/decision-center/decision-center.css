@@ -932,6 +932,22 @@
   }
 }
 
+.decision-ccn-extensions {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px dashed rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.25);
+}
+
+.decision-ccn-extensions-list {
+  margin: 8px 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+  font-size: 0.88rem;
+}
+
 @media (max-width: 1200px) {
   .decision-engine-controls {
     grid-template-columns: 1fr;

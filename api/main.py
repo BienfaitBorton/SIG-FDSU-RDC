@@ -38,6 +38,7 @@ from api.routes import (
     health as health_routes,
     geocoding,
     master,
+    ccn,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -880,6 +881,7 @@ app.include_router(reference.router, prefix="/api/reference", tags=["National Re
 app.include_router(health_routes.router, prefix="/api/health", tags=["Referentiel Sante"])
 app.include_router(geocoding.router, prefix="/api/geocoding", tags=["Geocodage Intelligent FDSU"])
 app.include_router(master.router, prefix="/api/master", tags=["Referentiel National des Actifs FDSU"])
+app.include_router(ccn.router, prefix="/api/ccn", tags=["Capability CCN (fondations)"])
 
 @app.get("/", tags=["Root"])
 def read_root() -> dict[str, str]:
