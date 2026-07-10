@@ -559,7 +559,28 @@ def build_site_case(site_id: str, program_code: str | None = None) -> dict[str, 
         f"score {score}/100 ({label}). Doctrine {doctrine_meta.get('title')} v{doctrine_meta.get('version')}."
     )
     case_id = f"DCF-SITE-{site.get('site_id') or sid}"
-    return _build_case_shell(
+
+    # Enrichissement NCI (besoins territoriaux) — ne remplace pas doctrine/matrice
+    nci_context: dict[str, Any] | None = None
+    try:
+        from api.services import coverage_intelligence_service as nci
+
+        terr = site.get("territoire")
+        if terr:
+            nci_context = nci.explain_territory_index(str(terr))
+            if not nci_context.get("available"):
+                nci_context = None
+    except Exception:  # noqa: BLE001
+        nci_context = None
+
+    if nci_context:
+        summary = (
+            f"{summary} Contexte besoins NCI: NDCI={nci_context.get('ndci')}, "
+            f"population restante={((nci_context.get('population') or {}).get('remaining'))}, "
+            f"priorités={nci_context.get('priority')}."
+        )
+
+    shell = _build_case_shell(
         case_id=case_id,
         asset={
             "asset_type": "SITE",
@@ -590,6 +611,8 @@ def build_site_case(site_id: str, program_code: str | None = None) -> dict[str, 
             },
             "knowledge_hub_domain": "business_doctrine",
             "referentiel": "Référentiel National / programmes FDSU",
+            "needs_referentiel": "Référentiel National des Besoins (NCI)",
+            "nci": nci_context,
         },
         indicators={"measurement": meas, "nif": kh_indicators},
         impacts=impacts,
@@ -598,16 +621,32 @@ def build_site_case(site_id: str, program_code: str | None = None) -> dict[str, 
             "Les seuils de priorité sont lus depuis priority_matrix.json.",
             "Les pondérations Sites sont lues depuis la doctrine Sites v1.",
             "Les indicateurs NIF restent structure_only tant que non sourcés.",
+            "Le contexte NCI (population/priorité/distance/catégorie/infra) complète doctrine et matrice.",
         ],
         sources=[
             doctrine_meta.get("source_document"),
             "data/business/doctrines/sites_doctrine_v1.json",
             "data/business/priority_matrix.json",
             "data/knowledge/national_indicators.json",
+            "data/coverage/aggregates.json",
+            "/api/coverage",
         ],
         confidence=confidence,
         summary=summary,
     )
+    if nci_context:
+        shell["needs_intelligence"] = {
+            "why": nci_context.get("why"),
+            "population": nci_context.get("population"),
+            "priority": nci_context.get("priority"),
+            "distance_km_avg": nci_context.get("distance_km_avg"),
+            "categories": nci_context.get("categories"),
+            "infrastructure": nci_context.get("infrastructure"),
+            "ndci": nci_context.get("ndci"),
+            "doctrine": "DOCTRINE_SITES_FDSU + priority_matrix",
+            "confidence_level": nci_context.get("confidence_level"),
+        }
+    return shell
 
 
 def get_decision_case(asset_id: str, *, asset_type: str | None = None, program_code: str | None = None) -> dict[str, Any] | None:
@@ -638,8 +677,10 @@ def explain_decision(asset_id: str, *, asset_type: str | None = None, program_co
         },
         "justification": case["justification"],
         "confidence": case["confidence"],
+        "needs_intelligence": case.get("needs_intelligence"),
         "risks": case["risks"],
         "impacts": case["impacts"],
+        "sources": case.get("sources"),
         "case_ref": f"/api/decision/case/{case['case_id']}",
     }
 

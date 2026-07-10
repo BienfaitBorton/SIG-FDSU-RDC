@@ -9,7 +9,14 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
 from api.config import DATA_MODE
-from api.services import decision_demo_service, decision_engine_service, explainable_decision_service, fdsu_site_priority_service, fdsu_sites_import_service
+from api.services import (
+    decision_demo_service,
+    decision_engine_service,
+    decision_kpi_detail_service,
+    explainable_decision_service,
+    fdsu_site_priority_service,
+    fdsu_sites_import_service,
+)
 
 router = APIRouter()
 
@@ -93,6 +100,162 @@ def decision_intents() -> dict[str, Any]:
 def demo_scenarios() -> dict[str, Any]:
     _ensure_db_mode()
     return decision_demo_service.get_demo_scenarios()
+
+
+def _detail_filters(
+    province: str | None,
+    territoire: str | None,
+    programme: str | None,
+    priority_level: str | None,
+    status: str | None,
+    category: str | None,
+    q: str | None,
+) -> dict[str, Any]:
+    return {
+        "province": province,
+        "territoire": territoire,
+        "programme": programme,
+        "priority_level": priority_level,
+        "status": status,
+        "category": category,
+        "q": q,
+    }
+
+
+@router.get("/details", summary="Catalogue des KPI décisionnels (Decision Detail Workspace)")
+def decision_details_catalog() -> dict[str, Any]:
+    return decision_kpi_detail_service.list_kpi_catalog()
+
+
+@router.get("/details/{kpi_code}", summary="Vue détail d'un KPI décisionnel")
+def decision_detail(
+    kpi_code: str,
+    province: str | None = Query(None),
+    territoire: str | None = Query(None),
+    programme: str | None = Query(None),
+    priority_level: str | None = Query(None),
+    status: str | None = Query(None),
+    category: str | None = Query(None),
+    q: str | None = Query(None),
+    limit: int = Query(100, gt=0, le=2000),
+    offset: int = Query(0, ge=0),
+) -> dict[str, Any]:
+    result = decision_kpi_detail_service.build_detail(
+        kpi_code,
+        province=province,
+        territoire=territoire,
+        programme=programme,
+        priority_level=priority_level,
+        status=status,
+        category=category,
+        q=q,
+        limit=limit,
+        offset=offset,
+    )
+    if not result:
+        raise HTTPException(status_code=404, detail=f"KPI inconnu: {kpi_code}")
+    return result
+
+
+@router.get("/details/{kpi_code}/map", summary="GeoJSON du KPI")
+def decision_detail_map(
+    kpi_code: str,
+    province: str | None = Query(None),
+    territoire: str | None = Query(None),
+    programme: str | None = Query(None),
+    priority_level: str | None = Query(None),
+    status: str | None = Query(None),
+    q: str | None = Query(None),
+) -> dict[str, Any]:
+    result = decision_kpi_detail_service.build_map(
+        kpi_code,
+        **_detail_filters(province, territoire, programme, priority_level, status, None, q),
+    )
+    if not result:
+        raise HTTPException(status_code=404, detail=f"KPI inconnu: {kpi_code}")
+    return result
+
+
+@router.get("/details/{kpi_code}/charts", summary="Graphiques EDVS du KPI")
+def decision_detail_charts(
+    kpi_code: str,
+    province: str | None = Query(None),
+    territoire: str | None = Query(None),
+    programme: str | None = Query(None),
+    priority_level: str | None = Query(None),
+    status: str | None = Query(None),
+    q: str | None = Query(None),
+) -> dict[str, Any]:
+    result = decision_kpi_detail_service.build_charts(
+        kpi_code,
+        **_detail_filters(province, territoire, programme, priority_level, status, None, q),
+    )
+    if not result:
+        raise HTTPException(status_code=404, detail=f"KPI inconnu: {kpi_code}")
+    return result
+
+
+@router.get("/details/{kpi_code}/items", summary="Liste paginée des éléments du KPI")
+def decision_detail_items(
+    kpi_code: str,
+    province: str | None = Query(None),
+    territoire: str | None = Query(None),
+    programme: str | None = Query(None),
+    priority_level: str | None = Query(None),
+    status: str | None = Query(None),
+    category: str | None = Query(None),
+    q: str | None = Query(None),
+    limit: int = Query(100, gt=0, le=2000),
+    offset: int = Query(0, ge=0),
+) -> dict[str, Any]:
+    result = decision_kpi_detail_service.build_items(
+        kpi_code,
+        limit=limit,
+        offset=offset,
+        **_detail_filters(province, territoire, programme, priority_level, status, category, q),
+    )
+    if not result:
+        raise HTTPException(status_code=404, detail=f"KPI inconnu: {kpi_code}")
+    return result
+
+
+@router.get("/details/{kpi_code}/explain", summary="Justification du KPI")
+def decision_detail_explain(
+    kpi_code: str,
+    province: str | None = Query(None),
+    territoire: str | None = Query(None),
+    programme: str | None = Query(None),
+    priority_level: str | None = Query(None),
+    q: str | None = Query(None),
+) -> dict[str, Any]:
+    result = decision_kpi_detail_service.build_explain(
+        kpi_code,
+        **_detail_filters(province, territoire, programme, priority_level, None, None, q),
+    )
+    if not result:
+        raise HTTPException(status_code=404, detail=f"KPI inconnu: {kpi_code}")
+    return result
+
+
+@router.get("/details/{kpi_code}/export", summary="Export Excel/CSV/GeoJSON du KPI")
+def decision_detail_export(
+    kpi_code: str,
+    format: str = Query("csv", description="csv | excel | geojson | json"),
+    province: str | None = Query(None),
+    territoire: str | None = Query(None),
+    programme: str | None = Query(None),
+    priority_level: str | None = Query(None),
+    status: str | None = Query(None),
+    q: str | None = Query(None),
+) -> dict[str, Any]:
+    result = decision_kpi_detail_service.build_export(
+        kpi_code,
+        format=format,
+        **_detail_filters(province, territoire, programme, priority_level, status, None, q),
+    )
+    if not result:
+        raise HTTPException(status_code=404, detail=f"KPI inconnu: {kpi_code}")
+    return result
 
 
 @router.get("/case/{asset_id}", summary="Dossier de Décision (Decision Case File)")

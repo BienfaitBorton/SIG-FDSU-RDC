@@ -1,0 +1,35 @@
+{
+  "_meta": {
+    "title": "National Coverage Intelligence — manifeste",
+    "generated_at": "2026-07-10T21:23:24.182196+00:00",
+    "schema_version": "1.0.0"
+  },
+  "heritage": "Référentiel National des Besoins Numériques",
+  "sources": [
+    {
+      "role": "localities_uncovered",
+      "path": "data/raw/Localités non couvertes_10072026.xlsx",
+      "sha256": "1ce0eeeb35b4efba3f1a3a02210d85fa1f7f4375e0a94f5749d5704ee519e3a9",
+      "preserved_original": true
+    },
+    {
+      "role": "population_coverage",
+      "path": "data/raw/Population coverage-20260709-pop_vf.xlsx",
+      "sha256": "d155457c557a6b30d705c11db1f96cd1188d6839feef2fe1ca2cfa8fdaef1b6a",
+      "preserved_original": true
+    }
+  ],
+  "outputs": {
+    "localities_uncovered": "data/coverage/localities_uncovered.jsonl",
+    "localities_covered": "data/coverage/localities_covered.jsonl",
+    "aggregates": "data/coverage/aggregates.json",
+    "quality_report": "data/coverage/quality_report.json",
+    "config": "data/coverage/nci_config.json"
+  },
+  "counts": {
+    "localities_uncovered": 24575,
+    "localities_covered": 4993,
+    "population_uncovered": 52575042,
+    "population_covered": 20690227
+  }
+}

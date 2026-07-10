@@ -149,6 +149,35 @@
         "data/strategic/strategie_fdsu_ccn_2026_2030.docx"
       ],
       "integration_targets": ["ccn", "decision_center", "prioritization", "master_registry"]
+    },
+    {
+      "id": "national_coverage",
+      "name": "National Coverage",
+      "description": "Référentiel National des Besoins Numériques — population, localités non couvertes, priorités, distances, infrastructures.",
+      "themes": [
+        "population_couverte",
+        "population_restante",
+        "localites_couvertes",
+        "localites_non_couvertes",
+        "distance_moyenne",
+        "categories",
+        "types_infrastructures",
+        "ndci",
+        "data_quality"
+      ],
+      "known_sources": [
+        "data/raw/Localités non couvertes_*.xlsx",
+        "data/raw/Population coverage-*.xlsx",
+        "data/coverage/",
+        "/api/coverage"
+      ],
+      "integration_targets": [
+        "coverage_intelligence",
+        "territorial_intelligence",
+        "decision_engine",
+        "executive_cockpit",
+        "edvs"
+      ]
     }
   ]
 }

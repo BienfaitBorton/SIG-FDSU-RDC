@@ -6,6 +6,7 @@
   <title>SIG-FDSU RDC - Interface de gestion</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="modules/decision-center/decision-center.css" />
+  <link rel="stylesheet" href="modules/decision-center/decision-detail.css" />
   <link rel="stylesheet" href="modules/geocoding/geocoding.css" />
   <link rel="stylesheet" href="modules/ccn/ccn.css" />
   <link rel="stylesheet" href="modules/territorial-intelligence/territorial-intelligence.css" />
@@ -597,54 +598,60 @@
                 <p class="summary-label">Sites FDSU</p>
                 <p class="summary-value" id="decision-kpi-sites-fdsu">—</p>
                 <p class="kpi-definition" data-kpi-field="definition">Nombre total de sites enregistrés dans les programmes FDSU.</p>
-                <p class="kpi-meta"><span data-kpi-field="source">programs.fdsu_sites</span></p>
-                <p class="kpi-meta"><span data-kpi-field="calculation">Sites 40 + Sites 300</span></p>
-                <p class="kpi-meta"><span data-kpi-field="updated">—</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Programmes FDSU</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="confidence">Confiance : —</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="updated">—</span></p>
+                <p class="kpi-meta kpi-meta-tech" hidden data-kpi-tech="true"><span data-kpi-field="calculation"></span></p>
                 <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_fdsu">Voir le détail</button>
               </article>
               <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_priority">
                 <p class="summary-label">Sites prioritaires</p>
                 <p class="summary-value" id="decision-kpi-sites-priority">—</p>
                 <p class="kpi-definition" data-kpi-field="definition">Sites avec niveau critique ou élevé.</p>
-                <p class="kpi-meta"><span data-kpi-field="source">decision.fdsu_site_scores</span></p>
-                <p class="kpi-meta"><span data-kpi-field="calculation">critical + high</span></p>
-                <p class="kpi-meta"><span data-kpi-field="updated">—</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Priorisation nationale</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="confidence">Confiance : —</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="updated">—</span></p>
+                <p class="kpi-meta kpi-meta-tech" hidden data-kpi-tech="true"><span data-kpi-field="calculation"></span></p>
                 <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_priority">Voir le détail</button>
               </article>
               <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_critical">
                 <p class="summary-label">Sites critiques</p>
                 <p class="summary-value" id="decision-kpi-sites-critical">—</p>
                 <p class="kpi-definition" data-kpi-field="definition">Intervention immédiate requise.</p>
-                <p class="kpi-meta"><span data-kpi-field="source">decision.fdsu_site_scores</span></p>
-                <p class="kpi-meta"><span data-kpi-field="calculation">priority_level = critical</span></p>
-                <p class="kpi-meta"><span data-kpi-field="updated">—</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Priorisation nationale</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="confidence">Confiance : —</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="updated">—</span></p>
+                <p class="kpi-meta kpi-meta-tech" hidden data-kpi-tech="true"><span data-kpi-field="calculation"></span></p>
                 <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_critical">Voir le détail</button>
               </article>
               <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_high">
                 <p class="summary-label">Sites à priorité élevée</p>
                 <p class="summary-value" id="decision-kpi-sites-high">—</p>
                 <p class="kpi-definition" data-kpi-field="definition">Déploiement prioritaire dans la séquence nationale.</p>
-                <p class="kpi-meta"><span data-kpi-field="source">decision.fdsu_site_scores</span></p>
-                <p class="kpi-meta"><span data-kpi-field="calculation">priority_level = high</span></p>
-                <p class="kpi-meta"><span data-kpi-field="updated">—</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Priorisation nationale</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="confidence">Confiance : —</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="updated">—</span></p>
+                <p class="kpi-meta kpi-meta-tech" hidden data-kpi-tech="true"><span data-kpi-field="calculation"></span></p>
                 <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_high">Voir le détail</button>
               </article>
               <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="referentials_active">
                 <p class="summary-label">Référentiels actifs</p>
                 <p class="summary-value" id="decision-kpi-referentials-active">—</p>
                 <p class="kpi-definition" data-kpi-field="definition">Référentiels sectoriels opérationnels.</p>
-                <p class="kpi-meta"><span data-kpi-field="source">reference.reference_catalog</span></p>
-                <p class="kpi-meta"><span data-kpi-field="calculation">status = active</span></p>
-                <p class="kpi-meta"><span data-kpi-field="updated">—</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">National Reference Framework</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="confidence">Confiance : —</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="updated">—</span></p>
+                <p class="kpi-meta kpi-meta-tech" hidden data-kpi-tech="true"><span data-kpi-field="calculation"></span></p>
                 <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="referentials_active">Voir le détail</button>
               </article>
               <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="referentials_planned">
                 <p class="summary-label">Référentiels planifiés</p>
                 <p class="summary-value" id="decision-kpi-referentials-planned">—</p>
                 <p class="kpi-definition" data-kpi-field="definition">Référentiels encore planifiés.</p>
-                <p class="kpi-meta"><span data-kpi-field="source">reference.reference_catalog</span></p>
-                <p class="kpi-meta"><span data-kpi-field="calculation">status = planned</span></p>
-                <p class="kpi-meta"><span data-kpi-field="updated">—</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">National Reference Framework</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="confidence">Confiance : —</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="updated">—</span></p>
+                <p class="kpi-meta kpi-meta-tech" hidden data-kpi-tech="true"><span data-kpi-field="calculation"></span></p>
                 <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="referentials_planned">Voir le détail</button>
               </article>
             </div>
@@ -654,56 +661,56 @@
                 <p class="summary-label">Sites 40</p>
                 <p class="summary-value" id="decision-kpi-sites-40">—</p>
                 <p class="kpi-definition" data-kpi-field="definition">Programme pilote en exécution.</p>
-                <p class="kpi-meta"><span data-kpi-field="source">programs.fdsu_sites</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Programme Sites 40</span></p>
                 <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_40">Voir le détail</button>
               </article>
               <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_300">
                 <p class="summary-label">Sites 300</p>
                 <p class="summary-value" id="decision-kpi-sites-300">—</p>
                 <p class="kpi-definition" data-kpi-field="definition">Programme planifié (matrice 300 sites).</p>
-                <p class="kpi-meta"><span data-kpi-field="source">programs.fdsu_sites</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Programme Sites 300</span></p>
                 <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_300">Voir le détail</button>
               </article>
               <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_scored">
                 <p class="summary-label">Sites scorés</p>
                 <p class="summary-value" id="decision-kpi-sites-scored">—</p>
                 <p class="kpi-definition" data-kpi-field="definition">Sites scorés par le moteur de décision.</p>
-                <p class="kpi-meta"><span data-kpi-field="source">decision.fdsu_site_scores</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Priorisation nationale</span></p>
                 <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_scored">Voir le détail</button>
               </article>
               <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="health_facilities">
                 <p class="summary-label">Référentiel Santé</p>
                 <p class="summary-value" id="decision-kpi-health-facilities">—</p>
                 <p class="kpi-definition" data-kpi-field="definition">Établissements sanitaires importés (KMZ national).</p>
-                <p class="kpi-meta"><span data-kpi-field="source">health.health_facilities</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Référentiel Santé</span></p>
                 <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="health_facilities">Voir la carte Santé</button>
               </article>
               <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="referentials_in_progress">
                 <p class="summary-label">Référentiels en cours</p>
                 <p class="summary-value" id="decision-kpi-referentials-in-progress">—</p>
                 <p class="kpi-definition" data-kpi-field="definition">Référentiels en consolidation.</p>
-                <p class="kpi-meta"><span data-kpi-field="source">reference.reference_catalog</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">National Reference Framework</span></p>
                 <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="referentials_in_progress">Voir le détail</button>
               </article>
               <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="telecom_objects">
                 <p class="summary-label">Objets télécoms</p>
                 <p class="summary-value" id="decision-kpi-telecom-objects">—</p>
                 <p class="kpi-definition" data-kpi-field="definition">Infrastructures télécom nationales.</p>
-                <p class="kpi-meta"><span data-kpi-field="source">telecom.infrastructure</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Référentiel Télécom</span></p>
                 <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="telecom_objects">Voir le détail</button>
               </article>
               <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="provinces">
                 <p class="summary-label">Provinces</p>
                 <p class="summary-value" id="decision-kpi-provinces">—</p>
                 <p class="kpi-definition" data-kpi-field="definition">Référentiel administratif.</p>
-                <p class="kpi-meta"><span data-kpi-field="source">provinces</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Référentiel administratif</span></p>
                 <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="provinces">Voir le détail</button>
               </article>
               <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="territoires">
                 <p class="summary-label">Territoires</p>
                 <p class="summary-value" id="decision-kpi-territoires">—</p>
                 <p class="kpi-definition" data-kpi-field="definition">Référentiel territorial.</p>
-                <p class="kpi-meta"><span data-kpi-field="source">territoires</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Référentiel administratif</span></p>
                 <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="territoires">Voir le détail</button>
               </article>
             </div>
@@ -1369,6 +1376,85 @@
           </div>
         </div>
 
+        <div class="module-panel hidden decision-detail-module" id="decision-detail-panel" data-module="decision_detail">
+          <header class="decision-detail-topbar" aria-label="Navigation détail KPI">
+            <button type="button" class="secondary-button" id="decision-detail-back-btn">← Retour au Centre de Décision</button>
+            <div class="decision-detail-topbar-copy">
+              <p class="panel-label">Decision Detail Workspace</p>
+              <h2 id="decision-detail-title">Détail indicateur</h2>
+            </div>
+            <span class="decision-detail-status" id="decision-detail-status" aria-live="polite">Chargement…</span>
+          </header>
+
+          <section class="decision-detail-header-card" id="decision-detail-header" aria-label="En-tête KPI">
+            <p class="decision-center-program-loading">Chargement du détail…</p>
+          </section>
+
+          <section class="decision-detail-secondary" id="decision-detail-secondary" aria-label="KPI secondaires"></section>
+
+          <section class="decision-detail-filters" id="decision-detail-filters" aria-label="Filtres">
+            <input type="search" id="decision-detail-q" placeholder="Rechercher…" aria-label="Recherche" />
+            <input type="text" id="decision-detail-province" placeholder="Province" aria-label="Province" />
+            <input type="text" id="decision-detail-territoire" placeholder="Territoire" aria-label="Territoire" />
+            <select id="decision-detail-programme" aria-label="Programme">
+              <option value="">Tous programmes</option>
+              <option value="sites_40">Sites 40</option>
+              <option value="sites_300">Sites 300</option>
+              <option value="sites_20476">Sites 20 476</option>
+            </select>
+            <select id="decision-detail-priority" aria-label="Niveau de priorité">
+              <option value="">Tous niveaux</option>
+              <option value="critical">Critique</option>
+              <option value="high">Élevée</option>
+              <option value="medium">Moyenne</option>
+              <option value="low">Faible</option>
+            </select>
+            <button type="button" class="primary-button" id="decision-detail-apply-filters">Filtrer</button>
+          </section>
+
+          <div class="decision-detail-grid">
+            <section class="decision-detail-map-card" aria-label="Carte">
+              <div class="decision-detail-section-head">
+                <h3>Carte</h3>
+                <button type="button" class="secondary-button" id="decision-detail-map-reset">Vue nationale</button>
+              </div>
+              <div id="decision-detail-map" class="decision-detail-map" role="region" aria-label="Carte des objets du KPI"></div>
+              <p class="decision-detail-legend" id="decision-detail-legend"></p>
+            </section>
+            <section class="decision-detail-charts-card" id="decision-detail-charts" aria-label="Graphiques EDVS">
+              <h3>Graphiques</h3>
+              <div id="decision-detail-charts-body"></div>
+            </section>
+          </div>
+
+          <section class="decision-detail-list-card" aria-label="Liste détaillée">
+            <div class="decision-detail-section-head">
+              <h3>Liste détaillée</h3>
+              <span id="decision-detail-list-count">0 élément</span>
+            </div>
+            <div class="decision-detail-table-frame">
+              <table class="decision-detail-table" id="decision-detail-table">
+                <thead id="decision-detail-table-head"></thead>
+                <tbody id="decision-detail-table-body">
+                  <tr><td>Chargement…</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="decision-detail-pagination">
+              <button type="button" class="secondary-button" id="decision-detail-prev">Précédent</button>
+              <span id="decision-detail-page-label">Page 1</span>
+              <button type="button" class="secondary-button" id="decision-detail-next">Suivant</button>
+            </div>
+          </section>
+
+          <section class="decision-detail-explain-card" id="decision-detail-explain" aria-label="Justification">
+            <h3>Justification</h3>
+            <div id="decision-detail-explain-body"></div>
+          </section>
+
+          <section class="decision-detail-actions" id="decision-detail-actions" aria-label="Actions"></section>
+        </div>
+
         <div class="module-panel hidden" id="sites-panel" data-module="sites">
           <div class="panel-header">
             <div>
@@ -2012,6 +2098,7 @@
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <!-- decision-center.js avant app.js : app.js boot immédiat (readyState interactive) sinon rate l'init des onglets -->
   <script src="modules/decision-center/decision-center.js"></script>
+  <script src="modules/decision-center/decision-detail.js"></script>
   <script src="modules/geocoding/geocoding.js"></script>
   <script src="modules/shared/executive-dashboard/executive-colors.js"></script>
   <script src="modules/shared/executive-dashboard/executive-icons.js"></script>

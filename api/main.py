@@ -42,6 +42,7 @@ from api.routes import (
     knowledge_hub,
     territorial_intelligence,
     executive,
+    coverage,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -895,6 +896,11 @@ app.include_router(
     executive.router,
     prefix="/api/executive",
     tags=["Executive Data Visualization System"],
+)
+app.include_router(
+    coverage.router,
+    prefix="/api/coverage",
+    tags=["National Coverage Intelligence"],
 )
 
 @app.get("/", tags=["Root"])

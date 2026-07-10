@@ -145,6 +145,8 @@ const ROUTE_TO_MODULE = {
   territorial_intelligence: 'territorial_intelligence',
   'salle-pilotage': 'salle_pilotage',
   salle_pilotage: 'salle_pilotage',
+  'decision-detail': 'decision_detail',
+  decision_detail: 'decision_detail',
   geocodage: 'geocodage',
   import: 'import',
   export: 'export',
@@ -167,6 +169,7 @@ const MODULE_TO_ROUTE = {
   ccn: 'ccn',
   territorial_intelligence: 'territorial-intelligence',
   salle_pilotage: 'salle-pilotage',
+  decision_detail: 'decision-detail',
   import: 'import',
   export: 'export',
   statistiques: 'statistiques',
@@ -343,6 +346,7 @@ const moduleNames = {
   ccn: 'Centres Communautaires',
   territorial_intelligence: 'Territorial Intelligence',
   salle_pilotage: 'Salle de Pilotage DG',
+  decision_detail: 'Détail indicateur décisionnel',
   import: 'Import',
   export: 'Export',
   statistiques: 'Statistiques',
@@ -761,6 +765,21 @@ function setActiveModule(moduleKey) {
     }
     if (window.Edvs?.state?.map) {
       window.setTimeout(() => window.Edvs.state.map.invalidateSize(), 0);
+    }
+  }
+
+  if (normalizedModule === 'decision_detail') {
+    if (typeof window.initializeDecisionDetailModule === 'function') {
+      window.initializeDecisionDetailModule();
+    } else {
+      window.setTimeout(() => {
+        if (typeof window.initializeDecisionDetailModule === 'function') {
+          window.initializeDecisionDetailModule();
+        }
+      }, 0);
+    }
+    if (window.decisionDetailState?.map) {
+      window.setTimeout(() => window.decisionDetailState.map.invalidateSize(), 0);
     }
   }
 
@@ -9450,11 +9469,22 @@ function getRouteFromHash() {
 }
 
 function getModuleFromRoute(route) {
-  return ROUTE_TO_MODULE[route] || 'dashboard';
+  const raw = String(route || '').trim();
+  if (raw.startsWith('decision-detail')) return 'decision_detail';
+  return ROUTE_TO_MODULE[raw] || 'dashboard';
 }
 
 function navigateTo(moduleOrRoute) {
-  const moduleKey = getModuleFromRoute(moduleOrRoute);
+  const raw = String(moduleOrRoute || '').trim();
+  if (raw.startsWith('decision-detail/') || raw.includes('/')) {
+    if (getRouteFromHash() === raw) {
+      setActiveModule(getModuleFromRoute(raw));
+      return;
+    }
+    window.location.hash = raw;
+    return;
+  }
+  const moduleKey = getModuleFromRoute(raw);
   const route = MODULE_TO_ROUTE[moduleKey] || 'dashboard';
   if (getRouteFromHash() === route) {
     setActiveModule(moduleKey);

@@ -90,13 +90,15 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
 
     const sitesCard = page.locator('.decision-explainable-kpi[data-kpi-key="sites_fdsu"]');
     await expect(sitesCard.locator('[data-kpi-field="definition"]')).toContainText('sites');
-    await expect(sitesCard.locator('[data-kpi-field="source"]')).toContainText('programs.fdsu_sites');
     await expect(sitesCard.locator('[data-kpi-detail="sites_fdsu"]')).toBeVisible();
 
     await page.locator('[data-kpi-detail="sites_fdsu"]').click();
-    await expect(page.locator('#decision-kpi-detail-drawer')).toBeVisible();
-    await expect(page.locator('#decision-kpi-detail-body')).toContainText('Source');
-    await expect(page.locator('#decision-kpi-detail-body')).toContainText('Calcul');
+    await expect(page).toHaveURL(/#decision-detail\/sites-total/);
+    await expect(page.locator('#decision-detail-panel')).toBeVisible();
+    await expect(page.locator('#decision-detail-back-btn')).toBeVisible();
+    await expect(page.locator('#decision-detail-title')).toContainText(/Sites/i);
+    await page.locator('#decision-detail-back-btn').click();
+    await expect(page).toHaveURL(/#decision-view/);
   });
 
   test('mode démonstration et suivi opérationnel', async ({ page }) => {

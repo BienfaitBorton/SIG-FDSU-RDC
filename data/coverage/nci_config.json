@@ -1,0 +1,72 @@
+{
+  "_meta": {
+    "title": "National Coverage Intelligence — configuration",
+    "schema_version": "1.0.0",
+    "updated_at": "2026-07-10",
+    "note": "Pondérations configurables — ne pas hardcoder dans le code métier."
+  },
+  "national_digital_coverage_index": {
+    "id": "NDCI_V1",
+    "label": "National Digital Coverage Index",
+    "version": "1.0.0",
+    "scale": [0, 100],
+    "weights": {
+      "population": 30,
+      "priority": 25,
+      "category": 15,
+      "distance": 15,
+      "infrastructure": 15
+    },
+    "priority_scores": {
+      "High": 100,
+      "Medium": 60,
+      "Low": 30,
+      "unknown": 10,
+      "invalid": 0
+    },
+    "category_scores": {
+      "A": 100,
+      "B": 80,
+      "C": 60,
+      "D": 40,
+      "E": 20,
+      ">10000": 90,
+      "unknown": 10
+    },
+    "distance_bands_km": {
+      "near_max": 5,
+      "medium_max": 20,
+      "scores": {
+        "near": 100,
+        "medium": 60,
+        "far": 25,
+        "missing": 10
+      }
+    },
+    "infrastructure_scores": {
+      "present": 100,
+      "absent": 20,
+      "unknown": 10
+    }
+  },
+  "data_quality": {
+    "id": "CDQS_V1",
+    "label": "Coverage Data Quality Score",
+    "version": "1.0.0",
+    "scale": [0, 100],
+    "checks": {
+      "coordinates": 20,
+      "territory": 15,
+      "province": 15,
+      "population": 15,
+      "priority": 15,
+      "category": 10,
+      "infrastructure": 10
+    }
+  },
+  "valid_priorities": ["High", "Medium", "Low"],
+  "heritage": {
+    "assets": "Référentiel National des Actifs",
+    "needs": "Référentiel National des Besoins"
+  }
+}

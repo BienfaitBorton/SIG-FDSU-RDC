@@ -1,0 +1,25 @@
+{
+  "_meta": {
+    "generated_at": "2026-07-10T21:23:24.182157+00:00",
+    "id": "CDQS_V1"
+  },
+  "uncovered": {
+    "sheet": "Localités non couvertes",
+    "rows": 24604,
+    "issues": {
+      "duplicates": 29,
+      "invalid_priority": 10
+    },
+    "unique_keys": 24575
+  },
+  "covered": {
+    "sheet": "Population coverage-20260709",
+    "rows": 4993,
+    "issues": {},
+    "unique_keys": 4993
+  },
+  "national_avg_quality": {
+    "uncovered": 100.0,
+    "covered": 100.0
+  }
+}

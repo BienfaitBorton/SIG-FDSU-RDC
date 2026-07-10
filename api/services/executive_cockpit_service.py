@@ -17,6 +17,7 @@ def _now() -> str:
 def build_cockpit_payload() -> dict[str, Any]:
     from api.services import (
         ccn_operational_service,
+        coverage_intelligence_service,
         explainable_decision_service,
         knowledge_hub_service,
         master_registry_service,
@@ -28,6 +29,9 @@ def build_cockpit_payload() -> dict[str, Any]:
     ccn_stats = ccn_operational_service.statistics()
     ccn_kpis = ccn_stats.get("kpis") or {}
     by_province = ccn_stats.get("by_province") or {}
+    nci_charts = coverage_intelligence_service.edvs_charts()
+    nci_stats = coverage_intelligence_service.statistics()
+    nci_kpis = nci_stats.get("kpis") or {}
 
     # Top provinces CCN
     top_provinces = [
@@ -193,11 +197,51 @@ def build_cockpit_payload() -> dict[str, Any]:
                 "/api/decision",
                 "/api/territorial-intelligence",
                 "/api/knowledge",
+                "/api/coverage",
             ],
             "hardcoded_forbidden": True,
             "visual_ratio": "30% cartes / 30% graphiques / 20% KPI / 20% texte",
         },
         "kpis": [
+            {
+                "id": "pop_covered_nci",
+                "label": "Population nationale couverte",
+                "value": nci_kpis.get("population_covered"),
+                "icon": "people",
+                "color": "green",
+                "confidence": "high",
+                "trend": "up",
+                "sparkline": nci_charts.get("sparkline_coverage_ratio") or [],
+                "note": "Référentiel National des Besoins (NCI)",
+            },
+            {
+                "id": "pop_remaining_nci",
+                "label": "Population restante",
+                "value": nci_kpis.get("population_remaining"),
+                "icon": "people",
+                "color": "orange",
+                "confidence": "high",
+                "trend": "flat",
+                "note": "Population des localités non couvertes",
+            },
+            {
+                "id": "loc_covered_nci",
+                "label": "Localités couvertes",
+                "value": nci_kpis.get("localities_covered"),
+                "icon": "map",
+                "color": "green",
+                "confidence": "high",
+                "trend": "flat",
+            },
+            {
+                "id": "loc_uncovered_nci",
+                "label": "Localités non couvertes",
+                "value": nci_kpis.get("localities_uncovered"),
+                "icon": "map",
+                "color": "red",
+                "confidence": "high",
+                "trend": "flat",
+            },
             {
                 "id": "territoires",
                 "label": "Territoires référencés",
@@ -231,16 +275,6 @@ def build_cockpit_payload() -> dict[str, Any]:
                 "sparkline": [ccn_kpis.get("operationnels") or 0],
             },
             {
-                "id": "population_ccn",
-                "label": "Population CCN (DEMO)",
-                "value": ccn_kpis.get("population_desservie"),
-                "icon": "people",
-                "color": "yellow",
-                "confidence": "low",
-                "trend": "flat",
-                "note": "Somme DEMO — non recensement officiel",
-            },
-            {
                 "id": "kh_domains",
                 "label": "Domaines Knowledge Hub",
                 "value": kh.get("domains_count"),
@@ -249,24 +283,16 @@ def build_cockpit_payload() -> dict[str, Any]:
                 "confidence": "high",
                 "trend": "flat",
             },
-            {
-                "id": "dungu_score",
-                "label": "Score Dungu (estimé)",
-                "value": ((sections.get("priority") or {}).get("score") or {}).get("value"),
-                "icon": "decision",
-                "color": "orange",
-                "confidence": ((dungu or {}).get("profile") or {}).get("confidence_level") or "medium",
-                "trend": "flat",
-                "note": "Agrégation sites — Territorial Intelligence",
-            },
         ],
         "rankings": {
             "provinces_ccn": top_provinces,
             "sites_priority": top_sites,
+            "provinces_needs": (nci_charts.get("bars") or {}).get("items") or [],
+            "territories_ndci": nci_charts.get("top_territories") or [],
         },
         "programs": programs,
         "stacked": stacked,
-        "radar": {"axes": radar_axes, "note": radar_note, "color": "blue"},
+        "radar": nci_charts.get("radar") or {"axes": radar_axes, "note": radar_note, "color": "blue"},
         "gauges": [
             {
                 "title": "Maturité connaissance territoriale",
@@ -280,8 +306,14 @@ def build_cockpit_payload() -> dict[str, Any]:
                 "subtitle": "Présence d'un jeu DEMO CCN",
                 "color": "blue",
             },
+            {
+                "title": "Ratio couverture population (NCI)",
+                "value": round(float(nci_kpis.get("coverage_ratio_population") or 0) * 100, 1),
+                "subtitle": "Population couverte / (couverte + restante)",
+                "color": "green",
+            },
         ],
-        "waterfall": {
+        "waterfall": nci_charts.get("waterfall") or {
             "title": "Doctrine Sites — pondérations",
             "steps": [
                 {
@@ -292,7 +324,7 @@ def build_cockpit_payload() -> dict[str, Any]:
                 for c in ((doctrine or {}).get("doctrine") or {}).get("selection_criteria") or []
             ],
         },
-        "treemap": {
+        "treemap": nci_charts.get("treemap") or {
             "title": "Répartition programmes (effectifs)",
             "items": [
                 {"label": p["label"], "value": p["value"], "color": p["color"]}
@@ -300,11 +332,18 @@ def build_cockpit_payload() -> dict[str, Any]:
                 if isinstance(p.get("value"), (int, float))
             ],
         },
-        "heatmap": {
+        "heatmap": nci_charts.get("heatmap") or {
             "title": "Priorités (échantillon sites)",
             "rows": [s["label"][:18] for s in top_sites[:5]],
             "cols": ["Score"],
             "matrix": [[int(s["value"] or 0)] for s in top_sites[:5]],
+        },
+        "bars_needs": nci_charts.get("bars"),
+        "priority_split": nci_charts.get("priority_split"),
+        "categories_split": nci_charts.get("categories"),
+        "nci": {
+            "kpis": nci_charts.get("kpis"),
+            "heritage": "Référentiel National des Besoins",
         },
         "alerts": alerts,
         "recommendations": recommendations[:5],
@@ -312,7 +351,8 @@ def build_cockpit_payload() -> dict[str, Any]:
         "map": {
             "center": [-2.8, 23.5],
             "zoom": 5,
-            "note": "Carte nationale de contexte — couches détaillées via Cartographie / TI",
+            "note": "Carte thermique des besoins — /api/coverage/map",
+            "coverage_endpoint": "/api/coverage/map",
         },
         "doctrine": {
             "id": ((doctrine or {}).get("doctrine") or {}).get("_meta", {}).get("doctrine_id"),

@@ -141,9 +141,18 @@
     const source = card.querySelector('[data-kpi-field="source"]');
     const calculation = card.querySelector('[data-kpi-field="calculation"]');
     const updated = card.querySelector('[data-kpi-field="updated"]');
+    const confidence = card.querySelector('[data-kpi-field="confidence"]');
     if (definition && kpi.definition) definition.textContent = kpi.definition;
-    if (source && kpi.source_table) source.textContent = kpi.source_table;
-    if (calculation && kpi.calculation_method) calculation.textContent = kpi.calculation_method;
+    // Affichage exécutif : source métier lisible (pas de table SQL)
+    if (source) source.textContent = kpi.source_label || kpi.source_readable || source.textContent || 'Source FDSU';
+    if (calculation && kpi.calculation_method) {
+      calculation.textContent = kpi.calculation_method;
+      const tech = card.querySelector('[data-kpi-tech="true"]');
+      if (tech) tech.hidden = true; // technique masquée par défaut pour le DG
+    }
+    if (confidence) {
+      confidence.textContent = `Confiance : ${kpi.confidence || 'moyenne'}`;
+    }
     if (updated) {
       const stamp = kpi.last_updated ? String(kpi.last_updated).slice(0, 19).replace('T', ' ') : '—';
       updated.textContent = `Mise à jour : ${stamp}`;
@@ -215,6 +224,17 @@
   }
 
   function openKpiDetail(kpiKey) {
+    // Feedback immédiat + navigation vers Decision Detail Workspace
+    const btn = document.querySelector(`[data-kpi-detail="${kpiKey}"]`);
+    if (btn) {
+      btn.classList.add('is-loading');
+      window.setTimeout(() => btn.classList.remove('is-loading'), 600);
+    }
+    if (typeof global.openDecisionDetail === 'function') {
+      global.openDecisionDetail(kpiKey);
+      return;
+    }
+    // Fallback drawer si le module détail n'est pas chargé
     const drawer = document.querySelector('#decision-kpi-detail-drawer');
     const title = document.querySelector('#decision-kpi-detail-title');
     const body = document.querySelector('#decision-kpi-detail-body');
@@ -227,11 +247,11 @@
       body.innerHTML = `
         <p><strong>Valeur :</strong> ${escapeHtml(kpi.available === false ? (kpi.display || NOT_CALCULATED_MESSAGE) : formatNationalKpiNumber(kpi.value))}</p>
         <p><strong>Définition :</strong> ${escapeHtml(kpi.definition || '—')}</p>
-        <p><strong>Source :</strong> ${escapeHtml(kpi.source_table || '—')}</p>
-        <p><strong>Calcul :</strong> ${escapeHtml(kpi.calculation_method || '—')}</p>
+        <p><strong>Source :</strong> ${escapeHtml(kpi.source_label || kpi.source_table || '—')}</p>
         <p><strong>Mise à jour :</strong> ${escapeHtml(kpi.last_updated || '—')}</p>
-        <p><strong>Limites :</strong> ${escapeHtml(kpi.limitations || 'Aucune limite signalée.')}</p>
+        <p><strong>Confiance :</strong> ${escapeHtml(kpi.confidence || '—')}</p>
         <p><strong>Action recommandée :</strong> ${escapeHtml(kpi.recommended_action || '—')}</p>
+        <p class="kpi-meta-tech"><strong>Technique :</strong> ${escapeHtml(kpi.calculation_method || '—')}</p>
       `;
     }
     drawer.hidden = false;

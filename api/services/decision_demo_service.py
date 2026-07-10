@@ -39,6 +39,8 @@ def _explained(
     limitations: str | None = None,
     display: str | None = None,
     unit: str | None = None,
+    source_label: str | None = None,
+    confidence: str = "medium",
 ) -> dict[str, Any]:
     return {
         "key": key,
@@ -48,11 +50,18 @@ def _explained(
         "available": available,
         "definition": definition,
         "source_table": source_table,
+        "source_label": source_label or source_table,
         "calculation_method": calculation_method,
         "last_updated": _now(),
         "limitations": limitations,
         "recommended_action": recommended_action,
         "unit": unit,
+        "confidence": confidence if available else "low",
+        "trend": "flat",
+        "technical": {
+            "source_table": source_table,
+            "calculation_method": calculation_method,
+        },
         "strategic_references": STRATEGIC_SOURCES,
     }
 
@@ -274,6 +283,19 @@ def build_explainable_kpis() -> dict[str, dict[str, Any]]:
             limitations=NOT_CALCULATED,
         ),
     }
+    # Enrichissement labels métier depuis le catalogue Decision Detail (pas de SQL au DG)
+    try:
+        from api.services import decision_kpi_detail_service
+
+        for key, kpi in kpis.items():
+            cfg = decision_kpi_detail_service.get_kpi_config(key)
+            if not cfg:
+                continue
+            kpi["source_label"] = cfg.get("source_label") or kpi.get("source_label")
+            kpi["confidence"] = cfg.get("confidence") or kpi.get("confidence") or "medium"
+            kpi["objective"] = cfg.get("executive_objective")
+    except Exception:  # noqa: BLE001
+        pass
     return kpis
 
 

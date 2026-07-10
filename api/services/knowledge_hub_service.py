@@ -37,6 +37,26 @@ INTEGRATION_POINTS: dict[str, dict[str, str]] = {
         "role": "Profil territorial consolidé et recommandations explicables",
         "api_hint": "/api/territorial-intelligence",
     },
+    "coverage_intelligence": {
+        "component": "National Coverage Intelligence",
+        "role": "Référentiel National des Besoins — population, localités, NDCI",
+        "api_hint": "/api/coverage",
+    },
+    "executive_cockpit": {
+        "component": "Salle de Pilotage DG / EDVS",
+        "role": "KPI et graphiques exécutifs nationaux",
+        "api_hint": "/api/executive/cockpit",
+    },
+    "edvs": {
+        "component": "Executive Data Visualization System",
+        "role": "Visualisations exécutives alimentées par NCI",
+        "api_hint": "/api/coverage/edvs",
+    },
+    "decision_engine": {
+        "component": "Explainable Decision Engine",
+        "role": "Recommandations enrichies par besoins NCI",
+        "api_hint": "/api/decision",
+    },
     "geocoding": {
         "component": "Géocodage Intelligent FDSU",
         "role": "Qualité de localisation → connaissance territoriale",
@@ -119,6 +139,15 @@ def get_domain(domain_id: str) -> dict[str, Any] | None:
                 payload["doctrine_catalog"] = catalog.get("doctrines") or []
                 payload["_meta"]["doctrine_catalog_path"] = "data/business/doctrines/catalog.json"
                 payload["_meta"]["active_doctrine_api"] = "/api/ccn/doctrine"
+            if needle == "national_coverage":
+                try:
+                    from api.services import coverage_intelligence_service as nci
+
+                    payload["coverage"] = nci.knowledge_domain_payload()
+                    payload["_meta"]["api"] = "/api/coverage"
+                    payload["_meta"]["heritage"] = "Référentiel National des Besoins"
+                except Exception as exc:  # noqa: BLE001
+                    payload["_meta"]["coverage_error"] = str(exc)
             return payload
     return None
 

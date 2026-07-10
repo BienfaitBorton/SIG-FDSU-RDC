@@ -306,6 +306,48 @@ def _safe_ccn(territory_name: str, province: str | None) -> dict[str, Any]:
         return {"count": 0, "items": [], "status": STATUS_UNAVAILABLE, "source": "/api/ccn", "note": str(exc)}
 
 
+def _safe_coverage(territory_name: str) -> dict[str, Any]:
+    """Référentiel National des Besoins — couverture numérique du territoire."""
+    try:
+        from api.services import coverage_intelligence_service as nci
+
+        payload = nci.get_territory_coverage(territory_name)
+        if not payload:
+            return {
+                "available": False,
+                "status": STATUS_UNAVAILABLE,
+                "source": "/api/coverage",
+                "note": "Territoire absent du Référentiel National des Besoins",
+            }
+        row = payload.get("territory") or {}
+        explain = payload.get("explain") or {}
+        return {
+            "available": True,
+            "status": STATUS_CONFIRMED,
+            "source": "data/coverage/aggregates.json",
+            "population_covered": row.get("population_covered"),
+            "population_uncovered": row.get("population_uncovered"),
+            "population_remaining": row.get("population_remaining"),
+            "localities_covered": row.get("localities_covered"),
+            "localities_uncovered": row.get("localities_uncovered"),
+            "categories": row.get("categories") or {},
+            "priorities": row.get("priorities") or {},
+            "avg_distance_km": row.get("avg_distance_km"),
+            "ndci": (row.get("ndci") or {}).get("index"),
+            "ndci_components": (row.get("ndci") or {}).get("components"),
+            "data_quality_avg": row.get("data_quality_avg"),
+            "explain": explain,
+            "note": "Données officielles FDSU (besoins) — distinctes des actifs programmes.",
+        }
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "available": False,
+            "status": STATUS_UNAVAILABLE,
+            "source": "/api/coverage",
+            "note": str(exc),
+        }
+
+
 def _score_sites(sites: list[dict[str, Any]]) -> list[dict[str, Any]]:
     from api.services import fdsu_site_priority_service
 
@@ -360,13 +402,17 @@ def build_territorial_profile(territory_id: str, *, light: bool = False) -> dict
     health = {"count": 0, "items": [], "status": STATUS_UNAVAILABLE}
     telecom = {"count": None, "items": [], "status": STATUS_NOT_SOURCED}
     ccn = {"count": 0, "items": [], "status": STATUS_UNAVAILABLE}
+    coverage = {"available": False, "status": STATUS_UNAVAILABLE}
     scored_sites: list[dict[str, Any]] = []
 
     if not light:
         health = _safe_health(name, province)
         telecom = _safe_telecom(name, province)
         ccn = _safe_ccn(name, province)
+        coverage = _safe_coverage(name)
         scored_sites = _score_sites(all_program_sites[:200])
+    else:
+        coverage = _safe_coverage(name)
 
     avg_score = None
     top_level = None
@@ -418,6 +464,7 @@ def build_territorial_profile(territory_id: str, *, light: bool = False) -> dict
             "/api/ccn",
             "/api/knowledge",
             "/api/decision",
+            "/api/coverage",
         ],
         "is_demo_focus": _norm(name) == DEMO_FOCUS_NAME,
         "engine_version": ENGINE_VERSION,
@@ -559,10 +606,62 @@ def build_territorial_profile(territory_id: str, *, light: bool = False) -> dict
         "confidence_level": confidence,
     }
 
+    coverage_section = {
+        "population_covered": field(
+            coverage.get("population_covered"),
+            coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") else STATUS_UNAVAILABLE,
+            source=coverage.get("source"),
+            note=coverage.get("note"),
+        ),
+        "population_uncovered": field(
+            coverage.get("population_uncovered"),
+            coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") else STATUS_UNAVAILABLE,
+            source=coverage.get("source"),
+        ),
+        "localities_covered": field(
+            coverage.get("localities_covered"),
+            coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") else STATUS_UNAVAILABLE,
+            source=coverage.get("source"),
+        ),
+        "localities_uncovered": field(
+            coverage.get("localities_uncovered"),
+            coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") else STATUS_UNAVAILABLE,
+            source=coverage.get("source"),
+        ),
+        "categories": field(
+            coverage.get("categories"),
+            coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") else STATUS_UNAVAILABLE,
+            source=coverage.get("source"),
+        ),
+        "priorities": field(
+            coverage.get("priorities"),
+            coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") else STATUS_UNAVAILABLE,
+            source=coverage.get("source"),
+        ),
+        "avg_distance_km": field(
+            coverage.get("avg_distance_km"),
+            coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") else STATUS_UNAVAILABLE,
+            source=coverage.get("source"),
+        ),
+        "ndci": field(
+            coverage.get("ndci"),
+            coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") else STATUS_UNAVAILABLE,
+            source="National Digital Coverage Index (configurable)",
+            note="Indice besoins — distinct du score actifs/sites.",
+        ),
+        "data_quality": field(
+            coverage.get("data_quality_avg"),
+            coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") else STATUS_UNAVAILABLE,
+            source="Coverage Data Quality Score",
+        ),
+        "explain": coverage.get("explain"),
+    }
+
     from api.services import knowledge_hub_service
 
     kh_domain = knowledge_hub_service.get_domain("territory")
     nif = knowledge_hub_service.list_indicators(domain_id="territory")
+    kh_coverage = knowledge_hub_service.get_domain("national_coverage")
 
     return {
         "_meta": {
@@ -581,6 +680,7 @@ def build_territorial_profile(territory_id: str, *, light: bool = False) -> dict
             "energy": energy,
             "programs": programs,
             "priority": priority,
+            "coverage": coverage_section,
             "opportunities": _build_opportunities(scored_sites, health, ccn, sites_300),
             "risks": _build_risks(missing, confidence, distances),
         },
@@ -590,8 +690,13 @@ def build_territorial_profile(territory_id: str, *, light: bool = False) -> dict
             "ccn": ccn.get("items") or [],
             "health_sample": health.get("items") or [],
         },
+        "needs": {
+            "coverage": coverage,
+            "heritage": "Référentiel National des Besoins",
+        },
         "knowledge_hub": {
             "domain": (kh_domain or {}).get("domain"),
+            "national_coverage": (kh_coverage or {}).get("domain"),
             "indicators_count": (nif or {}).get("_meta", {}).get("count"),
         },
         "data_gaps": missing,
@@ -737,6 +842,9 @@ def build_indicators(territory_id: str) -> dict[str, Any] | None:
             "sites_20476": profile["sections"]["programs"]["sites_20476"],
             "health": profile["sections"]["public_services"]["etablissements_sante"],
             "priority_score": profile["sections"]["priority"]["score"],
+            "coverage_ndci": (profile.get("sections") or {}).get("coverage", {}).get("ndci"),
+            "population_remaining": (profile.get("sections") or {}).get("coverage", {}).get("population_uncovered"),
+            "localities_uncovered": (profile.get("sections") or {}).get("coverage", {}).get("localities_uncovered"),
         },
         "nif": nif.get("indicators") or [],
         "data_gaps": profile.get("data_gaps") or [],
@@ -826,6 +934,42 @@ def build_recommendations(territory_id: str) -> dict[str, Any] | None:
             }
         )
 
+    # NCI — besoins nationaux
+    cov = (profile.get("needs") or {}).get("coverage") or {}
+    if cov.get("available"):
+        high_pri = int((cov.get("priorities") or {}).get("High") or 0)
+        remaining = int(cov.get("population_remaining") or cov.get("population_uncovered") or 0)
+        ndci = cov.get("ndci")
+        recommendations.insert(
+            0,
+            {
+                "id": "nci-needs",
+                "type": "coverage_needs",
+                "action": "Arbitrer les besoins numériques non couverts du territoire",
+                "why": (
+                    f"NCI: {cov.get('localities_uncovered') or 0} localités non couvertes, "
+                    f"population restante {remaining:,}, "
+                    f"{high_pri} priorités High, NDCI={ndci}, "
+                    f"distance moyenne {cov.get('avg_distance_km')} km. "
+                    "Comparaison Actifs (sites/CCN) vs Besoins (NCI)."
+                ),
+                "population": remaining,
+                "priority": cov.get("priorities"),
+                "distance_km_avg": cov.get("avg_distance_km"),
+                "infrastructure": list((cov.get("explain") or {}).get("infrastructure") or cov.get("categories") or {}),
+                "category": cov.get("categories"),
+                "ndci": ndci,
+                "doctrine": {
+                    "id": "DOCTRINE_SITES_FDSU",
+                    "version": (doctrine_sites or {}).get("doctrine", {}).get("_meta", {}).get("version"),
+                    "matrix": "priority_matrix.json",
+                },
+                "indicators": ["population", "priority", "distance", "infrastructure", "category", "ndci"],
+                "confidence_level": (cov.get("explain") or {}).get("confidence_level") or profile["profile"]["confidence_level"],
+                "sources": ["/api/coverage", "data/coverage/"],
+            },
+        )
+
     recommendations.append(
         {
             "id": "data-collect",
@@ -856,6 +1000,7 @@ def build_recommendations(territory_id: str) -> dict[str, Any] | None:
         "territory_id": profile["profile"]["territory_id"],
         "confidence_level": profile["profile"]["confidence_level"],
         "recommendations": recommendations,
+        "coverage": cov if cov.get("available") else None,
     }
 
 
