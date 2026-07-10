@@ -78,6 +78,7 @@
     decisionEngineLoaded: false,
     decisionEngineLoading: false,
     decisionEngineFilter: '',
+    decisionEngineProgram: 'sites_20476',
     decisionEngineSites: [],
     decisionEngineMap: null,
     decisionEngineMarkers: null,
@@ -1108,10 +1109,11 @@
 
   function formatProgramLabel(site) {
     const code = String(site?.program_code || '').toUpperCase();
-    if (code.includes('SITES_40')) return 'Sites 40';
-    if (code.includes('SITES_300')) return 'Sites 300';
+    if (code.includes('SITES_40') || code === 'SITES_40') return 'Sites 40';
+    if (code.includes('SITES_300') || code === 'SITES_300') return 'Sites 300';
+    if (code.includes('20476') || code.includes('SITES_20476')) return 'National 20 476';
     const name = site?.program_name || site?.program_code || '—';
-    return name.length > 14 ? `${name.slice(0, 12)}…` : name;
+    return name.length > 18 ? `${name.slice(0, 16)}…` : name;
   }
 
   function getDecisionEngineMarkerColor(site) {
@@ -1154,7 +1156,9 @@
       const selected = decisionCenterState.decisionEngineSelectedSiteId === site.site_id ? ' is-selected' : '';
       const territory = [site.territoire, site.province].filter(Boolean).join(' / ') || '—';
       const siteName = site.site_name || '—';
-      const criteriaText = formatDecisionCriteria(site.top_criteria);
+      const criteriaText = formatDecisionCriteria(
+        site.top_criteria || site.criteria_details?.top_factors || []
+      );
       return `
         <tr data-site-id="${site.site_id}" class="${selected.trim()}">
           <td title="${escapeHtml(site.site_code || '—')}">${escapeHtml(site.site_code || '—')}</td>
@@ -1311,6 +1315,101 @@
     });
   }
 
+  function renderDecisionEngineTopList(sites) {
+    const list = document.querySelector('#decision-engine-top-list');
+    if (!list) return;
+    const top = asArray(sites).slice(0, 10);
+    if (!top.length) {
+      list.innerHTML = '<li>Aucune priorité disponible pour ce programme.</li>';
+      return;
+    }
+    list.innerHTML = top.map((site, index) => `
+      <li>
+        <strong>#${index + 1}</strong>
+        ${escapeHtml(site.site_name || site.site_code || 'Site')}
+        — score ${escapeHtml(site.priority_score)}
+        (${escapeHtml(site.priority_level_label || site.priority_level)})
+        <button type="button" class="secondary-button decision-engine-explain-btn" data-site-id="${escapeHtml(site.site_id)}" data-program-code="${escapeHtml(site.program_code || decisionCenterState.decisionEngineProgram)}">Expliquer</button>
+      </li>
+    `).join('');
+  }
+
+  function openDecisionEngineExplain(payload) {
+    const panel = document.querySelector('#decision-engine-explain');
+    const title = document.querySelector('#decision-engine-explain-title');
+    const body = document.querySelector('#decision-engine-explain-body');
+    if (!panel || !body) return;
+    const site = payload?.site || {};
+    const explanation = payload?.explanation || {};
+    const criteria = explanation.criteria || {};
+    if (title) title.textContent = site.site_name || `Site ${site.site_id}`;
+    body.innerHTML = `
+      <p><strong>Réponse :</strong> ${escapeHtml(explanation.answer || '')}</p>
+      <p><strong>Calibration :</strong> ${escapeHtml(explanation.calibration_note || (site.criteria_details?.calibration?.note) || 'Matrice 300')}</p>
+      <ul>
+        ${Object.values(criteria).map((item) => `
+          <li><strong>${escapeHtml(item.score)}</strong> × ${escapeHtml(item.weight)} — ${escapeHtml(item.label)}</li>
+        `).join('')}
+      </ul>
+    `;
+    panel.hidden = false;
+    panel.removeAttribute('hidden');
+  }
+
+  function bindDecisionEngineProgramFilters() {
+    const container = document.querySelector('#decision-engine-program-filters');
+    if (!container || container.dataset.bound === 'true') return;
+    container.dataset.bound = 'true';
+    container.querySelectorAll('[data-program-filter]').forEach((button) => {
+      button.addEventListener('click', () => {
+        container.querySelectorAll('[data-program-filter]').forEach((item) => item.classList.remove('is-active'));
+        button.classList.add('is-active');
+        decisionCenterState.decisionEngineProgram = button.getAttribute('data-program-filter') || 'sites_20476';
+        decisionCenterState.decisionEngineLoaded = false;
+        loadDecisionEnginePanel(true);
+      });
+    });
+  }
+
+  function bindDecisionEngineExplainActions() {
+    const root = document.querySelector('#decision-engine-panel');
+    if (!root || root.dataset.explainBound === 'true') return;
+    root.dataset.explainBound = 'true';
+    root.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof global.HTMLElement)) return;
+      if (target.id === 'decision-engine-explain-close') {
+        const panel = document.querySelector('#decision-engine-explain');
+        if (panel) {
+          panel.hidden = true;
+          panel.setAttribute('hidden', '');
+        }
+        return;
+      }
+      if (target.id === 'decision-engine-export-btn') {
+        const program = decisionCenterState.decisionEngineProgram || 'sites_20476';
+        const shared = getShared();
+        shared.fetchJson(`/api/decision/sites/export?program_code=${encodeURIComponent(program)}`)
+          .then((payload) => {
+            if (payload?.absolute_path || payload?.export_path) {
+              global.alert(`Export généré : ${payload.filename || payload.export_path}`);
+            }
+          })
+          .catch(() => global.alert('Export indisponible.'));
+        return;
+      }
+      const explainBtn = target.closest('.decision-engine-explain-btn');
+      if (explainBtn) {
+        const siteId = explainBtn.getAttribute('data-site-id');
+        const program = explainBtn.getAttribute('data-program-code') || decisionCenterState.decisionEngineProgram;
+        const shared = getShared();
+        shared.fetchJson(`/api/decision/sites/${siteId}/explain?program_code=${encodeURIComponent(program)}`)
+          .then((payload) => openDecisionEngineExplain(payload))
+          .catch(() => openDecisionEngineExplain({ explanation: { answer: 'Explication indisponible.' }, site: {} }));
+      }
+    });
+  }
+
   function loadDecisionEnginePanel(forceReload) {
     if (decisionCenterState.decisionEngineLoaded && !forceReload) {
       initializeDecisionEngineMap();
@@ -1323,54 +1422,58 @@
     const tbody = document.querySelector('#decision-engine-table-body');
     const shared = getShared();
     bindDecisionEngineFilters();
+    bindDecisionEngineProgramFilters();
     bindDecisionEngineRecomputeButton();
+    bindDecisionEngineExplainActions();
 
     decisionCenterState.decisionEngineLoading = true;
     if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="decision-center-program-loading">Chargement des scores…</td></tr>';
 
-    const canUseDb = typeof shared.canUseTelecomDbData === 'function' && shared.canUseTelecomDbData();
-    if (!canUseDb) {
-      renderDecisionEngineKpis({ total: 0, critical: 0, high: 0, medium: 0, low: 0 });
-      if (tbody) {
-        tbody.innerHTML = '<tr><td colspan="7" class="decision-center-program-note">Moteur de décision disponible en mode DB (DATA_MODE=db).</td></tr>';
-      }
-      decisionCenterState.decisionEngineLoaded = true;
-      decisionCenterState.decisionEngineLoading = false;
-      initializeDecisionEngineMap();
-      return Promise.resolve();
-    }
+    const program = decisionCenterState.decisionEngineProgram || 'sites_20476';
+    const priority = decisionCenterState.decisionEngineFilter || '';
+    const query = new URLSearchParams({
+      program_code: program,
+      limit: program === 'sites_20476' ? '300' : '500',
+    });
+    if (priority) query.set('priority_level', priority);
 
     const fetchScores = typeof shared.fetchJson === 'function'
-      ? shared.fetchJson('/api/decision/site-scores?limit=500')
+      ? shared.fetchJson(`/api/decision/sites/priorities?${query.toString()}`)
       : Promise.reject(new Error('API indisponible'));
 
     return fetchScores
       .then((payload) => {
         if (!payload?.sites) throw new Error('Scores indisponibles');
-        if (payload.summary?.total === 0) {
-          return shared.fetchApiJson('/api/decision/recompute-site-scores', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({}),
-          }).then(() => shared.fetchJson('/api/decision/site-scores?limit=500'));
-        }
-        return payload;
-      })
-      .then((payload) => {
         decisionCenterState.decisionEngineSites = asArray(payload?.sites);
         renderDecisionEngineKpis(payload?.summary);
         renderDecisionEngineTable(decisionCenterState.decisionEngineSites);
+        renderDecisionEngineTopList(decisionCenterState.decisionEngineSites);
         initializeDecisionEngineMap();
         updateDecisionEngineMapMarkers(decisionCenterState.decisionEngineSites);
         decisionCenterState.decisionEngineLoaded = true;
       })
       .catch(() => {
-        renderDecisionEngineKpis({ total: 0, critical: 0, high: 0, medium: 0, low: 0 });
-        if (tbody) {
-          tbody.innerHTML = '<tr><td colspan="7" class="decision-center-program-note">Scores disponibles en mode DB après recalcul.</td></tr>';
+        // Fallback historique DB pour 40/300 si endpoint national indisponible
+        if (program === 'sites_20476') {
+          renderDecisionEngineKpis({ total: 0, critical: 0, high: 0, medium: 0, low: 0 });
+          if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="7" class="decision-center-program-note">Priorisation nationale indisponible — vérifier l’import 20 476.</td></tr>';
+          }
+          renderDecisionEngineTopList([]);
+          initializeDecisionEngineMap();
+          decisionCenterState.decisionEngineLoaded = true;
+          return null;
         }
-        initializeDecisionEngineMap();
-        decisionCenterState.decisionEngineLoaded = true;
+        return shared.fetchJson(`/api/decision/site-scores?limit=500${priority ? `&priority_level=${encodeURIComponent(priority)}` : ''}`)
+          .then((payload) => {
+            decisionCenterState.decisionEngineSites = asArray(payload?.sites);
+            renderDecisionEngineKpis(payload?.summary);
+            renderDecisionEngineTable(decisionCenterState.decisionEngineSites);
+            renderDecisionEngineTopList(decisionCenterState.decisionEngineSites);
+            initializeDecisionEngineMap();
+            updateDecisionEngineMapMarkers(decisionCenterState.decisionEngineSites);
+            decisionCenterState.decisionEngineLoaded = true;
+          });
       })
       .finally(() => {
         decisionCenterState.decisionEngineLoading = false;

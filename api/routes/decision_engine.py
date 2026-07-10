@@ -2,19 +2,25 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
 from api.config import DATA_MODE
-from api.services import decision_demo_service, decision_engine_service
+from api.services import decision_demo_service, decision_engine_service, fdsu_site_priority_service, fdsu_sites_import_service
 
 router = APIRouter()
 
 
 class RecomputePayload(BaseModel):
     program_codes: list[str] | None = None
+
+
+class ImportNationalPayload(BaseModel):
+    csv_path: str | None = None
+    program_code: str = "sites_20476"
 
 
 def _ensure_db_mode() -> None:
@@ -87,3 +93,91 @@ def decision_intents() -> dict[str, Any]:
 def demo_scenarios() -> dict[str, Any]:
     _ensure_db_mode()
     return decision_demo_service.get_demo_scenarios()
+
+
+@router.get("/sites/programs", summary="Programmes / vagues supportés par la priorisation nationale")
+def list_priority_programs() -> dict[str, Any]:
+    return {
+        "_meta": {
+            "title": "Vagues FDSU supportées",
+            "note": "40 = pilote ; 300 = première vague ; 20 476 = national ; extensible.",
+        },
+        "programs": fdsu_site_priority_service.list_supported_programs(),
+    }
+
+
+@router.get("/sites/priorities", summary="Priorisation nationale des sites FDSU")
+def sites_priorities(
+    program_code: str = Query("sites_20476", description="sites_40 | sites_300 | sites_20476"),
+    priority_level: str | None = Query(None),
+    limit: int = Query(200, gt=0, le=5000),
+    offset: int = Query(0, ge=0),
+) -> dict[str, Any]:
+    try:
+        return fdsu_site_priority_service.list_priorities(
+            program_code,
+            priority_level=priority_level,
+            limit=limit,
+            offset=offset,
+        )
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@router.get("/sites/top-priorities", summary="Top priorités nationales FDSU")
+def sites_top_priorities(
+    program_code: str = Query("sites_20476"),
+    limit: int = Query(50, gt=0, le=500),
+) -> dict[str, Any]:
+    try:
+        return fdsu_site_priority_service.top_priorities(program_code, limit=limit)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@router.get("/sites/{site_id}/explain", summary="Expliquer le score d'un site FDSU")
+def explain_site_priority(
+    site_id: int,
+    program_code: str | None = Query(None),
+) -> dict[str, Any]:
+    result = fdsu_site_priority_service.explain_site(site_id, program_code=program_code)
+    if not result:
+        raise HTTPException(status_code=404, detail="Site introuvable pour explication.")
+    return result
+
+
+@router.get("/sites/export", summary="Exporter la priorisation nationale (CSV)")
+def export_site_priorities(
+    program_code: str = Query("sites_20476"),
+    limit: int = Query(50000, gt=0, le=100000),
+) -> dict[str, Any]:
+    try:
+        return fdsu_site_priority_service.export_priorities(program_code, limit=limit)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@router.post("/sites/import-national", summary="Importer le programme national (CSV 20 476)")
+def import_national_sites(payload: ImportNationalPayload | None = None) -> dict[str, Any]:
+    body = payload or ImportNationalPayload()
+    csv_path = Path(body.csv_path) if body.csv_path else None
+    if csv_path and not csv_path.is_absolute():
+        csv_path = fdsu_sites_import_service.PROJECT_ROOT / csv_path
+    try:
+        result = fdsu_sites_import_service.import_sites_csv(
+            csv_path,
+            program_code=body.program_code,
+            write_outputs=True,
+        )
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    # Ne pas renvoyer les 20k sites dans la réponse HTTP
+    return {
+        "program_code": result["program_code"],
+        "count": result["count"],
+        "statistics": result["statistics"],
+        "outputs": result["outputs"],
+        "meta": result["meta"],
+    }

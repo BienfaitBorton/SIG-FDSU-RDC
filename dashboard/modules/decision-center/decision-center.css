@@ -796,11 +796,44 @@
 .decision-engine-priority-badge.is-medium { background: rgba(202, 138, 4, 0.22); color: #fde047; }
 .decision-engine-priority-badge.is-low { background: rgba(74, 222, 128, 0.18); color: #86efac; }
 
+.decision-engine-top-panel,
+.decision-engine-explain {
+  margin: 12px 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.decision-engine-top-list {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 6px;
+  font-size: 0.88rem;
+}
+
+.decision-engine-explain-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.decision-engine-explain-body p {
+  margin: 6px 0;
+  font-size: 0.9rem;
+}
+
 .decision-engine-criteria {
   display: block;
   color: var(--text-muted, #94a3b8);
   font-size: 0.72rem;
-  line-height: 1.3;
+  line-height: 1.25;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media (max-width: 1200px) {

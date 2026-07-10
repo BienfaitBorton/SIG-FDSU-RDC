@@ -847,13 +847,13 @@
               <div class="decision-engine-header">
                 <div>
                   <p class="panel-label">Priorisation nationale</p>
-                  <h3>Moteur de décision FDSU</h3>
+                  <h3>Priorisation nationale des sites FDSU</h3>
                 </div>
                 <button type="button" class="secondary-button decision-engine-recompute-btn" id="decision-engine-recompute-btn">Recalculer les scores</button>
               </div>
 
               <p class="decision-engine-sectorial-banner" id="decision-engine-sectorial-note">
-                Score partiel — données sectorielles Santé, Éducation, Énergie et Routes à intégrer progressivement.
+                Programme national extensible : Sites 40 (pilote) · Sites 300 (première vague / calibration) · Sites 20 476 (national 5 ans). Seuils calibrés sur la matrice 300.
               </p>
 
               <div class="decision-engine-controls">
@@ -881,6 +881,15 @@
                 </div>
 
                 <div class="decision-engine-toolbar">
+                  <span class="decision-engine-filter-label">Programme</span>
+                  <div class="decision-engine-filters" id="decision-engine-program-filters" role="group" aria-label="Filtrer par programme FDSU">
+                    <button type="button" class="decision-engine-filter" data-program-filter="sites_40">Sites 40</button>
+                    <button type="button" class="decision-engine-filter" data-program-filter="sites_300">Sites 300</button>
+                    <button type="button" class="decision-engine-filter is-active" data-program-filter="sites_20476">Sites 20 476</button>
+                  </div>
+                </div>
+
+                <div class="decision-engine-toolbar">
                   <span class="decision-engine-filter-label">Priorité</span>
                   <div class="decision-engine-filters" id="decision-engine-filters" role="group" aria-label="Filtrer par niveau de priorité">
                     <button type="button" class="decision-engine-filter is-active" data-priority-filter="">Tous</button>
@@ -889,8 +898,24 @@
                     <button type="button" class="decision-engine-filter filter-medium" data-priority-filter="medium">Moyenne</button>
                     <button type="button" class="decision-engine-filter filter-low" data-priority-filter="low">Faible</button>
                   </div>
+                  <button type="button" class="secondary-button" id="decision-engine-export-btn">Exporter</button>
                 </div>
               </div>
+
+              <section class="decision-engine-top-panel" id="decision-engine-top-panel" aria-label="Top priorités nationales">
+                <h4>Top priorités nationales</h4>
+                <ol id="decision-engine-top-list" class="decision-engine-top-list">
+                  <li>Chargement…</li>
+                </ol>
+              </section>
+
+              <aside class="decision-engine-explain" id="decision-engine-explain" hidden>
+                <div class="decision-engine-explain-header">
+                  <h4 id="decision-engine-explain-title">Explication du score</h4>
+                  <button type="button" class="secondary-button" id="decision-engine-explain-close">Fermer</button>
+                </div>
+                <div id="decision-engine-explain-body"></div>
+              </aside>
 
               <div class="decision-engine-body">
                 <div class="decision-engine-map-column">
