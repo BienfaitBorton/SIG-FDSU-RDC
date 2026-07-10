@@ -2,6 +2,10 @@
 
 La matrice des 300 sites sert de calibration officielle des seuils
 (priority_matrix.json), sans enfermer le moteur dans ce seul périmètre.
+
+Identité territoriale / codes sites : nomenclature officielle unique
+data/raw/FDSU Structure code Territoire zones.xlsx
+(via app.fdsu_nomenclature / Référentiel National).
 """
 
 from __future__ import annotations

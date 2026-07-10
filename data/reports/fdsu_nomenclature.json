@@ -1,5 +1,5 @@
 {
-  "source": "data/raw/FDSU Structure code Territoire zones(2).xlsx",
+  "source": "data/raw/FDSU Structure code Territoire zones.xlsx",
   "codification_format": "FDSU_<CODE_ZONE>_<CODE_PROVINCE>_<CODE_TERRITOIRE>_<CODE_SITE>",
   "codification_example": "FDSU_ND_05_001_001",
   "zones": [

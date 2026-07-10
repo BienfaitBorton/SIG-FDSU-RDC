@@ -83,6 +83,8 @@
     decisionEngineMap: null,
     decisionEngineMarkers: null,
     decisionEngineSelectedSiteId: null,
+    masterRegistryLoaded: false,
+    masterRegistryLoading: false,
     sectorialLoaded: false,
     sectorialLoading: false,
     healthMap: null,
@@ -1481,6 +1483,75 @@
       });
   }
 
+  function renderMasterBreakdown(targetId, mapping) {
+    const node = document.querySelector(targetId);
+    if (!node) return;
+    const entries = Object.entries(mapping || {}).sort((a, b) => Number(b[1]) - Number(a[1]));
+    if (!entries.length) {
+      node.textContent = 'Aucune donnée.';
+      return;
+    }
+    node.innerHTML = entries.map(([key, value]) => `
+      <div class="master-type-row">
+        <span>${escapeHtml(key)}</span>
+        <strong>${Number(value).toLocaleString('fr-FR')}</strong>
+      </div>
+    `).join('');
+  }
+
+  function loadMasterRegistryPanel(forceReload) {
+    if (decisionCenterState.masterRegistryLoaded && !forceReload) return Promise.resolve();
+    if (decisionCenterState.masterRegistryLoading && !forceReload) return Promise.resolve();
+
+    const shared = getShared();
+    decisionCenterState.masterRegistryLoading = true;
+    const fetchPanel = typeof shared.fetchJson === 'function'
+      ? shared.fetchJson('/api/master/panel')
+      : Promise.reject(new Error('API indisponible'));
+
+    return fetchPanel
+      .then((payload) => {
+        const stats = payload?.statistics || {};
+        const totals = stats.totals || {};
+        const set = (id, value) => {
+          const node = document.querySelector(id);
+          if (node) node.textContent = value == null ? '—' : Number(value).toLocaleString('fr-FR');
+        };
+        set('#master-kpi-entities', totals.entities);
+        set('#master-kpi-duplicates', totals.duplicate_groups);
+        set('#master-kpi-valid', totals.fdsu_codes_valid);
+        set('#master-kpi-invalid', totals.fdsu_codes_invalid);
+        set('#master-kpi-sources', totals.sources);
+        set('#master-kpi-versions', totals.versions_events);
+        const quality = document.querySelector('#master-kpi-quality');
+        if (quality) quality.textContent = `${stats.quality_score ?? '—'} %`;
+
+        const note = document.querySelector('#master-nomenclature-note');
+        const nomen = payload?.nomenclature || {};
+        if (note) {
+          note.textContent = `${nomen.format || ''} — exemple ${nomen.example || ''} — ${nomen.note || nomen.source || ''}`;
+        }
+        const zones = document.querySelector('#master-nomenclature-zones');
+        if (zones) {
+          zones.innerHTML = (nomen.zones || []).map((zone) => `<li>${escapeHtml(zone)}</li>`).join('');
+        }
+        renderMasterBreakdown('#master-type-breakdown', stats.by_type);
+        renderMasterBreakdown('#master-sources-breakdown', stats.sources);
+        renderMasterBreakdown('#master-quality-breakdown', {
+          ...(stats.validation_status || {}),
+          ...(stats.confidence_level || {}),
+        });
+        decisionCenterState.masterRegistryLoaded = true;
+      })
+      .catch(() => {
+        const note = document.querySelector('#master-nomenclature-note');
+        if (note) note.textContent = 'Référentiel national indisponible.';
+      })
+      .finally(() => {
+        decisionCenterState.masterRegistryLoading = false;
+      });
+  }
+
   const SECTORIAL_CARD_CODES = ['HEALTH', 'EDUCATION', 'ENERGY', 'ROADS', 'POPULATION'];
   const REFERENTIAL_STATUS_LABELS = {
     active: 'Actif',
@@ -1838,6 +1909,10 @@
       global.setTimeout(() => {
         decisionCenterState.decisionEngineMap?.invalidateSize();
       }, 120);
+    }
+
+    if (tabId === 'referentiel-national') {
+      loadMasterRegistryPanel(false);
     }
 
     if (tabId === 'referentiels-sectoriels') {

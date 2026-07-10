@@ -532,6 +532,7 @@
           <nav class="decision-center-tabs" id="decision-center-tabs" role="tablist" aria-label="Onglets du centre de décision">
             <button type="button" class="decision-center-tab is-active" data-decision-tab="vue-nationale" role="tab" aria-selected="true">Vue nationale</button>
             <button type="button" class="decision-center-tab" data-decision-tab="priorisation" role="tab" aria-selected="false">Priorisation</button>
+            <button type="button" class="decision-center-tab" data-decision-tab="referentiel-national" role="tab" aria-selected="false">Référentiel National</button>
             <button type="button" class="decision-center-tab" data-decision-tab="referentiels-sectoriels" role="tab" aria-selected="false">Référentiels sectoriels</button>
             <button type="button" class="decision-center-tab" data-decision-tab="analyse-multicritere" role="tab" aria-selected="false">Analyse multicritère</button>
             <button type="button" class="decision-center-tab" data-decision-tab="simulations" role="tab" aria-selected="false">Simulations</button>
@@ -941,6 +942,69 @@
                     </table>
                   </div>
                 </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="decision-center-tab-panel" data-decision-tab-panel="referentiel-national" role="tabpanel" hidden>
+            <div class="master-registry-panel" id="master-registry-panel" aria-label="Référentiel National des Actifs FDSU">
+              <div class="master-registry-header">
+                <div>
+                  <p class="panel-label">Master Data & Business Registry</p>
+                  <h3>Référentiel National des Actifs FDSU</h3>
+                </div>
+                <p class="master-registry-format">business_id site = <code>FDSU_ND_18_003_10100</code> — jamais SITE-FDSU-######</p>
+              </div>
+
+              <div class="master-registry-kpi-grid" id="master-registry-kpi-grid">
+                <article class="master-registry-kpi">
+                  <p class="summary-label">Entités</p>
+                  <p class="summary-value" id="master-kpi-entities">—</p>
+                </article>
+                <article class="master-registry-kpi">
+                  <p class="summary-label">Doublons (groupes)</p>
+                  <p class="summary-value" id="master-kpi-duplicates">—</p>
+                </article>
+                <article class="master-registry-kpi is-ok">
+                  <p class="summary-label">Codes FDSU valides</p>
+                  <p class="summary-value" id="master-kpi-valid">—</p>
+                </article>
+                <article class="master-registry-kpi is-warn">
+                  <p class="summary-label">Codes FDSU invalides</p>
+                  <p class="summary-value" id="master-kpi-invalid">—</p>
+                </article>
+                <article class="master-registry-kpi">
+                  <p class="summary-label">Sources</p>
+                  <p class="summary-value" id="master-kpi-sources">—</p>
+                </article>
+                <article class="master-registry-kpi">
+                  <p class="summary-label">Événements version</p>
+                  <p class="summary-value" id="master-kpi-versions">—</p>
+                </article>
+                <article class="master-registry-kpi is-score">
+                  <p class="summary-label">Qualité données</p>
+                  <p class="summary-value" id="master-kpi-quality">—</p>
+                </article>
+              </div>
+
+              <div class="master-registry-body">
+                <section class="master-registry-card">
+                  <h4>Nomenclature officielle</h4>
+                  <p id="master-nomenclature-note">Chargement…</p>
+                  <ul id="master-nomenclature-zones" class="master-registry-zones"></ul>
+                </section>
+                <section class="master-registry-card">
+                  <h4>Répartition par type</h4>
+                  <div id="master-type-breakdown" class="master-type-breakdown">Chargement…</div>
+                </section>
+                <section class="master-registry-card">
+                  <h4>Sources</h4>
+                  <div id="master-sources-breakdown" class="master-type-breakdown">Chargement…</div>
+                </section>
+                <section class="master-registry-card">
+                  <h4>Validation / confiance</h4>
+                  <div id="master-quality-breakdown" class="master-type-breakdown">Chargement…</div>
+                </section>
               </div>
             </div>
           </section>

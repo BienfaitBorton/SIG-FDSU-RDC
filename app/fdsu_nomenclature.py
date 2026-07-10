@@ -9,7 +9,10 @@ from typing import Any
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 NOMENCLATURE_PATH = BASE_DIR / "data" / "reports" / "fdsu_nomenclature.json"
+OFFICIAL_STRUCTURE_XLSX = BASE_DIR / "data" / "raw" / "FDSU Structure code Territoire zones.xlsx"
+OFFICIAL_STRUCTURE_RELATIVE = "data/raw/FDSU Structure code Territoire zones.xlsx"
 FDSU_CODE_FORMAT = "FDSU_<CODE_ZONE>_<CODE_PROVINCE>_<CODE_TERRITOIRE>_<CODE_SITE>"
+FDSU_CODE_EXAMPLE = "FDSU_ND_18_003_10100"
 
 
 def normalize_name(value: Any) -> str:
