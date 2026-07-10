@@ -1,0 +1,38 @@
+{
+  "_meta": {
+    "template_id": "DCF_PDF_TEMPLATE_V1",
+    "title": "Modèle d'export PDF — Dossier de Décision FDSU",
+    "version": "1.0.0",
+    "status": "structure_only",
+    "generation_enabled": false,
+    "note": "Préparation structurelle — génération PDF non activée dans ce sprint."
+  },
+  "document": {
+    "title": "Dossier de Décision FDSU",
+    "subtitle": "Explainable Decision Engine v1",
+    "header_fields": ["case_id", "generated_at", "engine_version", "doctrine_title", "doctrine_version"]
+  },
+  "sections": [
+    { "id": "A", "title": "Résumé de la décision", "source_path": "summary" },
+    { "id": "B", "title": "Actif concerné", "source_path": "asset" },
+    { "id": "C", "title": "Score global", "source_path": "score.global" },
+    { "id": "D", "title": "Niveau de priorité", "source_path": "score.priority_level" },
+    { "id": "E", "title": "Niveau de confiance", "source_path": "confidence" },
+    { "id": "F", "title": "Doctrine utilisée", "source_path": "doctrine" },
+    { "id": "G", "title": "Version de la doctrine", "source_path": "doctrine.version" },
+    { "id": "H", "title": "Matrice utilisée", "source_path": "matrix" },
+    { "id": "I", "title": "Critères appliqués", "source_path": "criteria" },
+    { "id": "J", "title": "Données utilisées", "source_path": "data_used" },
+    { "id": "K", "title": "Indicateurs mobilisés", "source_path": "indicators" },
+    { "id": "L", "title": "Impacts attendus", "source_path": "impacts" },
+    { "id": "M", "title": "Risques identifiés", "source_path": "risks" },
+    { "id": "N", "title": "Hypothèses", "source_path": "assumptions" },
+    { "id": "O", "title": "Sources", "source_path": "sources" },
+    { "id": "P", "title": "Date de génération", "source_path": "generated_at" },
+    { "id": "Q", "title": "Version du moteur", "source_path": "engine_version" },
+    { "id": "JUSTIFICATION", "title": "Justification détaillée par critère", "source_path": "justification" },
+    { "id": "TRACE", "title": "Traçabilité", "source_path": "traceability" }
+  ],
+  "export_formats_planned": ["pdf", "json"],
+  "footer": "Document généré par le SIG-FDSU RDC — Explainable Decision Engine. Aucune recommandation sans justification."
+}

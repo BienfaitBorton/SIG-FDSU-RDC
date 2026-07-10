@@ -606,6 +606,29 @@ def get_panel_payload() -> dict[str, Any]:
 PENDING_INTEGRATION_MESSAGE = "Données en cours d'intégration"
 
 
+def ccn_doctrine_extension_points() -> dict[str, Any]:
+    """Points d'extension Decision Engine ↔ Doctrine CCN (sans pondérations hardcodées)."""
+    from api.services import ccn_operational_service
+
+    doctrine = ccn_operational_service.load_doctrine()
+    meta = doctrine.get("_meta") or {}
+    return {
+        "_meta": {
+            "title": "Extension Decision Engine — Doctrine CCN",
+            "hardcoded_weights_forbidden": True,
+            "doctrine_id": meta.get("doctrine_id"),
+            "doctrine_version": meta.get("version"),
+            "source": meta.get("source_document"),
+            "api": "/api/ccn/doctrine",
+        },
+        "hooks": list(doctrine.get("decision_engine_hooks") or []),
+        "criteria_count": len(doctrine.get("selection_criteria") or []),
+        "indicators_count": len(doctrine.get("measurement_indicators") or []),
+        "opposability_rules_count": len(doctrine.get("opposability_rules") or []),
+        "consumes": ["doctrine", "criteria", "indicators", "opposability_rules"],
+    }
+
+
 def _kpi_available(value: int | float | None, label: str) -> dict[str, Any]:
     return {
         "label": label,
@@ -733,4 +756,5 @@ def get_national_panel_payload() -> dict[str, Any]:
         },
         "kpis": kpis,
         "decision_summary": scores,
+        "ccn_extension": ccn_doctrine_extension_points(),
     }

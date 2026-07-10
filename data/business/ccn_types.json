@@ -1,0 +1,51 @@
+{
+  "_meta": {
+    "schema_version": "1.0.0",
+    "title": "Catalogue officiel des types CCN FDSU",
+    "source": "Stratégie FDSU CCN + doctrine métier officielle",
+    "updated_at": "2026-07-10",
+    "version": "1.0.0"
+  },
+  "types": [
+    {
+      "code": "A",
+      "id": "CCN_A",
+      "label": "CCN A — Accès social / Internet",
+      "short_label": "Accès social / Internet",
+      "description": "Centre orienté accès public à Internet et inclusion sociale de base.",
+      "primary_services": ["public_internet", "digital_mediation", "social_access"]
+    },
+    {
+      "code": "B",
+      "id": "CCN_B",
+      "label": "CCN B — Formation / e-learning",
+      "short_label": "Formation / e-learning",
+      "description": "Centre dédié à la formation numérique et à l'e-learning.",
+      "primary_services": ["digital_training", "e_education", "certification"]
+    },
+    {
+      "code": "C",
+      "id": "CCN_C",
+      "label": "CCN C — Services publics / e-Gov",
+      "short_label": "Services publics / e-Gov",
+      "description": "Centre facilitant l'accès aux services publics et à l'e-gouvernance.",
+      "primary_services": ["e_admin", "public_services", "civic_support"]
+    },
+    {
+      "code": "D",
+      "id": "CCN_D",
+      "label": "CCN D — Innovation / entrepreneuriat",
+      "short_label": "Innovation / entrepreneuriat",
+      "description": "Centre orienté innovation locale, entrepreneuriat et accompagnement PME.",
+      "primary_services": ["business_support", "incubation", "coworking"]
+    },
+    {
+      "code": "Z",
+      "id": "CCN_Z",
+      "label": "CCN Z — Centre mixte",
+      "short_label": "Centre mixte",
+      "description": "Centre polyvalent combinant plusieurs fonctions selon le profil territorial.",
+      "primary_services": ["public_internet", "digital_training", "e_admin", "business_support"]
+    }
+  ]
+}

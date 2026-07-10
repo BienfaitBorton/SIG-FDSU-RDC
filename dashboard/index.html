@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="modules/decision-center/decision-center.css" />
   <link rel="stylesheet" href="modules/geocoding/geocoding.css" />
+  <link rel="stylesheet" href="modules/ccn/ccn.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 </head>
 <body>
@@ -32,6 +33,10 @@
         <button class="nav-item" data-module="centre_decision" data-route="decision-view">
           <span class="nav-icon">🎯</span>
           <span>Centre de Décision</span>
+        </button>
+        <button class="nav-item" data-module="ccn" data-route="ccn">
+          <span class="nav-icon">CCN</span>
+          <span>Centres Communautaires</span>
         </button>
         <button class="nav-item" data-module="referentiel" data-route="referentiel">
           <span class="nav-icon">🧭</span>
@@ -749,8 +754,12 @@
               <aside class="decision-center-placeholder-panel" id="decision-center-decision-sheet" aria-label="Fiche décisionnelle">
                 <p class="panel-label">Analyse</p>
                 <h3>Fiche décisionnelle</h3>
-                <div class="decision-center-placeholder-body">
-                  <p>Sélectionnez un site sur la carte pour afficher son analyse.</p>
+                <nav class="decision-case-tabs" role="tablist" aria-label="Onglets fiche décisionnelle">
+                  <button type="button" class="decision-case-tab is-active" data-sheet-tab="justification">Justification</button>
+                  <button type="button" class="decision-case-tab" data-sheet-tab="dossier">Dossier de décision</button>
+                </nav>
+                <div class="decision-center-placeholder-body" id="decision-center-decision-sheet-body">
+                  <p>Sélectionnez un site prioritaire (onglet Priorisation → Expliquer) pour afficher la justification.</p>
                 </div>
               </aside>
             </div>
@@ -924,7 +933,12 @@
                   <h4 id="decision-engine-explain-title">Explication du score</h4>
                   <button type="button" class="secondary-button" id="decision-engine-explain-close">Fermer</button>
                 </div>
-                <div id="decision-engine-explain-body"></div>
+                <nav class="decision-case-tabs" role="tablist" aria-label="Onglets justification">
+                  <button type="button" class="decision-case-tab is-active" data-decision-case-tab="justification">Justification</button>
+                  <button type="button" class="decision-case-tab" data-decision-case-tab="dossier">Dossier de décision</button>
+                </nav>
+                <div id="decision-engine-explain-body" data-decision-case-panel="justification"></div>
+                <div id="decision-engine-case-body" data-decision-case-panel="dossier" hidden></div>
               </aside>
 
               <div class="decision-engine-body">
@@ -1642,6 +1656,92 @@
           </section>
         </div>
 
+        <div class="module-panel hidden ccn-module" id="ccn-panel" data-module="ccn">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Capability 02 — Module opérationnel v1</p>
+              <h2>Centres Communautaires Numériques</h2>
+            </div>
+            <span class="panel-badge">DEMO — Doctrine CCN v1</span>
+          </div>
+
+          <p class="ccn-demo-banner">
+            Jeu de démonstration explicitement marqué DEMO. Site FDSU = connectivité · CCN = service numérique.
+            Pondérations issues de la doctrine versionnée (non hardcodées).
+          </p>
+
+          <div class="ccn-kpi-grid" id="ccn-kpi-grid">
+            <article class="ccn-kpi"><p class="summary-label">Total CCN</p><p class="summary-value" id="ccn-kpi-total">—</p></article>
+            <article class="ccn-kpi"><p class="summary-label">Planifiés</p><p class="summary-value" id="ccn-kpi-planned">—</p></article>
+            <article class="ccn-kpi"><p class="summary-label">Préparation</p><p class="summary-value" id="ccn-kpi-prep">—</p></article>
+            <article class="ccn-kpi"><p class="summary-label">Déploiement</p><p class="summary-value" id="ccn-kpi-deploy">—</p></article>
+            <article class="ccn-kpi is-ok"><p class="summary-label">Opérationnels</p><p class="summary-value" id="ccn-kpi-ops">—</p></article>
+            <article class="ccn-kpi"><p class="summary-label">Population desservie</p><p class="summary-value" id="ccn-kpi-pop">—</p></article>
+            <article class="ccn-kpi"><p class="summary-label">Sites FDSU associés</p><p class="summary-value" id="ccn-kpi-sites">—</p></article>
+            <article class="ccn-kpi"><p class="summary-label">Provinces</p><p class="summary-value" id="ccn-kpi-provinces">—</p></article>
+          </div>
+
+          <div class="ccn-toolbar">
+            <label>Province <select id="ccn-filter-province"><option value="">Toutes</option></select></label>
+            <label>Territoire <select id="ccn-filter-territoire"><option value="">Tous</option></select></label>
+            <label>Zone <select id="ccn-filter-zone"><option value="">Toutes</option><option>ND</option><option>SD</option><option>CE</option><option>OT</option><option>ET</option></select></label>
+            <label>Programme <select id="ccn-filter-program"><option value="">Tous</option><option value="sites_40">Sites 40</option><option value="sites_300">Sites 300</option><option value="sites_20476">Sites 20 476</option></select></label>
+            <label>Statut <select id="ccn-filter-status"><option value="">Tous</option><option value="planned">Planifié</option><option value="preparation">Préparation</option><option value="deploying">Déploiement</option><option value="operational">Opérationnel</option><option value="suspended">Suspendu</option></select></label>
+            <label>Type <select id="ccn-filter-type"><option value="">Tous</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="Z">Z</option></select></label>
+            <button type="button" class="secondary-button" id="ccn-filter-reset">Réinitialiser</button>
+          </div>
+
+          <div class="ccn-body">
+            <section class="ccn-map-column">
+              <div id="ccn-map" class="ccn-map" aria-label="Carte des CCN et Sites FDSU associés"></div>
+              <p class="ccn-map-legend">● CCN &nbsp; ■ Site FDSU &nbsp; — liaison Site→CCN</p>
+            </section>
+            <section class="ccn-table-column">
+              <div class="ccn-table-frame">
+                <table class="ccn-table" id="ccn-table">
+                  <thead>
+                    <tr>
+                      <th>Code</th>
+                      <th>Nom</th>
+                      <th>Province</th>
+                      <th>Territoire</th>
+                      <th>Programme</th>
+                      <th>Type</th>
+                      <th>Statut</th>
+                      <th>Population</th>
+                      <th>Gestionnaire</th>
+                      <th>Site FDSU</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ccn-table-body">
+                    <tr><td colspan="10">Chargement…</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <aside class="ccn-detail" id="ccn-detail" hidden>
+            <div class="ccn-detail-header">
+              <h3 id="ccn-detail-title">Fiche CCN</h3>
+              <button type="button" class="secondary-button" id="ccn-detail-close">Fermer</button>
+            </div>
+            <nav class="ccn-detail-tabs" role="tablist" aria-label="Onglets fiche CCN">
+              <button type="button" class="ccn-detail-tab is-active" data-ccn-tab="fiche">Fiche</button>
+              <button type="button" class="ccn-detail-tab" data-ccn-tab="justification">Justification</button>
+              <button type="button" class="ccn-detail-tab" data-ccn-tab="dossier">Dossier de décision</button>
+            </nav>
+            <div id="ccn-detail-body" class="ccn-detail-body" data-ccn-tab-panel="fiche"></div>
+            <div id="ccn-justification-body" class="ccn-detail-body" data-ccn-tab-panel="justification" hidden></div>
+            <div id="ccn-case-body" class="ccn-detail-body" data-ccn-tab-panel="dossier" hidden></div>
+          </aside>
+
+          <section class="ccn-doctrine-panel" id="ccn-doctrine-panel">
+            <h3>Doctrine CCN FDSU v1</h3>
+            <div id="ccn-doctrine-summary" class="ccn-doctrine-summary">Chargement…</div>
+          </section>
+        </div>
+
         <div class="module-panel hidden geocoding-module" id="geocodage-panel" data-module="geocodage">
           <header class="geocoding-header">
             <div>
@@ -1833,6 +1933,7 @@
   <!-- decision-center.js avant app.js : app.js boot immédiat (readyState interactive) sinon rate l'init des onglets -->
   <script src="modules/decision-center/decision-center.js"></script>
   <script src="modules/geocoding/geocoding.js"></script>
+  <script src="modules/ccn/ccn.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

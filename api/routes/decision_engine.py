@@ -9,7 +9,7 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
 from api.config import DATA_MODE
-from api.services import decision_demo_service, decision_engine_service, fdsu_site_priority_service, fdsu_sites_import_service
+from api.services import decision_demo_service, decision_engine_service, explainable_decision_service, fdsu_site_priority_service, fdsu_sites_import_service
 
 router = APIRouter()
 
@@ -93,6 +93,62 @@ def decision_intents() -> dict[str, Any]:
 def demo_scenarios() -> dict[str, Any]:
     _ensure_db_mode()
     return decision_demo_service.get_demo_scenarios()
+
+
+@router.get("/case/{asset_id}", summary="Dossier de Décision (Decision Case File)")
+def decision_case(
+    asset_id: str,
+    asset_type: str | None = Query(None, description="ccn | site"),
+    program_code: str | None = Query(None),
+) -> dict[str, Any]:
+    result = explainable_decision_service.get_decision_case(
+        asset_id,
+        asset_type=asset_type,
+        program_code=program_code,
+    )
+    if not result:
+        raise HTTPException(status_code=404, detail="Dossier de décision introuvable pour cet actif.")
+    return result
+
+
+@router.get("/explain/{asset_id}", summary="Justification détaillée d'une recommandation")
+def explain_decision(
+    asset_id: str,
+    asset_type: str | None = Query(None, description="ccn | site"),
+    program_code: str | None = Query(None),
+) -> dict[str, Any]:
+    result = explainable_decision_service.explain_decision(
+        asset_id,
+        asset_type=asset_type,
+        program_code=program_code,
+    )
+    if not result:
+        raise HTTPException(status_code=404, detail="Justification introuvable pour cet actif.")
+    return result
+
+
+@router.get("/doctrine/{doctrine_id}", summary="Doctrine métier utilisée par le moteur")
+def decision_doctrine(doctrine_id: str) -> dict[str, Any]:
+    result = explainable_decision_service.get_doctrine_payload(doctrine_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Doctrine introuvable.")
+    return result
+
+
+@router.get("/case-history", summary="Historique / traçabilité des dossiers de décision")
+def decision_case_history(
+    case_id: str | None = Query(None),
+    limit: int = Query(50, gt=0, le=500),
+) -> dict[str, Any]:
+    return explainable_decision_service.get_case_history(case_id=case_id, limit=limit)
+
+
+@router.get("/pdf-template", summary="Modèle PDF Dossier de Décision (structure only)")
+def decision_pdf_template() -> dict[str, Any]:
+    template = explainable_decision_service.pdf_template()
+    if not template:
+        raise HTTPException(status_code=404, detail="Modèle PDF introuvable.")
+    return template
 
 
 @router.get("/sites/programs", summary="Programmes / vagues supportés par la priorisation nationale")

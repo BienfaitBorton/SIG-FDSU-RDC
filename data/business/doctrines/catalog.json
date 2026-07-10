@@ -1,0 +1,57 @@
+{
+  "_meta": {
+    "title": "Catalogue des doctrines métier FDSU",
+    "schema_version": "1.0.0",
+    "updated_at": "2026-07-10"
+  },
+  "doctrines": [
+    {
+      "id": "DOCTRINE_CCN_FDSU",
+      "label": "Doctrine CCN FDSU",
+      "version": "1.0.0",
+      "status": "active",
+      "path": "data/business/doctrines/ccn_doctrine_v1.json",
+      "knowledge_domain": "business_doctrine"
+    },
+    {
+      "id": "DOCTRINE_SITES_FDSU",
+      "label": "Doctrine Sites FDSU",
+      "version": "1.0.0",
+      "status": "active",
+      "path": "data/business/doctrines/sites_doctrine_v1.json",
+      "knowledge_domain": "business_doctrine"
+    },
+    {
+      "id": "DOCTRINE_SUBVENTIONS_FDSU",
+      "label": "Doctrine Subventions",
+      "version": null,
+      "status": "planned",
+      "path": null,
+      "knowledge_domain": "business_doctrine"
+    },
+    {
+      "id": "DOCTRINE_PARTENAIRES_FDSU",
+      "label": "Doctrine Partenaires",
+      "version": null,
+      "status": "planned",
+      "path": null,
+      "knowledge_domain": "business_doctrine"
+    },
+    {
+      "id": "DOCTRINE_GOUVERNANCE_FDSU",
+      "label": "Doctrine Gouvernance",
+      "version": null,
+      "status": "planned",
+      "path": null,
+      "knowledge_domain": "business_doctrine"
+    },
+    {
+      "id": "DOCTRINE_TELECOM_FDSU",
+      "label": "Doctrine Télécommunications",
+      "version": null,
+      "status": "planned",
+      "path": null,
+      "knowledge_domain": "business_doctrine"
+    }
+  ]
+}

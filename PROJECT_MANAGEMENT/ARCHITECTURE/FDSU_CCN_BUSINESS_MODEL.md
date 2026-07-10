@@ -1,15 +1,19 @@
 # SIG-FDSU RDC — Modèle métier CCN (Centres Communautaires Numériques)
 
-**Capacité :** Capability 1 — Gestion des CCN  
+**Capacité :** Capability 02 — Gestion des CCN  
 **Phase :** 2  
-**Statut :** Fondations architecturales (pas de CRUD opérationnel)  
+**Statut :** Module opérationnel v1 (démonstration DG) — doctrine versionnée + API lecture + UI  
 **Date :** 10 juillet 2026  
 
 **Documents liés :**
 - [`FDSU_ENTERPRISE_BUSINESS_MODEL.md`](./FDSU_ENTERPRISE_BUSINESS_MODEL.md)
 - [`FDSU_MASTER_DATA_MODEL.md`](./FDSU_MASTER_DATA_MODEL.md)
+- [`FDSU_KNOWLEDGE_HUB.md`](./FDSU_KNOWLEDGE_HUB.md)
 - Artefact : `api/models/business_entities.py`
 - Socle capacité : `api/services/ccn_capability_service.py`
+- Opérationnel : `api/services/ccn_operational_service.py`
+- Doctrine : `data/business/doctrines/ccn_doctrine_v1.json`
+- UI : `dashboard/modules/ccn/`
 
 ---
 

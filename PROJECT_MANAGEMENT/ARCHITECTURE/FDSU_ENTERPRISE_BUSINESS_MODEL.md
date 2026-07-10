@@ -4,9 +4,11 @@
 **Date :** 10 juillet 2026  
 **Périmètre :** Modèle métier d’entreprise — sans refonte des modules existants  
 **Documents liés :**
+- [`FDSU_BUSINESS_ARCHITECTURE.md`](./FDSU_BUSINESS_ARCHITECTURE.md) — Architecture métier de référence
 - [`FDSU_BUSINESS_CAPABILITIES.md`](./FDSU_BUSINESS_CAPABILITIES.md) — Cartographie des Business Capabilities
 - [`FDSU_MASTER_DATA_MODEL.md`](./FDSU_MASTER_DATA_MODEL.md) — Référentiel National (application technique du modèle)
 - [`FDSU_CCN_BUSINESS_MODEL.md`](./FDSU_CCN_BUSINESS_MODEL.md) — Capability 02 (CCN)
+- [`FDSU_KNOWLEDGE_HUB.md`](./FDSU_KNOWLEDGE_HUB.md) — Knowledge Hub & National Indicators Framework
 - [`SIG_FDSU_RDC_V1_FUNCTIONAL_ARCHITECTURE.md`](./SIG_FDSU_RDC_V1_FUNCTIONAL_ARCHITECTURE.md) — Architecture fonctionnelle
 
 ---

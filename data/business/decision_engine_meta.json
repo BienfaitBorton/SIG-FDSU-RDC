@@ -1,0 +1,17 @@
+{
+  "_meta": {
+    "engine_id": "FDSU_EXPLAINABLE_DECISION_ENGINE",
+    "version": "1.0.0",
+    "title": "Explainable Decision Engine FDSU",
+    "updated_at": "2026-07-10",
+    "principle": "Aucune recommandation sans justification.",
+    "hardcoded_forbidden": true,
+    "consumes": [
+      "referentiel_national",
+      "knowledge_hub",
+      "doctrine",
+      "matrice",
+      "indicateurs"
+    ]
+  }
+}

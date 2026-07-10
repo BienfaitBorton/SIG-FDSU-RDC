@@ -6,9 +6,11 @@
 **Règle :** Documentation uniquement — aucune logique applicative modifiée
 
 **Documents liés :**
+- [`FDSU_BUSINESS_ARCHITECTURE.md`](./FDSU_BUSINESS_ARCHITECTURE.md)
 - [`FDSU_ENTERPRISE_BUSINESS_MODEL.md`](./FDSU_ENTERPRISE_BUSINESS_MODEL.md)
 - [`FDSU_MASTER_DATA_MODEL.md`](./FDSU_MASTER_DATA_MODEL.md)
 - [`FDSU_CCN_BUSINESS_MODEL.md`](./FDSU_CCN_BUSINESS_MODEL.md)
+- [`FDSU_KNOWLEDGE_HUB.md`](./FDSU_KNOWLEDGE_HUB.md)
 - [`SIG_FDSU_RDC_V1_FUNCTIONAL_ARCHITECTURE.md`](./SIG_FDSU_RDC_V1_FUNCTIONAL_ARCHITECTURE.md)
 
 ---
@@ -192,3 +194,16 @@ Fournir à la Direction Générale une vue nationale consolidée (programmes, al
 - Fiches détaillées Capability 03 à 07 (sur le modèle CCN) ;
 - Matrice capacité ↔ endpoints / modules UI ;
 - Roadmap Phase 2 ordonnée par capacité.
+
+---
+
+## 8. Couche transverse — FDSU Knowledge Hub
+
+Le **Knowledge Hub** (voir [`FDSU_KNOWLEDGE_HUB.md`](./FDSU_KNOWLEDGE_HUB.md)) n’est pas une capacité opérationnelle isolée : c’est la **couche de connaissance métier** qui alimente notamment :
+
+- Capability 08 — Gestion des Référentiels ;
+- Capability 09 — Centre de Décision ;
+- Capability 10 — Salle de Pilotage DG (cible) ;
+- le futur Territorial Intelligence Engine.
+
+Il répond à « Que sait-on ? » ; le Référentiel répond à « Qu’est-ce que c’est ? » ; le Centre de Décision répond à « Que faut-il faire ? ».

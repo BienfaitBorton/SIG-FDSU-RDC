@@ -1,0 +1,126 @@
+{
+  "_meta": {
+    "schema_version": "1.0.0",
+    "doctrine_id": "DOCTRINE_CCN_FDSU",
+    "title": "Doctrine CCN FDSU",
+    "version": "1.0.0",
+    "status": "official_input",
+    "source_document": "data/strategic/strategie_fdsu_ccn_2026_2030.docx",
+    "source_table": "Critères de Sélection et Priorisation des Sites",
+    "knowledge_hub_domain": "business_doctrine",
+    "calculation_enabled": true,
+    "hardcoded_forbidden": true,
+    "updated_at": "2026-07-10",
+    "notes": [
+      "Doctrine métier officielle versionnable — ne pas coder les pondérations en dur dans les services.",
+      "Les évolutions futures passent par une nouvelle version de ce fichier."
+    ]
+  },
+  "selection_criteria": [
+    {
+      "id": "CRIT_CONN_EXTENSION",
+      "label": "Sélection CCN extension connectivité",
+      "weight": 0.25,
+      "weight_percent": 25,
+      "description": "Potentiel d'extension de la connectivité via un CCN adossé à un site / infrastructure FDSU.",
+      "why_template": "Le potentiel d'extension de connectivité est évalué à {score}/100 (poids {weight_percent} %). Lien Site FDSU : {context}."
+    },
+    {
+      "id": "CRIT_INFRA_PRESENCE",
+      "label": "Présence infrastructures",
+      "weight": 0.15,
+      "weight_percent": 15,
+      "description": "Présence d'infrastructures d'accueil ou d'ancrage territorial (école, hôpital, admin, etc.).",
+      "why_template": "La présence d'infrastructures d'accueil obtient {score}/100 (poids {weight_percent} %). Contexte : {context}."
+    },
+    {
+      "id": "CRIT_PROJECT_PRESENCE",
+      "label": "Présence projet",
+      "weight": 0.15,
+      "weight_percent": 15,
+      "description": "Présence de projets structurants (ANSER, PDL145, autres) sur le territoire.",
+      "why_template": "La présence de projets structurants obtient {score}/100 (poids {weight_percent} %). Contexte : {context}."
+    },
+    {
+      "id": "CRIT_NEEDS_TYPOLOGY",
+      "label": "Typologie besoins",
+      "weight": 0.15,
+      "weight_percent": 15,
+      "description": "Adéquation entre typologie de besoins locaux et type de CCN (A/B/C/D/Z).",
+      "why_template": "L'adéquation typologique (type CCN) obtient {score}/100 (poids {weight_percent} %). Contexte : {context}."
+    },
+    {
+      "id": "CRIT_SERVICE_UNIVERSAL_FIRST",
+      "label": "Service Universal First",
+      "weight": 0.20,
+      "weight_percent": 20,
+      "description": "Priorité aux zones et populations relevant du service universel.",
+      "why_template": "Le critère Service Universal First obtient {score}/100 (poids {weight_percent} %). Contexte : {context}."
+    },
+    {
+      "id": "CRIT_LOCAL_INTEGRATOR",
+      "label": "Projet intégrateur local",
+      "weight": 0.10,
+      "weight_percent": 10,
+      "description": "Capacité du projet à intégrer acteurs locaux et services de proximité.",
+      "why_template": "Le projet intégrateur local obtient {score}/100 (poids {weight_percent} %). Contexte : {context}."
+    }
+  ],
+  "measurement_indicators": [
+    { "id": "MEAS_CHURCH", "label": "Église", "category": "infrastructure_sociale" },
+    { "id": "MEAS_SCHOOL", "label": "École", "category": "infrastructure_sociale" },
+    { "id": "MEAS_HOSPITAL", "label": "Hôpital", "category": "infrastructure_sociale" },
+    { "id": "MEAS_ADMIN", "label": "Administration", "category": "infrastructure_publique" },
+    { "id": "MEAS_PRIVATE_INFRA", "label": "Infrastructure privée", "category": "infrastructure_privee" },
+    { "id": "MEAS_ANSER", "label": "ANSER", "category": "projet_structurant" },
+    { "id": "MEAS_PDL145", "label": "PDL145", "category": "projet_structurant" },
+    { "id": "MEAS_OTHER_PROJECTS", "label": "Autres projets", "category": "projet_structurant" },
+    { "id": "MEAS_CCN_TYPOLOGY", "label": "Typologie CCN", "category": "typologie" }
+  ],
+  "priority_matrix": {
+    "id": "CCN_SITE_PRIORITY_MATRIX_V1",
+    "levels": [
+      { "id": "critical", "label": "Priorité critique", "min_score": 85, "max_score": 100 },
+      { "id": "high", "label": "Priorité élevée", "min_score": 70, "max_score": 84 },
+      { "id": "medium", "label": "Priorité moyenne", "min_score": 50, "max_score": 69 },
+      { "id": "low", "label": "Priorité faible", "min_score": 0, "max_score": 49 }
+    ]
+  },
+  "opposability_rules": [
+    {
+      "id": "RULE_HIGHER_PRIORITY_WINS",
+      "label": "Priorité supérieure retenue",
+      "description": "En cas de conflit entre options, la priorité supérieure est retenue.",
+      "severity": "priority_rank",
+      "version": "1.0.0"
+    },
+    {
+      "id": "RULE_SECURITY_CONSTRAINTS",
+      "label": "Contraintes sécuritaires",
+      "description": "Les contraintes sécuritaires peuvent écarter ou différer un site / CCN malgré un score élevé.",
+      "severity": "hard_constraint",
+      "version": "1.0.0"
+    },
+    {
+      "id": "RULE_CONNECTIVITY_SITES_FIRST",
+      "label": "Priorité aux sites connectivité",
+      "description": "Les CCN adossés à un Site FDSU de connectivité sont privilégiés.",
+      "severity": "boost_if_linked_site",
+      "version": "1.0.0"
+    },
+    {
+      "id": "RULE_SERVICE_UNIVERSAL_FIRST",
+      "label": "Stratégie Service Universal First",
+      "description": "Les territoires relevant du service universel priment dans l'arbitrage final.",
+      "severity": "policy_override",
+      "version": "1.0.0"
+    }
+  ],
+  "decision_engine_hooks": [
+    "load_doctrine",
+    "load_criteria_weights",
+    "load_measurement_indicators",
+    "apply_opposability_rules",
+    "compute_ccn_priority_score"
+  ]
+}

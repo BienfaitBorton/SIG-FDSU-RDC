@@ -140,6 +140,7 @@ const ROUTE_TO_MODULE = {
   enrichment: 'enrichissement',
   enrichissement: 'enrichissement',
   geocoding: 'geocodage',
+  ccn: 'ccn',
   geocodage: 'geocodage',
   import: 'import',
   export: 'export',
@@ -159,6 +160,7 @@ const MODULE_TO_ROUTE = {
   connaissances: 'knowledge',
   enrichissement: 'enrichment',
   geocodage: 'geocoding',
+  ccn: 'ccn',
   import: 'import',
   export: 'export',
   statistiques: 'statistiques',
@@ -332,6 +334,7 @@ const moduleNames = {
   connaissances: 'Centre de connaissances',
   enrichissement: 'Enrichissement territorial',
   geocodage: 'Géocodage FDSU',
+  ccn: 'Centres Communautaires',
   import: 'Import',
   export: 'Export',
   statistiques: 'Statistiques',
@@ -721,6 +724,15 @@ function setActiveModule(moduleKey) {
     }
     if (window.geocodingState?.map) {
       window.setTimeout(() => window.geocodingState.map.invalidateSize(), 0);
+    }
+  }
+
+  if (normalizedModule === 'ccn') {
+    if (typeof window.initializeCcnModule === 'function') {
+      window.initializeCcnModule();
+    }
+    if (window.ccnState?.map) {
+      window.setTimeout(() => window.ccnState.map.invalidateSize(), 0);
     }
   }
 

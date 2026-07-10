@@ -39,6 +39,7 @@ from api.routes import (
     geocoding,
     master,
     ccn,
+    knowledge_hub,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -882,6 +883,7 @@ app.include_router(health_routes.router, prefix="/api/health", tags=["Referentie
 app.include_router(geocoding.router, prefix="/api/geocoding", tags=["Geocodage Intelligent FDSU"])
 app.include_router(master.router, prefix="/api/master", tags=["Referentiel National des Actifs FDSU"])
 app.include_router(ccn.router, prefix="/api/ccn", tags=["Capability CCN (fondations)"])
+app.include_router(knowledge_hub.router, prefix="/api/knowledge", tags=["FDSU Knowledge Hub"])
 
 @app.get("/", tags=["Root"])
 def read_root() -> dict[str, str]:

@@ -22,15 +22,34 @@ from api.services import decision_engine_service, fdsu_sites_import_service
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 BUSINESS_DIR = PROJECT_ROOT / "data" / "business"
 EXPORT_DIR = PROJECT_ROOT / "data" / "exports" / "priorities"
+SITES_DOCTRINE_PATH = BUSINESS_DIR / "doctrines" / "sites_doctrine_v1.json"
 
-# Pondérations nationales — calibrées sur la logique matrice 300, extensibles.
-NATIONAL_WEIGHTS: dict[str, float] = {
+# Fallback uniquement si doctrine absente — le moteur doit lire la doctrine.
+_FALLBACK_WEIGHTS: dict[str, float] = {
     "population": 0.30,
     "deficit_distance": 0.30,
     "wave_calibration": 0.20,
     "contexte_administratif": 0.10,
     "phase_programme": 0.10,
 }
+
+
+def _load_national_weights() -> dict[str, float]:
+    if not SITES_DOCTRINE_PATH.exists():
+        return dict(_FALLBACK_WEIGHTS)
+    try:
+        doctrine = json.loads(SITES_DOCTRINE_PATH.read_text(encoding="utf-8"))
+        weights = {
+            str(item.get("id")): float(item.get("weight") or 0)
+            for item in doctrine.get("selection_criteria") or []
+            if item.get("id")
+        }
+        return weights or dict(_FALLBACK_WEIGHTS)
+    except (OSError, json.JSONDecodeError, TypeError, ValueError):
+        return dict(_FALLBACK_WEIGHTS)
+
+
+NATIONAL_WEIGHTS: dict[str, float] = _load_national_weights()
 
 PRIORITY_LEVEL_LABELS = {
     "critical": "Priorité critique",

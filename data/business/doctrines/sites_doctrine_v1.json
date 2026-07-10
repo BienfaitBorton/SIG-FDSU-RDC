@@ -1,0 +1,116 @@
+{
+  "_meta": {
+    "schema_version": "1.0.0",
+    "doctrine_id": "DOCTRINE_SITES_FDSU",
+    "title": "Doctrine Sites FDSU",
+    "version": "1.0.0",
+    "status": "official_input",
+    "source_document": "data/strategic/matrice_priorisation_300_sites.xlsx",
+    "source_table": "Matrice de priorisation nationale",
+    "knowledge_hub_domain": "business_doctrine",
+    "matrix_ref": "data/business/priority_matrix.json",
+    "calculation_enabled": true,
+    "hardcoded_forbidden": true,
+    "updated_at": "2026-07-10",
+    "notes": [
+      "Doctrine Sites versionnable — pondérations lues par le moteur explicable.",
+      "Calibrée sur la matrice 300 ; applicable aux vagues 40 / 300 / 20 476."
+    ]
+  },
+  "selection_criteria": [
+    {
+      "id": "population",
+      "label": "Population desservie",
+      "weight": 0.30,
+      "weight_percent": 30,
+      "description": "Volume de population potentiellement desservie par le site.",
+      "indicator_refs": ["IND_SOCIO_POPULATION", "IND_FDSU_PRIORITY_SCORE"],
+      "why_template": "La population estimée ({value}) justifie un score de {score}/100 sur ce critère."
+    },
+    {
+      "id": "deficit_distance",
+      "label": "Déficit de couverture",
+      "weight": 0.30,
+      "weight_percent": 30,
+      "description": "Éloignement / déficit de couverture télécom autour du site.",
+      "indicator_refs": ["IND_CONN_COVERAGE_GAP"],
+      "why_template": "Le déficit de couverture ({value}) produit un score de {score}/100."
+    },
+    {
+      "id": "wave_calibration",
+      "label": "Calibration vague / matrice 300",
+      "weight": 0.20,
+      "weight_percent": 20,
+      "description": "Alignement avec la calibration officielle de la première vague (300 sites).",
+      "indicator_refs": ["IND_FDSU_PRIORITY_SCORE"],
+      "why_template": "La calibration vague ({value}) contribue à {score}/100."
+    },
+    {
+      "id": "contexte_administratif",
+      "label": "Contexte administratif",
+      "weight": 0.10,
+      "weight_percent": 10,
+      "description": "Complétude du rattachement province / territoire / zone.",
+      "indicator_refs": [],
+      "why_template": "Le contexte administratif ({value}) obtient {score}/100."
+    },
+    {
+      "id": "phase_programme",
+      "label": "Phase programme",
+      "weight": 0.10,
+      "weight_percent": 10,
+      "description": "Priorité liée à la phase du programme (pilote, vague, national).",
+      "indicator_refs": [],
+      "why_template": "La phase programme ({value}) obtient {score}/100."
+    }
+  ],
+  "measurement_indicators": [
+    { "id": "MEAS_POPULATION", "label": "Population", "category": "demographie" },
+    { "id": "MEAS_SCHOOL", "label": "Écoles", "category": "infrastructure_sociale" },
+    { "id": "MEAS_HEALTH", "label": "Centres de santé", "category": "infrastructure_sociale" },
+    { "id": "MEAS_MARKET", "label": "Marchés", "category": "economie" },
+    { "id": "MEAS_COVERAGE", "label": "Couverture réseau", "category": "connectivite" },
+    { "id": "MEAS_PROGRAM", "label": "Programme", "category": "programme" }
+  ],
+  "priority_matrix": {
+    "id": "SITE_PRIORITY_MATRIX_V1",
+    "ref": "data/business/priority_matrix.json",
+    "levels": [
+      { "id": "critical", "label": "Priorité critique", "min_score": 85, "max_score": 100 },
+      { "id": "high", "label": "Priorité élevée", "min_score": 70, "max_score": 84 },
+      { "id": "medium", "label": "Priorité moyenne", "min_score": 50, "max_score": 69 },
+      { "id": "low", "label": "Priorité faible", "min_score": 0, "max_score": 49 }
+    ]
+  },
+  "opposability_rules": [
+    {
+      "id": "RULE_HIGHER_PRIORITY_WINS",
+      "label": "Priorité supérieure retenue",
+      "description": "En cas de conflit, la priorité supérieure est retenue.",
+      "severity": "priority_rank",
+      "version": "1.0.0"
+    },
+    {
+      "id": "RULE_SECURITY_CONSTRAINTS",
+      "label": "Contraintes sécuritaires",
+      "description": "Les contraintes sécuritaires peuvent différer un site malgré un score élevé.",
+      "severity": "hard_constraint",
+      "version": "1.0.0"
+    },
+    {
+      "id": "RULE_DATA_CONFIDENCE",
+      "label": "Confiance des données",
+      "description": "Un niveau de confiance faible doit être signalé dans le dossier de décision.",
+      "severity": "confidence_flag",
+      "version": "1.0.0"
+    }
+  ],
+  "decision_engine_hooks": [
+    "load_doctrine",
+    "load_criteria_weights",
+    "load_measurement_indicators",
+    "apply_opposability_rules",
+    "compute_site_priority_score",
+    "build_decision_case_file"
+  ]
+}

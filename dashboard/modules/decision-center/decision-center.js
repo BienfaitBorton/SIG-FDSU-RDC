@@ -1341,22 +1341,75 @@
     const panel = document.querySelector('#decision-engine-explain');
     const title = document.querySelector('#decision-engine-explain-title');
     const body = document.querySelector('#decision-engine-explain-body');
+    const caseBody = document.querySelector('#decision-engine-case-body');
+    const sheetBody = document.querySelector('#decision-center-decision-sheet-body');
     if (!panel || !body) return;
-    const site = payload?.site || {};
+    const site = payload?.site || payload?.asset || {};
     const explanation = payload?.explanation || {};
-    const criteria = explanation.criteria || {};
-    if (title) title.textContent = site.site_name || `Site ${site.site_id}`;
-    body.innerHTML = `
-      <p><strong>Réponse :</strong> ${escapeHtml(explanation.answer || '')}</p>
-      <p><strong>Calibration :</strong> ${escapeHtml(explanation.calibration_note || (site.criteria_details?.calibration?.note) || 'Matrice 300')}</p>
-      <ul>
-        ${Object.values(criteria).map((item) => `
+    const justification = payload?.justification || [];
+    const doctrine = payload?.doctrine || {};
+    if (title) title.textContent = site.name || site.site_name || `Site ${site.id || site.site_id}`;
+
+    const justifyHtml = justification.length
+      ? justification.map((item) => `
+          <article class="decision-justify-item">
+            <h5>${escapeHtml(item.label)} — ${escapeHtml(item.contribution_display || item.score_display)}</h5>
+            <p><strong>Pourquoi ?</strong> ${escapeHtml(item.why)}</p>
+          </article>
+        `).join('')
+      : `<ul>${Object.values(explanation.criteria || {}).map((item) => `
           <li><strong>${escapeHtml(item.score)}</strong> × ${escapeHtml(item.weight)} — ${escapeHtml(item.label)}</li>
-        `).join('')}
-      </ul>
+        `).join('')}</ul>`;
+
+    body.innerHTML = `
+      <p><strong>Réponse :</strong> ${escapeHtml(payload?.summary?.text || explanation.answer || '')}</p>
+      <p><strong>Doctrine :</strong> ${escapeHtml(doctrine.title || '—')} v${escapeHtml(doctrine.version || '—')}</p>
+      <p><strong>Confiance :</strong> ${escapeHtml(payload?.confidence?.label || '—')}</p>
+      <p><strong>Calibration :</strong> ${escapeHtml(explanation.calibration_note || (site.criteria_details?.calibration?.note) || 'Matrice 300')}</p>
+      ${justifyHtml}
     `;
+
+    const casePayload = payload?.case_file || null;
+    if (caseBody) {
+      if (casePayload) {
+        caseBody.innerHTML = renderDecisionCaseHtml(casePayload);
+      } else {
+        caseBody.innerHTML = '<p>Chargement du dossier…</p>';
+      }
+    }
+    if (sheetBody) {
+      sheetBody.innerHTML = body.innerHTML;
+    }
+
+    panel.querySelectorAll('[data-decision-case-tab]').forEach((btn) => {
+      btn.classList.toggle('is-active', btn.getAttribute('data-decision-case-tab') === 'justification');
+    });
+    body.hidden = false;
+    body.removeAttribute('hidden');
+    if (caseBody) {
+      caseBody.hidden = true;
+      caseBody.setAttribute('hidden', '');
+    }
+
     panel.hidden = false;
     panel.removeAttribute('hidden');
+  }
+
+  function renderDecisionCaseHtml(c) {
+    return `
+      <div class="decision-case-block">
+        <h5>Dossier ${escapeHtml(c.case_id)}</h5>
+        <p><strong>Score :</strong> ${escapeHtml(c.score?.global)} — ${escapeHtml(c.score?.priority_label || c.score?.priority_level)}</p>
+        <p><strong>Doctrine :</strong> ${escapeHtml(c.doctrine?.title)} v${escapeHtml(c.doctrine?.version)}</p>
+        <p><strong>Matrice :</strong> ${escapeHtml(c.matrix?.id)}</p>
+        <p><strong>Impact population :</strong> ${escapeHtml(c.impacts?.population_touchee)}</p>
+        <p><strong>Risques :</strong> ${(c.risks || []).map((r) => escapeHtml(r.label)).join(', ') || 'Aucun'}</p>
+        <p><strong>Sources :</strong></p>
+        <ul>${(c.sources || []).map((s) => `<li>${escapeHtml(s)}</li>`).join('')}</ul>
+        <p><strong>Traçabilité :</strong> ${escapeHtml(c.engine_version)} — ${escapeHtml(c.generated_at)}</p>
+        <p><em>${escapeHtml(c.pdf_export?.note || '')}</em></p>
+      </div>
+    `;
   }
 
   function bindDecisionEngineProgramFilters() {
@@ -1406,11 +1459,35 @@
         const siteId = explainBtn.getAttribute('data-site-id');
         const program = explainBtn.getAttribute('data-program-code') || decisionCenterState.decisionEngineProgram;
         const shared = getShared();
-        shared.fetchJson(`/api/decision/sites/${siteId}/explain?program_code=${encodeURIComponent(program)}`)
-          .then((payload) => openDecisionEngineExplain(payload))
+        Promise.all([
+          shared.fetchJson(`/api/decision/explain/${siteId}?asset_type=site&program_code=${encodeURIComponent(program)}`),
+          shared.fetchJson(`/api/decision/case/${siteId}?asset_type=site&program_code=${encodeURIComponent(program)}`),
+        ])
+          .then(([explain, caseFile]) => {
+            openDecisionEngineExplain({ ...explain, case_file: caseFile, site: explain.asset || {} });
+          })
           .catch(() => openDecisionEngineExplain({ explanation: { answer: 'Explication indisponible.' }, site: {} }));
       }
     });
+
+    const explainPanel = document.querySelector('#decision-engine-explain');
+    if (explainPanel && explainPanel.dataset.caseTabsBound !== 'true') {
+      explainPanel.dataset.caseTabsBound = 'true';
+      explainPanel.addEventListener('click', (event) => {
+        const tab = event.target?.closest?.('[data-decision-case-tab]');
+        if (!tab) return;
+        const tabId = tab.getAttribute('data-decision-case-tab');
+        explainPanel.querySelectorAll('[data-decision-case-tab]').forEach((btn) => {
+          btn.classList.toggle('is-active', btn.getAttribute('data-decision-case-tab') === tabId);
+        });
+        explainPanel.querySelectorAll('[data-decision-case-panel]').forEach((panelNode) => {
+          const active = panelNode.getAttribute('data-decision-case-panel') === tabId;
+          panelNode.hidden = !active;
+          if (active) panelNode.removeAttribute('hidden');
+          else panelNode.setAttribute('hidden', '');
+        });
+      });
+    }
   }
 
   function loadDecisionEnginePanel(forceReload) {

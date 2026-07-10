@@ -1,0 +1,154 @@
+{
+  "_meta": {
+    "title": "FDSU Knowledge Hub — Domaines de connaissance",
+    "schema_version": "1.0.0",
+    "updated_at": "2026-07-10",
+    "note": "Structure de connaissance métier. Aucune valeur chiffrée inventée."
+  },
+  "domains": [
+    {
+      "id": "territory",
+      "name": "Territoire",
+      "description": "Connaissance administrative et démographique du territoire.",
+      "themes": [
+        "hierarchie_administrative",
+        "population",
+        "accessibilite"
+      ],
+      "known_sources": [
+        "data/raw/FDSU Structure code Territoire zones.xlsx",
+        "data/reports/fdsu_nomenclature.json",
+        "Référentiels administratifs officiels (à brancher)"
+      ],
+      "integration_targets": ["master_registry", "geocoding", "cartography", "prioritization"]
+    },
+    {
+      "id": "connectivity",
+      "name": "Connectivité",
+      "description": "Connaissance des infrastructures et de la qualité de connectivité.",
+      "themes": [
+        "operateurs",
+        "couverture",
+        "fibre",
+        "backbone",
+        "qualite_reseau"
+      ],
+      "known_sources": [
+        "Référentiel Télécom SIG-FDSU",
+        "Couches fibre / opérateurs (si disponibles)"
+      ],
+      "integration_targets": ["telecom", "prioritization", "ccn", "cartography"]
+    },
+    {
+      "id": "public_services",
+      "name": "Services publics",
+      "description": "Connaissance des services de proximité et équipements publics.",
+      "themes": [
+        "sante",
+        "education",
+        "administration",
+        "marches"
+      ],
+      "known_sources": [
+        "Référentiel Santé",
+        "National Reference Framework (sectoriel)",
+        "Sources éducation / marchés (à brancher)"
+      ],
+      "integration_targets": ["health", "reference", "ccn", "cartography"]
+    },
+    {
+      "id": "socio_economic",
+      "name": "Développement socio-économique",
+      "description": "Connaissance des dynamiques économiques locales.",
+      "themes": [
+        "agriculture",
+        "peche",
+        "elevage",
+        "mines",
+        "commerce",
+        "tourisme",
+        "pme"
+      ],
+      "known_sources": [
+        "Enrichissement territorial / CNCT (profils)",
+        "Sources sectorielles (à brancher)"
+      ],
+      "integration_targets": ["territorial_enrichment", "knowledge_cnct", "decision_center"]
+    },
+    {
+      "id": "fdsu_programs",
+      "name": "Programmes FDSU",
+      "description": "Connaissance des programmes, vagues et actifs FDSU.",
+      "themes": [
+        "sites",
+        "ccn",
+        "subventions",
+        "projets",
+        "vagues"
+      ],
+      "known_sources": [
+        "data/business/fdsu_programs.json",
+        "data/programs/sites_20476/",
+        "Capability CCN (fondations)"
+      ],
+      "integration_targets": ["programs", "master_registry", "ccn", "prioritization"]
+    },
+    {
+      "id": "national_indicators",
+      "name": "Indicateurs nationaux",
+      "description": "Catalogue National Indicators Framework (NIF).",
+      "themes": [
+        "connectivite",
+        "inclusion_numerique",
+        "sante",
+        "education",
+        "economie",
+        "accessibilite",
+        "energie",
+        "priorite_fdsu"
+      ],
+      "known_sources": [
+        "data/knowledge/national_indicators.json",
+        "data/business/priority_matrix.json"
+      ],
+      "integration_targets": ["decision_center", "prioritization", "dg_cockpit"]
+    },
+    {
+      "id": "decision",
+      "name": "Décision",
+      "description": "Structure de la connaissance décisionnelle (sans calcul de recommandation dans ce sprint).",
+      "themes": [
+        "regles",
+        "matrice",
+        "scenarios",
+        "simulations",
+        "recommandations"
+      ],
+      "known_sources": [
+        "data/business/decision_rules.json",
+        "data/business/scoring_rules.json",
+        "data/business/priority_matrix.json"
+      ],
+      "integration_targets": ["decision_center", "prioritization", "decision_engine"]
+    },
+    {
+      "id": "business_doctrine",
+      "name": "Doctrine Métier FDSU",
+      "description": "Doctrines métier officielles versionnées (critères, pondérations, règles d'opposabilité).",
+      "themes": [
+        "doctrine_ccn",
+        "doctrine_sites_future",
+        "doctrine_subventions_future",
+        "doctrine_partenaires_future",
+        "doctrine_gouvernance_future",
+        "doctrine_telecom_future"
+      ],
+      "known_sources": [
+        "data/business/doctrines/ccn_doctrine_v1.json",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/strategic/strategie_fdsu_ccn_2026_2030.docx"
+      ],
+      "integration_targets": ["ccn", "decision_center", "prioritization", "master_registry"]
+    }
+  ]
+}
