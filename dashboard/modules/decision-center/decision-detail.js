@@ -328,9 +328,60 @@
     }
   }
 
+  function setLoading(isLoading) {
+    const root = document.querySelector('#decision-detail-panel');
+    const overlay = document.querySelector('#decision-detail-loading-overlay');
+    state.loading = Boolean(isLoading);
+    if (root) {
+      root.classList.toggle('is-loading', state.loading);
+      root.style.opacity = '1';
+      root.style.filter = 'none';
+      root.style.pointerEvents = state.loading ? 'none' : 'auto';
+    }
+    if (overlay) {
+      overlay.setAttribute('aria-hidden', state.loading ? 'false' : 'true');
+    }
+  }
+
+  function clearResidualOverlays() {
+    // Fermer drawer KPI legacy s'il était ouvert
+    const drawer = document.querySelector('#decision-kpi-detail-drawer');
+    if (drawer) {
+      drawer.hidden = true;
+      drawer.setAttribute('hidden', '');
+    }
+    document.querySelectorAll('.kpi-detail-btn.is-loading').forEach((btn) => {
+      btn.classList.remove('is-loading');
+    });
+    // Sortir du mode présentation EDVS s'il masque l'UI
+    if (document.body.classList.contains('edvs-presentation-mode')) {
+      document.body.classList.remove('edvs-presentation-mode');
+      const bar = document.querySelector('#edvs-presentation-bar');
+      if (bar) {
+        bar.hidden = true;
+        bar.setAttribute('hidden', '');
+      }
+    }
+    document.body.classList.add('decision-detail-open');
+    document.body.style.filter = 'none';
+    document.body.style.opacity = '1';
+    const root = document.querySelector('#decision-detail-panel');
+    if (root) {
+      root.style.opacity = '1';
+      root.style.filter = 'none';
+      root.classList.remove('is-loading');
+    }
+  }
+
+  function leaveDetailWorkspace() {
+    document.body.classList.remove('decision-detail-open');
+    setLoading(false);
+  }
+
   async function loadDetail(kpiCode) {
     state.kpiCode = kpiCode;
-    state.loading = true;
+    clearResidualOverlays();
+    setLoading(true);
     setStatus('Chargement…');
     const header = document.querySelector('#decision-detail-header');
     if (header) header.innerHTML = '<p class="decision-center-program-loading">Chargement du détail…</p>';
@@ -352,8 +403,12 @@
         header.innerHTML = `<p class="decision-detail-empty is-error">Impossible de charger le détail : ${escapeHtml(err.message)}</p>`;
       }
     } finally {
-      state.loading = false;
-      global.requestAnimationFrame(() => state.map?.invalidateSize());
+      setLoading(false);
+      global.requestAnimationFrame(() => {
+        state.map?.invalidateSize();
+        clearResidualOverlays();
+        setLoading(false);
+      });
     }
   }
 
@@ -413,6 +468,7 @@
     root.dataset.bound = 'true';
 
     document.querySelector('#decision-detail-back-btn')?.addEventListener('click', () => {
+      leaveDetailWorkspace();
       global.location.hash = 'decision-view';
     });
 
@@ -461,12 +517,14 @@
       if (event.key !== 'Escape') return;
       const panel = document.querySelector('#decision-detail-panel');
       if (panel && !panel.classList.contains('hidden')) {
+        leaveDetailWorkspace();
         global.location.hash = 'decision-view';
       }
     });
   }
 
   function openDecisionDetail(kpiKey) {
+    clearResidualOverlays();
     const code = resolveKpiCode(kpiKey);
     const slug = ROUTE_SLUGS[code] || String(kpiKey).replace(/_/g, '-');
     global.location.hash = `decision-detail/${slug}`;
@@ -475,11 +533,13 @@
   function initializeDecisionDetailModule() {
     bindEvents();
     state.initialized = true;
+    clearResidualOverlays();
     const kpi = getKpiFromHash();
     if (kpi) {
       state.offset = 0;
       loadDetail(kpi);
     } else {
+      setLoading(false);
       setStatus('Aucun KPI sélectionné', true);
     }
   }

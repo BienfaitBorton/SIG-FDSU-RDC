@@ -128,3 +128,16 @@ def test_kpi_cards_hide_sql_in_executive_html():
     assert "COUNT(*)" not in primary
     assert "priority_level = critical" not in primary
     assert "kpi-meta-exec" in primary
+
+def test_detail_workspace_has_no_persistent_light_veil():
+    root = Path(__file__).resolve().parents[1]
+    css = (root / "dashboard/modules/decision-center/decision-detail.css").read_text(encoding="utf-8")
+    html = (root / "dashboard/index.html").read_text(encoding="utf-8")
+    js = (root / "dashboard/modules/decision-center/decision-detail.js").read_text(encoding="utf-8")
+    assert "rgba(248, 250, 252" not in css
+    assert "background: #fff" not in css
+    assert "decision-detail-loading-overlay" in html
+    assert "clearResidualOverlays" in js
+    assert "setLoading(false)" in js
+    assert "body.decision-detail-open" in css
+    assert ".decision-detail-module:not(.is-loading) .decision-detail-loading-overlay" in css

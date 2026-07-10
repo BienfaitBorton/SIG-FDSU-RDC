@@ -781,6 +781,15 @@ function setActiveModule(moduleKey) {
     if (window.decisionDetailState?.map) {
       window.setTimeout(() => window.decisionDetailState.map.invalidateSize(), 0);
     }
+  } else {
+    document.body.classList.remove('decision-detail-open');
+    const detailPanel = document.querySelector('#decision-detail-panel');
+    if (detailPanel) {
+      detailPanel.classList.remove('is-loading');
+      detailPanel.style.opacity = '';
+      detailPanel.style.filter = '';
+      detailPanel.style.pointerEvents = '';
+    }
   }
 
   if (normalizedModule === 'import') {

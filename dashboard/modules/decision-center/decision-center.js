@@ -228,8 +228,10 @@
     const btn = document.querySelector(`[data-kpi-detail="${kpiKey}"]`);
     if (btn) {
       btn.classList.add('is-loading');
-      window.setTimeout(() => btn.classList.remove('is-loading'), 600);
+      window.setTimeout(() => btn.classList.remove('is-loading'), 400);
     }
+    // Fermer immédiatement le drawer legacy pour éviter tout voile résiduel
+    closeKpiDetail();
     if (typeof global.openDecisionDetail === 'function') {
       global.openDecisionDetail(kpiKey);
       return;
