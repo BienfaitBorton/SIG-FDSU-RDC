@@ -59,6 +59,23 @@
     setKpi('#ccn-kpi-pop', kpis.population_desservie);
     setKpi('#ccn-kpi-sites', kpis.sites_fdsu_associes);
     setKpi('#ccn-kpi-provinces', Object.keys(stats?.by_province || {}).length);
+
+    if (global.Edvs?.mountKpiStrip) {
+      const host = document.querySelector('#ccn-edvs-kpi-host');
+      const legacy = document.querySelector('#ccn-kpi-grid');
+      if (host) {
+        host.hidden = false;
+        if (legacy) legacy.hidden = true;
+        global.Edvs.mountKpiStrip('#ccn-edvs-kpi-host', [
+          { id: 'ccn-total', label: 'Total CCN', value: kpis.total, icon: 'ccn', color: 'blue', confidence: 'medium', note: 'DEMO' },
+          { id: 'ccn-ops', label: 'Opérationnels', value: kpis.operationnels, icon: 'gauge', color: 'green', confidence: 'medium' },
+          { id: 'ccn-deploy', label: 'Déploiement', value: kpis.deploiement, icon: 'program', color: 'orange', confidence: 'medium' },
+          { id: 'ccn-pop', label: 'Population', value: kpis.population_desservie, icon: 'people', color: 'yellow', confidence: 'low', note: 'DEMO' },
+          { id: 'ccn-sites', label: 'Sites associés', value: kpis.sites_fdsu_associes, icon: 'sites', color: 'blue', confidence: 'medium' },
+          { id: 'ccn-prov', label: 'Provinces', value: Object.keys(stats?.by_province || {}).length, icon: 'map', color: 'blue', confidence: 'high' },
+        ]);
+      }
+    }
   }
 
   function fillFilterOptions(items) {
@@ -323,6 +340,9 @@
   function initializeCcnModule() {
     bindFilters();
     ensureMap();
+    if (global.Edvs?.mountPresentationButton) {
+      global.Edvs.mountPresentationButton('#ccn-edvs-presentation-slot');
+    }
     return loadModule().then(() => {
       global.setTimeout(() => ccnState.map?.invalidateSize(), 120);
     });

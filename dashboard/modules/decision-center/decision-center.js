@@ -187,6 +187,21 @@
       setNationalKpiElement(binding.elementId, resolved.text || NOT_CALCULATED_MESSAGE, true);
       if (explained[binding.key]) applyExplainableKpiCard(binding.key, explained[binding.key]);
     });
+
+    if (global.Edvs?.mountKpiStrip) {
+      const pick = (key) => {
+        const item = explained[key] || kpis[key];
+        if (item && typeof item === 'object' && 'value' in item) return item.value;
+        if (typeof item === 'number') return item;
+        return synthesis[key] ?? null;
+      };
+      global.Edvs.mountKpiStrip('#decision-edvs-kpi-host', [
+        { label: 'Sites FDSU', value: pick('sites_fdsu_total') ?? synthesis.sites_fdsu, icon: 'sites', color: 'blue', confidence: 'high' },
+        { label: 'Sites prioritaires', value: pick('sites_priority') ?? synthesis.sites_priority, icon: 'decision', color: 'orange', confidence: 'medium' },
+        { label: 'Sites critiques', value: pick('sites_critical') ?? synthesis.sites_critical, icon: 'alert', color: 'red', confidence: 'medium' },
+        { label: 'Référentiels actifs', value: pick('referentials_active') ?? synthesis.referentials_active, icon: 'data', color: 'green', confidence: 'high' },
+      ]);
+    }
   }
 
   function renderNationalPanelUnavailable(message) {
@@ -517,6 +532,16 @@
 
       if (target.id === 'decision-kpi-detail-close') {
         closeKpiDetail();
+        return;
+      }
+
+      if (target.id === 'decision-open-edvs-btn') {
+        global.location.hash = 'salle-pilotage';
+        return;
+      }
+
+      if (target.id === 'decision-open-ti-btn') {
+        global.location.hash = 'territorial-intelligence';
         return;
       }
 
@@ -2122,6 +2147,9 @@
     bindSpatialAnalysisRunButton();
     bindDecisionEngineFilters();
     bindDecisionEngineRecomputeButton();
+    if (global.Edvs?.mountPresentationButton) {
+      global.Edvs.mountPresentationButton('#decision-edvs-presentation-slot');
+    }
 
     if (!decisionCenterState.initialized) {
       setDecisionCenterTab('vue-nationale');

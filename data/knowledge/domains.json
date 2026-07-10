@@ -20,7 +20,7 @@
         "data/reports/fdsu_nomenclature.json",
         "Référentiels administratifs officiels (à brancher)"
       ],
-      "integration_targets": ["master_registry", "geocoding", "cartography", "prioritization"]
+      "integration_targets": ["master_registry", "geocoding", "cartography", "prioritization", "territorial_intelligence"]
     },
     {
       "id": "connectivity",

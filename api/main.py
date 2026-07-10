@@ -40,6 +40,8 @@ from api.routes import (
     master,
     ccn,
     knowledge_hub,
+    territorial_intelligence,
+    executive,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -884,6 +886,16 @@ app.include_router(geocoding.router, prefix="/api/geocoding", tags=["Geocodage I
 app.include_router(master.router, prefix="/api/master", tags=["Referentiel National des Actifs FDSU"])
 app.include_router(ccn.router, prefix="/api/ccn", tags=["Capability CCN (fondations)"])
 app.include_router(knowledge_hub.router, prefix="/api/knowledge", tags=["FDSU Knowledge Hub"])
+app.include_router(
+    territorial_intelligence.router,
+    prefix="/api/territorial-intelligence",
+    tags=["Territorial Intelligence Explorer"],
+)
+app.include_router(
+    executive.router,
+    prefix="/api/executive",
+    tags=["Executive Data Visualization System"],
+)
 
 @app.get("/", tags=["Root"])
 def read_root() -> dict[str, str]:

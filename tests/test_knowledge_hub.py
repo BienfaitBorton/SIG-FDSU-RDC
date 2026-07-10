@@ -99,4 +99,4 @@ def test_existing_cnct_knowledge_route_untouched():
 def test_hub_does_not_claim_recommendations():
     manifest = knowledge_hub_service.hub_manifest()
     assert manifest["_meta"]["computes_recommendations"] is False
-    assert manifest["_meta"]["territorial_intelligence_engine"] == "not_started"
+    assert manifest["_meta"]["territorial_intelligence_engine"] == "v1_explorer"

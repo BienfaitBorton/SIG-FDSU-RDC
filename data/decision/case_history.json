@@ -1,10 +1,788 @@
 {
   "_meta": {
     "title": "Historique des Dossiers de Décision",
-    "updated_at": "2026-07-10T18:30:02.301747+00:00",
-    "count": 11
+    "updated_at": "2026-07-10T20:44:14.500410+00:00",
+    "count": 54
   },
   "history": [
+    {
+      "case_id": "DCF-SITE-15002",
+      "asset_type": "SITE",
+      "asset_id": 15002,
+      "score": 73.5,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T20:44:14.474794+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-10941",
+      "asset_type": "SITE",
+      "asset_id": 10941,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T20:44:13.762006+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-17456",
+      "asset_type": "SITE",
+      "asset_id": 17456,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T20:44:13.045304+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-15002",
+      "asset_type": "SITE",
+      "asset_id": 15002,
+      "score": 73.5,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T20:26:17.965706+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-10941",
+      "asset_type": "SITE",
+      "asset_id": 10941,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T20:26:16.779888+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-17456",
+      "asset_type": "SITE",
+      "asset_id": 17456,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T20:26:15.795401+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-15002",
+      "asset_type": "SITE",
+      "asset_id": 15002,
+      "score": 73.5,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T20:26:12.463787+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-10941",
+      "asset_type": "SITE",
+      "asset_id": 10941,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T20:26:11.199067+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-17456",
+      "asset_type": "SITE",
+      "asset_id": 17456,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T20:26:10.458438+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-15002",
+      "asset_type": "SITE",
+      "asset_id": 15002,
+      "score": 73.5,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T20:24:22.083607+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-10941",
+      "asset_type": "SITE",
+      "asset_id": 10941,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T20:24:21.085202+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-17456",
+      "asset_type": "SITE",
+      "asset_id": 17456,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T20:24:20.068703+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-15002",
+      "asset_type": "SITE",
+      "asset_id": 15002,
+      "score": 73.5,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T20:24:03.775946+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-10941",
+      "asset_type": "SITE",
+      "asset_id": 10941,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T20:24:02.773361+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-17456",
+      "asset_type": "SITE",
+      "asset_id": 17456,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T20:24:01.941769+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-15002",
+      "asset_type": "SITE",
+      "asset_id": 15002,
+      "score": 73.5,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:54:56.400472+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-10941",
+      "asset_type": "SITE",
+      "asset_id": 10941,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:54:55.562423+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-17456",
+      "asset_type": "SITE",
+      "asset_id": 17456,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:54:54.831314+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-15002",
+      "asset_type": "SITE",
+      "asset_id": 15002,
+      "score": 73.5,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:53:37.945103+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-10941",
+      "asset_type": "SITE",
+      "asset_id": 10941,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:53:37.090331+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-17456",
+      "asset_type": "SITE",
+      "asset_id": 17456,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:53:36.284946+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-15002",
+      "asset_type": "SITE",
+      "asset_id": 15002,
+      "score": 73.5,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:53:24.128739+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-10941",
+      "asset_type": "SITE",
+      "asset_id": 10941,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:53:23.350186+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-17456",
+      "asset_type": "SITE",
+      "asset_id": 17456,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:53:22.556398+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-6300",
+      "asset_type": "SITE",
+      "asset_id": 6300,
+      "score": 86.9,
+      "priority_level": "critical",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:53:18.997192+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-6300",
+      "asset_type": "SITE",
+      "asset_id": 6300,
+      "score": 86.9,
+      "priority_level": "critical",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:53:18.427003+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-6300",
+      "asset_type": "SITE",
+      "asset_id": 6300,
+      "score": 86.9,
+      "priority_level": "critical",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:53:17.385718+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-6300",
+      "asset_type": "SITE",
+      "asset_id": 6300,
+      "score": 86.9,
+      "priority_level": "critical",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:53:13.679370+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-6300",
+      "asset_type": "SITE",
+      "asset_id": 6300,
+      "score": 86.9,
+      "priority_level": "critical",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:53:13.678990+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-1",
+      "asset_type": "SITE",
+      "asset_id": 1,
+      "score": 65.0,
+      "priority_level": "medium",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:50:45.770446+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-CCN-CCN-DEMO-0002",
+      "asset_type": "CCN",
+      "asset_id": "CCN-DEMO-0002",
+      "score": 75.4,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_CCN_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:50:45.729723+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/strategie_fdsu_ccn_2026_2030.docx",
+        "data/business/doctrines/ccn_doctrine_v1.json",
+        "data/programs/ccn/demo_ccn.json",
+        "data/knowledge/domains.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-CCN-CCN-DEMO-0001",
+      "asset_type": "CCN",
+      "asset_id": "CCN-DEMO-0001",
+      "score": 80.5,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_CCN_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:50:45.518234+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/strategie_fdsu_ccn_2026_2030.docx",
+        "data/business/doctrines/ccn_doctrine_v1.json",
+        "data/programs/ccn/demo_ccn.json",
+        "data/knowledge/domains.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-CCN-CCN-DEMO-0001",
+      "asset_type": "CCN",
+      "asset_id": "CCN-DEMO-0001",
+      "score": 80.5,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_CCN_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:50:45.454643+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/strategie_fdsu_ccn_2026_2030.docx",
+        "data/business/doctrines/ccn_doctrine_v1.json",
+        "data/programs/ccn/demo_ccn.json",
+        "data/knowledge/domains.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-CCN-CCN-DEMO-0001",
+      "asset_type": "CCN",
+      "asset_id": "CCN-DEMO-0001",
+      "score": 80.5,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_CCN_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:50:45.362985+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/strategie_fdsu_ccn_2026_2030.docx",
+        "data/business/doctrines/ccn_doctrine_v1.json",
+        "data/programs/ccn/demo_ccn.json",
+        "data/knowledge/domains.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-15002",
+      "asset_type": "SITE",
+      "asset_id": 15002,
+      "score": 73.5,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:50:31.040082+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-10941",
+      "asset_type": "SITE",
+      "asset_id": 10941,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:50:30.371218+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-17456",
+      "asset_type": "SITE",
+      "asset_id": 17456,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:50:29.571620+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-15002",
+      "asset_type": "SITE",
+      "asset_id": 15002,
+      "score": 73.5,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:50:11.147471+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-10941",
+      "asset_type": "SITE",
+      "asset_id": 10941,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:50:09.696096+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-17456",
+      "asset_type": "SITE",
+      "asset_id": 17456,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:50:08.200020+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-15002",
+      "asset_type": "SITE",
+      "asset_id": 15002,
+      "score": 73.5,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:46:44.991405+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-10941",
+      "asset_type": "SITE",
+      "asset_id": 10941,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:46:44.625145+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
+    {
+      "case_id": "DCF-SITE-17456",
+      "asset_type": "SITE",
+      "asset_id": 17456,
+      "score": 78.0,
+      "priority_level": "high",
+      "doctrine_id": "DOCTRINE_SITES_FDSU",
+      "doctrine_version": "1.0.0",
+      "engine_version": "1.0.0",
+      "generated_at": "2026-07-10T19:46:44.234287+00:00",
+      "user": "system",
+      "sources": [
+        "data/strategic/matrice_priorisation_300_sites.xlsx",
+        "data/business/doctrines/sites_doctrine_v1.json",
+        "data/business/priority_matrix.json",
+        "data/knowledge/national_indicators.json"
+      ]
+    },
     {
       "case_id": "DCF-CCN-CCN-DEMO-0001",
       "asset_type": "CCN",

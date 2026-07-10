@@ -1,0 +1,154 @@
+/* Territorial Intelligence Explorer v1 */
+
+.ti-module {
+  display: grid;
+  gap: 14px;
+}
+
+.ti-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.ti-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: end;
+}
+
+.ti-toolbar label {
+  display: grid;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.ti-toolbar input,
+.ti-toolbar select {
+  min-width: 160px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(15, 23, 42, 0.6);
+  color: inherit;
+}
+
+.ti-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.ti-kpi {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.ti-kpi .summary-label {
+  margin: 0;
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+.ti-kpi .summary-value {
+  margin: 4px 0 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.ti-status {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 0.68rem;
+  color: #cbd5e1;
+  opacity: 0.9;
+}
+
+.ti-status.is-unavailable,
+.ti-status.is-not_sourced { color: #fca5a5; }
+.ti-status.is-partial,
+.ti-status.is-estimated { color: #fde68a; }
+.ti-status.is-confirmed { color: #86efac; }
+.ti-status.is-demonstration { color: #93c5fd; }
+
+.ti-main {
+  display: grid;
+  grid-template-columns: minmax(280px, 1.15fr) minmax(320px, 1fr);
+  gap: 14px;
+}
+
+.ti-map {
+  height: 440px;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  overflow: hidden;
+}
+
+.ti-map-legend {
+  margin: 8px 0 0;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.ti-sections {
+  display: grid;
+  gap: 10px;
+  max-height: 520px;
+  overflow: auto;
+}
+
+.ti-section {
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(15, 23, 42, 0.32);
+}
+
+.ti-section h3 {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+}
+
+.ti-section p,
+.ti-section li {
+  margin: 4px 0;
+  font-size: 0.84rem;
+}
+
+.ti-recs {
+  display: grid;
+  gap: 10px;
+}
+
+.ti-rec {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(96, 165, 250, 0.25);
+  background: rgba(30, 58, 138, 0.18);
+}
+
+.ti-rec h4 {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+}
+
+.ti-banner {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px dashed rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.28);
+  font-size: 0.86rem;
+  color: #e2e8f0;
+}
+
+@media (max-width: 1100px) {
+  .ti-main {
+    grid-template-columns: 1fr;
+  }
+}

@@ -32,6 +32,11 @@ INTEGRATION_POINTS: dict[str, dict[str, str]] = {
         "role": "Module opérationnel CCN + doctrine métier versionnée",
         "api_hint": "/api/ccn",
     },
+    "territorial_intelligence": {
+        "component": "Territorial Intelligence Explorer",
+        "role": "Profil territorial consolidé et recommandations explicables",
+        "api_hint": "/api/territorial-intelligence",
+    },
     "geocoding": {
         "component": "Géocodage Intelligent FDSU",
         "role": "Qualité de localisation → connaissance territoriale",
@@ -186,7 +191,7 @@ def hub_manifest() -> dict[str, Any]:
                 "knowledge_cnct": "Centre de connaissances historique (/knowledge)",
             },
             "computes_recommendations": False,
-            "territorial_intelligence_engine": "not_started",
+            "territorial_intelligence_engine": "v1_explorer",
         },
         "domains_count": domains["_meta"]["count"],
         "indicators_count": indicators["_meta"]["count"],
