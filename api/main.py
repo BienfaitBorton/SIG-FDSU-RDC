@@ -36,6 +36,7 @@ from api.routes import (
     decision_engine,
     reference,
     health as health_routes,
+    geocoding,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -876,6 +877,7 @@ app.include_router(analysis.router, prefix="/api/analysis", tags=["Spatial Intel
 app.include_router(decision_engine.router, prefix="/api/decision", tags=["Moteur de Decision FDSU"])
 app.include_router(reference.router, prefix="/api/reference", tags=["National Reference Framework"])
 app.include_router(health_routes.router, prefix="/api/health", tags=["Referentiel Sante"])
+app.include_router(geocoding.router, prefix="/api/geocoding", tags=["Geocodage Intelligent FDSU"])
 
 @app.get("/", tags=["Root"])
 def read_root() -> dict[str, str]:

@@ -190,17 +190,31 @@ def get_statistics() -> dict[str, Any]:
             cur.execute("SELECT COUNT(*) AS count FROM telecom.coverage_polygons")
             polygon_count = int(cur.fetchone()["count"])
 
+            # Agrégats séparés pour éviter le produit cartésien des LEFT JOIN multiples.
             cur.execute(
                 """
-                SELECT o.operator_code, o.operator_name,
-                       COUNT(DISTINCT i.id) AS infrastructure_count,
-                       COUNT(DISTINCT l.id) AS network_line_count,
-                       COUNT(DISTINCT p.id) AS coverage_polygon_count
+                SELECT
+                    o.operator_code,
+                    o.operator_name,
+                    COALESCE(i.infrastructure_count, 0) AS infrastructure_count,
+                    COALESCE(l.network_line_count, 0) AS network_line_count,
+                    COALESCE(p.coverage_polygon_count, 0) AS coverage_polygon_count
                 FROM telecom.operators o
-                LEFT JOIN telecom.infrastructure i ON i.operator_id = o.id
-                LEFT JOIN telecom.network_lines l ON l.operator_id = o.id
-                LEFT JOIN telecom.coverage_polygons p ON p.operator_id = o.id
-                GROUP BY o.id, o.operator_code, o.operator_name
+                LEFT JOIN (
+                    SELECT operator_id, COUNT(*) AS infrastructure_count
+                    FROM telecom.infrastructure
+                    GROUP BY operator_id
+                ) i ON i.operator_id = o.id
+                LEFT JOIN (
+                    SELECT operator_id, COUNT(*) AS network_line_count
+                    FROM telecom.network_lines
+                    GROUP BY operator_id
+                ) l ON l.operator_id = o.id
+                LEFT JOIN (
+                    SELECT operator_id, COUNT(*) AS coverage_polygon_count
+                    FROM telecom.coverage_polygons
+                    GROUP BY operator_id
+                ) p ON p.operator_id = o.id
                 ORDER BY o.operator_code
                 """
             )
@@ -209,15 +223,30 @@ def get_statistics() -> dict[str, Any]:
             cur.execute(
                 """
                 SELECT source_file,
-                       COUNT(*) FILTER (WHERE table_name = 'infrastructure') AS points,
-                       COUNT(*) FILTER (WHERE table_name = 'network_lines') AS lines,
-                       COUNT(*) FILTER (WHERE table_name = 'coverage_polygons') AS polygons
+                       SUM(points)::int AS points,
+                       SUM(lines)::int AS lines,
+                       SUM(polygons)::int AS polygons
                 FROM (
-                    SELECT source_file, 'infrastructure' AS table_name FROM telecom.infrastructure
+                    SELECT source_file,
+                           COUNT(*)::int AS points,
+                           0 AS lines,
+                           0 AS polygons
+                    FROM telecom.infrastructure
+                    GROUP BY source_file
                     UNION ALL
-                    SELECT source_file, 'network_lines' FROM telecom.network_lines
+                    SELECT source_file,
+                           0 AS points,
+                           COUNT(*)::int AS lines,
+                           0 AS polygons
+                    FROM telecom.network_lines
+                    GROUP BY source_file
                     UNION ALL
-                    SELECT source_file, 'coverage_polygons' FROM telecom.coverage_polygons
+                    SELECT source_file,
+                           0 AS points,
+                           0 AS lines,
+                           COUNT(*)::int AS polygons
+                    FROM telecom.coverage_polygons
+                    GROUP BY source_file
                 ) s
                 GROUP BY source_file
                 ORDER BY source_file

@@ -139,6 +139,8 @@ const ROUTE_TO_MODULE = {
   connaissances: 'connaissances',
   enrichment: 'enrichissement',
   enrichissement: 'enrichissement',
+  geocoding: 'geocodage',
+  geocodage: 'geocodage',
   import: 'import',
   export: 'export',
   statistiques: 'statistiques',
@@ -156,6 +158,7 @@ const MODULE_TO_ROUTE = {
   centre_decision: 'decision-view',
   connaissances: 'knowledge',
   enrichissement: 'enrichment',
+  geocodage: 'geocoding',
   import: 'import',
   export: 'export',
   statistiques: 'statistiques',
@@ -328,6 +331,7 @@ const moduleNames = {
   centre_decision: 'Centre de Décision FDSU',
   connaissances: 'Centre de connaissances',
   enrichissement: 'Enrichissement territorial',
+  geocodage: 'Géocodage FDSU',
   import: 'Import',
   export: 'Export',
   statistiques: 'Statistiques',
@@ -709,6 +713,15 @@ function setActiveModule(moduleKey) {
 
   if (normalizedModule === 'enrichissement') {
     initializeEnrichmentModule();
+  }
+
+  if (normalizedModule === 'geocodage') {
+    if (typeof window.initializeGeocodingModule === 'function') {
+      window.initializeGeocodingModule();
+    }
+    if (window.geocodingState?.map) {
+      window.setTimeout(() => window.geocodingState.map.invalidateSize(), 0);
+    }
   }
 
   if (normalizedModule === 'import') {

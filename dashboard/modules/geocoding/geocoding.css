@@ -1,0 +1,108 @@
+/* Géocodage Intelligent FDSU */
+.geocoding-header {
+  margin-bottom: 16px;
+}
+
+.geocoding-header h2 {
+  margin: 4px 0 8px;
+}
+
+.geocoding-upload-card,
+.geocoding-table-card,
+.geocoding-map-card,
+.geocoding-anomalies {
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.geocoding-upload-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.geocoding-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 12px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.geocoding-hint {
+  margin: 12px 0 0;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  max-width: 90ch;
+}
+
+.geocoding-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.geocoding-main-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 14px;
+}
+
+.geocoding-table-wrap {
+  overflow: auto;
+  max-height: 420px;
+  margin-top: 10px;
+}
+
+.geocoding-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+
+.geocoding-table th,
+.geocoding-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  text-align: left;
+  vertical-align: top;
+}
+
+.geocoding-table th {
+  color: var(--text-muted);
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+}
+
+.geocoding-map {
+  height: 360px;
+  border-radius: 14px;
+  margin-top: 10px;
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.geocoding-anomalies {
+  margin-top: 14px;
+}
+
+.geocoding-anomalies ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+@media (max-width: 1100px) {
+  .geocoding-kpi-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .geocoding-main-grid {
+    grid-template-columns: 1fr;
+  }
+}

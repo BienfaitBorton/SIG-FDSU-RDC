@@ -6,6 +6,7 @@
   <title>SIG-FDSU RDC - Interface de gestion</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="modules/decision-center/decision-center.css" />
+  <link rel="stylesheet" href="modules/geocoding/geocoding.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 </head>
 <body>
@@ -59,6 +60,10 @@
         <button class="nav-item" data-module="enrichissement" data-route="enrichment">
           <span class="nav-icon">ENR</span>
           <span>Assistant d’enrichissement</span>
+        </button>
+        <button class="nav-item" data-module="geocodage" data-route="geocoding">
+          <span class="nav-icon">GEO</span>
+          <span>Géocodage FDSU</span>
         </button>
         <button class="nav-item" data-module="import">
           <span class="nav-icon">⬆️</span>
@@ -1539,6 +1544,74 @@
           </section>
         </div>
 
+        <div class="module-panel hidden geocoding-module" id="geocodage-panel" data-module="geocodage">
+          <header class="geocoding-header">
+            <div>
+              <p class="panel-label">Module métier</p>
+              <h2>Géocodage Intelligent FDSU</h2>
+              <p>Importer un Excel de sites, contrôler les coordonnées, corriger uniquement les cas invalides, exporter un fichier propre avec traçabilité.</p>
+            </div>
+          </header>
+
+          <section class="geocoding-upload-card" aria-label="Import Excel">
+            <div class="geocoding-upload-row">
+              <label class="geocoding-file-label" for="geocoding-file-input">Fichier Excel (.xlsx)</label>
+              <input type="file" id="geocoding-file-input" accept=".xlsx,.xlsm" />
+              <button type="button" class="primary-button" id="geocoding-analyze-btn">Analyser</button>
+              <button type="button" class="secondary-button" id="geocoding-run-btn" disabled>Lancer le géocodage</button>
+              <button type="button" class="secondary-button" id="geocoding-export-btn" disabled>Exporter Excel</button>
+            </div>
+            <div class="geocoding-options">
+              <label><input type="checkbox" id="geocoding-offline" checked /> Mode offline (référentiel / villes RDC)</label>
+              <label><input type="checkbox" id="geocoding-nominatim" /> Nominatim OSM (limité, réseau)</label>
+            </div>
+            <p class="geocoding-hint">Règle FDSU : les coordonnées déjà valides ne sont jamais écrasées. Seules les valeurs manquantes, hors RDC, (0,0), mal formatées ou génériques répétées sont corrigées.</p>
+          </section>
+
+          <section class="geocoding-kpi-grid" id="geocoding-kpi-grid" aria-live="polite">
+            <article class="summary-card"><p class="summary-label">Lignes analysées</p><p class="summary-value" id="geocoding-kpi-analyzed">—</p></article>
+            <article class="summary-card"><p class="summary-label">Valides conservées</p><p class="summary-value" id="geocoding-kpi-kept">—</p></article>
+            <article class="summary-card"><p class="summary-label">Corrigées</p><p class="summary-value" id="geocoding-kpi-corrected">—</p></article>
+            <article class="summary-card"><p class="summary-label">Approximatives</p><p class="summary-value" id="geocoding-kpi-approx">—</p></article>
+            <article class="summary-card"><p class="summary-label">Non géocodées</p><p class="summary-value" id="geocoding-kpi-failed">—</p></article>
+            <article class="summary-card"><p class="summary-label">Job</p><p class="summary-value" id="geocoding-kpi-job">—</p></article>
+          </section>
+
+          <div class="geocoding-main-grid">
+            <section class="geocoding-table-card" aria-label="Lignes suspectes">
+              <h3>Lignes suspectes / corrigées</h3>
+              <div class="geocoding-table-wrap">
+                <table class="geocoding-table" id="geocoding-results-table">
+                  <thead>
+                    <tr>
+                      <th>Ligne</th>
+                      <th>Site</th>
+                      <th>Ancienne lat/lon</th>
+                      <th>Nouvelle lat/lon</th>
+                      <th>Statut</th>
+                      <th>Source</th>
+                      <th>Commentaire</th>
+                    </tr>
+                  </thead>
+                  <tbody id="geocoding-results-body">
+                    <tr><td colspan="7">Importez un fichier Excel pour démarrer l’analyse.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+            <aside class="geocoding-map-card" aria-label="Carte des points géocodés">
+              <h3>Carte des points</h3>
+              <div id="geocoding-map" class="geocoding-map" role="region" aria-label="Carte géocodage FDSU"></div>
+              <p class="geocoding-hint" id="geocoding-map-message">Les points corrigés ou valides apparaîtront ici après géocodage.</p>
+            </aside>
+          </div>
+
+          <section class="geocoding-anomalies" id="geocoding-anomalies" aria-live="polite">
+            <h3>Anomalies détectées</h3>
+            <ul id="geocoding-anomalies-list"><li>Aucune analyse en cours.</li></ul>
+          </section>
+        </div>
+
         <div class="module-panel hidden" id="import-panel" data-module="import">
           <div class="panel-header">
             <div>
@@ -1661,6 +1734,7 @@
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <!-- decision-center.js avant app.js : app.js boot immédiat (readyState interactive) sinon rate l'init des onglets -->
   <script src="modules/decision-center/decision-center.js"></script>
+  <script src="modules/geocoding/geocoding.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
