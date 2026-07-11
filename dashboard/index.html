@@ -43,7 +43,7 @@
         </button>
         <button class="nav-item" data-module="territorial_intelligence" data-route="territorial-intelligence">
           <span class="nav-icon">TI</span>
-          <span>Territorial Intelligence</span>
+          <span>Intelligence territoriale</span>
         </button>
         <button class="nav-item" data-module="ccn" data-route="ccn">
           <span class="nav-icon">CCN</span>
@@ -71,7 +71,7 @@
         </button>
         <button class="nav-item" data-module="connaissances" data-route="knowledge">
           <span class="nav-icon">CNCT</span>
-          <span>Centre de connaissances</span>
+          <span>Base nationale de connaissances</span>
         </button>
         <button class="nav-item" data-module="enrichissement" data-route="enrichment">
           <span class="nav-icon">ENR</span>
@@ -545,7 +545,7 @@
               <p>Plateforme nationale d'aide à la décision géospatiale — alignée stratégie FDSU–CCN 2026–2030 et matrice de priorisation 300 sites.</p>
             </div>
             <div class="decision-center-header-actions" aria-label="Actions du centre de décision">
-              <button type="button" class="secondary-button" id="decision-open-ti-btn" data-route="territorial-intelligence">Territorial Intelligence</button>
+              <button type="button" class="secondary-button" id="decision-open-ti-btn" data-route="territorial-intelligence">Intelligence territoriale</button>
               <button type="button" class="secondary-button" id="decision-open-edvs-btn" data-route="salle-pilotage">Salle de Pilotage DG</button>
               <span id="decision-edvs-presentation-slot"></span>
               <button type="button" class="primary-button" id="decision-center-demo-mode-btn">Mode démonstration</button>
@@ -1380,12 +1380,12 @@
           <header class="decision-detail-topbar" aria-label="Navigation détail KPI">
             <button type="button" class="secondary-button" id="decision-detail-back-btn">← Retour au Centre de Décision</button>
             <div class="decision-detail-topbar-copy">
-              <p class="panel-label">Decision Detail Workspace</p>
+              <p class="panel-label">Analyse détaillée</p>
               <h2 id="decision-detail-title">Détail indicateur</h2>
             </div>
             <span class="decision-detail-status" id="decision-detail-status" aria-live="polite">Chargement…</span>
           </header>
-          <div class="decision-detail-loading-overlay" id="decision-detail-loading-overlay" aria-hidden="true">Chargement du détail…</div>
+          <div class="decision-detail-loading-overlay" id="decision-detail-loading-overlay" hidden aria-hidden="true" style="display:none"></div>
 
           <section class="decision-detail-header-card" id="decision-detail-header" aria-label="En-tête KPI">
             <p class="decision-center-program-loading">Chargement du détail…</p>
@@ -1558,8 +1558,8 @@
         <div class="module-panel hidden" id="connaissances-panel" data-module="connaissances">
           <div class="panel-header">
             <div>
-              <p class="panel-label">Centre National de Connaissances Territoriales</p>
-              <h2>Centre de connaissances</h2>
+              <p class="panel-label">Base nationale de connaissances</p>
+              <h2>Base nationale de connaissances</h2>
             </div>
             <span class="panel-badge">CNCT Sprint 3.2</span>
           </div>
@@ -1764,14 +1764,14 @@
         </div>
 
         <div class="module-panel hidden edvs-module" id="salle-pilotage-panel" data-module="salle_pilotage">
-          <p class="ti-banner" id="edvs-cockpit-banner">Salle de Pilotage DG — EDVS</p>
+          <p class="ti-banner" id="edvs-cockpit-banner">Salle de Pilotage DG</p>
           <div id="edvs-cockpit-root" class="edvs-shell" aria-live="polite"></div>
         </div>
 
         <div class="module-panel hidden ti-module" id="territorial-intelligence-panel" data-module="territorial_intelligence">
           <div class="ti-header">
             <div>
-              <p class="panel-label">Phase 3 — Territorial Intelligence Explorer v1</p>
+              <p class="panel-label">Intelligence territoriale</p>
               <h2 id="ti-territory-title">Intelligence Territoriale FDSU</h2>
               <p>Que sait le FDSU d’un territoire, quels besoins numériques, quelles interventions prioriser ?</p>
             </div>
@@ -2097,6 +2097,7 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <script src="modules/shared/map-tooltips.js"></script>
   <!-- decision-center.js avant app.js : app.js boot immédiat (readyState interactive) sinon rate l'init des onglets -->
   <script src="modules/decision-center/decision-center.js"></script>
   <script src="modules/decision-center/decision-detail.js"></script>

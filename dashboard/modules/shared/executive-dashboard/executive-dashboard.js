@@ -55,12 +55,12 @@
     ].join('');
 
     root.innerHTML = global.EdvsLayout.shell({
-      eyebrow: 'EDVS · Salle de Pilotage',
+      eyebrow: 'Salle de Pilotage DG',
       title: 'Salle de Pilotage DG',
-      subtitle: 'Histoire visuelle nationale — Knowledge Hub · Decision Engine · Territorial Intelligence · CCN',
+      subtitle: 'Histoire visuelle nationale — Base nationale de connaissances · Centre de Décision · Intelligence territoriale · CCN',
       actionsHtml: `
         <button type="button" class="secondary-button" data-route-jump="decision-view">Centre de Décision</button>
-        <button type="button" class="secondary-button" data-route-jump="territorial-intelligence">Intelligence Territoriale</button>
+        <button type="button" class="secondary-button" data-route-jump="territorial-intelligence">Intelligence territoriale</button>
       `,
       mapHtml,
       chartsHtml,
@@ -84,7 +84,7 @@
       .then((payload) => {
         renderCockpit(payload);
         if (banner) {
-          banner.textContent = `EDVS v1 · sources consolidées · doctrine ${payload.doctrine?.id || '—'} v${payload.doctrine?.version || '—'}`;
+          banner.textContent = `Sources consolidées · doctrine métier ${payload.doctrine?.id || '—'} v${payload.doctrine?.version || '—'}`;
         }
         state.initialized = true;
         global.EdvsLayout.bindPresentationControls(document);

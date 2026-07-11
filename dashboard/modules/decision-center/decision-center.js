@@ -224,7 +224,7 @@
   }
 
   function openKpiDetail(kpiKey) {
-    // Feedback immédiat + navigation vers Decision Detail Workspace
+    // Feedback immédiat + navigation vers Analyse détaillée
     const btn = document.querySelector(`[data-kpi-detail="${kpiKey}"]`);
     if (btn) {
       btn.classList.add('is-loading');
@@ -232,6 +232,7 @@
     }
     // Fermer immédiatement le drawer legacy pour éviter tout voile résiduel
     closeKpiDetail();
+    // Santé : ouvrir l'analyse détaillée (carte + liste + graphiques)
     if (typeof global.openDecisionDetail === 'function') {
       global.openDecisionDetail(kpiKey);
       return;
@@ -1884,10 +1885,12 @@
             <span class="map-popup-action">Voir fiche établissement</span>
           </div>
         `, { maxWidth: 280 });
-        featureLayer.bindTooltip(`
-          <strong>${escapeHtml(props.name || 'Structure')}</strong><br>
-          ${escapeHtml(props.facility_type_name || props.facility_type_code || '')}
-        `, { sticky: true, direction: 'top', opacity: 1, className: 'sig-map-tooltip' });
+        featureLayer.bindTooltip(
+          (global.SigMapTooltips?.buildHtml
+            ? global.SigMapTooltips.buildHtml('health', props)
+            : `<strong>${escapeHtml(props.name || 'Structure')}</strong><br>${escapeHtml(props.facility_type_name || props.facility_type_code || '')}`),
+          { sticky: false, direction: 'top', opacity: 1, className: 'sig-map-tooltip' },
+        );
       },
     }).addTo(decisionCenterState.healthMap);
     decisionCenterState.healthFacilitiesLayer = layer;

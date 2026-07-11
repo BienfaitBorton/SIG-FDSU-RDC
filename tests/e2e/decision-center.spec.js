@@ -96,9 +96,50 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
     await expect(page).toHaveURL(/#decision-detail\/sites-total/);
     await expect(page.locator('#decision-detail-panel')).toBeVisible();
     await expect(page.locator('#decision-detail-back-btn')).toBeVisible();
+    await expect(page.locator('#decision-detail-panel .panel-label')).toHaveText('Analyse détaillée');
     await expect(page.locator('#decision-detail-title')).toContainText(/Sites/i);
+    // Aucun voile de chargement après affichage
+    await expect(page.locator('#decision-detail-loading-overlay')).toBeHidden();
+    await expect(page.locator('#decision-detail-panel')).not.toHaveClass(/is-loading/);
+    const veilBlocked = await page.evaluate(() => {
+      const panel = document.querySelector('#decision-detail-panel');
+      const overlay = document.querySelector('#decision-detail-loading-overlay');
+      if (!panel) return true;
+      const cs = getComputedStyle(panel);
+      const ocs = overlay ? getComputedStyle(overlay) : null;
+      return (
+        cs.opacity !== '1'
+        || cs.filter !== 'none'
+        || (ocs && ocs.display !== 'none')
+        || (ocs && ocs.opacity !== '0' && ocs.display !== 'none')
+      );
+    });
+    expect(veilBlocked).toBeFalsy();
     await page.locator('#decision-detail-back-btn').click();
     await expect(page).toHaveURL(/#decision-view/);
+  });
+
+  test('plusieurs KPI ouvrent une analyse détaillée utile', async ({ page }) => {
+    await openDecisionCenter(page);
+    await page.waitForFunction(
+      () => (document.querySelector('#decision-kpi-sites-fdsu')?.textContent || '').includes('340'),
+      null,
+      { timeout: 30_000 },
+    );
+    for (const kpi of ['sites_priority', 'sites_40', 'provinces']) {
+      await page.locator(`[data-kpi-detail="${kpi}"]`).click();
+      await expect(page).toHaveURL(new RegExp(`#decision-detail/`));
+      await expect(page.locator('#decision-detail-panel')).toBeVisible();
+      await expect(page.locator('#decision-detail-loading-overlay')).toBeHidden();
+      await page.waitForFunction(
+        () => !document.querySelector('#decision-detail-panel')?.classList.contains('is-loading'),
+        null,
+        { timeout: 30_000 },
+      );
+      await expect(page.locator('#decision-detail-header')).not.toContainText('Impossible de charger');
+      await page.locator('#decision-detail-back-btn').click();
+      await expect(page).toHaveURL(/#decision-view/);
+    }
   });
 
   test('mode démonstration et suivi opérationnel', async ({ page }) => {
@@ -151,6 +192,21 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
       null,
       { timeout: 60_000 },
     );
+
+    const tooltipOk = await page.evaluate(() => {
+      const layerGroup = window.cartographyState?.layers?.sites_40;
+      const layers = layerGroup?.getLayers?.() || [];
+      if (!layers.length) return { ok: false, reason: 'no-layers' };
+      const layer = layers[0];
+      if (!layer.getTooltip) return { ok: false, reason: 'no-getTooltip' };
+      const tip = layer.getTooltip();
+      if (!tip) return { ok: false, reason: 'no-tooltip' };
+      const content = tip.getContent?.() || '';
+      const hasBusiness = /Programme|Priorité|Population|Code|Statut/i.test(String(content));
+      if (typeof layer.openTooltip === 'function') layer.openTooltip();
+      return { ok: hasBusiness, reason: hasBusiness ? 'ok' : String(content).slice(0, 120) };
+    });
+    expect(tooltipOk.ok).toBeTruthy();
 
     const opened = await page.evaluate(() => {
       const layerGroup = window.cartographyState?.layers?.sites_40;

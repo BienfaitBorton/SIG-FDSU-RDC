@@ -85,10 +85,17 @@
     const bounds = [];
     features.forEach((feature) => {
       const kind = feature.properties?.kind;
+      // Aussi binder le polygone territoire
       if (kind === 'territory_boundary') {
         const layer = global.L.geoJSON(feature, {
           style: { color: '#38bdf8', weight: 2, fillOpacity: 0.08 },
-        }).addTo(tiState.layer);
+          onEachFeature: (feat, pathLayer) => {
+            if (global.SigMapTooltips?.bindHoverTooltip) {
+              global.SigMapTooltips.bindHoverTooltip(pathLayer, 'territoire', feat.properties || feature.properties || {});
+            }
+          },
+        });
+        layer.addTo(tiState.layer);
         try { bounds.push(layer.getBounds()); } catch (e) { /* ignore */ }
         return;
       }
@@ -97,17 +104,33 @@
       const latlng = [coords[1], coords[0]];
       bounds.push(global.L.latLng(latlng));
       if (kind === 'site_fdsu') {
-        global.L.circleMarker(latlng, { radius: 5, color: '#fbbf24', fillColor: '#f59e0b', fillOpacity: 0.9 })
-          .bindPopup(`Site FDSU<br>${escapeHtml(feature.properties.name || feature.properties.code)}`)
-          .addTo(tiState.layer);
+        const marker = global.L.circleMarker(latlng, { radius: 5, color: '#fbbf24', fillColor: '#f59e0b', fillOpacity: 0.9 })
+          .bindPopup(`Site FDSU<br>${escapeHtml(feature.properties.name || feature.properties.code)}`);
+        if (global.SigMapTooltips?.bindHoverTooltip) {
+          global.SigMapTooltips.bindHoverTooltip(marker, 'site_fdsu', feature.properties);
+        }
+        marker.addTo(tiState.layer);
       } else if (kind === 'ccn') {
-        global.L.circleMarker(latlng, { radius: 7, color: '#a78bfa', fillColor: '#8b5cf6', fillOpacity: 0.9 })
-          .bindPopup(`CCN<br>${escapeHtml(feature.properties.name)}`)
-          .addTo(tiState.layer);
+        const marker = global.L.circleMarker(latlng, { radius: 7, color: '#a78bfa', fillColor: '#8b5cf6', fillOpacity: 0.9 })
+          .bindPopup(`CCN<br>${escapeHtml(feature.properties.name)}`);
+        if (global.SigMapTooltips?.bindHoverTooltip) {
+          global.SigMapTooltips.bindHoverTooltip(marker, 'ccn', feature.properties);
+        }
+        marker.addTo(tiState.layer);
       } else if (kind === 'health') {
-        global.L.circleMarker(latlng, { radius: 5, color: '#34d399', fillColor: '#10b981', fillOpacity: 0.9 })
-          .bindPopup(`Santé<br>${escapeHtml(feature.properties.name)}`)
-          .addTo(tiState.layer);
+        const marker = global.L.circleMarker(latlng, { radius: 5, color: '#34d399', fillColor: '#10b981', fillOpacity: 0.9 })
+          .bindPopup(`Santé<br>${escapeHtml(feature.properties.name)}`);
+        if (global.SigMapTooltips?.bindHoverTooltip) {
+          global.SigMapTooltips.bindHoverTooltip(marker, 'health', feature.properties);
+        }
+        marker.addTo(tiState.layer);
+      } else if (kind === 'uncovered_locality' || feature.properties?.coverage_status === 'uncovered') {
+        const marker = global.L.circleMarker(latlng, { radius: 4, color: '#f87171', fillColor: '#ef4444', fillOpacity: 0.85 })
+          .bindPopup(`Localité non couverte<br>${escapeHtml(feature.properties.name || feature.properties.nom || '')}`);
+        if (global.SigMapTooltips?.bindHoverTooltip) {
+          global.SigMapTooltips.bindHoverTooltip(marker, 'uncovered_locality', feature.properties);
+        }
+        marker.addTo(tiState.layer);
       }
     });
     if (bounds.length) {

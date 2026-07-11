@@ -340,13 +340,13 @@ const moduleNames = {
   sites: 'Sites FDSU',
   decision: 'Aide à la décision',
   centre_decision: 'Centre de Décision FDSU',
-  connaissances: 'Centre de connaissances',
+  connaissances: 'Base nationale de connaissances',
   enrichissement: 'Enrichissement territorial',
   geocodage: 'Géocodage FDSU',
   ccn: 'Centres Communautaires',
-  territorial_intelligence: 'Territorial Intelligence',
+  territorial_intelligence: 'Intelligence territoriale',
   salle_pilotage: 'Salle de Pilotage DG',
-  decision_detail: 'Détail indicateur décisionnel',
+  decision_detail: 'Analyse détaillée',
   import: 'Import',
   export: 'Export',
   statistiques: 'Statistiques',
@@ -2703,8 +2703,9 @@ function buildTelecomPopupHtml(properties) {
     ['label', 'Opérateur', properties.operator_name || properties.operator_code],
     ['label', 'Technologie', properties.technology],
     ['label', 'Distance au site sélectionné', distance],
-    ['label', 'Source', properties.source_file],
+    ['label', 'Source', properties.source_label || properties.data_source || 'Référentiel télécom'],
   ];
+  // Ne jamais exposer de nom de fichier technique au DG
   if (properties.province) lines.push(['text', properties.province]);
   if (properties.territoire) lines.push(['text', properties.territoire]);
 
@@ -2734,6 +2735,7 @@ function onTelecomEachFeature(feature, layer, layerKey) {
   if (!cartographyState.featureLayers[layerKey]) cartographyState.featureLayers[layerKey] = {};
   cartographyState.featureLayers[layerKey][featureId] = layer;
   layer.bindPopup(buildTelecomPopupHtml(properties), { maxWidth: 280, className: 'telecom-popup-wrapper' });
+  renderSmartTooltip(feature, layer, layerKey);
 }
 
 function ensureTelecomLayerLoaded(layerKey) {
@@ -4876,6 +4878,14 @@ function getTooltipLayerLabel(layerKey) {
     sites_40: 'Site 40 FDSU',
     sites_300: 'Site 300 FDSU',
     missions: 'Mission',
+    telecom_vodacom: 'Couverture Vodacom',
+    telecom_orange: 'Couverture Orange',
+    telecom_fiber_mw: 'Lien micro-ondes / fibre',
+    telecom_fiberco: 'Backbone fibre',
+    telecom_fttx: 'Accès fibre (FTTx)',
+    health: 'Établissement de santé',
+    ccn: 'Centre communautaire',
+    uncovered_locality: 'Localité non couverte',
   };
   return labels[layerKey] || 'Entité';
 }
@@ -4893,11 +4903,25 @@ function getTooltipLayerIcon(layerKey) {
     sites_40: '🟣',
     sites_300: '🔵',
     missions: '🎯',
+    telecom_vodacom: '📶',
+    telecom_orange: '📶',
+    telecom_fiber_mw: '📡',
+    telecom_fiberco: '🧵',
+    telecom_fttx: '🧵',
+    health: '🏥',
+    ccn: '🏛️',
+    uncovered_locality: '⚠️',
   };
   return icons[layerKey] || '📍';
 }
 
 function buildCompactTooltipLines(layerKey, properties, stats) {
+  // Télécom / fibre / backbone : composant partagé (contenu métier unifié)
+  if (typeof window !== 'undefined' && window.SigMapTooltips?.buildLines && isTelecomLayer(layerKey)) {
+    const shared = window.SigMapTooltips.buildLines(layerKey, properties);
+    if (shared?.length) return shared;
+  }
+
   const lines = [];
 
   if (layerKey === 'provinces') {
@@ -4908,6 +4932,11 @@ function buildCompactTooltipLines(layerKey, properties, stats) {
     if (population) lines.push(`Population : ${population}`);
     if (properties.fdsu_sites_count != null) lines.push(`Sites FDSU : ${properties.fdsu_sites_count}`);
     if (properties.health_facilities_count != null) lines.push(`Établissements santé : ${properties.health_facilities_count}`);
+    if (properties.uncovered_localities_count != null) lines.push(`Localités non couvertes : ${properties.uncovered_localities_count}`);
+    if (isPresentableTooltipValue(properties.ndci)) lines.push(`NDCI : ${properties.ndci}`);
+    if (isPresentableTooltipValue(properties.data_quality || properties.quality_label)) {
+      lines.push(`Qualité des données : ${properties.data_quality || properties.quality_label}`);
+    }
     return lines;
   }
 
@@ -4920,6 +4949,13 @@ function buildCompactTooltipLines(layerKey, properties, stats) {
     const population = formatTooltipPopulation(stats.population);
     if (population) lines.push(`Population : ${population}`);
     if (properties.fdsu_sites_count != null) lines.push(`Sites FDSU : ${properties.fdsu_sites_count}`);
+    if (properties.uncovered_localities_count != null) lines.push(`Localités non couvertes : ${properties.uncovered_localities_count}`);
+    if (isPresentableTooltipValue(properties.ndci || properties.ndci_score)) {
+      lines.push(`NDCI : ${properties.ndci || properties.ndci_score}`);
+    }
+    if (isPresentableTooltipValue(properties.data_quality || properties.quality_label || properties.cdqs)) {
+      lines.push(`Qualité des données : ${properties.data_quality || properties.quality_label || properties.cdqs}`);
+    }
     if (properties.health_facilities_count != null) lines.push(`Établissements santé : ${properties.health_facilities_count}`);
     return lines;
   }
@@ -4943,8 +4979,18 @@ function buildCompactTooltipLines(layerKey, properties, stats) {
   if (layerKey === 'villages') {
     const groupement = getFeatureProperty(properties, ['groupement']);
     if (isPresentableTooltipValue(groupement)) lines.push(`Groupement : ${groupement}`);
-    const population = formatTooltipPopulation(stats.population);
+    const territoire = getFeatureProperty(properties, ['territoire', 'territory']);
+    if (isPresentableTooltipValue(territoire)) lines.push(`Territoire : ${territoire}`);
+    const population = formatTooltipPopulation(stats.population || properties.population);
     if (population) lines.push(`Population : ${population}`);
+    if (properties.coverage_status === 'uncovered' || properties.is_uncovered) {
+      if (isPresentableTooltipValue(properties.priority_level || properties.priorite)) {
+        lines.push(`Priorité : ${properties.priority_level || properties.priorite}`);
+      }
+      if (isPresentableTooltipValue(properties.category || properties.categorie)) {
+        lines.push(`Catégorie : ${properties.category || properties.categorie}`);
+      }
+    }
     return lines;
   }
 
@@ -4953,13 +4999,13 @@ function buildCompactTooltipLines(layerKey, properties, stats) {
       || (layerKey === 'sites_300' ? 'Sites 300' : 'Sites 40');
     [
       ['Code', properties.site_code || properties.code || properties.official_code],
+      ['Localité', properties.localite || properties.locality || properties.village || properties.name],
       ['Programme', programme],
-      ['Statut', properties.status || properties.operational_status || 'À renseigner'],
-      ['Score', properties.priority_score ?? properties.fdsu_score ?? properties.priority_status],
-      ['Niveau', properties.priority_level_label || properties.priority_level],
+      ['Priorité', properties.priority_level_label || properties.priority_level || properties.priority_status],
+      ['Population cible', formatTooltipPopulation(properties.population_cible || properties.population || properties.target_population)],
+      ['Statut de donnée', properties.data_status || properties.data_quality || properties.quality_label || properties.status || properties.operational_status || 'À renseigner'],
       ['Province', properties.province],
       ['Territoire', properties.territoire],
-      ['Zone', properties.zone],
     ].forEach(([label, value]) => {
       if (isPresentableTooltipValue(value)) lines.push(`${label} : ${value}`);
     });
@@ -4968,10 +5014,13 @@ function buildCompactTooltipLines(layerKey, properties, stats) {
 
   if (layerKey === 'sites') {
     [
+      ['Code', getFeatureProperty(properties, ['site_code', 'code', 'official_code'])],
+      ['Localité', getFeatureProperty(properties, ['localite', 'locality', 'nom', 'name'])],
       ['État', getFeatureProperty(properties, ['etat', 'status', 'statut'])],
       ['Technologie', getFeatureProperty(properties, ['technologie', 'technology', 'technologies'])],
       ['Opérateur', getFeatureProperty(properties, ['operateur', 'operator', 'operateurs'])],
       ['Priorité', getFeatureProperty(properties, ['priorite', 'score_priorite_fdsu', 'priority'])],
+      ['Statut de donnée', getFeatureProperty(properties, ['data_quality', 'data_status', 'quality_label']) || 'À renseigner'],
     ].forEach(([label, value]) => {
       if (isPresentableTooltipValue(value)) lines.push(`${label} : ${value}`);
     });
@@ -4993,13 +5042,32 @@ function buildCompactTooltipLines(layerKey, properties, stats) {
     if (stats.localites > 0) lines.push(`${stats.localites.toLocaleString('fr-FR')} localités`);
   }
 
+  if (isTelecomLayer(layerKey)) {
+    [
+      ['Type', properties.infra_type || properties.line_type || properties.polygon_type || properties.infra_category || properties.technology],
+      ['Opérateur', properties.operator_name || properties.operator_code],
+      ['Technologie', properties.technology],
+      ['Province', properties.province],
+      ['Territoire', properties.territoire],
+    ].forEach(([label, value]) => {
+      if (isPresentableTooltipValue(value)) lines.push(`${label} : ${value}`);
+    });
+    const dist = properties.distance_to_selected_site_m != null
+      ? `${Math.round(properties.distance_to_selected_site_m)} m`
+      : (properties.distance_m != null ? `${Math.round(properties.distance_m)} m` : null);
+    if (isPresentableTooltipValue(dist)) lines.push(`Distance au site : ${dist}`);
+    if (!lines.length) lines.push('Infrastructure télécom');
+    return lines;
+  }
+
   return lines;
 }
 
 function buildCompactTooltipHtml(feature, layerKey) {
   const properties = feature?.properties || {};
   const stats = computeSpatialContextStats(layerKey, properties);
-  const name = getFeatureProperty(properties, ['nom', 'name', 'libelle']) || getTooltipLayerLabel(layerKey);
+  const name = getFeatureProperty(properties, ['nom', 'name', 'libelle', 'infra_name', 'line_name', 'polygon_name', 'site_name'])
+    || getTooltipLayerLabel(layerKey);
   const lines = buildCompactTooltipLines(layerKey, properties, stats);
 
   return `
@@ -5010,7 +5078,7 @@ function buildCompactTooltipHtml(feature, layerKey) {
       </div>
       <span class="map-smart-tooltip-type">${escapeHtml(getTooltipLayerLabel(layerKey))}</span>
       ${lines.map((line) => `<span class="map-smart-tooltip-line">${escapeHtml(line)}</span>`).join('')}
-      <span class="map-smart-tooltip-hint">Cliquer pour ouvrir la fiche</span>
+      <span class="map-smart-tooltip-hint">Cliquer pour analyser en détail</span>
     </div>
   `;
 }

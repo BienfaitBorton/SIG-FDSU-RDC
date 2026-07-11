@@ -1,4 +1,4 @@
-/* Decision Detail Workspace — aligné thème sombre SIG-FDSU (pas de voile clair) */
+/* Analyse détaillée — thème sombre SIG-FDSU (aucun voile / overlay de chargement) */
 
 .decision-detail-module {
   position: relative;
@@ -15,38 +15,23 @@
   pointer-events: auto;
 }
 
+/* Feedback de chargement = statut texte uniquement (jamais de voile) */
 .decision-detail-module.is-loading {
-  /* Ne pas baisser l'opacity du contenu — overlay dédié uniquement */
-  pointer-events: none;
-}
-
-.decision-detail-module.is-loading > *:not(.decision-detail-loading-overlay) {
-  /* Contenu reste lisible ; l'overlay gère le feedback */
-  pointer-events: none;
-}
-
-.decision-detail-loading-overlay {
-  display: none;
-  position: absolute;
-  inset: 0;
-  z-index: 40;
-  align-items: center;
-  justify-content: center;
-  background: rgba(15, 23, 42, 0.55);
-  color: var(--text);
-  font-weight: 600;
-  pointer-events: none;
+  pointer-events: auto;
   opacity: 1;
   filter: none;
 }
 
-.decision-detail-module.is-loading .decision-detail-loading-overlay {
-  display: flex;
-}
-
+.decision-detail-loading-overlay,
+.decision-detail-module.is-loading .decision-detail-loading-overlay,
 .decision-detail-module:not(.is-loading) .decision-detail-loading-overlay {
   display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
   pointer-events: none !important;
+  background: transparent !important;
+  inset: auto;
+  z-index: -1;
 }
 
 .decision-detail-topbar {

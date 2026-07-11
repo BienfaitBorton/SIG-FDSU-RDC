@@ -1,5 +1,5 @@
 /**
- * Decision Detail Workspace — vue dédiée #decision-detail/<kpi_code>
+ * Analyse détaillée — vue dédiée #decision-detail/<kpi_code>
  */
 (function initDecisionDetailWorkspace(global) {
   const API_BASE = `${global.location.protocol}//${global.location.hostname}:8001`;
@@ -314,6 +314,19 @@
           fillOpacity: 0.75,
           weight: 1,
         });
+        const kind = props.kind === 'ccn'
+          ? 'ccn'
+          : (props.kind === 'uncovered_locality' || props.coverage_status === 'uncovered')
+            ? 'uncovered_locality'
+            : (props.kind === 'health' ? 'health' : 'site_fdsu');
+        if (global.SigMapTooltips?.bindHoverTooltip) {
+          global.SigMapTooltips.bindHoverTooltip(marker, kind, props);
+        } else {
+          marker.bindTooltip(
+            `<strong>${escapeHtml(props.name || '—')}</strong><br>${escapeHtml(props.province || '')} / ${escapeHtml(props.territoire || '')}`,
+            { direction: 'top', opacity: 1, className: 'sig-map-tooltip' },
+          );
+        }
         marker.bindPopup(`<strong>${escapeHtml(props.name || '—')}</strong><br>${escapeHtml(props.province || '')} / ${escapeHtml(props.territoire || '')}<br>${escapeHtml(props.priority_level || '')}`);
         state.layer.addLayer(marker);
       });
@@ -336,10 +349,17 @@
       root.classList.toggle('is-loading', state.loading);
       root.style.opacity = '1';
       root.style.filter = 'none';
-      root.style.pointerEvents = state.loading ? 'none' : 'auto';
+      root.style.pointerEvents = 'auto';
+      root.style.background = 'transparent';
     }
+    // Overlay conservé dans le DOM pour compatibilité tests, jamais affiché
     if (overlay) {
-      overlay.setAttribute('aria-hidden', state.loading ? 'false' : 'true');
+      overlay.setAttribute('aria-hidden', 'true');
+      overlay.hidden = true;
+      overlay.style.display = 'none';
+      overlay.style.pointerEvents = 'none';
+      overlay.style.opacity = '0';
+      overlay.style.background = 'transparent';
     }
   }
 
@@ -349,6 +369,7 @@
     if (drawer) {
       drawer.hidden = true;
       drawer.setAttribute('hidden', '');
+      drawer.style.display = 'none';
     }
     document.querySelectorAll('.kpi-detail-btn.is-loading').forEach((btn) => {
       btn.classList.remove('is-loading');
@@ -369,7 +390,18 @@
     if (root) {
       root.style.opacity = '1';
       root.style.filter = 'none';
+      root.style.pointerEvents = 'auto';
+      root.style.background = 'transparent';
       root.classList.remove('is-loading');
+    }
+    const overlay = document.querySelector('#decision-detail-loading-overlay');
+    if (overlay) {
+      overlay.setAttribute('aria-hidden', 'true');
+      overlay.hidden = true;
+      overlay.style.display = 'none';
+      overlay.style.opacity = '0';
+      overlay.style.pointerEvents = 'none';
+      overlay.style.background = 'transparent';
     }
   }
 

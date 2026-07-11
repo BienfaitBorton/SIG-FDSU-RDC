@@ -140,4 +140,49 @@ def test_detail_workspace_has_no_persistent_light_veil():
     assert "clearResidualOverlays" in js
     assert "setLoading(false)" in js
     assert "body.decision-detail-open" in css
-    assert ".decision-detail-module:not(.is-loading) .decision-detail-loading-overlay" in css
+    # Overlay never shown (display none in all states)
+    assert "display: none !important" in css
+    assert "pointerEvents = 'auto'" in js or 'pointerEvents = "auto"' in js
+    assert "Analyse détaillée" in html
+    assert "Decision Detail Workspace" not in html
+
+
+def test_map_tooltips_shared_component_covers_business_layers():
+    root = Path(__file__).resolve().parents[1]
+    tip_js = (root / "dashboard/modules/shared/map-tooltips.js").read_text(encoding="utf-8")
+    html = (root / "dashboard/index.html").read_text(encoding="utf-8")
+    app_js = (root / "dashboard/app.js").read_text(encoding="utf-8")
+    assert "modules/shared/map-tooltips.js" in html
+    assert "SigMapTooltips" in tip_js
+    assert "uncovered_locality" in tip_js
+    assert "Population cible" in tip_js
+    assert "bindHoverTooltip" in tip_js
+    assert "renderSmartTooltip(feature, layer, layerKey)" in app_js
+    assert "onTelecomEachFeature" in app_js
+    # telecom layers get hover tooltips
+    assert "renderSmartTooltip(feature, layer, layerKey)" in app_js.split("function onTelecomEachFeature")[1][:800]
+
+
+def test_business_vocabulary_visible_labels():
+    root = Path(__file__).resolve().parents[1]
+    html = (root / "dashboard/index.html").read_text(encoding="utf-8")
+    app_js = (root / "dashboard/app.js").read_text(encoding="utf-8")
+    assert "Intelligence territoriale" in html
+    assert "Base nationale de connaissances" in html
+    assert "Analyse détaillée" in html
+    assert "Territorial Intelligence" not in html
+    assert "Knowledge Hub" not in html
+    assert "Intelligence territoriale" in app_js
+    assert "Analyse détaillée" in app_js
+
+
+def test_voir_le_detail_buttons_are_wired():
+    root = Path(__file__).resolve().parents[1]
+    html = (root / "dashboard/index.html").read_text(encoding="utf-8")
+    center_js = (root / "dashboard/modules/decision-center/decision-center.js").read_text(encoding="utf-8")
+    detail_js = (root / "dashboard/modules/decision-center/decision-detail.js").read_text(encoding="utf-8")
+    assert html.count('data-kpi-detail=') >= 15
+    assert "openDecisionDetail" in center_js
+    assert "function openDecisionDetail" in detail_js
+    assert "loadDetail" in detail_js
+    assert "leaveDetailWorkspace" in detail_js

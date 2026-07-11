@@ -153,10 +153,17 @@
           fillColor: '#f59e0b',
           fillOpacity: 0.9,
         }).bindPopup(`<strong>${escapeHtml(feature.properties.name)}</strong><br>${escapeHtml(feature.properties.business_id)}`);
+        if (global.SigMapTooltips?.bindHoverTooltip) {
+          global.SigMapTooltips.bindHoverTooltip(marker, 'ccn', feature.properties);
+        }
         marker.on('click', () => openDetail(feature.properties.id));
         marker.addTo(ccnState.layer);
       } else if (kind === 'site_fdsu') {
-        global.L.marker(latlng).bindPopup(`Site FDSU<br>${escapeHtml(feature.properties.code)}`).addTo(ccnState.layer);
+        const siteMarker = global.L.marker(latlng).bindPopup(`Site FDSU<br>${escapeHtml(feature.properties.code)}`);
+        if (global.SigMapTooltips?.bindHoverTooltip) {
+          global.SigMapTooltips.bindHoverTooltip(siteMarker, 'site_fdsu', feature.properties);
+        }
+        siteMarker.addTo(ccnState.layer);
       }
     });
     global.setTimeout(() => ccnState.map.invalidateSize(), 80);
