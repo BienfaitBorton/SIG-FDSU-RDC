@@ -115,6 +115,9 @@
       onEachFeature: (feature, layer) => {
         const p = feature.properties || {};
         layer.bindPopup(`<strong>${escapeHtml(p.site || 'Site')}</strong><br>Statut : ${escapeHtml(p.status)}<br>Source : ${escapeHtml(p.source || '—')}`);
+        if (global.SigMapTooltips?.bind) {
+          global.SigMapTooltips.bind(layer, p, 'site', { hint: 'Résultat de géocodage' });
+        }
       },
     }).addTo(map);
     try {

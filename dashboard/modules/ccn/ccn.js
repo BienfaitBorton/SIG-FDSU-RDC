@@ -138,9 +138,15 @@
     features.forEach((feature) => {
       const kind = feature.properties?.kind;
       if (kind === 'site_ccn_link') {
-        global.L.geoJSON(feature, {
+        const linkLayer = global.L.geoJSON(feature, {
           style: { color: '#93c5fd', weight: 2, dashArray: '4 4', opacity: 0.8 },
-        }).addTo(ccnState.layer);
+        });
+        if (global.SigMapTooltips?.bind) {
+          linkLayer.eachLayer((lyr) => {
+            global.SigMapTooltips.bind(lyr, feature.properties || {}, 'spatial_match', { hint: false, interactive: false });
+          });
+        }
+        linkLayer.addTo(ccnState.layer);
         return;
       }
       const coords = feature.geometry?.coordinates;
@@ -153,15 +159,29 @@
           fillColor: '#f59e0b',
           fillOpacity: 0.9,
         }).bindPopup(`<strong>${escapeHtml(feature.properties.name)}</strong><br>${escapeHtml(feature.properties.business_id)}`);
-        if (global.SigMapTooltips?.bindHoverTooltip) {
-          global.SigMapTooltips.bindHoverTooltip(marker, 'ccn', feature.properties);
+        if (global.SigMapTooltips?.bind) {
+          global.SigMapTooltips.bind(marker, feature.properties, 'ccn', {
+            onClick: () => {
+              if (feature.properties.id) {
+                if (typeof global.openDecisionCase === 'function') global.openDecisionCase('ccn', feature.properties.id);
+                else global.location.hash = `decision-case/ccn/${encodeURIComponent(feature.properties.id)}`;
+              } else openDetail(feature.properties.id);
+            },
+          });
+        } else {
+          marker.on('click', () => openDetail(feature.properties.id));
         }
-        marker.on('click', () => openDetail(feature.properties.id));
         marker.addTo(ccnState.layer);
       } else if (kind === 'site_fdsu') {
         const siteMarker = global.L.marker(latlng).bindPopup(`Site FDSU<br>${escapeHtml(feature.properties.code)}`);
-        if (global.SigMapTooltips?.bindHoverTooltip) {
-          global.SigMapTooltips.bindHoverTooltip(siteMarker, 'site_fdsu', feature.properties);
+        if (global.SigMapTooltips?.bind) {
+          global.SigMapTooltips.bind(siteMarker, feature.properties, 'site', {
+            onClick: () => {
+              const id = feature.properties.id || feature.properties.code;
+              if (id && typeof global.openDecisionCase === 'function') global.openDecisionCase('site', id);
+              else if (id) global.location.hash = `decision-case/site/${encodeURIComponent(id)}`;
+            },
+          });
         }
         siteMarker.addTo(ccnState.layer);
       }
