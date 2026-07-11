@@ -152,12 +152,15 @@
       pushLine(lines, 'Code', pick(p, ['site_code', 'code', 'official_code', 'business_id']));
       pushLine(lines, 'Localité', pick(p, ['localite', 'locality', 'village', 'name', 'nom', 'site_name']));
       pushLine(lines, 'Programme', pick(p, ['programme', 'program_code', 'program']) || (resolved === 'sites_300' ? 'Sites 300' : resolved === 'sites_40' ? 'Sites 40' : null));
+      const score = formatScore(pick(p, ['priority_score', 'score']));
+      if (score) pushLine(lines, 'Score', score);
       pushLine(lines, 'Priorité', pick(p, ['priority_level_label', 'priority_level', 'priorite', 'priority_status']));
+      pushLine(lines, 'Facteur principal', pick(p, ['top_factor', 'main_factor', 'primary_factor']));
       const pop = formatPopulation(pick(p, ['population_cible', 'population', 'pop_cible', 'target_population', 'impact_total_population']));
       if (pop) pushLine(lines, 'Population cible / impact', pop);
-      pushLine(lines, 'Statut de donnée', pick(p, ['data_status', 'data_quality', 'quality_label', 'statut_donnee', 'status', 'operational_status']) || 'À renseigner');
       pushLine(lines, 'Province', pick(p, ['province', 'province_name']));
       pushLine(lines, 'Territoire', pick(p, ['territoire', 'territory', 'territoire_name']));
+      pushLine(lines, 'Statut de donnée', pick(p, ['data_status', 'data_quality', 'quality_label', 'statut_donnee', 'status', 'operational_status']));
       return lines.slice(0, 7);
     }
 
@@ -375,10 +378,11 @@
 
     layer.bindTooltip(html, {
       sticky: false,
-      direction: options.direction || 'top',
+      direction: options.direction || 'auto',
       opacity: 1,
       className: 'sig-map-tooltip',
       permanent: false,
+      pane: options.pane || 'tooltipPane',
     });
 
     if (options.interactive !== false && typeof layer.on === 'function') {

@@ -971,26 +971,52 @@
                 <div id="decision-engine-case-body" data-decision-case-panel="dossier" hidden></div>
               </aside>
 
-              <div class="decision-engine-body">
+              <div class="decision-engine-body" id="decision-engine-body">
                 <div class="decision-engine-map-column">
-                  <div id="decision-engine-map" class="decision-engine-map" aria-label="Carte des sites priorisés"></div>
+                  <div class="decision-engine-map-shell">
+                    <div id="decision-engine-map" class="decision-engine-map" aria-label="Carte des sites priorisés"></div>
+                    <aside class="decision-engine-map-legend" id="decision-engine-map-legend" aria-label="Légende de la carte">
+                      <button type="button" class="decision-engine-legend-toggle" id="decision-engine-legend-toggle" aria-expanded="true">
+                        Légende
+                      </button>
+                      <div class="decision-engine-legend-body" id="decision-engine-legend-body">
+                        <p class="decision-engine-legend-title">Priorité</p>
+                        <ul class="decision-engine-legend-list">
+                          <li><span class="decision-engine-legend-swatch is-critical"></span> Critique</li>
+                          <li><span class="decision-engine-legend-swatch is-high"></span> Élevée</li>
+                          <li><span class="decision-engine-legend-swatch is-medium"></span> Moyenne</li>
+                          <li><span class="decision-engine-legend-swatch is-low"></span> Faible</li>
+                        </ul>
+                        <p class="decision-engine-legend-title">Symboles</p>
+                        <ul class="decision-engine-legend-list">
+                          <li><span class="decision-engine-legend-dot"></span> Site FDSU priorisé</li>
+                          <li><span class="decision-engine-legend-poly"></span> Province (référentiel)</li>
+                        </ul>
+                      </div>
+                    </aside>
+                  </div>
                 </div>
                 <div class="decision-engine-table-column">
+                  <div class="decision-engine-table-toolbar">
+                    <p class="decision-engine-table-caption">Tableau analytique</p>
+                    <button type="button" class="secondary-button" id="decision-engine-table-expand-btn" aria-pressed="false">
+                      Agrandir le tableau
+                    </button>
+                  </div>
                   <div class="decision-engine-table-frame">
                     <table class="decision-engine-table" id="decision-engine-table">
                       <thead>
                         <tr>
-                          <th>Code</th>
-                          <th>Site</th>
-                          <th>Prog.</th>
-                          <th>Localisation</th>
-                          <th>Score</th>
-                          <th>Niveau</th>
-                          <th>Facteurs</th>
+                          <th scope="col">Site</th>
+                          <th scope="col">Localisation</th>
+                          <th scope="col">Score</th>
+                          <th scope="col">Priorité</th>
+                          <th scope="col">Facteur principal</th>
+                          <th scope="col">Action</th>
                         </tr>
                       </thead>
                       <tbody id="decision-engine-table-body">
-                        <tr><td colspan="7" class="decision-center-program-loading">Chargement des scores…</td></tr>
+                        <tr><td colspan="6" class="decision-center-program-loading">Chargement des scores…</td></tr>
                       </tbody>
                     </table>
                   </div>

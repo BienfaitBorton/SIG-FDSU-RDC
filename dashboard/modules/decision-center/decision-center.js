@@ -1198,8 +1198,22 @@
 
   function formatDecisionCriteria(topCriteria) {
     const items = asArray(topCriteria);
-    if (!items.length) return '—';
+    if (!items.length) return 'Non renseigné';
     return items.slice(0, 2).map((item) => escapeHtml(humanizeCriteriaLabel(item?.label || ''))).join(' · ');
+  }
+
+  function formatPrimaryFactor(site) {
+    const items = asArray(site?.top_criteria || site?.criteria_details?.top_factors || []);
+    if (!items.length) return 'Non renseigné';
+    const label = humanizeCriteriaLabel(items[0]?.label || items[0]?.criterion_id || '');
+    return label || 'Non renseigné';
+  }
+
+  function truncateText(value, maxLen) {
+    const text = String(value ?? '').trim();
+    if (!text) return 'Non renseigné';
+    if (text.length <= maxLen) return text;
+    return `${text.slice(0, Math.max(0, maxLen - 1)).trim()}…`;
   }
 
   function renderDecisionEngineTable(sites) {
@@ -1210,34 +1224,42 @@
       : sites;
 
     if (!filtered.length) {
-      tbody.innerHTML = '<tr><td colspan="7" class="decision-center-program-loading">Aucun site pour ce filtre.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="decision-center-program-loading">Aucun site pour ce filtre.</td></tr>';
       return;
     }
 
     tbody.innerHTML = filtered.map((site) => {
       const levelClass = DECISION_ENGINE_PRIORITY_CLASS[site.priority_level] || 'is-low';
       const selected = decisionCenterState.decisionEngineSelectedSiteId === site.site_id ? ' is-selected' : '';
-      const territory = [site.territoire, site.province].filter(Boolean).join(' / ') || '—';
-      const siteName = site.site_name || '—';
-      const criteriaText = formatDecisionCriteria(
-        site.top_criteria || site.criteria_details?.top_factors || []
-      );
+      const territory = [site.territoire, site.province].filter(Boolean).join(' · ') || 'Non renseigné';
+      const siteName = site.site_name || site.site_code || 'Site FDSU';
+      const siteTitle = [site.site_name, site.site_code, formatProgramLabel(site)].filter(Boolean).join(' — ');
+      const factor = formatPrimaryFactor(site);
+      const score = Number(site.priority_score || 0).toFixed(1);
+      const priorityLabel = site.priority_level_label || site.priority_level || '—';
       return `
-        <tr data-site-id="${site.site_id}" class="${selected.trim()}">
-          <td title="${escapeHtml(site.site_code || '—')}">${escapeHtml(site.site_code || '—')}</td>
-          <td title="${escapeHtml(siteName)}">${escapeHtml(siteName)}</td>
-          <td title="${escapeHtml(site.program_name || site.program_code || '—')}">${escapeHtml(formatProgramLabel(site))}</td>
-          <td title="${escapeHtml(territory)}">${escapeHtml(territory)}</td>
-          <td>${Number(site.priority_score || 0).toFixed(1)}</td>
-          <td><span class="decision-engine-priority-badge ${levelClass}">${escapeHtml(site.priority_level_label || site.priority_level)}</span></td>
-          <td><span class="decision-engine-criteria" title="${criteriaText}">${criteriaText}</span></td>
+        <tr data-site-id="${escapeHtml(site.site_id)}" class="${selected.trim()}">
+          <td class="col-site" title="${escapeHtml(siteTitle)}">
+            <strong>${escapeHtml(truncateText(siteName, 42))}</strong>
+            <small>${escapeHtml(formatProgramLabel(site))}</small>
+          </td>
+          <td class="col-location is-ellipsis" title="${escapeHtml(territory)}">${escapeHtml(truncateText(territory, 48))}</td>
+          <td class="col-score">${score}</td>
+          <td class="col-priority"><span class="decision-engine-priority-badge ${levelClass}">${escapeHtml(priorityLabel)}</span></td>
+          <td class="col-factor is-ellipsis" title="${escapeHtml(factor)}">${escapeHtml(truncateText(factor, 40))}</td>
+          <td class="col-action">
+            <button type="button" class="secondary-button decision-engine-detail-btn" data-site-id="${escapeHtml(site.site_id)}" data-program-code="${escapeHtml(site.program_code || decisionCenterState.decisionEngineProgram || '')}">
+              Voir le détail
+            </button>
+          </td>
         </tr>
       `;
     }).join('');
 
-    tbody.querySelectorAll('[data-site-id]').forEach((row) => {
-      row.addEventListener('click', () => {
-        selectDecisionEngineSite(Number(row.dataset.siteId));
+    tbody.querySelectorAll('tr[data-site-id]').forEach((row) => {
+      row.addEventListener('click', (event) => {
+        if (event.target?.closest?.('.decision-engine-detail-btn')) return;
+        selectDecisionEngineSite(Number(row.dataset.siteId) || row.dataset.siteId);
       });
     });
   }
@@ -1261,6 +1283,10 @@
       maxZoom: 14,
     }).setView([-2.8, 23.5], 5);
 
+    // Remonter le pane tooltip au-dessus des contrôles (évite tooltips « muets » / masqués)
+    const tooltipPane = decisionCenterState.decisionEngineMap.getPane('tooltipPane');
+    if (tooltipPane) tooltipPane.style.zIndex = 700;
+
     global.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors',
       maxZoom: 19,
@@ -1275,6 +1301,21 @@
           if (!features.length) return;
           global.L.geoJSON({ type: 'FeatureCollection', features }, {
             style: shared.styleProvinceFeature,
+            onEachFeature: (feature, layer) => {
+              if (global.SigMapTooltips?.bind) {
+                global.SigMapTooltips.bind(layer, feature, 'province', {
+                  interactive: false,
+                  direction: 'auto',
+                });
+              } else if (layer.bindTooltip) {
+                const name = feature?.properties?.nom || feature?.properties?.name || 'Province';
+                layer.bindTooltip(String(name), {
+                  sticky: false,
+                  direction: 'auto',
+                  className: 'sig-map-tooltip',
+                });
+              }
+            },
           }).addTo(decisionCenterState.decisionEngineMap);
         })
         .catch(() => {});
@@ -1298,28 +1339,49 @@
       const lng = Number(site.longitude);
       if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
       const color = getDecisionEngineMarkerColor(site);
+      const selected = decisionCenterState.decisionEngineSelectedSiteId === site.site_id;
       const marker = global.L.circleMarker([lat, lng], {
-        radius: decisionCenterState.decisionEngineSelectedSiteId === site.site_id ? 9 : 6,
+        radius: selected ? 10 : 7,
         color,
         fillColor: color,
-        fillOpacity: 0.85,
-        weight: decisionCenterState.decisionEngineSelectedSiteId === site.site_id ? 3 : 1,
+        fillOpacity: 0.9,
+        weight: selected ? 3 : 2,
+        bubblingMouseEvents: false,
       });
       marker.bindPopup(`
-        <strong>${escapeHtml(site.site_name || '')}</strong><br/>
+        <strong>${escapeHtml(site.site_name || site.site_code || 'Site FDSU')}</strong><br/>
         Score : ${Number(site.priority_score || 0).toFixed(1)}<br/>
-        ${escapeHtml(site.priority_level_label || '')}
-      `);
+        ${escapeHtml(site.priority_level_label || site.priority_level || '')}<br/>
+        <span class="map-popup-action">Cliquer pour le dossier de décision</span>
+      `, { maxWidth: 260, className: 'decision-map-popup-wrapper' });
+
+      const tipProps = {
+        ...site,
+        name: site.site_name,
+        site_name: site.site_name,
+        site_code: site.site_code,
+        program_code: site.program_code,
+        programme: site.program_name || site.program_code,
+        province: site.province,
+        territoire: site.territoire,
+        priority_score: site.priority_score,
+        priority_level: site.priority_level_label || site.priority_level,
+        priority_level_label: site.priority_level_label || site.priority_level,
+        top_factor: formatPrimaryFactor(site),
+      };
+
       if (global.SigMapTooltips?.bind) {
-        global.SigMapTooltips.bind(marker, site, 'site', {
+        global.SigMapTooltips.bind(marker, tipProps, 'site', {
+          direction: 'auto',
           onClick: () => {
             selectDecisionEngineSite(site.site_id);
-            if (typeof global.openDecisionCase === 'function') {
-              global.openDecisionCase('site', site.site_id, site.program_code || decisionCenterState.decisionEngineProgram);
-            }
           },
         });
       } else {
+        marker.bindTooltip(
+          `<strong>${escapeHtml(site.site_name || site.site_code || 'Site')}</strong><br>Score ${Number(site.priority_score || 0).toFixed(1)}`,
+          { direction: 'auto', opacity: 1, className: 'sig-map-tooltip' },
+        );
         marker.on('click', () => selectDecisionEngineSite(site.site_id));
       }
       marker.addTo(decisionCenterState.decisionEngineMarkers);
@@ -1327,7 +1389,7 @@
     });
 
     if (bounds.length > 1) {
-      decisionCenterState.decisionEngineMap.fitBounds(bounds, { padding: [24, 24], maxZoom: 8 });
+      decisionCenterState.decisionEngineMap.fitBounds(bounds, { padding: [28, 28], maxZoom: 8 });
     } else if (bounds.length === 1) {
       decisionCenterState.decisionEngineMap.setView(bounds[0], 8);
     }
@@ -1338,7 +1400,7 @@
     renderDecisionEngineTable(decisionCenterState.decisionEngineSites);
     updateDecisionEngineMapMarkers(decisionCenterState.decisionEngineSites);
 
-    const site = decisionCenterState.decisionEngineSites.find((item) => item.site_id === siteId);
+    const site = decisionCenterState.decisionEngineSites.find((item) => String(item.site_id) === String(siteId));
     if (site && decisionCenterState.decisionEngineMap) {
       const lat = Number(site.latitude);
       const lng = Number(site.longitude);
@@ -1346,6 +1408,30 @@
         decisionCenterState.decisionEngineMap.setView([lat, lng], 10);
       }
     }
+  }
+
+  function bindDecisionEngineTableExpand() {
+    const btn = document.querySelector('#decision-engine-table-expand-btn');
+    const body = document.querySelector('#decision-engine-body');
+    if (!btn || !body || btn.dataset.bound === 'true') return;
+    btn.dataset.bound = 'true';
+    btn.addEventListener('click', () => {
+      const expanded = body.classList.toggle('is-table-expanded');
+      btn.setAttribute('aria-pressed', expanded ? 'true' : 'false');
+      btn.textContent = expanded ? 'Réduire le tableau' : 'Agrandir le tableau';
+      global.setTimeout(() => decisionCenterState.decisionEngineMap?.invalidateSize(), 80);
+    });
+  }
+
+  function bindDecisionEngineLegend() {
+    const toggle = document.querySelector('#decision-engine-legend-toggle');
+    const legend = document.querySelector('#decision-engine-map-legend');
+    if (!toggle || !legend || toggle.dataset.bound === 'true') return;
+    toggle.dataset.bound = 'true';
+    toggle.addEventListener('click', () => {
+      const collapsed = legend.classList.toggle('is-collapsed');
+      toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    });
   }
 
   function bindDecisionEngineFilters() {
@@ -1536,6 +1622,19 @@
         global.location.hash = `decision-case/site/${encodeURIComponent(siteId)}?program_code=${encodeURIComponent(program || '')}`;
         return;
       }
+      const detailBtn = target.closest('.decision-engine-detail-btn');
+      if (detailBtn) {
+        event.preventDefault();
+        event.stopPropagation();
+        const siteId = detailBtn.getAttribute('data-site-id');
+        const program = detailBtn.getAttribute('data-program-code') || decisionCenterState.decisionEngineProgram;
+        selectDecisionEngineSite(Number(siteId) || siteId);
+        if (typeof global.openDecisionCase === 'function') {
+          global.openDecisionCase('site', siteId, program);
+        } else {
+          global.location.hash = `decision-case/site/${encodeURIComponent(siteId)}?program_code=${encodeURIComponent(program || '')}`;
+        }
+      }
     });
 
     const explainPanel = document.querySelector('#decision-engine-explain');
@@ -1573,6 +1672,8 @@
     bindDecisionEngineProgramFilters();
     bindDecisionEngineRecomputeButton();
     bindDecisionEngineExplainActions();
+    bindDecisionEngineTableExpand();
+    bindDecisionEngineLegend();
 
     decisionCenterState.decisionEngineLoading = true;
     if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="decision-center-program-loading">Chargement des scores…</td></tr>';
@@ -2158,11 +2259,11 @@
           if (global.SigMapTooltips?.bind) {
             global.SigMapTooltips.bind(layer, feature, 'province', {
               interactive: false,
-              hint: false,
+              direction: 'auto',
             });
           } else if (layer.bindTooltip) {
             const name = feature?.properties?.nom || feature?.properties?.name || 'Province';
-            layer.bindTooltip(String(name), { sticky: false, direction: 'top', className: 'sig-map-tooltip' });
+            layer.bindTooltip(String(name), { sticky: false, direction: 'auto', className: 'sig-map-tooltip' });
           }
         },
       }),

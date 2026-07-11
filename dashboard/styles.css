@@ -800,7 +800,8 @@ button {
   min-height: clamp(420px, calc(100vh - 220px), 760px);
   height: 100%;
   border-radius: 20px;
-  overflow: hidden;
+  /* visible : évite le clipping des .leaflet-tooltip.sig-map-tooltip */
+  overflow: visible;
   border: 1px solid rgba(148, 163, 184, 0.14);
   background: #eef2f7;
   box-shadow: var(--shadow);
@@ -1574,7 +1575,7 @@ body.cartography-focus-mode #carto-focus-btn {
 .map-canvas {
   min-height: 620px;
   border-radius: 26px;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid rgba(148, 163, 184, 0.14);
 }
 
