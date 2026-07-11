@@ -21,6 +21,7 @@ def build_cockpit_payload() -> dict[str, Any]:
         explainable_decision_service,
         knowledge_hub_service,
         master_registry_service,
+        spatial_matching_service,
         territorial_intelligence_service,
     )
 
@@ -32,6 +33,12 @@ def build_cockpit_payload() -> dict[str, Any]:
     nci_charts = coverage_intelligence_service.edvs_charts()
     nci_stats = coverage_intelligence_service.statistics()
     nci_kpis = nci_stats.get("kpis") or {}
+    try:
+        nsme_charts = spatial_matching_service.edvs_charts()
+        nsme_stats = spatial_matching_service.get_statistics()
+    except Exception:  # noqa: BLE001
+        nsme_charts = {}
+        nsme_stats = {}
 
     # Top provinces CCN
     top_provinces = [
@@ -344,6 +351,17 @@ def build_cockpit_payload() -> dict[str, Any]:
         "nci": {
             "kpis": nci_charts.get("kpis"),
             "heritage": "Référentiel National des Besoins",
+        },
+        "spatial_matching": {
+            "heritage": "National Spatial Matching Engine",
+            "statistics": {
+                "matches_total": nsme_stats.get("matches_total"),
+                "population_impacted_sum": nsme_stats.get("population_impacted_sum"),
+                "avg_distance_m": nsme_stats.get("avg_distance_m"),
+                "needs_matched": nsme_stats.get("needs_matched"),
+            },
+            "charts": nsme_charts,
+            "source": "/api/spatial-matching/edvs",
         },
         "alerts": alerts,
         "recommendations": recommendations[:5],

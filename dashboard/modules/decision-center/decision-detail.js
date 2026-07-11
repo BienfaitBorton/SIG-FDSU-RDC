@@ -319,8 +319,17 @@
           : (props.kind === 'uncovered_locality' || props.coverage_status === 'uncovered')
             ? 'uncovered_locality'
             : (props.kind === 'health' ? 'health' : 'site_fdsu');
-        if (global.SigMapTooltips?.bindHoverTooltip) {
-          global.SigMapTooltips.bindHoverTooltip(marker, kind, props);
+        if (global.SigMapTooltips?.bind) {
+          global.SigMapTooltips.bind(marker, props, kind, {
+            onClick: () => {
+              const id = props.id || props.site_id || props.code;
+              if (id && typeof global.openDecisionCase === 'function') {
+                global.openDecisionCase('site', id, props.program_code);
+              } else if (id) {
+                global.location.hash = `decision-case/site/${encodeURIComponent(id)}`;
+              }
+            },
+          });
         } else {
           marker.bindTooltip(
             `<strong>${escapeHtml(props.name || '—')}</strong><br>${escapeHtml(props.province || '')} / ${escapeHtml(props.territoire || '')}`,
@@ -467,6 +476,56 @@
       global.location.hash = 'map';
       return;
     }
+    if (actionId === 'open_nsme_map' || actionId === 'view_matched_needs') {
+      global.location.hash = 'map';
+      global.setTimeout(() => {
+        const checkbox = document.querySelector('input[data-layer="asset_need_matches"]');
+        if (checkbox && !checkbox.checked) {
+          checkbox.checked = true;
+          checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }, 400);
+      return;
+    }
+    if (actionId === 'explain_match') {
+      const firstId = state.payload?.items?.rows?.[0]?.id || state.payload?.items?.rows?.[0]?.site_id;
+      if (!firstId) {
+        setStatus('Aucun actif disponible pour l’explication spatiale');
+        return;
+      }
+      fetchJson(`${API_BASE}/api/spatial-matching/assets/${encodeURIComponent(firstId)}/explain`)
+        .then((payload) => {
+          const host = document.querySelector('#decision-detail-explain-body');
+          if (host) {
+            host.innerHTML = `
+              <p><strong>Correspondance spatiale</strong></p>
+              <p>${escapeHtml(payload.summary || '—')}</p>
+              <p>Distance : ${escapeHtml(payload.distance_m ?? '—')} m · Rayon : ${escapeHtml(payload.service_radius_m ?? '—')} m</p>
+              <p>Règle : ${escapeHtml(payload.spatial_rule || '—')} · Confiance : ${escapeHtml(payload.confidence_level || '—')}</p>
+            `;
+          }
+          document.querySelector('#decision-detail-explain')?.scrollIntoView({ behavior: 'smooth' });
+          setStatus('Explication NSME chargée');
+        })
+        .catch((err) => setStatus(`Explication NSME indisponible : ${err.message}`, true));
+      return;
+    }
+    if (actionId === 'view_population_impact') {
+      const firstId = state.payload?.items?.rows?.[0]?.id || state.payload?.items?.rows?.[0]?.site_id;
+      if (!firstId) {
+        setStatus('Aucun actif pour l’impact populationnel');
+        return;
+      }
+      fetchJson(`${API_BASE}/api/spatial-matching/assets/${encodeURIComponent(firstId)}/impact`)
+        .then((payload) => {
+          const impact = payload.impact || {};
+          setStatus(
+            `Impact : ${impact.localities_impacted ?? 0} localités · population ${impact.population_impacted ?? 'n/d'} (${impact.population_status || ''})`,
+          );
+        })
+        .catch((err) => setStatus(`Impact NSME indisponible : ${err.message}`, true));
+      return;
+    }
     if (actionId === 'open_ti') {
       global.location.hash = 'territorial-intelligence';
       return;
@@ -539,8 +598,12 @@
         const id = openBtn.getAttribute('data-open-item');
         const program = openBtn.getAttribute('data-program');
         if (id) {
-          const qs = program ? `?program_code=${encodeURIComponent(program)}` : '';
-          global.open(`${API_BASE}/api/decision/case/${encodeURIComponent(id)}${qs}`, '_blank');
+          const programQs = program ? `?program_code=${encodeURIComponent(program)}` : '';
+          if (typeof global.openDecisionCase === 'function') {
+            global.openDecisionCase('site', id, program || undefined);
+          } else {
+            global.location.hash = `decision-case/site/${encodeURIComponent(id)}${programQs}`;
+          }
         }
       }
     });

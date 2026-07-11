@@ -43,6 +43,7 @@ from api.routes import (
     territorial_intelligence,
     executive,
     coverage,
+    spatial_matching,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -901,6 +902,11 @@ app.include_router(
     coverage.router,
     prefix="/api/coverage",
     tags=["National Coverage Intelligence"],
+)
+app.include_router(
+    spatial_matching.router,
+    prefix="/api/spatial-matching",
+    tags=["National Spatial Matching Engine"],
 )
 
 @app.get("/", tags=["Root"])

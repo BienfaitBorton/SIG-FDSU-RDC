@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Applique le schéma analysis (Spatial Intelligence Engine)."""
+"""Applique / met à jour le schéma analysis (SIE + NSME)."""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ def main() -> None:
         with conn.cursor() as cur:
             cur.execute(sql)
         conn.commit()
-    print("Schéma analysis appliqué.")
+    print("Schéma analysis (spatial_relations + asset_need_matches) appliqué.")
 
 
 if __name__ == "__main__":

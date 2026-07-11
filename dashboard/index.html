@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="modules/decision-center/decision-center.css" />
   <link rel="stylesheet" href="modules/decision-center/decision-detail.css" />
+  <link rel="stylesheet" href="modules/decision-experience/decision-experience.css" />
   <link rel="stylesheet" href="modules/geocoding/geocoding.css" />
   <link rel="stylesheet" href="modules/ccn/ccn.css" />
   <link rel="stylesheet" href="modules/territorial-intelligence/territorial-intelligence.css" />
@@ -384,6 +385,7 @@
                         <span class="cartography-layer-group-title">Analyse spatiale</span>
                         <ul class="cartography-layer-group-list">
                           <li><label><input type="checkbox" data-layer="spatial_relations" /> Relations spatiales</label></li>
+                          <li><label><input type="checkbox" data-layer="asset_need_matches" /> Correspondance Actifs ↔ Besoins</label></li>
                         </ul>
                       </li>
                       <li><label><input type="checkbox" data-layer="missions" /> Missions</label></li>
@@ -547,6 +549,7 @@
             <div class="decision-center-header-actions" aria-label="Actions du centre de décision">
               <button type="button" class="secondary-button" id="decision-open-ti-btn" data-route="territorial-intelligence">Intelligence territoriale</button>
               <button type="button" class="secondary-button" id="decision-open-edvs-btn" data-route="salle-pilotage">Salle de Pilotage DG</button>
+              <button type="button" class="secondary-button" id="decision-open-nsme-map-btn">Carte correspondances</button>
               <span id="decision-edvs-presentation-slot"></span>
               <button type="button" class="primary-button" id="decision-center-demo-mode-btn">Mode démonstration</button>
               <span class="decision-center-action-slot">Export</span>
@@ -1456,6 +1459,34 @@
           <section class="decision-detail-actions" id="decision-detail-actions" aria-label="Actions"></section>
         </div>
 
+        <div class="module-panel hidden decision-experience-module" id="decision-experience-panel" data-module="decision_experience">
+          <header class="dxl-topbar" aria-label="Navigation dossier de décision">
+            <button type="button" class="secondary-button" id="dxl-back-btn">← Retour</button>
+            <div>
+              <p class="panel-label">Dossier de décision</p>
+              <h2 id="dxl-title">Dossier de décision</h2>
+            </div>
+            <span class="dxl-status" id="dxl-status" aria-live="polite">Chargement…</span>
+          </header>
+
+          <section class="dxl-section" id="dxl-section-summary" aria-label="Résumé exécutif">
+            <p class="dxl-empty">Chargement du résumé…</p>
+          </section>
+
+          <section class="dxl-section" aria-label="Carte interactive">
+            <p class="dxl-kicker">Carte interactive</p>
+            <div id="dxl-map" class="dxl-map" role="region" aria-label="Carte du dossier de décision"></div>
+          </section>
+
+          <section class="dxl-section" id="dxl-section-why" aria-label="Pourquoi"></section>
+          <section class="dxl-section" id="dxl-section-context" aria-label="Contexte territorial"></section>
+          <section class="dxl-section" id="dxl-section-impact" aria-label="Impacts attendus"></section>
+          <section class="dxl-section" id="dxl-section-risks" aria-label="Risques"></section>
+          <section class="dxl-section" id="dxl-section-trace" aria-label="Traçabilité"></section>
+          <section class="dxl-section" id="dxl-section-reco" aria-label="Recommandation"></section>
+          <section class="dxl-actions" id="dxl-actions" aria-label="Actions métier"></section>
+        </div>
+
         <div class="module-panel hidden" id="sites-panel" data-module="sites">
           <div class="panel-header">
             <div>
@@ -2098,6 +2129,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <script src="modules/shared/map-tooltips.js"></script>
+  <script src="modules/decision-experience/decision-experience.js"></script>
   <!-- decision-center.js avant app.js : app.js boot immédiat (readyState interactive) sinon rate l'init des onglets -->
   <script src="modules/decision-center/decision-center.js"></script>
   <script src="modules/decision-center/decision-detail.js"></script>

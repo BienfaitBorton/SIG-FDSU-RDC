@@ -568,6 +568,18 @@
         return;
       }
 
+      if (target.id === 'decision-open-nsme-map-btn') {
+        global.location.hash = 'map';
+        global.setTimeout(() => {
+          const checkbox = document.querySelector('input[data-layer="asset_need_matches"]');
+          if (checkbox && !checkbox.checked) {
+            checkbox.checked = true;
+            checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        }, 400);
+        return;
+      }
+
       if (target.id === 'decision-center-demo-mode-btn') {
         setDemoModeVisible(true);
         loadDecisionBusinessPanels(!decisionCenterState.demoScenarios.length);
@@ -1298,7 +1310,18 @@
         Score : ${Number(site.priority_score || 0).toFixed(1)}<br/>
         ${escapeHtml(site.priority_level_label || '')}
       `);
-      marker.on('click', () => selectDecisionEngineSite(site.site_id));
+      if (global.SigMapTooltips?.bind) {
+        global.SigMapTooltips.bind(marker, site, 'site', {
+          onClick: () => {
+            selectDecisionEngineSite(site.site_id);
+            if (typeof global.openDecisionCase === 'function') {
+              global.openDecisionCase('site', site.site_id, site.program_code || decisionCenterState.decisionEngineProgram);
+            }
+          },
+        });
+      } else {
+        marker.on('click', () => selectDecisionEngineSite(site.site_id));
+      }
       marker.addTo(decisionCenterState.decisionEngineMarkers);
       bounds.push([lat, lng]);
     });
@@ -1506,15 +1529,12 @@
       if (explainBtn) {
         const siteId = explainBtn.getAttribute('data-site-id');
         const program = explainBtn.getAttribute('data-program-code') || decisionCenterState.decisionEngineProgram;
-        const shared = getShared();
-        Promise.all([
-          shared.fetchJson(`/api/decision/explain/${siteId}?asset_type=site&program_code=${encodeURIComponent(program)}`),
-          shared.fetchJson(`/api/decision/case/${siteId}?asset_type=site&program_code=${encodeURIComponent(program)}`),
-        ])
-          .then(([explain, caseFile]) => {
-            openDecisionEngineExplain({ ...explain, case_file: caseFile, site: explain.asset || {} });
-          })
-          .catch(() => openDecisionEngineExplain({ explanation: { answer: 'Explication indisponible.' }, site: {} }));
+        if (typeof global.openDecisionCase === 'function') {
+          global.openDecisionCase('site', siteId, program);
+          return;
+        }
+        global.location.hash = `decision-case/site/${encodeURIComponent(siteId)}?program_code=${encodeURIComponent(program || '')}`;
+        return;
       }
     });
 
@@ -1880,17 +1900,21 @@
             Zone de santé : ${escapeHtml(props.properties?.zonesante || props.zonesante || '')}<br>
             Aire de santé : ${escapeHtml(props.properties?.airesante || props.airesante || '')}<br>
             Localité : ${escapeHtml(props.locality_name || '')}<br>
-            Source : ${escapeHtml(props.data_source || 'RDC_ESS_Santé_01042026.csv.kmz')}<br>
+            Source : ${escapeHtml(props.data_source || 'Référentiel Santé')}<br>
             Qualité donnée : ${escapeHtml(quality)}<br>
             <span class="map-popup-action">Voir fiche établissement</span>
           </div>
         `, { maxWidth: 280 });
-        featureLayer.bindTooltip(
-          (global.SigMapTooltips?.buildHtml
-            ? global.SigMapTooltips.buildHtml('health', props)
-            : `<strong>${escapeHtml(props.name || 'Structure')}</strong><br>${escapeHtml(props.facility_type_name || props.facility_type_code || '')}`),
-          { sticky: false, direction: 'top', opacity: 1, className: 'sig-map-tooltip' },
-        );
+        if (global.SigMapTooltips?.bind) {
+          global.SigMapTooltips.bind(featureLayer, props, 'health', {
+            onClick: () => { global.location.hash = 'decision-detail/sante'; },
+          });
+        } else {
+          featureLayer.bindTooltip(
+            `<strong>${escapeHtml(props.name || 'Structure')}</strong><br>${escapeHtml(props.facility_type_name || props.facility_type_code || '')}`,
+            { sticky: false, direction: 'top', opacity: 1, className: 'sig-map-tooltip' },
+          );
+        }
       },
     }).addTo(decisionCenterState.healthMap);
     decisionCenterState.healthFacilitiesLayer = layer;
@@ -2128,7 +2152,20 @@
 
     decisionCenterState.layers = {
       rdcBoundary: global.L.geoJSON(null, { style: shared.styleRdcBoundaryFeature }),
-      provinces: global.L.geoJSON(null, { style: shared.styleProvinceFeature }),
+      provinces: global.L.geoJSON(null, {
+        style: shared.styleProvinceFeature,
+        onEachFeature: (feature, layer) => {
+          if (global.SigMapTooltips?.bind) {
+            global.SigMapTooltips.bind(layer, feature, 'province', {
+              interactive: false,
+              hint: false,
+            });
+          } else if (layer.bindTooltip) {
+            const name = feature?.properties?.nom || feature?.properties?.name || 'Province';
+            layer.bindTooltip(String(name), { sticky: false, direction: 'top', className: 'sig-map-tooltip' });
+          }
+        },
+      }),
     };
 
     const boundaryPromise = shared.fetchApiJson

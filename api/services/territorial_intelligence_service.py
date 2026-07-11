@@ -694,6 +694,7 @@ def build_territorial_profile(territory_id: str, *, light: bool = False) -> dict
             "coverage": coverage,
             "heritage": "Référentiel National des Besoins",
         },
+        "spatial_matching": _safe_spatial_matching(name, profile.get("territory_id") if isinstance(profile, dict) else territory_id),
         "knowledge_hub": {
             "domain": (kh_domain or {}).get("domain"),
             "national_coverage": (kh_coverage or {}).get("domain"),
@@ -701,6 +702,35 @@ def build_territorial_profile(territory_id: str, *, light: bool = False) -> dict
         },
         "data_gaps": missing,
     }
+
+
+def _safe_spatial_matching(territory_name: str, territory_id: str | None = None) -> dict[str, Any]:
+    """Intègre le NSME sans casser le profil TI si la table n'est pas encore peuplée."""
+    try:
+        from api.services import spatial_matching_service as nsme
+
+        payload = nsme.get_territory_matches(territory_id or territory_name, limit=100, compute_if_empty=False)
+        return {
+            "available": True,
+            "engine": "nsme-1.0.0",
+            "assets_present": payload.get("assets_present"),
+            "needs_matched": payload.get("needs_matched"),
+            "population_impacted_by_assets": payload.get("population_impacted_by_assets"),
+            "population_remaining": payload.get("population_remaining"),
+            "zones_without_matching_asset": payload.get("zones_without_matching_asset"),
+            "match_quality": payload.get("match_quality"),
+            "investment_opportunities": payload.get("investment_opportunities"),
+            "impact": payload.get("impact"),
+            "source": "/api/spatial-matching",
+        }
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "available": False,
+            "engine": "nsme-1.0.0",
+            "status": "unavailable",
+            "note": str(exc),
+            "source": "/api/spatial-matching",
+        }
 
 
 def _build_opportunities(scored_sites, health, ccn, sites_300) -> dict[str, Any]:

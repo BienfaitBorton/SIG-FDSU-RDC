@@ -90,8 +90,8 @@
         const layer = global.L.geoJSON(feature, {
           style: { color: '#38bdf8', weight: 2, fillOpacity: 0.08 },
           onEachFeature: (feat, pathLayer) => {
-            if (global.SigMapTooltips?.bindHoverTooltip) {
-              global.SigMapTooltips.bindHoverTooltip(pathLayer, 'territoire', feat.properties || feature.properties || {});
+            if (global.SigMapTooltips?.bind) {
+              global.SigMapTooltips.bind(pathLayer, feat.properties || feature.properties || {}, 'territory');
             }
           },
         });
@@ -106,29 +106,48 @@
       if (kind === 'site_fdsu') {
         const marker = global.L.circleMarker(latlng, { radius: 5, color: '#fbbf24', fillColor: '#f59e0b', fillOpacity: 0.9 })
           .bindPopup(`Site FDSU<br>${escapeHtml(feature.properties.name || feature.properties.code)}`);
-        if (global.SigMapTooltips?.bindHoverTooltip) {
-          global.SigMapTooltips.bindHoverTooltip(marker, 'site_fdsu', feature.properties);
+        if (global.SigMapTooltips?.bind) {
+          global.SigMapTooltips.bind(marker, feature.properties, 'site', {
+            onClick: () => {
+              const id = feature.properties.id || feature.properties.code || feature.properties.business_id;
+              if (id && typeof global.openDecisionCase === 'function') {
+                global.openDecisionCase('site', id, feature.properties.program_code || feature.properties.programme);
+              } else if (id) {
+                global.location.hash = `decision-case/site/${encodeURIComponent(id)}`;
+              }
+            },
+          });
         }
         marker.addTo(tiState.layer);
       } else if (kind === 'ccn') {
         const marker = global.L.circleMarker(latlng, { radius: 7, color: '#a78bfa', fillColor: '#8b5cf6', fillOpacity: 0.9 })
           .bindPopup(`CCN<br>${escapeHtml(feature.properties.name)}`);
-        if (global.SigMapTooltips?.bindHoverTooltip) {
-          global.SigMapTooltips.bindHoverTooltip(marker, 'ccn', feature.properties);
+        if (global.SigMapTooltips?.bind) {
+          global.SigMapTooltips.bind(marker, feature.properties, 'ccn', {
+            onClick: () => {
+              const id = feature.properties.id || feature.properties.business_id;
+              if (id && typeof global.openDecisionCase === 'function') global.openDecisionCase('ccn', id);
+              else if (id) global.location.hash = `ccn-detail/${encodeURIComponent(id)}`;
+            },
+          });
         }
         marker.addTo(tiState.layer);
       } else if (kind === 'health') {
         const marker = global.L.circleMarker(latlng, { radius: 5, color: '#34d399', fillColor: '#10b981', fillOpacity: 0.9 })
           .bindPopup(`Santé<br>${escapeHtml(feature.properties.name)}`);
-        if (global.SigMapTooltips?.bindHoverTooltip) {
-          global.SigMapTooltips.bindHoverTooltip(marker, 'health', feature.properties);
+        if (global.SigMapTooltips?.bind) {
+          global.SigMapTooltips.bind(marker, feature.properties, 'health', {
+            onClick: () => { global.location.hash = 'decision-detail/sante'; },
+          });
         }
         marker.addTo(tiState.layer);
       } else if (kind === 'uncovered_locality' || feature.properties?.coverage_status === 'uncovered') {
         const marker = global.L.circleMarker(latlng, { radius: 4, color: '#f87171', fillColor: '#ef4444', fillOpacity: 0.85 })
           .bindPopup(`Localité non couverte<br>${escapeHtml(feature.properties.name || feature.properties.nom || '')}`);
-        if (global.SigMapTooltips?.bindHoverTooltip) {
-          global.SigMapTooltips.bindHoverTooltip(marker, 'uncovered_locality', feature.properties);
+        if (global.SigMapTooltips?.bind) {
+          global.SigMapTooltips.bind(marker, feature.properties, 'uncovered_locality', {
+            onClick: () => { global.location.hash = 'decision-detail/population-non-couverte'; },
+          });
         }
         marker.addTo(tiState.layer);
       }
@@ -207,6 +226,24 @@
         ${line('Niveau', s.priority?.level)}
         <p>Confiance profil : <strong>${escapeHtml(p.confidence_level)}</strong></p>
         <p>Gaps : ${escapeHtml((profilePayload?.data_gaps || []).join(', ') || '—')}</p>
+      </section>
+      <section class="ti-section">
+        <h3>Correspondance spatiale Actifs ↔ Besoins</h3>
+        ${(() => {
+          const sm = profilePayload?.spatial_matching || {};
+          if (!sm.available) {
+            return `<p>Correspondances non encore calculées — lancer un refresh NSME ciblé.</p>`;
+          }
+          return `
+            <p><strong>Actifs présents :</strong> ${escapeHtml(sm.assets_present ?? '—')}</p>
+            <p><strong>Besoins associés :</strong> ${escapeHtml(sm.needs_matched ?? '—')}</p>
+            <p><strong>Population impactée (par actifs) :</strong> ${escapeHtml(sm.population_impacted_by_assets ?? '—')}</p>
+            <p><strong>Population restante :</strong> ${escapeHtml(sm.population_remaining ?? '—')}</p>
+            <p><strong>Zones sans actif correspondant :</strong> ${escapeHtml(sm.zones_without_matching_asset ?? '—')}</p>
+            <p><strong>Qualité de la correspondance :</strong> ${escapeHtml(sm.match_quality ?? '—')}</p>
+            <p><strong>Opportunités d'investissement :</strong> ${(sm.investment_opportunities || []).map((o) => escapeHtml(`${o.type}: ${o.value ?? '—'}`)).join(' · ') || '—'}</p>
+          `;
+        })()}
       </section>
       <section class="ti-section">
         <h3>I. Recommandations</h3>
@@ -345,9 +382,19 @@
     if (global.Edvs?.mountPresentationButton) {
       global.Edvs.mountPresentationButton('#ti-edvs-presentation-slot');
     }
+    const hash = (global.location.hash || '').replace(/^#/, '');
+    const hashTerritory = hash.startsWith('territorial-intelligence/')
+      ? decodeURIComponent(hash.split('/')[1] || '')
+      : '';
     return loadTerritoryList().then(() => {
       tiState.initialized = true;
+      if (hashTerritory) {
+        const select = document.querySelector('#ti-territory-select');
+        if (select) select.value = hashTerritory;
+        return loadTerritory(hashTerritory);
+      }
       global.setTimeout(() => tiState.map?.invalidateSize(), 120);
+      return null;
     });
   }
 

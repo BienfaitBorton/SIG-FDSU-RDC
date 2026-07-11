@@ -13,7 +13,7 @@ const FDSU_ZONE_DEFINITIONS = {
   ET: { nom: 'Zone Est', colorVar: '--zone-et' },
 };
 const FDSU_ZONE_CODES = ['ND', 'OT', 'CE', 'SD', 'ET'];
-const FDSU_LAYER_STACK_ORDER = ['rdcBoundary', 'zones', 'provinces', 'territoires', 'collectivites', 'groupements', 'villages', 'sites', 'sites_all', 'sites_40', 'sites_300', 'telecom_vodacom', 'telecom_orange', 'telecom_fiber_mw', 'telecom_fiberco', 'telecom_fttx', 'spatial_relations', 'missions'];
+const FDSU_LAYER_STACK_ORDER = ['rdcBoundary', 'zones', 'provinces', 'territoires', 'collectivites', 'groupements', 'villages', 'sites', 'sites_all', 'sites_40', 'sites_300', 'telecom_vodacom', 'telecom_orange', 'telecom_fiber_mw', 'telecom_fiberco', 'telecom_fttx', 'spatial_relations', 'asset_need_matches', 'missions'];
 const FDSU_SITES_PROGRAM_LAYERS = {
   sites_all: {
     label: 'Tous les sites',
@@ -77,6 +77,13 @@ const SPATIAL_ANALYSIS_LAYERS = {
     pendingMessage: 'Relations spatiales disponibles en mode DB après analyse',
     color: '#0d9488',
     fillColor: '#2dd4bf',
+  },
+  asset_need_matches: {
+    label: 'Correspondance Actifs ↔ Besoins',
+    apiPath: '/api/spatial-matching/map',
+    pendingMessage: 'Correspondances NSME disponibles après refresh',
+    color: '#f59e0b',
+    fillColor: '#fbbf24',
   },
 };
 const FDSU_SMART_MAP_MODES = {
@@ -147,6 +154,11 @@ const ROUTE_TO_MODULE = {
   salle_pilotage: 'salle_pilotage',
   'decision-detail': 'decision_detail',
   decision_detail: 'decision_detail',
+  'decision-case': 'decision_experience',
+  'spatial-impact': 'decision_experience',
+  'coverage-detail': 'decision_experience',
+  'ccn-detail': 'decision_experience',
+  decision_experience: 'decision_experience',
   geocodage: 'geocodage',
   import: 'import',
   export: 'export',
@@ -170,6 +182,7 @@ const MODULE_TO_ROUTE = {
   territorial_intelligence: 'territorial-intelligence',
   salle_pilotage: 'salle-pilotage',
   decision_detail: 'decision-detail',
+  decision_experience: 'decision-case',
   import: 'import',
   export: 'export',
   statistiques: 'statistiques',
@@ -347,6 +360,7 @@ const moduleNames = {
   territorial_intelligence: 'Intelligence territoriale',
   salle_pilotage: 'Salle de Pilotage DG',
   decision_detail: 'Analyse détaillée',
+  decision_experience: 'Dossier de décision',
   import: 'Import',
   export: 'Export',
   statistiques: 'Statistiques',
@@ -780,6 +794,13 @@ function setActiveModule(moduleKey) {
     }
     if (window.decisionDetailState?.map) {
       window.setTimeout(() => window.decisionDetailState.map.invalidateSize(), 0);
+    }
+  } else if (normalizedModule === 'decision_experience') {
+    if (typeof window.initializeDecisionExperienceModule === 'function') {
+      window.initializeDecisionExperienceModule();
+    }
+    if (window.decisionExperienceState?.map) {
+      window.setTimeout(() => window.decisionExperienceState.map.invalidateSize(), 0);
     }
   } else {
     document.body.classList.remove('decision-detail-open');
@@ -2199,6 +2220,19 @@ function initializeCartographyModule() {
       style: () => ({ color: '#0d9488', weight: 2, opacity: 0.75, dashArray: '4 6' }),
       onEachFeature: (feature, layer) => onSpatialRelationEachFeature(feature, layer),
     }),
+    asset_need_matches: L.geoJSON(null, {
+      style: (feature) => {
+        const kind = feature?.properties?.kind;
+        if (kind === 'link') return { color: '#f59e0b', weight: 2, opacity: 0.8, dashArray: '3 5' };
+        return { color: '#f59e0b', weight: 1 };
+      },
+      pointToLayer: (feature, latlng) => {
+        const kind = feature?.properties?.kind;
+        if (kind === 'asset') return makePointMarker(latlng, '#b45309', '#fbbf24', 9);
+        return makePointMarker(latlng, '#dc2626', '#fca5a5', 6);
+      },
+      onEachFeature: (feature, layer) => onAssetNeedMatchEachFeature(feature, layer),
+    }),
     missions: L.geoJSON(null, {
       pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#be123c', '#fb7185'),
       onEachFeature: (feature, layer) => onGeoEachFeature(feature, layer, 'missions'),
@@ -2608,6 +2642,52 @@ function onSpatialRelationEachFeature(feature, layer) {
     }).filter(Boolean).join('<br>')}</div>`,
     { maxWidth: 280, className: 'telecom-popup-wrapper' },
   );
+  if (typeof window !== 'undefined' && window.SigMapTooltips?.bind) {
+    window.SigMapTooltips.bind(layer, {
+      ...properties,
+      relation_type: properties.relation_type,
+      distance_m: properties.distance_m,
+      name: properties.infra_name || properties.line_name || 'Correspondance spatiale',
+    }, 'spatial_match', { interactive: false, hint: false });
+  }
+}
+
+function onAssetNeedMatchEachFeature(feature, layer) {
+  if (!layer) return;
+  const p = feature?.properties || {};
+  const kind = p.kind || 'linked_locality';
+  if (kind === 'link') {
+    if (window.SigMapTooltips?.bind) {
+      window.SigMapTooltips.bind(layer, p, 'spatial_match', { hint: false });
+    }
+    return;
+  }
+  if (kind === 'asset') {
+    if (window.SigMapTooltips?.bind) {
+      window.SigMapTooltips.bind(layer, {
+        ...p,
+        site_code: p.code,
+        program_code: p.programme,
+        population: p.impact_total_population,
+      }, 'site', {
+        onClick: () => {
+          const id = p.code || p.id;
+          if (id && typeof window.openDecisionCase === 'function') window.openDecisionCase('site', id, p.programme);
+          else if (id) window.location.hash = `decision-case/site/${encodeURIComponent(id)}`;
+        },
+      });
+    }
+    return;
+  }
+  if (window.SigMapTooltips?.bind) {
+    window.SigMapTooltips.bind(layer, p, 'uncovered_locality', {
+      onClick: () => {
+        const assetId = p.asset_business_id;
+        if (assetId && typeof window.openSpatialImpact === 'function') window.openSpatialImpact('site', assetId);
+        else window.location.hash = 'decision-detail/population-non-couverte';
+      },
+    });
+  }
 }
 
 function ensureSpatialAnalysisLayerLoaded(layerKey) {
@@ -3901,6 +3981,9 @@ function bindDashboardDetailFeature(feature, layer, layerKey) {
   if (layer.bindPopup) {
     layer.bindPopup(`<strong>${escapeHtml(getFeatureProperty(properties, ['nom', 'name']))}</strong>`);
   }
+  if (typeof window !== 'undefined' && window.SigMapTooltips?.bind) {
+    window.SigMapTooltips.bind(layer, feature || properties, layerKey, { interactive: false });
+  }
   layer.on('click', () => selectDashboardDetailEntity(featureId, layerKey, properties));
 }
 
@@ -4749,9 +4832,10 @@ function onFdsuProgramSiteEachFeature(feature, layer, layerKey) {
     layer.bindPopup(popupHtml, { maxWidth: 240, className: 'sites-40-leaflet-popup' });
   }
 
+  renderSmartTooltip(feature, layer, layerKey);
+
   layer.on('mouseover', () => {
     highlightMapFeature(layerKey, feature, layer);
-    renderSmartTooltip(feature, layer, layerKey);
   });
 
   layer.on('mouseout', () => {
@@ -4764,6 +4848,15 @@ function onFdsuProgramSiteEachFeature(feature, layer, layerKey) {
     }
     selectMapFeature(layerKey, feature, layer, { zoom: true });
     if (cartographyState.map?.closePopup) cartographyState.map.closePopup();
+    const siteId = properties.business_id || properties.site_code || properties.code || properties.id;
+    const program = properties.programme || properties.program_code
+      || (layerKey === 'sites_300' ? 'sites_300' : (layerKey === 'sites_40' ? 'sites_40' : null));
+    if (siteId && typeof window.openDecisionCase === 'function') {
+      window.openDecisionCase('site', siteId, program);
+    } else if (siteId) {
+      const qs = program ? `?program_code=${encodeURIComponent(program)}` : '';
+      window.location.hash = `decision-case/site/${encodeURIComponent(siteId)}${qs}`;
+    }
   });
 }
 
@@ -4788,9 +4881,10 @@ function onGeoEachFeature(feature, layer, layerKey) {
     `, { maxWidth: 280, className: 'decision-map-popup-wrapper' });
   }
 
+  renderSmartTooltip(feature, layer, layerKey);
+
   layer.on('mouseover', () => {
     highlightMapFeature(layerKey, feature, layer);
-    renderSmartTooltip(feature, layer, layerKey);
   });
 
   layer.on('mouseout', () => {
@@ -4813,6 +4907,10 @@ function onGeoEachFeature(feature, layer, layerKey) {
       L.DomEvent.stopPropagation(event.originalEvent);
     }
     openEntityProfile(layerKey, properties, feature);
+    if (layerKey === 'territoires' || layerKey === 'territory') {
+      const tid = properties.territoire_id || properties.id || properties.code || properties.nom;
+      if (tid) window.location.hash = `territorial-intelligence/${encodeURIComponent(tid)}`;
+    }
   });
 }
 
@@ -5085,6 +5183,11 @@ function buildCompactTooltipHtml(feature, layerKey) {
 
 function renderSmartTooltip(feature, layer, layerKey) {
   if (!layer?.bindTooltip) return;
+  if (typeof window !== 'undefined' && window.SigMapTooltips?.bind) {
+    // Tooltip only — le clic métier reste géré par onEachFeature (fiche / sélection)
+    window.SigMapTooltips.bind(layer, feature, layerKey, { interactive: false });
+    return;
+  }
   layer.bindTooltip(buildCompactTooltipHtml(feature, layerKey), {
     sticky: false,
     direction: 'top',
@@ -5827,9 +5930,7 @@ function onNationalGeoEachFeature(feature, layer, layerKey) {
     `);
   }
 
-  layer.on('mouseover', () => {
-    renderSmartTooltip(feature, layer, layerKey);
-  });
+  renderSmartTooltip(feature, layer, layerKey);
 
   layer.on('click', (event) => {
     if (event?.originalEvent && typeof L !== 'undefined') {
@@ -9548,12 +9649,25 @@ function getRouteFromHash() {
 function getModuleFromRoute(route) {
   const raw = String(route || '').trim();
   if (raw.startsWith('decision-detail')) return 'decision_detail';
-  return ROUTE_TO_MODULE[raw] || 'dashboard';
+  if (raw.startsWith('decision-case') || raw.startsWith('spatial-impact') || raw.startsWith('coverage-detail') || raw.startsWith('ccn-detail')) {
+    return 'decision_experience';
+  }
+  if (raw.startsWith('territorial-intelligence/')) return 'territorial_intelligence';
+  const base = raw.split('?')[0].split('/')[0];
+  return ROUTE_TO_MODULE[raw] || ROUTE_TO_MODULE[base] || 'dashboard';
 }
 
 function navigateTo(moduleOrRoute) {
   const raw = String(moduleOrRoute || '').trim();
-  if (raw.startsWith('decision-detail/') || raw.includes('/')) {
+  if (
+    raw.startsWith('decision-detail/')
+    || raw.startsWith('decision-case/')
+    || raw.startsWith('spatial-impact/')
+    || raw.startsWith('coverage-detail/')
+    || raw.startsWith('ccn-detail/')
+    || raw.startsWith('territorial-intelligence/')
+    || raw.includes('/')
+  ) {
     if (getRouteFromHash() === raw) {
       setActiveModule(getModuleFromRoute(raw));
       return;

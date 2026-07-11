@@ -660,10 +660,14 @@ def _action_label(action_id: str) -> str:
         "export_excel": "Exporter Excel",
         "export_geojson": "Exporter GeoJSON",
         "open_cartography": "Ouvrir dans Cartographie",
-        "open_ti": "Ouvrir Territorial Intelligence",
+        "open_ti": "Ouvrir l'intelligence territoriale",
+        "open_nsme_map": "Voir sur la carte (correspondances)",
+        "view_matched_needs": "Voir les besoins desservis",
+        "view_population_impact": "Voir la population impactée",
+        "explain_match": "Expliquer la correspondance",
         "explain": "Expliquer",
         "prepare_mission": "Préparer une mission",
-        "simulate_investment": "Simuler un investissement",
+        "simulate_investment": "Préparer une simulation future",
     }
     return labels.get(action_id, action_id)
 

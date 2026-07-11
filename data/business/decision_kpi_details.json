@@ -38,7 +38,7 @@
       "chart_types": ["bars_province", "bars_program", "priority_split"],
       "list_columns": ["site_name", "province", "territoire", "program_code", "population", "priority_level", "priority_score"],
       "filters": ["province", "territoire", "programme", "priority_level", "q"],
-      "actions": ["export_excel", "export_geojson", "open_cartography", "open_ti", "explain", "prepare_mission"],
+      "actions": ["export_excel", "export_geojson", "open_cartography", "open_ti", "view_matched_needs", "view_population_impact", "explain_match", "open_nsme_map", "explain", "prepare_mission"],
       "explain_mode": "sites_doctrine",
       "executive_objective": "Suivre le stock national de sites FDSU."
     },
@@ -59,7 +59,7 @@
       "chart_types": ["bars_province", "bars_territory", "priority_split", "bars_program"],
       "list_columns": ["site_name", "province", "territoire", "program_code", "priority_level", "priority_score", "population"],
       "filters": ["province", "territoire", "programme", "priority_level", "q"],
-      "actions": ["export_excel", "export_geojson", "open_cartography", "open_ti", "explain", "prepare_mission", "simulate_investment"],
+      "actions": ["export_excel", "export_geojson", "open_cartography", "open_ti", "view_matched_needs", "view_population_impact", "explain_match", "open_nsme_map", "explain", "prepare_mission", "simulate_investment"],
       "explain_mode": "sites_doctrine",
       "executive_objective": "Identifier où investir en priorité."
     },
@@ -80,7 +80,7 @@
       "chart_types": ["bars_province", "bars_territory", "bars_program"],
       "list_columns": ["site_name", "province", "territoire", "program_code", "priority_score", "population", "distance"],
       "filters": ["province", "territoire", "programme", "q"],
-      "actions": ["export_excel", "export_geojson", "open_cartography", "open_ti", "explain", "prepare_mission", "simulate_investment"],
+      "actions": ["export_excel", "export_geojson", "open_cartography", "open_ti", "view_matched_needs", "view_population_impact", "explain_match", "open_nsme_map", "explain", "prepare_mission", "simulate_investment"],
       "explain_mode": "sites_doctrine",
       "executive_objective": "Traiter les urgences territoriales."
     },
