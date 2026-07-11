@@ -104,7 +104,9 @@
           btn.click();
           return;
         }
-        if (key && typeof global.openDecisionDetail === 'function') {
+        if (key && typeof global.openDecisionWorkspace === 'function') {
+          global.openDecisionWorkspace({ kpiKey: key, returnHash: 'decision-view' });
+        } else if (key && typeof global.openDecisionDetail === 'function') {
           global.openDecisionDetail(key);
         } else if (key) {
           global.location.hash = `decision-detail/${encodeURIComponent(key.replace(/_/g, '-'))}`;
@@ -135,6 +137,10 @@
         const route = card.getAttribute('data-detail-route');
         if (route) {
           global.location.hash = String(route).replace(/^#/, '');
+          return;
+        }
+        if (key && typeof global.openDecisionWorkspace === 'function') {
+          global.openDecisionWorkspace({ kpiKey: key, returnHash: 'decision-view' });
           return;
         }
         if (typeof global.openDecisionDetail === 'function' && key) {

@@ -153,7 +153,9 @@ const ROUTE_TO_MODULE = {
   'salle-pilotage': 'salle_pilotage',
   salle_pilotage: 'salle_pilotage',
   'decision-detail': 'decision_detail',
+  'decision-workspace': 'decision_detail',
   decision_detail: 'decision_detail',
+  decision_workspace: 'decision_detail',
   'decision-case': 'decision_experience',
   'spatial-impact': 'decision_experience',
   'coverage-detail': 'decision_experience',
@@ -804,6 +806,9 @@ function setActiveModule(moduleKey) {
     }
   } else {
     document.body.classList.remove('decision-detail-open');
+    if (typeof window.DecisionWorkspace?.detach === 'function') {
+      window.DecisionWorkspace.detach();
+    }
     const detailPanel = document.querySelector('#decision-detail-panel');
     if (detailPanel) {
       detailPanel.classList.remove('is-loading');
@@ -9648,7 +9653,7 @@ function getRouteFromHash() {
 
 function getModuleFromRoute(route) {
   const raw = String(route || '').trim();
-  if (raw.startsWith('decision-detail')) return 'decision_detail';
+  if (raw.startsWith('decision-detail') || raw.startsWith('decision-workspace')) return 'decision_detail';
   if (raw.startsWith('decision-case') || raw.startsWith('spatial-impact') || raw.startsWith('coverage-detail') || raw.startsWith('ccn-detail')) {
     return 'decision_experience';
   }
@@ -9661,6 +9666,7 @@ function navigateTo(moduleOrRoute) {
   const raw = String(moduleOrRoute || '').trim();
   if (
     raw.startsWith('decision-detail/')
+    || raw.startsWith('decision-workspace/')
     || raw.startsWith('decision-case/')
     || raw.startsWith('spatial-impact/')
     || raw.startsWith('coverage-detail/')

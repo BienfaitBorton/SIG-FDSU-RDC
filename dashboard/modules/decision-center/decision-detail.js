@@ -85,8 +85,9 @@
   }
 
   function getKpiFromHash() {
-    const hash = (global.location.hash || '').replace(/^#/, '');
-    if (!hash.startsWith('decision-detail')) return null;
+    const hash = (global.location.hash || '').replace(/^#/, '').split('?')[0];
+    // Alias Decision Workspace v1.1 — même contrat que decision-detail
+    if (!hash.startsWith('decision-detail') && !hash.startsWith('decision-workspace')) return null;
     const parts = hash.split('/');
     return resolveKpiCode(parts[1] || '');
   }
@@ -326,6 +327,9 @@
         if (global.SigMapTooltips?.bind) {
           global.SigMapTooltips.bind(marker, props, kind, {
             onClick: () => {
+              if (global.DecisionWorkspace?.bindMapFeatureSelection) {
+                global.DecisionWorkspace.bindMapFeatureSelection(props);
+              }
               const id = props.id || props.site_id || props.code;
               if (id && typeof global.openDecisionCase === 'function') {
                 global.openDecisionCase('site', id, props.program_code);
@@ -420,6 +424,7 @@
 
   function leaveDetailWorkspace() {
     document.body.classList.remove('decision-detail-open');
+    if (global.DecisionWorkspace?.detach) global.DecisionWorkspace.detach();
     setLoading(false);
   }
 
@@ -441,6 +446,9 @@
       renderExplain(payload.explain);
       renderActions(payload.actions);
       await renderMap(kpiCode);
+      if (global.DecisionWorkspace?.syncFromDetailPayload) {
+        global.DecisionWorkspace.syncFromDetailPayload(payload, kpiCode);
+      }
       setStatus(`${payload.header?.title || kpiCode} — prêt`);
     } catch (err) {
       setStatus(`Erreur : ${err.message}`, true);
@@ -602,6 +610,14 @@
         const id = openBtn.getAttribute('data-open-item');
         const program = openBtn.getAttribute('data-program');
         if (id) {
+          if (global.DecisionWorkspace?.selectEntity) {
+            global.DecisionWorkspace.selectEntity({
+              id,
+              site_id: id,
+              name: openBtn.closest('tr')?.querySelector('td')?.textContent?.trim() || `Site ${id}`,
+              program_code: program || undefined,
+            }, { applyFilters: false });
+          }
           const programQs = program ? `?program_code=${encodeURIComponent(program)}` : '';
           if (typeof global.openDecisionCase === 'function') {
             global.openDecisionCase('site', id, program || undefined);
@@ -626,6 +642,9 @@
     clearResidualOverlays();
     const code = resolveKpiCode(kpiKey);
     const slug = ROUTE_SLUGS[code] || String(kpiKey).replace(/_/g, '-');
+    if (global.DecisionWorkspace?.attach) {
+      global.DecisionWorkspace.attach({ kpiCode: code, returnHash: 'decision-view' });
+    }
     global.location.hash = `decision-detail/${slug}`;
   }
 
@@ -633,6 +652,15 @@
     bindEvents();
     state.initialized = true;
     clearResidualOverlays();
+    if (global.DecisionWorkspace?.attach) {
+      const ctx = global.DecisionWorkspace.restoreContextFromStorage?.();
+      global.DecisionWorkspace.attach({
+        kpiCode: getKpiFromHash() || ctx?.kpiKey,
+        returnHash: ctx?.returnHash || 'decision-view',
+        trail: ctx?.trail,
+      });
+      if (ctx?.selection) global.DecisionWorkspace.selectEntity(ctx.selection, { applyFilters: false });
+    }
     const kpi = getKpiFromHash();
     if (kpi) {
       state.offset = 0;
@@ -644,6 +672,13 @@
   }
 
   global.openDecisionDetail = openDecisionDetail;
+  global.openDecisionWorkspace = function openDecisionWorkspace(context) {
+    if (global.DecisionWorkspace?.open) {
+      global.DecisionWorkspace.open(context || {});
+      return;
+    }
+    if (context?.kpiKey || context?.kpiCode) openDecisionDetail(context.kpiKey || context.kpiCode);
+  };
   global.initializeDecisionDetailModule = initializeDecisionDetailModule;
   global.decisionDetailState = state;
   global.resolveDecisionDetailKpi = resolveKpiCode;

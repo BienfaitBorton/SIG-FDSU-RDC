@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="modules/territorial-intelligence/territorial-intelligence.css" />
   <link rel="stylesheet" href="modules/shared/executive-dashboard/executive-dashboard.css" />
   <link rel="stylesheet" href="modules/shared/ux-premium/ux-premium.css" />
+  <link rel="stylesheet" href="modules/shared/decision-workspace/decision-workspace.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 </head>
 <body>
@@ -1420,6 +1421,7 @@
             </div>
             <span class="decision-detail-status" id="decision-detail-status" aria-live="polite">Chargement…</span>
           </header>
+          <!-- Decision Workspace chrome injecté par decision-workspace.js (#decision-workspace-chrome) -->
           <div class="decision-detail-loading-overlay" id="decision-detail-loading-overlay" hidden aria-hidden="true" style="display:none"></div>
 
           <section class="decision-detail-header-card" id="decision-detail-header" aria-label="En-tête KPI">
@@ -2168,6 +2170,7 @@
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <script src="modules/shared/map-tooltips.js"></script>
   <script src="modules/shared/ux-premium/ux-premium.js"></script>
+  <script src="modules/shared/decision-workspace/decision-workspace.js"></script>
   <script src="modules/decision-experience/decision-experience.js"></script>
   <!-- decision-center.js avant app.js : app.js boot immédiat (readyState interactive) sinon rate l'init des onglets -->
   <script src="modules/decision-center/decision-center.js"></script>
