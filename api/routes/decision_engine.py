@@ -13,6 +13,7 @@ from api.services import (
     decision_demo_service,
     decision_engine_service,
     decision_kpi_detail_service,
+    decision_scenarios_service,
     explainable_decision_service,
     fdsu_site_priority_service,
     fdsu_sites_import_service,
@@ -100,6 +101,42 @@ def decision_intents() -> dict[str, Any]:
 def demo_scenarios() -> dict[str, Any]:
     _ensure_db_mode()
     return decision_demo_service.get_demo_scenarios()
+
+
+@router.get("/scenarios", summary="Catalogue des scénarios décisionnels v1.2")
+def list_decision_scenarios() -> dict[str, Any]:
+    _ensure_db_mode()
+    return decision_scenarios_service.list_scenarios()
+
+
+@router.get("/scenarios/{scenario_id}", summary="Métadonnées d’un scénario décisionnel")
+def get_decision_scenario(scenario_id: str) -> dict[str, Any]:
+    _ensure_db_mode()
+    item = decision_scenarios_service.get_scenario(scenario_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Scénario introuvable.")
+    return {"scenario": item, "_meta": {"version": decision_scenarios_service.ENGINE_VERSION}}
+
+
+@router.get("/scenarios/{scenario_id}/run", summary="Exécuter un scénario décisionnel (orchestration)")
+def run_decision_scenario(
+    scenario_id: str,
+    program_code: str | None = Query(None),
+    territory_id: str | None = Query(None),
+    asset_id: str | None = Query(None),
+    site_id: str | None = Query(None),
+) -> dict[str, Any]:
+    _ensure_db_mode()
+    if not decision_scenarios_service.get_scenario(scenario_id):
+        raise HTTPException(status_code=404, detail="Scénario introuvable.")
+    context = {
+        "program_code": program_code,
+        "territory_id": territory_id,
+        "asset_id": asset_id or site_id,
+        "site_id": site_id or asset_id,
+    }
+    context = {k: v for k, v in context.items() if v is not None}
+    return decision_scenarios_service.run_scenario(scenario_id, context)
 
 
 def _detail_filters(

@@ -1,0 +1,134 @@
+/**
+ * Decision Scenarios v1.2 — UI métier
+ */
+
+#decision-scenarios-root {
+  display: grid;
+  gap: 14px;
+}
+
+.ds-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.ds-header h3 {
+  margin: 0.2rem 0 0;
+}
+
+#decision-scenarios-status {
+  font-size: 0.82rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+#decision-scenarios-status.is-error {
+  color: #fecaca;
+}
+
+#decision-scenarios-catalog {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.ds-scenario-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: var(--ux-radius, 12px);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.92);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.ds-scenario-card:hover,
+.ds-scenario-card.is-active {
+  border-color: rgba(56, 189, 248, 0.5);
+  transform: translateY(-1px);
+}
+
+.ds-scenario-code {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--edvs-blue, #38bdf8);
+}
+
+.ds-scenario-card strong {
+  font-size: 0.95rem;
+}
+
+.ds-scenario-card span:last-child {
+  font-size: 0.8rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+#decision-scenarios-result {
+  display: grid;
+  gap: 12px;
+}
+
+.ds-result-header h3 {
+  margin: 0.15rem 0;
+}
+
+.ds-question {
+  margin: 0;
+  color: var(--text-muted, #94a3b8);
+}
+
+.ds-block {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(2, 6, 23, 0.35);
+}
+
+.ds-block h4 {
+  margin: 0 0 8px;
+  font-size: 0.92rem;
+}
+
+.ds-reco-list,
+.ds-data-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.ds-reco-list li,
+.ds-data-links li {
+  display: grid;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.7);
+}
+
+.ds-data-links code {
+  font-size: 0.72rem;
+  color: var(--edvs-blue, #38bdf8);
+  word-break: break-all;
+}
+
+.ds-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 960px) {
+  #decision-scenarios-catalog {
+    grid-template-columns: 1fr;
+  }
+}

@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="modules/shared/executive-dashboard/executive-dashboard.css" />
   <link rel="stylesheet" href="modules/shared/ux-premium/ux-premium.css" />
   <link rel="stylesheet" href="modules/shared/decision-workspace/decision-workspace.css" />
+  <link rel="stylesheet" href="modules/shared/decision-scenarios/decision-scenarios.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 </head>
 <body>
@@ -1204,10 +1205,17 @@
           </section>
 
           <section class="decision-center-tab-panel" data-decision-tab-panel="simulations" role="tabpanel" hidden>
-            <div class="decision-center-tab-placeholder">
-              <p class="panel-label">Simulations</p>
-              <h3>Espace Simulations</h3>
-              <p>Structure prête pour les scénarios et simulations d'investissement.</p>
+            <div id="decision-scenarios-root" class="decision-scenarios-root" aria-label="Scénarios décisionnels">
+              <div class="ds-header">
+                <div>
+                  <p class="panel-label">Aide à la décision</p>
+                  <h3>Scénarios décisionnels</h3>
+                  <p>Cas d’usage complets pour le DG, les partenaires et les équipes opérationnelles.</p>
+                </div>
+                <span id="decision-scenarios-status" aria-live="polite">Chargement…</span>
+              </div>
+              <div id="decision-scenarios-catalog" class="ds-catalog" aria-label="Catalogue des scénarios"></div>
+              <div id="decision-scenarios-result" class="ds-result" aria-live="polite"></div>
             </div>
           </section>
 
@@ -2171,6 +2179,7 @@
   <script src="modules/shared/map-tooltips.js"></script>
   <script src="modules/shared/ux-premium/ux-premium.js"></script>
   <script src="modules/shared/decision-workspace/decision-workspace.js"></script>
+  <script src="modules/shared/decision-scenarios/decision-scenarios.js"></script>
   <script src="modules/decision-experience/decision-experience.js"></script>
   <!-- decision-center.js avant app.js : app.js boot immédiat (readyState interactive) sinon rate l'init des onglets -->
   <script src="modules/decision-center/decision-center.js"></script>

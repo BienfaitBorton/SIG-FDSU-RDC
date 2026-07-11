@@ -571,6 +571,11 @@
       if (intentCard) {
         const tab = intentCard.getAttribute('data-target-tab');
         const scenarioId = intentCard.getAttribute('data-scenario-id');
+        const V12 = new Set(['invest_priority', 'ccn_implantation', 'territory_priority', 'investment_impact', 'dg_dossier']);
+        if (scenarioId && V12.has(scenarioId) && typeof global.openDecisionScenario === 'function') {
+          global.openDecisionScenario(scenarioId);
+          return;
+        }
         if (scenarioId) {
           setDemoModeVisible(true);
           const scenario = decisionCenterState.demoScenarios.find((item) => item.id === scenarioId);
@@ -2232,6 +2237,10 @@
       loadCcnDecisionExtensions(false);
     }
 
+    if (tabId === 'simulations' && typeof global.initializeDecisionScenariosModule === 'function') {
+      global.initializeDecisionScenariosModule();
+    }
+
     if (tabId === 'priorisation') {
       loadDecisionEnginePanel(false);
       global.setTimeout(() => {
@@ -2389,6 +2398,7 @@
 
   global.decisionCenterState = decisionCenterState;
   global.initializeDecisionCenterModule = initializeDecisionCenterModule;
+  global.setDecisionCenterTab = setDecisionCenterTab;
   global.loadNationalPanel = loadNationalPanel;
   global.loadFdsuBusinessArchitecture = loadBusinessArchitecturePanel;
   global.loadFdsuSites40Program = loadSites40ProgramPanel;
