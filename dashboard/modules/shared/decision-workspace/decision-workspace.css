@@ -1,0 +1,172 @@
+/**
+ * Decision Workspace v1.1 — chrome partagé (fil d’analyse, sync, sections)
+ * Tokens alignés UX Premium / EDVS.
+ */
+
+.dw-chrome {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border-radius: var(--ux-radius, 12px);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.88));
+}
+
+.dw-trail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.dw-trail-step {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(30, 41, 59, 0.85);
+  color: var(--text, #e2e8f0);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.dw-trail-step:hover {
+  border-color: rgba(56, 189, 248, 0.45);
+  transform: translateY(-1px);
+}
+
+.dw-trail-step.is-current {
+  border-color: rgba(56, 189, 248, 0.55);
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.2);
+}
+
+.dw-trail-level {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted, #94a3b8);
+}
+
+.dw-trail-step strong {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.dw-trail-sep {
+  color: var(--text-muted, #94a3b8);
+  font-size: 0.85rem;
+  padding: 0 2px;
+}
+
+.dw-sync {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.dw-sections {
+  display: grid;
+  gap: 10px;
+}
+
+.dw-section {
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(2, 6, 23, 0.35);
+  padding: 10px 12px;
+}
+
+.dw-section h3 {
+  margin: 0 0 8px;
+  font-size: 0.92rem;
+}
+
+.dw-section-scaffold {
+  border-style: dashed;
+}
+
+.dw-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.dw-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.dw-kicker {
+  margin: 0;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted, #94a3b8);
+}
+
+.dw-summary-card strong {
+  font-size: 0.95rem;
+}
+
+.dw-summary-card span,
+.dw-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.dw-history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.dw-history-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.82rem;
+}
+
+.dw-history-list time {
+  color: var(--text-muted, #94a3b8);
+  font-size: 0.75rem;
+}
+
+/* Sélection tableau synchronisée */
+#decision-detail-panel.is-decision-workspace #decision-detail-table-body tr.is-selected,
+#decision-detail-table-body tr[data-dw-selected="true"] {
+  background: rgba(45, 212, 191, 0.14);
+  box-shadow: inset 3px 0 0 #2dd4bf;
+}
+
+#decision-detail-panel.is-decision-workspace #decision-detail-table-body tr {
+  cursor: pointer;
+}
+
+body.decision-workspace-open .decision-detail-topbar-copy .panel-label::after {
+  content: " · Espace d’analyse";
+  font-weight: 500;
+  color: var(--edvs-blue, #38bdf8);
+}
+
+@media (max-width: 960px) {
+  .dw-trail-step {
+    padding: 5px 8px;
+  }
+
+  .dw-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
