@@ -71,3 +71,21 @@ def test_vocabulary_no_decision_detail_workspace():
     html = (ROOT / "dashboard/index.html").read_text(encoding="utf-8")
     assert "Decision Detail Workspace" not in html
     assert "Analyse détaillée" in html or "Dossier de décision" in html
+
+
+def test_spatial_impact_resilience_patterns():
+    """Explain KO ne doit plus bloquer toute la vue via Promise.all."""
+    dxl = (ROOT / "dashboard/modules/decision-experience/decision-experience.js").read_text(encoding="utf-8")
+    html = (ROOT / "dashboard/index.html").read_text(encoding="utf-8")
+    assert "Promise.allSettled" in dxl
+    assert "tracedFetch" in dxl
+    assert "timeoutMs" in dxl
+    assert "loadSpatialImpact" in dxl
+    assert "dxl-section-services" in html
+    assert "État des services" in html
+    assert "Analyse explicative indisponible" in dxl
+    assert "Les données d’impact restent consultables" in dxl or "Les données d'impact restent consultables" in dxl
+    assert "const [needs, impact, explain, mapPayload] = await Promise.all([" not in dxl
+    assert "softLoadingHtml" in dxl
+    assert "AbortController" in dxl
+    assert "Promise.resolve(boot).catch" in dxl

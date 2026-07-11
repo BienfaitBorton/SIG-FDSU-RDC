@@ -7,6 +7,16 @@
 (function initDecisionExperienceLayer(global) {
   const API_BASE = `${global.location.protocol}//${global.location.hostname}:8001`;
 
+  const SERVICE_LABELS = {
+    impact: 'Impact spatial',
+    needs: 'Needs',
+    explain: 'Explain',
+    coverage: 'Coverage',
+    decisionCase: 'Decision Engine',
+    statistics: 'Statistics',
+    map: 'Carte NSME',
+  };
+
   const state = {
     initialized: false,
     mode: null, // decision-case | spatial-impact
@@ -14,6 +24,7 @@
     assetId: null,
     programCode: null,
     payload: null,
+    services: null,
     map: null,
     layer: null,
     loading: false,
@@ -34,11 +45,163 @@
     return new Intl.NumberFormat('fr-FR').format(n);
   }
 
-  async function fetchJson(path) {
+  function summarizePayload(payload) {
+    if (payload == null) return null;
+    if (typeof payload !== 'object') return { type: typeof payload };
+    if (Array.isArray(payload)) return { type: 'array', length: payload.length };
+    const keys = Object.keys(payload).slice(0, 12);
+    return {
+      type: 'object',
+      keys,
+      featureCount: Array.isArray(payload.features) ? payload.features.length : undefined,
+      matchCount: payload.match_count ?? (Array.isArray(payload.matches) ? payload.matches.length : undefined),
+    };
+  }
+
+  function humanizeFetchError(error, status) {
+    const raw = String(error?.message || error || 'erreur inconnue');
+    if (/failed to fetch|networkerror|load failed|network request failed/i.test(raw)) {
+      return `Connexion impossible vers le service (${API_BASE}). Vérifiez que l’API est démarrée et accessible.`;
+    }
+    if (status) return `Réponse HTTP ${status}`;
+    return raw;
+  }
+
+  /**
+   * Fetch tracé : URL, status, payload, erreur, durée (ms).
+   * Timeout par service pour ne jamais bloquer toute la vue (ex. /explain lent).
+   * Ne lance jamais d’exception — retourne { ok, status, data, error, ms, url, service }.
+   */
+  async function tracedFetch(path, serviceKey, options = {}) {
     const url = path.startsWith('http') ? path : `${API_BASE}${path}`;
-    const response = await fetch(url, { headers: { Accept: 'application/json' }, cache: 'no-store' });
-    if (!response.ok) throw new Error(`Données indisponibles (${response.status})`);
-    return response.json();
+    const started = global.performance?.now?.() ?? Date.now();
+    const label = SERVICE_LABELS[serviceKey] || serviceKey || 'Service';
+    const logBase = { service: serviceKey, label, url };
+    const timeoutMs = Number(options.timeoutMs) > 0
+      ? Number(options.timeoutMs)
+      : (serviceKey === 'explain' ? 12000 : 20000);
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timer = controller
+      ? global.setTimeout(() => controller.abort(), timeoutMs)
+      : null;
+
+    console.info('[DXL fetch] →', { ...logBase, phase: 'start', timeoutMs });
+
+    try {
+      const response = await fetch(url, {
+        headers: { Accept: 'application/json' },
+        cache: 'no-store',
+        signal: controller?.signal,
+      });
+      const ms = Math.round((global.performance?.now?.() ?? Date.now()) - started);
+      const contentType = response.headers.get('content-type') || '';
+      let data = null;
+      let parseError = null;
+      try {
+        if (contentType.includes('application/json')) {
+          data = await response.json();
+        } else {
+          const text = await response.text();
+          data = text ? { _non_json: true, preview: text.slice(0, 200) } : null;
+        }
+      } catch (err) {
+        parseError = err;
+      }
+
+      if (!response.ok) {
+        const error = humanizeFetchError(
+          parseError || new Error(`HTTP ${response.status}`),
+          response.status,
+        );
+        console.warn('[DXL fetch] ✗', {
+          ...logBase,
+          status: response.status,
+          ms,
+          payload: summarizePayload(data),
+          error,
+        });
+        return {
+          ok: false,
+          status: 'error',
+          httpStatus: response.status,
+          data: null,
+          error,
+          ms,
+          url,
+          service: serviceKey,
+          label,
+        };
+      }
+
+      if (parseError) {
+        const error = `Réponse illisible : ${parseError.message}`;
+        console.warn('[DXL fetch] ✗', { ...logBase, status: response.status, ms, error });
+        return {
+          ok: false,
+          status: 'error',
+          httpStatus: response.status,
+          data: null,
+          error,
+          ms,
+          url,
+          service: serviceKey,
+          label,
+        };
+      }
+
+      console.info('[DXL fetch] ✓', {
+        ...logBase,
+        status: response.status,
+        ms,
+        payload: summarizePayload(data),
+        error: null,
+      });
+      return {
+        ok: true,
+        status: 'loaded',
+        httpStatus: response.status,
+        data,
+        error: null,
+        ms,
+        url,
+        service: serviceKey,
+        label,
+      };
+    } catch (err) {
+      const ms = Math.round((global.performance?.now?.() ?? Date.now()) - started);
+      const aborted = err?.name === 'AbortError';
+      const error = aborted
+        ? `Délai dépassé (${timeoutMs} ms) — le service ${label} n’a pas répondu à temps.`
+        : humanizeFetchError(err);
+      console.error('[DXL fetch] ✗', {
+        ...logBase,
+        status: null,
+        ms,
+        payload: null,
+        error,
+        raw: String(err?.message || err),
+        aborted,
+      });
+      return {
+        ok: false,
+        status: 'error',
+        httpStatus: null,
+        data: null,
+        error,
+        ms,
+        url,
+        service: serviceKey,
+        label,
+      };
+    } finally {
+      if (timer) global.clearTimeout(timer);
+    }
+  }
+
+  async function fetchJson(path) {
+    const result = await tracedFetch(path, 'generic');
+    if (!result.ok) throw new Error(result.error || 'Données indisponibles');
+    return result.data;
   }
 
   function parseHash() {
@@ -88,6 +251,53 @@
     root.style.pointerEvents = 'auto';
   }
 
+  function serviceIcon(status) {
+    if (status === 'loaded') return '🟢';
+    if (status === 'loading') return '🟡';
+    if (status === 'error') return '🔴';
+    return '🟡';
+  }
+
+  function renderServicesPanel(services) {
+    const host = document.querySelector('#dxl-section-services');
+    const list = document.querySelector('#dxl-services-list');
+    if (!host || !list) return;
+    const order = ['impact', 'needs', 'explain', 'coverage', 'decisionCase', 'statistics', 'map'];
+    const entries = order
+      .filter((key) => services[key])
+      .map((key) => {
+        const svc = services[key];
+        const detail = svc.status === 'loaded'
+          ? `OK${svc.ms != null ? ` · ${svc.ms} ms` : ''}`
+          : (svc.error || 'En attente');
+        return `
+          <li data-service="${escapeHtml(key)}" data-status="${escapeHtml(svc.status)}">
+            <span class="dxl-svc-icon" aria-hidden="true">${serviceIcon(svc.status)}</span>
+            <span class="dxl-svc-meta">
+              <span class="dxl-svc-name">${escapeHtml(svc.label || SERVICE_LABELS[key] || key)}</span>
+              <span class="dxl-svc-detail">${escapeHtml(detail)}</span>
+            </span>
+          </li>
+        `;
+      });
+    list.innerHTML = entries.join('');
+    host.hidden = entries.length === 0;
+  }
+
+  function softErrorHtml(title, detail, hint) {
+    return `
+      <p class="dxl-panel-soft-error">
+        <strong>${escapeHtml(title)}</strong><br>
+        ${escapeHtml(detail || '')}
+        ${hint ? `<br>${escapeHtml(hint)}` : ''}
+      </p>
+    `;
+  }
+
+  function softLoadingHtml(title) {
+    return `<p class="dxl-empty">${escapeHtml(title)}</p>`;
+  }
+
   function ensureMap() {
     const host = document.querySelector('#dxl-map');
     if (!host || !global.L) return null;
@@ -126,7 +336,6 @@
           global.SigMapTooltips.bind(marker, props, tipKind, {
             onClick: () => {
               if (kind === 'linked_locality') return;
-              // rester dans le dossier
             },
           });
         }
@@ -300,14 +509,356 @@
     `;
   }
 
+  function emptyService(key) {
+    return {
+      status: 'loading',
+      data: null,
+      error: null,
+      ms: null,
+      url: null,
+      httpStatus: null,
+      service: key,
+      label: SERVICE_LABELS[key] || key,
+    };
+  }
+
+  /**
+   * Charge l’impact spatial avec statut individuel par service.
+   * Retourne { impact, needs, statistics, coverage, explain, map, decisionCase }.
+   * Affichage progressif : les panneaux utiles s’affichent dès qu’un service répond.
+   */
+  async function loadSpatialImpactData(assetType, assetId) {
+    const id = encodeURIComponent(assetId);
+    const services = {
+      impact: emptyService('impact'),
+      needs: emptyService('needs'),
+      explain: emptyService('explain'),
+      coverage: emptyService('coverage'),
+      decisionCase: emptyService('decisionCase'),
+      statistics: emptyService('statistics'),
+      map: emptyService('map'),
+    };
+    state.services = services;
+    renderServicesPanel(services);
+
+    const requests = [
+      { key: 'needs', path: `/api/spatial-matching/assets/${id}/needs?limit=100` },
+      { key: 'impact', path: `/api/spatial-matching/assets/${id}/impact` },
+      { key: 'explain', path: `/api/spatial-matching/assets/${id}/explain`, timeoutMs: 12000 },
+      { key: 'map', path: `/api/spatial-matching/map?asset_id=${id}` },
+      { key: 'statistics', path: '/api/spatial-matching/statistics' },
+      { key: 'decisionCase', path: `/api/decision/case/${id}?asset_type=${encodeURIComponent(assetType === 'site' ? 'site' : assetType)}` },
+    ];
+
+    const refreshCoverageDerived = () => {
+      const impactData = services.impact.data;
+      if (services.impact.status === 'loaded' && impactData?.coverage_gain) {
+        services.coverage = {
+          status: 'loaded',
+          data: impactData.coverage_gain,
+          error: null,
+          ms: services.impact.ms,
+          url: services.impact.url,
+          httpStatus: services.impact.httpStatus,
+          service: 'coverage',
+          label: SERVICE_LABELS.coverage,
+        };
+      } else if (services.impact.status === 'error') {
+        services.coverage = {
+          status: 'error',
+          data: null,
+          error: 'Couverture indisponible faute d’impact spatial.',
+          ms: null,
+          url: null,
+          httpStatus: null,
+          service: 'coverage',
+          label: SERVICE_LABELS.coverage,
+        };
+      } else if (services.impact.status === 'loaded') {
+        services.coverage = {
+          status: 'loaded',
+          data: impactData?.impact || null,
+          error: null,
+          ms: services.impact.ms,
+          url: services.impact.url,
+          httpStatus: services.impact.httpStatus,
+          service: 'coverage',
+          label: SERVICE_LABELS.coverage,
+        };
+      }
+    };
+
+    const paint = () => {
+      try {
+        refreshCoverageDerived();
+        renderServicesPanel(services);
+        renderSpatialImpactWorkspace(services, assetId);
+        const summary = summarizeServiceFailures(services);
+        const stillLoading = Object.values(services).some((s) => s.status === 'loading');
+        if (stillLoading) {
+          setStatus(`Chargement… ${summary.text}`, summary.isError);
+        } else {
+          setStatus(summary.text, summary.isError);
+        }
+      } catch (paintErr) {
+        console.error('[DXL] paint spatial-impact', paintErr);
+        setStatus(`Affichage partiel — ${humanizeFetchError(paintErr)}`, true);
+      }
+    };
+
+    await Promise.allSettled(
+      requests.map(async ({ key, path, timeoutMs }) => {
+        const result = await tracedFetch(path, key, timeoutMs ? { timeoutMs } : {});
+        services[key] = {
+          status: result.ok ? 'loaded' : 'error',
+          data: result.data,
+          error: result.error,
+          ms: result.ms,
+          url: result.url,
+          httpStatus: result.httpStatus,
+          service: key,
+          label: SERVICE_LABELS[key] || key,
+        };
+        paint();
+        return services[key];
+      }),
+    );
+
+    refreshCoverageDerived();
+    renderServicesPanel(services);
+    return services;
+  }
+
+  function renderSpatialImpactWorkspace(services, assetId) {
+    const needs = services.needs?.data;
+    const impact = services.impact?.data;
+    const explain = services.explain?.data;
+    const mapPayload = services.map?.data;
+    const decisionCase = services.decisionCase?.data;
+    const statistics = services.statistics?.data;
+
+    const title = document.querySelector('#dxl-title');
+    if (title) {
+      const name = needs?.asset?.site_name || decisionCase?.asset?.site_name || assetId;
+      title.textContent = `Impact spatial — ${name}`;
+    }
+
+    // Résumé : ne dépend pas d’explain
+    const summarySource = {
+      asset: {
+        site_code: assetId,
+        site_name: needs?.asset?.site_name || decisionCase?.asset?.site_name || assetId,
+        program_code: needs?.asset?.program_code || decisionCase?.asset?.program_code,
+        priority_level_label: decisionCase?.asset?.priority_level_label || decisionCase?.priority_level,
+        priority_score: decisionCase?.asset?.priority_score || decisionCase?.score,
+      },
+      summary: explain?.summary
+        || (services.impact.status === 'loaded'
+          ? 'Impact spatial calculé à partir des correspondances Actifs ↔ Besoins.'
+          : 'Dossier d’impact spatial — certaines sources sont encore en cours de consolidation.'),
+      confidence_level: explain?.confidence_level || impact?.impact?.confidence_level,
+      recommendation_text: explain?.summary || decisionCase?.recommendation_text,
+    };
+    renderExecutiveSummary(summarySource, impact?.impact);
+
+    // Impact / NDCI / population — indépendant
+    const impactHost = document.querySelector('#dxl-section-impact');
+    if (impactHost) {
+      if (services.impact.status === 'loaded' && impact) {
+        renderImpact({}, impact);
+        const statsBits = [];
+        if (services.coverage.status === 'loaded' && services.coverage.data) {
+          const gain = services.coverage.data;
+          statsBits.push(`<article><span>Couverture — gain NDCI</span><strong>${escapeHtml(gain.ndci_gain_estimated?.value ?? gain.value ?? '—')}</strong><small>${escapeHtml(gain.ndci_gain_estimated?.status || gain.status || 'estime')}</small></article>`);
+        }
+        if (services.statistics.status === 'loaded' && statistics) {
+          statsBits.push(`<article><span>Statistiques nationales</span><strong>${escapeHtml(formatNumber(statistics.matches_total))}</strong><small>correspondances NSME</small></article>`);
+        }
+        if (statsBits.length) {
+          impactHost.insertAdjacentHTML('beforeend', `<div class="dxl-kpi-strip" style="margin-top:0.75rem">${statsBits.join('')}</div>`);
+        }
+      } else if (services.impact.status === 'loading') {
+        impactHost.innerHTML = softLoadingHtml('Chargement de l’impact spatial…');
+      } else {
+        impactHost.innerHTML = softErrorHtml(
+          'Impact spatial indisponible',
+          services.impact.error || 'Le service d’impact n’a pas répondu.',
+          'Les autres volets (besoins, carte, explication) restent affichés s’ils sont disponibles.',
+        );
+      }
+    }
+
+    // Carte — message d’état sans dupliquer
+    const mapSection = document.querySelector('#dxl-map')?.closest('.dxl-section');
+    mapSection?.querySelectorAll(':scope > .dxl-panel-soft-error').forEach((el) => el.remove());
+    try {
+      if (services.map.status === 'loaded' && mapPayload) {
+        renderMapFromNsme(mapPayload);
+      } else {
+        ensureMap();
+        if (mapSection && services.map.status === 'error') {
+          const note = document.createElement('p');
+          note.className = 'dxl-panel-soft-error';
+          note.innerHTML = `<strong>Carte indisponible</strong> — ${escapeHtml(services.map.error || 'Le service cartographique n’a pas répondu.')}`;
+          document.querySelector('#dxl-map')?.before(note);
+        }
+      }
+    } catch (mapErr) {
+      console.warn('[DXL] rendu carte', mapErr);
+      if (mapSection) {
+        const note = document.createElement('p');
+        note.className = 'dxl-panel-soft-error';
+        note.innerHTML = '<strong>Carte indisponible</strong> — erreur de rendu cartographique.';
+        document.querySelector('#dxl-map')?.before(note);
+      }
+    }
+
+    // Explain — indépendant (ne masque jamais impact / carte / besoins)
+    const why = document.querySelector('#dxl-section-why');
+    if (why) {
+      if (services.explain.status === 'loaded' && explain) {
+        why.innerHTML = `
+          <p class="dxl-kicker">Explication de la correspondance</p>
+          <p>${escapeHtml(explain.summary || '—')}</p>
+          <p>Distance : ${escapeHtml(explain.distance_m ?? '—')} m · Rayon : ${escapeHtml(explain.service_radius_m ?? '—')} m</p>
+          <p>Règle spatiale : ${escapeHtml(explain.spatial_rule || '—')} · Méthode : ${escapeHtml(explain.calculation_method || '—')}</p>
+        `;
+      } else if (services.explain.status === 'loading') {
+        why.innerHTML = softLoadingHtml('Chargement de l’analyse explicative…');
+      } else {
+        why.innerHTML = softErrorHtml(
+          'Analyse explicative indisponible',
+          'Le moteur d’explication n’a pas répondu.',
+          'Les données d’impact restent consultables.',
+        ) + (services.explain?.error ? `<p class="dxl-note">${escapeHtml(services.explain.error)}</p>` : '');
+      }
+    }
+
+    // Needs / localités — indépendant
+    const ctx = document.querySelector('#dxl-section-context');
+    if (ctx) {
+      if (services.needs.status === 'loaded' && needs) {
+        const matches = (needs.matches || []).filter((m) => m.relation_type === 'SERVES_LOCALITY').slice(0, 12);
+        ctx.innerHTML = `
+          <p class="dxl-kicker">Besoins associés</p>
+          <div class="dxl-kpi-strip">
+            <article><span>Correspondances</span><strong>${escapeHtml(formatNumber(needs.match_count ?? matches.length))}</strong></article>
+            <article><span>Population liée</span><strong>${escapeHtml(formatNumber(needs.population_impacted_sum ?? impact?.impact?.population_impacted))}</strong></article>
+          </div>
+          <ul>${matches.map((m) => `<li>${escapeHtml((m.properties || {}).locality_name || m.need_id)} — ${escapeHtml(m.distance_m != null ? `${Math.round(m.distance_m)} m` : '—')} — pop. ${escapeHtml(formatNumber(m.population_impacted))}</li>`).join('') || '<li>Aucun besoin apparié dans le rayon configurable.</li>'}</ul>
+        `;
+      } else if (services.needs.status === 'loading') {
+        ctx.innerHTML = softLoadingHtml('Chargement des besoins associés…');
+      } else {
+        ctx.innerHTML = softErrorHtml(
+          'Besoins associés indisponibles',
+          services.needs.error || 'Le service Needs n’a pas répondu.',
+          'La carte et l’impact restent consultables si disponibles.',
+        );
+      }
+    }
+
+    // Risques / reco / traçabilité — tolérants
+    renderRisks({
+      missing_data: explain?.missing_data || [],
+      risks: services.explain.status === 'error'
+        ? [{ label: 'Explication spatiale partiellement indisponible' }]
+        : [],
+    });
+    renderTraceability({
+      doctrine: { title: 'National Spatial Matching Engine', version: 'nsme-1.0.0' },
+      generated_at: impact?._meta?.generated_at || statistics?._meta?.generated_at,
+    });
+    renderRecommendation({
+      recommendation_text: explain?.summary
+        || (services.impact.status === 'loaded'
+          ? 'Prioriser les localités desservies à population impactée élevée.'
+          : 'Consolider les correspondances spatiales avant arbitrage.'),
+      next_action: 'Préparer une mission sur les localités à priorité élevée les plus proches.',
+    });
+    renderActions();
+  }
+
+  function summarizeServiceFailures(services) {
+    const values = Object.values(services || {}).filter(Boolean);
+    const failed = values.filter((s) => s.status === 'error');
+    const loaded = values.filter((s) => s.status === 'loaded');
+    const loading = values.filter((s) => s.status === 'loading');
+    if (loading.length && !failed.length) {
+      return { text: `${loaded.length} prêt(s) · ${loading.length} en cours`, isError: false };
+    }
+    if (!failed.length) {
+      return { text: `${loaded.length} service(s) prêts`, isError: false };
+    }
+    if (!loaded.length && !loading.length) {
+      const names = failed.map((s) => s.label).join(', ');
+      return {
+        text: `Aucun service joignable (${names}). ${failed[0]?.error || ''}`.trim(),
+        isError: true,
+      };
+    }
+    const names = failed.map((s) => s.label).join(', ');
+    return {
+      text: `Affichage partiel — indisponible : ${names}. Les autres données restent consultables.`,
+      isError: true,
+    };
+  }
+
+  async function loadSpatialImpact(assetType, assetId) {
+    setLoading(true);
+    setStatus('Chargement de l’impact spatial…');
+    try {
+      const services = await loadSpatialImpactData(assetType, assetId);
+      state.payload = {
+        services,
+        needs: services.needs?.data,
+        impact: services.impact?.data,
+        explain: services.explain?.data,
+        map: services.map?.data,
+        statistics: services.statistics?.data,
+        decisionCase: services.decisionCase?.data,
+      };
+      state.services = services;
+      renderSpatialImpactWorkspace(services, assetId);
+      const summary = summarizeServiceFailures(services);
+      setStatus(summary.text, summary.isError);
+      console.info('[DXL] loadSpatialImpact terminé', {
+        assetType,
+        assetId,
+        statuses: Object.fromEntries(
+          Object.entries(services).map(([k, v]) => [k, { status: v.status, ms: v.ms, error: v.error }]),
+        ),
+      });
+      return services;
+    } catch (err) {
+      // Ne devrait quasiment jamais arriver (tracedFetch ne throw pas)
+      console.error('[DXL] loadSpatialImpact erreur fatale', err);
+      setStatus(`Impact spatial — erreur inattendue : ${humanizeFetchError(err)}`, true);
+      const summary = document.querySelector('#dxl-section-summary');
+      if (summary) {
+        summary.innerHTML = softErrorHtml(
+          'Espace d’impact spatial indisponible',
+          humanizeFetchError(err),
+          'Réessayez après vérification de l’API NSME.',
+        );
+      }
+      renderActions();
+      return state.services;
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function loadCoverageDetail(territoryId) {
     setLoading(true);
     setStatus('Chargement du détail de couverture…');
     try {
-      const [profile, mapPayload] = await Promise.all([
-        fetchJson(`/api/territorial-intelligence/territories/${encodeURIComponent(territoryId)}`).catch(() => null),
-        fetchJson(`/api/territorial-intelligence/territories/${encodeURIComponent(territoryId)}/map`).catch(() => null),
+      const [profileRes, mapRes] = await Promise.all([
+        tracedFetch(`/api/territorial-intelligence/territories/${encodeURIComponent(territoryId)}`, 'coverage'),
+        tracedFetch(`/api/territorial-intelligence/territories/${encodeURIComponent(territoryId)}/map`, 'map'),
       ]);
+      const profile = profileRes.ok ? profileRes.data : null;
+      const mapPayload = mapRes.ok ? mapRes.data : null;
       const title = document.querySelector('#dxl-title');
       if (title) title.textContent = `Couverture territoriale — ${profile?.profile?.name || territoryId}`;
       renderExecutiveSummary({
@@ -320,7 +871,6 @@
         summary: 'Analyse de couverture et population restante pour le territoire sélectionné.',
         confidence_level: profile?.confidence_level || profile?._meta?.confidence_level,
       }, {});
-      // carte TI via features NSME-like si disponibles
       if (mapPayload?.features) {
         renderMapFromNsme({
           features: (mapPayload.features || []).map((f) => ({
@@ -348,9 +898,9 @@
         next_action: 'Ouvrir l’Intelligence territoriale pour le même territoire.',
       });
       renderActions();
-      setStatus(profile ? 'Détail couverture prêt' : 'Données de couverture partielles', !profile);
+      setStatus(profile ? 'Détail couverture prêt' : `Couverture partielle — ${profileRes.error || 'sources incomplètes'}`, !profile);
     } catch (err) {
-      setStatus(`Couverture indisponible : ${err.message}`, true);
+      setStatus(`Couverture indisponible : ${humanizeFetchError(err)}`, true);
     } finally {
       setLoading(false);
     }
@@ -359,89 +909,61 @@
   async function loadDecisionCase(assetType, assetId, programCode) {
     setLoading(true);
     setStatus('Chargement du dossier de décision…');
-    const qs = programCode ? `?asset_type=${encodeURIComponent(assetType === 'site' ? 'site' : assetType)}&program_code=${encodeURIComponent(programCode)}` : `?asset_type=${encodeURIComponent(assetType === 'site' ? 'site' : assetType)}`;
+    const qs = programCode
+      ? `?asset_type=${encodeURIComponent(assetType === 'site' ? 'site' : assetType)}&program_code=${encodeURIComponent(programCode)}`
+      : `?asset_type=${encodeURIComponent(assetType === 'site' ? 'site' : assetType)}`;
     try {
-      const [caseFile, nsmeImpact, nsmeMap] = await Promise.all([
-        fetchJson(`/api/decision/case/${encodeURIComponent(assetId)}${qs}`).catch(() => null),
-        fetchJson(`/api/spatial-matching/assets/${encodeURIComponent(assetId)}/impact`).catch(() => null),
-        fetchJson(`/api/spatial-matching/map?asset_id=${encodeURIComponent(assetId)}`).catch(() => null),
+      const [caseRes, impactRes, mapRes] = await Promise.all([
+        tracedFetch(`/api/decision/case/${encodeURIComponent(assetId)}${qs}`, 'decisionCase'),
+        tracedFetch(`/api/spatial-matching/assets/${encodeURIComponent(assetId)}/impact`, 'impact'),
+        tracedFetch(`/api/spatial-matching/map?asset_id=${encodeURIComponent(assetId)}`, 'map'),
       ]);
+      const caseFile = caseRes.ok ? caseRes.data : null;
+      const nsmeImpact = impactRes.ok ? impactRes.data : null;
+      const nsmeMap = mapRes.ok ? mapRes.data : null;
       let ti = null;
       const territoire = caseFile?.asset?.territoire || caseFile?.site?.territoire || caseFile?.asset?.territory_id;
       if (territoire) {
-        ti = await fetchJson(`/api/territorial-intelligence/territories/${encodeURIComponent(territoire)}`).catch(() => null);
+        const tiRes = await tracedFetch(`/api/territorial-intelligence/territories/${encodeURIComponent(territoire)}`, 'coverage');
+        ti = tiRes.ok ? tiRes.data : null;
       }
       state.payload = { caseFile, nsmeImpact, nsmeMap, ti };
       const title = document.querySelector('#dxl-title');
       if (title) title.textContent = `Dossier de décision — ${caseFile?.asset?.site_name || caseFile?.asset?.name || assetId}`;
-      renderExecutiveSummary(caseFile || {}, nsmeImpact?.impact);
-      renderMapFromNsme(nsmeMap);
+      renderExecutiveSummary(caseFile || {
+        asset: { site_code: assetId },
+        summary: caseRes.error ? 'Dossier partiel — le moteur de décision n’a pas entièrement répondu.' : 'Dossier en cours de consolidation.',
+      }, nsmeImpact?.impact);
+      if (nsmeMap) renderMapFromNsme(nsmeMap);
+      else ensureMap();
       renderWhy(caseFile || {});
       renderContext(caseFile || {}, ti || {});
-      renderImpact(caseFile?.impacts, nsmeImpact);
+      if (nsmeImpact) renderImpact(caseFile?.impacts, nsmeImpact);
+      else {
+        const host = document.querySelector('#dxl-section-impact');
+        if (host) {
+          host.innerHTML = softErrorHtml(
+            'Impact spatial indisponible',
+            impactRes.error || 'Le service d’impact n’a pas répondu.',
+            'Le reste du dossier reste consultable.',
+          );
+        }
+      }
       renderRisks(caseFile || {});
       renderTraceability(caseFile || {});
       renderRecommendation(caseFile || {});
       renderActions();
-      setStatus(caseFile ? 'Dossier prêt' : 'Dossier partiel — certaines sources indisponibles', !caseFile);
+      const failed = [caseRes, impactRes, mapRes].filter((r) => !r.ok).map((r) => r.label);
+      setStatus(
+        caseFile
+          ? (failed.length ? `Dossier partiel — indisponible : ${failed.join(', ')}` : 'Dossier prêt')
+          : `Dossier partiel — ${caseRes.error || 'sources indisponibles'}`,
+        !caseFile || failed.length > 0,
+      );
     } catch (err) {
-      setStatus(`Impossible de charger le dossier : ${err.message}`, true);
+      setStatus(`Impossible de charger le dossier : ${humanizeFetchError(err)}`, true);
       const summary = document.querySelector('#dxl-section-summary');
-      if (summary) summary.innerHTML = `<p class="dxl-empty is-error">${escapeHtml(err.message)}</p>`;
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function loadSpatialImpact(assetType, assetId) {
-    setLoading(true);
-    setStatus('Chargement de l’impact spatial…');
-    try {
-      const [needs, impact, explain, mapPayload] = await Promise.all([
-        fetchJson(`/api/spatial-matching/assets/${encodeURIComponent(assetId)}/needs?limit=100`),
-        fetchJson(`/api/spatial-matching/assets/${encodeURIComponent(assetId)}/impact`),
-        fetchJson(`/api/spatial-matching/assets/${encodeURIComponent(assetId)}/explain`),
-        fetchJson(`/api/spatial-matching/map?asset_id=${encodeURIComponent(assetId)}`),
-      ]);
-      const title = document.querySelector('#dxl-title');
-      if (title) title.textContent = `Impact spatial — actif ${assetId}`;
-      renderExecutiveSummary({
-        asset: { site_code: assetId, site_name: needs?.asset?.site_name || assetId, program_code: needs?.asset?.program_code },
-        summary: explain?.summary,
-        confidence_level: explain?.confidence_level,
-      }, impact?.impact);
-      renderMapFromNsme(mapPayload);
-      const why = document.querySelector('#dxl-section-why');
-      if (why) {
-        why.innerHTML = `
-          <p class="dxl-kicker">Explication de la correspondance</p>
-          <p>${escapeHtml(explain?.summary || '—')}</p>
-          <p>Distance : ${escapeHtml(explain?.distance_m ?? '—')} m · Rayon : ${escapeHtml(explain?.service_radius_m ?? '—')} m</p>
-          <p>Règle spatiale : ${escapeHtml(explain?.spatial_rule || '—')} · Méthode : ${escapeHtml(explain?.calculation_method || '—')}</p>
-        `;
-      }
-      renderImpact({}, impact);
-      renderRisks({ missing_data: explain?.missing_data || [], risks: [] });
-      renderTraceability({
-        doctrine: { title: 'National Spatial Matching Engine', version: 'nsme-1.0.0' },
-        generated_at: impact?._meta?.generated_at,
-      });
-      renderRecommendation({
-        recommendation_text: explain?.summary,
-        next_action: 'Préparer une mission sur les localités à priorité élevée les plus proches.',
-      });
-      renderActions();
-      const ctx = document.querySelector('#dxl-section-context');
-      if (ctx) {
-        const matches = (needs?.matches || []).filter((m) => m.relation_type === 'SERVES_LOCALITY').slice(0, 8);
-        ctx.innerHTML = `
-          <p class="dxl-kicker">Besoins associés</p>
-          <ul>${matches.map((m) => `<li>${escapeHtml((m.properties || {}).locality_name || m.need_id)} — ${escapeHtml(m.distance_m != null ? `${Math.round(m.distance_m)} m` : '—')} — pop. ${escapeHtml(formatNumber(m.population_impacted))}</li>`).join('') || '<li>Aucun besoin apparié dans le rayon configurable.</li>'}</ul>
-        `;
-      }
-      setStatus(`${needs?.match_count || 0} correspondance(s) — prêt`);
-    } catch (err) {
-      setStatus(`Impact spatial indisponible : ${err.message}`, true);
+      if (summary) summary.innerHTML = softErrorHtml('Dossier indisponible', humanizeFetchError(err));
     } finally {
       setLoading(false);
     }
@@ -481,7 +1003,8 @@
         const tid = state.payload?.caseFile?.asset?.territoire
           || state.payload?.caseFile?.site?.territoire
           || state.payload?.ti?.profile?.id
-          || state.payload?.ti?.territory_id;
+          || state.payload?.ti?.territory_id
+          || state.payload?.decisionCase?.asset?.territoire;
         global.location.hash = tid
           ? `territorial-intelligence/${encodeURIComponent(tid)}`
           : 'territorial-intelligence';
@@ -520,23 +1043,28 @@
     const parsed = parseHash();
     if (!parsed) {
       setStatus('Aucun dossier sélectionné', true);
+      setLoading(false);
       return;
     }
     state.mode = parsed.mode;
     state.assetType = parsed.assetType;
     state.assetId = parsed.assetId;
     state.programCode = parsed.programCode;
-    if (parsed.mode === 'spatial-impact') {
-      loadSpatialImpact(parsed.assetType, parsed.assetId);
-    } else if (parsed.mode === 'coverage-detail') {
-      loadCoverageDetail(parsed.assetId);
-    } else {
-      loadDecisionCase(parsed.assetType, parsed.assetId, parsed.programCode);
-    }
+    const boot = parsed.mode === 'spatial-impact'
+      ? loadSpatialImpact(parsed.assetType, parsed.assetId)
+      : parsed.mode === 'coverage-detail'
+        ? loadCoverageDetail(parsed.assetId)
+        : loadDecisionCase(parsed.assetType, parsed.assetId, parsed.programCode);
+    Promise.resolve(boot).catch((err) => {
+      console.error('[DXL] initialisation module', err);
+      setLoading(false);
+      setStatus(`Chargement interrompu : ${humanizeFetchError(err)}`, true);
+    });
   }
 
   global.openDecisionCase = openDecisionCase;
   global.openSpatialImpact = openSpatialImpact;
+  global.loadSpatialImpact = loadSpatialImpact;
   global.initializeDecisionExperienceModule = initializeDecisionExperienceModule;
   global.decisionExperienceState = state;
 })(typeof window !== 'undefined' ? window : globalThis);
