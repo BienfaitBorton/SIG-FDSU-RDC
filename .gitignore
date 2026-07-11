@@ -24,9 +24,16 @@ downloads/
 *.pid
 *.sock
 
-# PostgreSQL
-*.sql
+# PostgreSQL — dumps / backups uniquement
+# Les scripts d'architecture (database/*.sql, migrations, seeds officiels) sont versionnés.
 *.dump
+**/backup.sql
+**/dump.sql
+**/postgres_backup.sql
+**/*_backup.sql
+**/*_dump.sql
+**/backups/*.sql
+**/dumps/*.sql
 pgdata/
 .postgresql_history
 
