@@ -205,12 +205,51 @@
         return synthesis[key] ?? null;
       };
       global.Edvs.mountKpiStrip('#decision-edvs-kpi-host', [
-        { label: 'Sites FDSU', value: pick('sites_fdsu_total') ?? synthesis.sites_fdsu, icon: 'sites', color: 'blue', confidence: 'high' },
-        { label: 'Sites prioritaires', value: pick('sites_priority') ?? synthesis.sites_priority, icon: 'decision', color: 'orange', confidence: 'medium' },
-        { label: 'Sites critiques', value: pick('sites_critical') ?? synthesis.sites_critical, icon: 'alert', color: 'red', confidence: 'medium' },
-        { label: 'Référentiels actifs', value: pick('referentials_active') ?? synthesis.referentials_active, icon: 'data', color: 'green', confidence: 'high' },
+        { label: 'Sites FDSU', value: pick('sites_fdsu_total') ?? synthesis.sites_fdsu, icon: 'sites', color: 'blue', confidence: 'high', detailKey: 'sites_fdsu' },
+        { label: 'Sites prioritaires', value: pick('sites_priority') ?? synthesis.sites_priority, icon: 'decision', color: 'orange', confidence: 'medium', detailKey: 'sites_priority' },
+        { label: 'Sites critiques', value: pick('sites_critical') ?? synthesis.sites_critical, icon: 'alert', color: 'red', confidence: 'medium', detailKey: 'sites_critical' },
+        { label: 'Référentiels actifs', value: pick('referentials_active') ?? synthesis.referentials_active, icon: 'data', color: 'green', confidence: 'high', detailKey: 'referentials_active' },
       ]);
+      if (global.UxPremium?.bindInteractiveKpis) global.UxPremium.bindInteractiveKpis(document);
+      if (global.UxPremium?.bindEdvsKpiClicks) global.UxPremium.bindEdvsKpiClicks(document);
     }
+
+    renderNationalExecutiveCharts(payload, explainPayload);
+  }
+
+  function renderNationalExecutiveCharts(payload) {
+    const host = document.querySelector('#decision-edvs-charts-host');
+    if (!host || !global.EdvsCharts) return;
+    const synthesis = payload?.synthesis || {};
+    const total = Number(synthesis.sites_fdsu) || 0;
+    const priority = Number(synthesis.sites_priority) || 0;
+    const critical = Number(synthesis.sites_critical) || 0;
+    const high = Number(synthesis.sites_high) || 0;
+    const other = Math.max(0, total - priority - critical - high);
+    if (!total && !priority && !critical) {
+      host.innerHTML = global.UxPremium?.stateHtml
+        ? global.UxPremium.stateHtml('empty', 'Graphiques en attente', 'Les indicateurs nationaux se chargeront dès que la synthèse sera disponible.')
+        : '';
+      return;
+    }
+    const share = total ? Math.round((priority / total) * 100) : 0;
+    host.innerHTML = [
+      global.EdvsCharts.treemap({
+        title: 'Portefeuille sites FDSU',
+        items: [
+          { label: 'Prioritaires', value: priority, color: 'orange' },
+          { label: 'Critiques', value: critical, color: 'red' },
+          { label: 'Élevés', value: high, color: 'yellow' },
+          { label: 'Autres', value: other, color: 'blue' },
+        ].filter((item) => Number(item.value) > 0),
+      }),
+      global.EdvsCharts.gauge({
+        title: 'Part prioritaire',
+        value: share,
+        subtitle: 'Sites prioritaires / total FDSU',
+        color: share >= 40 ? 'orange' : 'blue',
+      }),
+    ].join('');
   }
 
   function renderNationalPanelUnavailable(message) {
@@ -550,6 +589,12 @@
       const detailBtn = target.closest('[data-kpi-detail]');
       if (detailBtn) {
         openKpiDetail(detailBtn.getAttribute('data-kpi-detail'));
+        return;
+      }
+
+      const kpiCard = target.closest('.decision-center-kpi-card[data-kpi-key]');
+      if (kpiCard && !target.closest('button, a, input, select')) {
+        openKpiDetail(kpiCard.getAttribute('data-kpi-key'));
         return;
       }
 
@@ -2296,6 +2341,17 @@
       .catch(() => {})
       .finally(() => {
         decisionCenterState.mapInitialized = true;
+        if (global.UxPremium?.mountMapLegend) {
+          global.UxPremium.mountMapLegend('#decision-center-national-map', {
+            id: 'ux-legend-decision-national',
+            title: 'Légende',
+            sectionTitle: 'Couches',
+            items: [
+              { className: 'is-poly', label: 'Province' },
+              { className: 'is-site', label: 'Site FDSU (si affiché)' },
+            ],
+          });
+        }
         global.setTimeout(() => decisionCenterState.map?.invalidateSize(), 0);
       });
   }

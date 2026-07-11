@@ -35,7 +35,7 @@
         ? `<span class="edvs-chip" style="--edvs-chip:${conf.hex}">${U.escapeHtml(U.confidenceLabel(opts.confidence))}</span>`
         : '';
       return `
-        <article class="edvs-kpi-card" data-edvs="kpi" style="--edvs-accent:${color.hex}; --edvs-soft:${color.soft}">
+        <article class="edvs-kpi-card${opts.detailKey || opts.onClick || opts.detailRoute ? ' is-interactive' : ''}" data-edvs="kpi"${opts.detailKey ? ` data-detail-key="${U.escapeHtml(opts.detailKey)}"` : ''}${opts.detailRoute ? ` data-detail-route="${U.escapeHtml(opts.detailRoute)}"` : ''} style="--edvs-accent:${color.hex}; --edvs-soft:${color.soft}">
           <div class="edvs-kpi-top">
             ${I.icon(opts.icon || 'data', 'edvs-kpi-icon')}
             <p class="edvs-kpi-label">${U.escapeHtml(opts.label || '')}</p>
@@ -50,6 +50,7 @@
           </div>
           ${sparkline(opts.sparkline, color.hex)}
           ${opts.note ? `<p class="edvs-kpi-note">${U.escapeHtml(opts.note)}</p>` : ''}
+          ${opts.detailKey || opts.detailRoute ? '<p class="ux-kpi-cta">Voir l’analyse →</p>' : ''}
         </article>
       `;
     });

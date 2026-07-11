@@ -67,15 +67,53 @@
         host.hidden = false;
         if (legacy) legacy.hidden = true;
         global.Edvs.mountKpiStrip('#ccn-edvs-kpi-host', [
-          { id: 'ccn-total', label: 'Total CCN', value: kpis.total, icon: 'ccn', color: 'blue', confidence: 'medium', note: 'DEMO' },
-          { id: 'ccn-ops', label: 'Opérationnels', value: kpis.operationnels, icon: 'gauge', color: 'green', confidence: 'medium' },
-          { id: 'ccn-deploy', label: 'Déploiement', value: kpis.deploiement, icon: 'program', color: 'orange', confidence: 'medium' },
+          { id: 'ccn-total', label: 'Total CCN', value: kpis.total, icon: 'ccn', color: 'blue', confidence: 'medium', note: 'DEMO', detailRoute: 'ccn' },
+          { id: 'ccn-ops', label: 'Opérationnels', value: kpis.operationnels, icon: 'gauge', color: 'green', confidence: 'medium', detailRoute: 'ccn' },
+          { id: 'ccn-deploy', label: 'Déploiement', value: kpis.deploiement, icon: 'program', color: 'orange', confidence: 'medium', detailRoute: 'ccn' },
           { id: 'ccn-pop', label: 'Population', value: kpis.population_desservie, icon: 'people', color: 'yellow', confidence: 'low', note: 'DEMO' },
-          { id: 'ccn-sites', label: 'Sites associés', value: kpis.sites_fdsu_associes, icon: 'sites', color: 'blue', confidence: 'medium' },
+          { id: 'ccn-sites', label: 'Sites associés', value: kpis.sites_fdsu_associes, icon: 'sites', color: 'blue', confidence: 'medium', detailKey: 'sites_fdsu' },
           { id: 'ccn-prov', label: 'Provinces', value: Object.keys(stats?.by_province || {}).length, icon: 'map', color: 'blue', confidence: 'high' },
         ]);
+        if (global.UxPremium?.bindEdvsKpiClicks) global.UxPremium.bindEdvsKpiClicks(document);
       }
     }
+
+    renderCcnExecutiveCharts(stats);
+  }
+
+  function renderCcnExecutiveCharts(stats) {
+    const host = document.querySelector('#ccn-edvs-charts-host');
+    if (!host || !global.EdvsCharts) return;
+    const byProvince = stats?.by_province || {};
+    const top = Object.entries(byProvince)
+      .map(([label, value]) => [label, Number(value) || 0])
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8);
+    const kpis = stats?.kpis || {};
+    const statusSteps = [
+      { label: 'Planifiés', value: Number(kpis.planifies) || 0, color: 'blue' },
+      { label: 'Préparation', value: Number(kpis.preparation) || 0, color: 'yellow' },
+      { label: 'Déploiement', value: Number(kpis.deploiement) || 0, color: 'orange' },
+      { label: 'Opérationnels', value: Number(kpis.operationnels) || 0, color: 'green' },
+    ].filter((s) => s.value > 0);
+    if (!top.length && !statusSteps.length) {
+      host.innerHTML = global.UxPremium?.stateHtml
+        ? global.UxPremium.stateHtml('empty', 'Répartition CCN indisponible', 'Ajustez les filtres ou vérifiez le jeu DEMO.')
+        : '';
+      return;
+    }
+    const parts = [];
+    if (statusSteps.length) {
+      parts.push(global.EdvsCharts.waterfall({ title: 'Pipeline CCN', steps: statusSteps }));
+    }
+    if (top.length) {
+      parts.push(global.EdvsCharts.stackedBar({
+        title: 'CCN par province',
+        categories: top.map(([label]) => label),
+        series: [{ label: 'CCN', color: 'purple', values: top.map(([, value]) => value) }],
+      }));
+    }
+    host.innerHTML = parts.join('');
   }
 
   function fillFilterOptions(items) {
@@ -96,7 +134,9 @@
     const body = document.querySelector('#ccn-table-body');
     if (!body) return;
     if (!items.length) {
-      body.innerHTML = '<tr><td colspan="10">Aucun CCN pour ces filtres.</td></tr>';
+      body.innerHTML = global.UxPremium?.tableEmptyRow
+        ? global.UxPremium.tableEmptyRow(10, 'Aucun CCN pour ces filtres', 'Modifiez la province, le territoire ou le statut.')
+        : '<tr><td colspan="10">Aucun CCN pour ces filtres.</td></tr>';
       return;
     }
     body.innerHTML = items.map((item) => `

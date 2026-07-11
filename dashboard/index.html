@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="modules/ccn/ccn.css" />
   <link rel="stylesheet" href="modules/territorial-intelligence/territorial-intelligence.css" />
   <link rel="stylesheet" href="modules/shared/executive-dashboard/executive-dashboard.css" />
+  <link rel="stylesheet" href="modules/shared/ux-premium/ux-premium.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 </head>
 <body>
@@ -570,6 +571,7 @@
 
           <section class="decision-center-tab-panel is-active" data-decision-tab-panel="vue-nationale" role="tabpanel">
             <div id="decision-edvs-kpi-host" class="edvs-kpi-grid" style="margin-bottom:12px"></div>
+            <div id="decision-edvs-charts-host" class="edvs-charts-grid ux-exec-charts" aria-label="Graphiques exécutifs nationaux"></div>
             <section class="decision-intent-panel" id="decision-intent-panel" aria-label="Questions métier">
               <div class="decision-intent-header">
                 <p class="panel-label">Aide à la décision</p>
@@ -765,8 +767,12 @@
               <aside class="decision-center-side-panel" aria-label="Classement des sites">
                 <p class="panel-label">Classement</p>
                 <h3>Classement des sites</h3>
-                <div class="decision-center-placeholder-body">
-                  <p>Le classement des sites prioritaires sera affiché ici.</p>
+                <div class="decision-center-placeholder-body" id="decision-center-ranking-body">
+                  <div class="ux-state is-empty">
+                    <strong>Classement synchronisé avec la priorisation</strong>
+                    <span>Ouvrez l’onglet Priorisation ou un KPI sites pour afficher le classement opérationnel.</span>
+                    <span class="ux-state-hint">Aucun classement inventé — seules les données calculées apparaissent ici.</span>
+                  </div>
                 </div>
               </aside>
             </div>
@@ -1899,6 +1905,7 @@
           </p>
 
           <div class="ccn-kpi-grid" id="ccn-edvs-kpi-host" hidden></div>
+          <div id="ccn-edvs-charts-host" class="edvs-charts-grid ux-exec-charts" aria-label="Graphiques exécutifs CCN"></div>
           <div class="ccn-kpi-grid" id="ccn-kpi-grid">
             <article class="ccn-kpi"><p class="summary-label">Total CCN</p><p class="summary-value" id="ccn-kpi-total">—</p></article>
             <article class="ccn-kpi"><p class="summary-label">Planifiés</p><p class="summary-value" id="ccn-kpi-planned">—</p></article>
@@ -2160,6 +2167,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <script src="modules/shared/map-tooltips.js"></script>
+  <script src="modules/shared/ux-premium/ux-premium.js"></script>
   <script src="modules/decision-experience/decision-experience.js"></script>
   <!-- decision-center.js avant app.js : app.js boot immédiat (readyState interactive) sinon rate l'init des onglets -->
   <script src="modules/decision-center/decision-center.js"></script>

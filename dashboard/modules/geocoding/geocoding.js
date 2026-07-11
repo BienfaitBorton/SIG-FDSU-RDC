@@ -49,7 +49,9 @@
     if (!body) return;
     const items = Array.isArray(rows) ? rows : [];
     if (!items.length) {
-      body.innerHTML = '<tr><td colspan="7">Aucune ligne suspecte.</td></tr>';
+      body.innerHTML = (global.UxPremium?.tableEmptyRow
+        ? global.UxPremium.tableEmptyRow(7, 'Aucune ligne suspecte', 'Tous les enregistrements du job sont cohérents.')
+        : '<tr><td colspan="7">Aucune ligne suspecte.</td></tr>');
       return;
     }
     body.innerHTML = items.slice(0, 200).map((row) => `

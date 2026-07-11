@@ -1,0 +1,285 @@
+/**
+ * SIG-FDSU — UX Premium Design System (v1.0)
+ * Harmonise tokens, états vides/erreur/chargement, KPI interactifs, légendes compactes.
+ * Réutilise les patterns existants (EDVS, legend-swatch, empty-state) sans nouvelle lib.
+ */
+
+:root {
+  /* Pont EDVS → plateforme */
+  --edvs-green: #22c55e;
+  --edvs-orange: #f97316;
+  --edvs-blue: #38bdf8;
+  --edvs-red: #ef4444;
+  --edvs-yellow: #eab308;
+  --edvs-purple: #a78bfa;
+  --edvs-surface: rgba(15, 23, 42, 0.92);
+
+  /* Échelle UX Premium */
+  --ux-radius: 12px;
+  --ux-radius-lg: 16px;
+  --ux-gap: 14px;
+  --ux-gap-lg: 18px;
+  --ux-pad: 14px;
+  --ux-pad-lg: 18px;
+  --ux-font: "Segoe UI", "Inter", system-ui, -apple-system, sans-serif;
+  --ux-shadow: 0 10px 28px rgba(2, 6, 23, 0.35);
+}
+
+/* ——— États métier unifiés ——— */
+.ux-state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: var(--ux-pad);
+  border-radius: var(--ux-radius);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.ux-state strong {
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.ux-state.is-loading {
+  border-color: rgba(56, 189, 248, 0.28);
+  background: rgba(14, 165, 233, 0.06);
+}
+
+.ux-state.is-empty {
+  border-style: dashed;
+}
+
+.ux-state.is-error {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.06);
+  color: #fecaca;
+}
+
+.ux-state.is-error strong {
+  color: #fecaca;
+}
+
+.ux-state-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* Cellules / lignes de tableau vides */
+td.ux-state,
+.ux-table-empty td {
+  text-align: left;
+  white-space: normal;
+}
+
+/* ——— KPI interactifs ——— */
+.decision-center-kpi-card[data-kpi-key],
+.edvs-kpi-card[data-detail-key],
+.edvs-kpi-card.is-interactive,
+.summary-card.clickable-summary {
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.decision-center-kpi-card[data-kpi-key]:hover,
+.edvs-kpi-card[data-detail-key]:hover,
+.edvs-kpi-card.is-interactive:hover {
+  transform: translateY(-1px);
+  border-color: rgba(56, 189, 248, 0.45);
+  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.28);
+}
+
+.decision-center-kpi-card[data-kpi-key]:focus-visible,
+.edvs-kpi-card[data-detail-key]:focus-visible {
+  outline: 2px solid var(--edvs-blue);
+  outline-offset: 2px;
+}
+
+.edvs-kpi-card[data-detail-key]::after,
+.decision-center-kpi-card[data-kpi-key] .kpi-detail-btn {
+  /* le bouton reste visible ; carte entière cliquable */
+}
+
+.edvs-kpi-card .ux-kpi-cta {
+  margin-top: 0.45rem;
+  font-size: 0.72rem;
+  color: var(--edvs-blue);
+  font-weight: 600;
+}
+
+/* ——— Légende carte compacte réutilisable ——— */
+.ux-map-legend {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 800;
+  max-width: min(230px, 48%);
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.94);
+  box-shadow: var(--ux-shadow);
+  color: var(--text);
+  font-size: 0.75rem;
+}
+
+.ux-map-legend-toggle {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  padding: 0.55rem 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ux-map-legend-body {
+  padding: 0 0.7rem 0.7rem;
+}
+
+.ux-map-legend.is-collapsed .ux-map-legend-body {
+  display: none;
+}
+
+.ux-map-legend-title {
+  margin: 0.3rem 0 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+.ux-map-legend-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.28rem;
+}
+
+.ux-map-legend-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.ux-swatch {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ux-swatch.is-poly {
+  border-radius: 2px;
+  background: rgba(56, 189, 248, 0.35);
+  border-color: rgba(56, 189, 248, 0.7);
+}
+
+.ux-swatch.is-critical { background: #ef4444; }
+.ux-swatch.is-high { background: #f97316; }
+.ux-swatch.is-medium { background: #ca8a04; }
+.ux-swatch.is-low { background: #4ade80; }
+.ux-swatch.is-site { background: #fbbf24; }
+.ux-swatch.is-ccn { background: #a78bfa; }
+.ux-swatch.is-health { background: #34d399; }
+.ux-swatch.is-uncovered { background: #f87171; }
+.ux-swatch.is-ok { background: var(--edvs-green); }
+.ux-swatch.is-warn { background: var(--edvs-yellow); }
+.ux-swatch.is-fail { background: var(--edvs-red); }
+
+/* ——— Tableaux premium ——— */
+.ux-table-frame {
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--ux-radius);
+  background: rgba(15, 23, 42, 0.45);
+  max-height: clamp(280px, 52vh, 560px);
+}
+
+.ux-table-frame table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.84rem;
+}
+
+.ux-table-frame thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: rgba(15, 23, 42, 0.98);
+  white-space: nowrap;
+}
+
+.ux-table-frame tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.ux-table-frame tbody tr:hover {
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.ux-table-frame tbody tr.is-selected {
+  background: rgba(45, 212, 191, 0.14);
+  box-shadow: inset 3px 0 0 #2dd4bf;
+}
+
+/* ——— Coquilles carte ——— */
+.ux-map-shell {
+  position: relative;
+  overflow: visible;
+  border-radius: var(--ux-radius-lg);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(15, 23, 42, 0.92);
+  min-height: 320px;
+}
+
+.ux-map-host {
+  position: relative !important;
+}
+
+.dashboard-national-map-shell {
+  position: relative;
+}
+
+.dashboard-national-map.ux-map-host .ux-map-legend,
+#dashboard-national-map .ux-map-legend {
+  z-index: 900;
+}
+
+.ux-exec-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--ux-gap);
+  margin: 0 0 var(--ux-gap-lg);
+}
+
+.ux-exec-charts .edvs-card {
+  min-height: 0;
+}
+
+/* Harmonisation légendes texte → pattern UX */
+.ti-map-legend,
+.ccn-map-legend,
+.geocoding-hint {
+  display: none; /* remplacées par .ux-map-legend injectées */
+}
+
+/* Présentation DG : densité un peu plus aérée */
+body.edvs-presentation-mode .decision-center-kpi-card,
+body.edvs-presentation-mode .edvs-kpi-card {
+  min-height: 112px;
+}
+
+@media (max-width: 960px) {
+  .ux-map-legend {
+    max-width: min(200px, 58%);
+  }
+}

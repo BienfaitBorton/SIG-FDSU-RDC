@@ -99,6 +99,9 @@
     const node = document.querySelector(selector);
     if (!node || !global.EdvsKpi) return;
     node.innerHTML = global.EdvsKpi.renderKpiGrid(items || []);
+    if (global.UxPremium?.bindEdvsKpiClicks) {
+      global.UxPremium.bindEdvsKpiClicks(node);
+    }
   }
 
   function mountPresentationButton(selector) {

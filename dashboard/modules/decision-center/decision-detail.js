@@ -254,12 +254,16 @@
     if (!head || !body) return;
     if (!columns.length) {
       head.innerHTML = '';
-      body.innerHTML = '<tr><td class="decision-detail-empty">Aucune colonne configurée pour ce KPI.</td></tr>';
+      body.innerHTML = global.UxPremium?.tableEmptyRow
+        ? global.UxPremium.tableEmptyRow(1, 'Aucune colonne configurée', 'Ce KPI n’a pas encore de colonnes de liste.')
+        : '<tr><td class="decision-detail-empty">Aucune colonne configurée pour ce KPI.</td></tr>';
       return;
     }
     head.innerHTML = `<tr>${columns.map((c) => `<th>${escapeHtml(c)}</th>`).join('')}<th></th></tr>`;
     if (!rows.length) {
-      body.innerHTML = `<tr><td colspan="${columns.length + 1}" class="decision-detail-empty">Aucun élément pour ce filtre.</td></tr>`;
+      body.innerHTML = global.UxPremium?.tableEmptyRow
+        ? global.UxPremium.tableEmptyRow(columns.length + 1, 'Aucun élément pour ce filtre', 'Élargissez la province, le territoire ou la priorité.')
+        : `<tr><td colspan="${columns.length + 1}" class="decision-detail-empty">Aucun élément pour ce filtre.</td></tr>`;
       return;
     }
     body.innerHTML = rows.map((row) => {

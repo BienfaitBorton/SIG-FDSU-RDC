@@ -314,14 +314,27 @@
           const fieldStatus = (f) => (f && typeof f === 'object' ? f.status : 'confirmed');
           const colorFor = (status) => (global.EdvsColors?.forStatus(status)?.token || 'blue');
           global.Edvs.mountKpiStrip('#ti-edvs-kpi-host', [
-            { label: 'Population', value: fieldVal(p.population), icon: 'people', color: colorFor(fieldStatus(p.population)), confidence: p.confidence_level, note: p.population?.note },
-            { label: 'Sites 20 476', value: fieldVal(profile.sections?.programs?.sites_20476), icon: 'sites', color: 'blue', confidence: 'high' },
-            { label: 'Sites 300', value: fieldVal(profile.sections?.programs?.sites_300), icon: 'program', color: 'orange', confidence: 'high' },
-            { label: 'CCN', value: fieldVal(profile.sections?.programs?.ccn), icon: 'ccn', color: colorFor(fieldStatus(profile.sections?.programs?.ccn)), confidence: 'medium' },
-            { label: 'Santé', value: fieldVal(profile.sections?.public_services?.etablissements_sante), icon: 'data', color: colorFor(fieldStatus(profile.sections?.public_services?.etablissements_sante)), confidence: 'medium' },
-            { label: 'Score', value: fieldVal(profile.sections?.priority?.score), icon: 'decision', color: 'orange', confidence: p.confidence_level, note: 'Estimé' },
+            { label: 'Population', value: fieldVal(p.population), icon: 'people', color: colorFor(fieldStatus(p.population)), confidence: p.confidence_level, note: p.population?.note, detailRoute: 'territorial-intelligence' },
+            { label: 'Sites 20 476', value: fieldVal(profile.sections?.programs?.sites_20476), icon: 'sites', color: 'blue', confidence: 'high', detailKey: 'sites_fdsu' },
+            { label: 'Sites 300', value: fieldVal(profile.sections?.programs?.sites_300), icon: 'program', color: 'orange', confidence: 'high', detailKey: 'sites_fdsu' },
+            { label: 'CCN', value: fieldVal(profile.sections?.programs?.ccn), icon: 'ccn', color: colorFor(fieldStatus(profile.sections?.programs?.ccn)), confidence: 'medium', detailRoute: 'ccn' },
+            { label: 'Santé', value: fieldVal(profile.sections?.public_services?.etablissements_sante), icon: 'data', color: colorFor(fieldStatus(profile.sections?.public_services?.etablissements_sante)), confidence: 'medium', detailKey: 'health_facilities' },
+            { label: 'Score', value: fieldVal(profile.sections?.priority?.score), icon: 'decision', color: 'orange', confidence: p.confidence_level, note: 'Estimé', detailKey: 'sites_priority' },
             { label: 'Confiance', valueDisplay: p.confidence_level, value: p.confidence_level, icon: 'gauge', color: colorFor(p.confidence_level === 'high' ? 'confirmed' : 'partial'), confidence: p.confidence_level },
           ]);
+          if (global.UxPremium?.mountMapLegend) {
+            global.UxPremium.mountMapLegend('#ti-map', {
+              id: 'ux-legend-ti',
+              title: 'Légende',
+              items: [
+                { className: 'is-poly', label: 'Territoire' },
+                { className: 'is-site', label: 'Site FDSU' },
+                { className: 'is-ccn', label: 'CCN' },
+                { className: 'is-health', label: 'Santé' },
+                { className: 'is-uncovered', label: 'Localité non couverte' },
+              ],
+            });
+          }
         }
       }
       renderMap(map.geojson);
