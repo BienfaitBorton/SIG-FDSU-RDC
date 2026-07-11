@@ -90,7 +90,7 @@
         global.EdvsLayout.bindPresentationControls(document);
       })
       .catch(() => {
-        if (banner) banner.textContent = 'Salle de pilotage indisponible — vérifier l’API /api/executive/cockpit';
+        if (banner) banner.textContent = 'Salle de pilotage indisponible — vérifier le service de pilotage.';
       });
   }
 

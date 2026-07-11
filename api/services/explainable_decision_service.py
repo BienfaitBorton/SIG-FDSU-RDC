@@ -681,7 +681,7 @@ def explain_decision(asset_id: str, *, asset_type: str | None = None, program_co
         "risks": case["risks"],
         "impacts": case["impacts"],
         "sources": case.get("sources"),
-        "case_ref": f"/api/decision/case/{case['case_id']}",
+        "case_ref": f"#decision-case/site/{case['case_id']}",
     }
 
 

@@ -517,4 +517,14 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
     await expect(page.locator('#decision-run')).toBeVisible();
     await expect(page.locator('#decision-view-panel')).toHaveClass(/hidden/);
   });
+
+  test('DXL — ouverture dossier de décision sans JSON API', async ({ page }) => {
+    await page.goto('/index.html#decision-case/site/30?program_code=sites_40');
+    await expect(page.locator('#decision-experience-panel')).not.toHaveClass(/hidden/, { timeout: 30_000 });
+    await expect(page.locator('#dxl-title')).toContainText(/Dossier de décision/i);
+    await expect(page.locator('#dxl-section-summary')).toBeVisible();
+    await expect(page.locator('#dxl-actions [data-dxl-action="back"]')).toBeVisible();
+    expect(page.url()).not.toMatch(/\/api\//);
+    await page.locator('#dxl-back-btn').click();
+  });
 });
