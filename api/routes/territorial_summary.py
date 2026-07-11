@@ -23,20 +23,53 @@ def tst_metrics() -> dict[str, Any]:
     return territorial_summary_service.list_metrics()
 
 
-@router.get("/layer", summary="Couche choroplèthe TST (properties sans géométrie)")
+@router.get("/layer", summary="Couche choroplèthe TST (parent + enfants + statut géométrique)")
 def tst_layer(
-    level: str = Query("province", description="province | territoire"),
+    level: str = Query(
+        "province",
+        description="province | territoire | collectivite | groupement | localite",
+    ),
     metric: str = Query("priority"),
-    parent_id: str | None = Query(None, description="Province parente pour niveau territoire"),
+    parent_id: str | None = Query(None, description="Entité parente (province, territoire, …)"),
+    province: str | None = Query(None, description="Province contextuelle (niveaux inférieurs)"),
+    territory: str | None = Query(None, description="Territoire contextuel (groupement/localité)"),
 ) -> dict[str, Any]:
     _ensure_db_mode()
-    if level == "province":
+    level_norm = (level or "province").strip().lower()
+    if level_norm in {"province", "provinces"}:
         return territorial_summary_service.build_province_layer(metric)
-    if level == "territoire":
+    if level_norm in {"territoire", "territory", "territoires"}:
         if not parent_id:
             raise HTTPException(status_code=400, detail="parent_id (province) requis pour les territoires.")
         return territorial_summary_service.build_territory_layer(parent_id, metric)
-    raise HTTPException(status_code=400, detail="Niveau non supporté pour cette version (province|territoire).")
+    if level_norm in {"collectivite", "collectivites", "subdivision", "secteur", "chefferie"}:
+        if not parent_id:
+            raise HTTPException(status_code=400, detail="parent_id (territoire) requis pour les collectivités.")
+        return territorial_summary_service.build_subdivision_layer(parent_id, metric, province_name=province)
+    if level_norm in {"groupement", "groupements"}:
+        if not parent_id:
+            raise HTTPException(status_code=400, detail="parent_id (collectivité) requis pour les groupements.")
+        return territorial_summary_service.build_points_layer(
+            "groupement",
+            parent_id,
+            metric,
+            province_name=province,
+            territory_name=territory,
+        )
+    if level_norm in {"localite", "localites", "localité"}:
+        if not parent_id:
+            raise HTTPException(status_code=400, detail="parent_id (groupement) requis pour les localités.")
+        return territorial_summary_service.build_points_layer(
+            "localite",
+            parent_id,
+            metric,
+            province_name=province,
+            territory_name=territory,
+        )
+    raise HTTPException(
+        status_code=400,
+        detail="Niveau non supporté (province|territoire|collectivite|groupement|localite).",
+    )
 
 
 @router.get("/entity", summary="Panneau de synthèse d’une entité territoriale")

@@ -18,7 +18,7 @@ from api.services import (
     territorial_intelligence_service,
 )
 
-ENGINE_VERSION = "tst-1.0.0"
+ENGINE_VERSION = "tst-1.1.0"
 
 
 def _now() -> str:
@@ -29,11 +29,129 @@ def _norm(value: Any) -> str:
     return " ".join(str(value or "").strip().lower().split())
 
 
+def _admin_key(value: Any) -> str:
+    """Clé administrative stricte (pas de sous-chaîne) — évite Haut-Lomami ↔ Lomami."""
+    return " ".join(str(value or "").strip().upper().replace("-", " ").replace("_", " ").split())
+
+
+def _admin_eq(a: Any, b: Any) -> bool:
+    ka, kb = _admin_key(a), _admin_key(b)
+    return bool(ka and kb and ka == kb)
+
+
 def _safe(fn, default=None):
     try:
         return fn()
     except Exception:
         return default
+
+
+def _map_layer_fc(layer_name: str) -> dict[str, Any]:
+    """Source géométrique unique : même pipeline que /map/layers/{layer} (PostGIS ou rapports)."""
+    try:
+        from api import main as api_main
+
+        payload = api_main.read_map_layer(layer_name, skip=0, limit=5000)
+        if isinstance(payload, dict) and payload.get("type") == "FeatureCollection":
+            return payload
+    except Exception:
+        pass
+    return {"type": "FeatureCollection", "features": []}
+
+
+def _geometry_status(expected: int, with_geom: int) -> str:
+    if with_geom <= 0:
+        return "unavailable"
+    if expected > 0 and with_geom < expected:
+        return "partial"
+    return "complete"
+
+
+def _insufficient_metric(metric: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "value": None,
+        "display": "Données insuffisantes",
+        "class_id": "insufficient",
+        "class_label": "Données insuffisantes",
+        "objects_count": 0,
+        "status": "insufficient",
+        "source": metric.get("source"),
+    }
+
+
+def _territory_metric(metric_id: str, crow: dict | None, metric: dict[str, Any]) -> dict[str, Any]:
+    if metric_id in ("needs", "coverage") and crow:
+        return {
+            **_metric_value(
+                metric_id,
+                None,
+                {
+                    **crow,
+                    "coverage_ratio": (
+                        int(crow.get("localities_covered") or 0)
+                        / max(
+                            1,
+                            int(crow.get("localities_covered") or 0) + int(crow.get("localities_uncovered") or 0),
+                        )
+                    )
+                    if (
+                        crow.get("localities_covered") is not None
+                        or crow.get("localities_uncovered") is not None
+                    )
+                    else None,
+                },
+                None,
+                None,
+            ),
+            "source": metric.get("source"),
+        }
+    ndci = (crow or {}).get("ndci") or {}
+    if metric_id == "priority" and ndci.get("index") is not None:
+        score = float(ndci["index"])
+        return {
+            "value": score,
+            "display": str(score),
+            "class_id": _priority_class(score),
+            "class_label": f"NDCI {ndci.get('label') or score}",
+            "objects_count": 1,
+            "status": "ok",
+            "source": "coverage aggregates / ndci",
+        }
+    return _insufficient_metric(metric)
+
+
+def _find_parent_feature(
+    layer_name: str,
+    name: str,
+    *,
+    province: str | None = None,
+    level: str,
+    administrative_level: str,
+    name_keys: tuple[str, ...] = ("nom", "name"),
+) -> dict[str, Any] | None:
+    for feature in (_map_layer_fc(layer_name).get("features") or []):
+        props = feature.get("properties") or {}
+        fname = next((props.get(k) for k in name_keys if props.get(k)), None)
+        if not _admin_eq(fname, name):
+            continue
+        if province and props.get("province") and not _admin_eq(props.get("province"), province):
+            continue
+        if not feature.get("geometry"):
+            continue
+        return {
+            "type": "Feature",
+            "id": props.get("id") or _norm(fname),
+            "properties": {
+                "id": props.get("id") or _norm(fname),
+                "name": fname,
+                "level": level,
+                "administrative_level": administrative_level,
+                "province": props.get("province") or province,
+                "territoire": props.get("territoire"),
+            },
+            "geometry": feature["geometry"],
+        }
+    return None
 
 
 METRICS: list[dict[str, Any]] = [
@@ -495,15 +613,23 @@ def build_province_layer(metric_id: str = "priority") -> dict[str, Any]:
             "count": len(features),
             "updated_at": _now(),
             "geometry_endpoint": "/map/layers/provinces?limit=5000",
-            "rule": "Joindre properties.id / name aux features GeoJSON provinces",
+            "geometry_source": "/map/layers/provinces (PostGIS provinces.geom ou Province26)",
+            "rule": "Joindre properties.id / name aux features GeoJSON provinces côté client",
         },
+        "level": "province",
+        "parent": None,
         "legend": _legend_for(metric["id"]),
         "features": features,
         "type": "FeatureCollection",
+        "expected_count": len(features),
+        "geometry_count": None,
+        "geometry_status": "complete",
+        "message": None,
     }
 
 
 def build_territory_layer(province_name: str, metric_id: str = "priority") -> dict[str, Any]:
+    """Province → territoires : métriques TI/NCI + polygones /map/layers/territoires."""
     metric = next((m for m in METRICS if m["id"] == metric_id), METRICS[0])
     ti = _safe(
         lambda: territorial_intelligence_service.list_territories(province=province_name, limit=500),
@@ -513,66 +639,100 @@ def build_territory_layer(province_name: str, metric_id: str = "priority") -> di
         lambda: coverage_intelligence_service.list_territories(province=province_name, limit=500),
         {},
     ) or {}
-    cov_by_name = {_norm(t.get("territoire") or t.get("territory_name") or t.get("name")): t for t in (cov.get("territories") or [])}
+    cov_rows = [
+        t
+        for t in (cov.get("territories") or [])
+        if _admin_eq(t.get("province") or t.get("province_name"), province_name)
+        or not (t.get("province") or t.get("province_name"))
+    ]
+    cov_by_name = {
+        _admin_key(t.get("territoire") or t.get("territory_name") or t.get("name")): t for t in cov_rows
+    }
+
+    # Référentiel métrique : filtre province STRICT (évite fuite Lomami via sous-chaîne TI)
+    metric_by_name: dict[str, dict[str, Any]] = {}
+    for item in ti.get("items") or ti.get("territories") or []:
+        if not _admin_eq(item.get("province"), province_name):
+            continue
+        name = item.get("territory_name") or item.get("name")
+        if not name:
+            continue
+        metric_by_name[_admin_key(name)] = item
+
+    # Géométries officielles (même source que Cartographie nationale)
+    geom_features = []
+    for feature in (_map_layer_fc("territoires").get("features") or []):
+        props = feature.get("properties") or {}
+        type_val = str(props.get("type") or props.get("TYPE") or "").lower()
+        # Couche map déjà filtrée TYPE=territoire ; tolérer absence de type
+        if type_val and type_val not in {"territoire", "territory"}:
+            continue
+        if not _admin_eq(props.get("province"), province_name):
+            continue
+        if not feature.get("geometry"):
+            continue
+        geom_features.append(feature)
+
+    # Union des noms : référentiel + géométries (pas de territoire inventé)
+    names: dict[str, str] = {}
+    ids: dict[str, Any] = {}
+    provinces: dict[str, str] = {}
+    for key, item in metric_by_name.items():
+        names[key] = item.get("territory_name") or item.get("name")
+        ids[key] = item.get("territory_id") or names[key]
+        provinces[key] = item.get("province") or province_name
+    for feature in geom_features:
+        props = feature.get("properties") or {}
+        name = props.get("nom") or props.get("name")
+        key = _admin_key(name)
+        names.setdefault(key, name)
+        ids.setdefault(key, props.get("id") or name)
+        provinces.setdefault(key, props.get("province") or province_name)
+
+    geom_by_name = {
+        _admin_key((f.get("properties") or {}).get("nom") or (f.get("properties") or {}).get("name")): f
+        for f in geom_features
+    }
 
     features = []
-    items = ti.get("items") or ti.get("territories") or []
-    for item in items:
-        name = item.get("territory_name") or item.get("name")
-        tid = item.get("territory_id") or name
-        crow = cov_by_name.get(_norm(name))
-        # Territoire : métriques limitées aux sources TI/NCI — pas de score inventé
-        if metric_id in ("needs", "coverage") and crow:
-            measured = _metric_value(metric_id, None, {
-                **crow,
-                "coverage_ratio": (
-                    int(crow.get("localities_covered") or 0)
-                    / max(1, int(crow.get("localities_covered") or 0) + int(crow.get("localities_uncovered") or 0))
-                ) if (crow.get("localities_covered") is not None or crow.get("localities_uncovered") is not None) else None,
-            }, None, None)
-        else:
-            # Sites / priorité / santé / CCN non agrégés au territoire ici → insuffisant sauf NDCI
-            ndci = (crow or {}).get("ndci") or {}
-            if metric_id == "priority" and ndci.get("index") is not None:
-                score = float(ndci["index"])
-                measured = {
-                    "value": score,
-                    "display": str(score),
-                    "class_id": _priority_class(score),
-                    "class_label": f"NDCI {ndci.get('label') or score}",
-                    "objects_count": 1,
-                    "status": "ok",
-                }
-            else:
-                measured = {
-                    "value": None,
-                    "display": "Données insuffisantes",
-                    "class_id": "insufficient",
-                    "class_label": "Données insuffisantes",
-                    "objects_count": 0,
-                    "status": "insufficient",
-                }
+    for key, name in sorted(names.items(), key=lambda x: str(x[1] or "")):
+        crow = cov_by_name.get(key)
+        measured = _territory_metric(metric_id, crow, metric)
+        geom_feat = geom_by_name.get(key)
         features.append(
             {
                 "type": "Feature",
-                "id": tid,
+                "id": ids.get(key) or name,
                 "properties": {
-                    "id": tid,
+                    "id": ids.get(key) or name,
                     "name": name,
                     "level": "territoire",
                     "administrative_level": "Territoire",
                     "parent_id": province_name,
-                    "province": item.get("province") or province_name,
+                    "province": provinces.get(key) or province_name,
                     "metric_id": metric["id"],
                     "metric_label": metric["label"],
-                    **{k: measured[k] for k in ("value", "display", "class_id", "class_label", "objects_count", "status")},
-                    "source": metric["source"],
+                    **{
+                        k: measured[k]
+                        for k in ("value", "display", "class_id", "class_label", "objects_count", "status", "source")
+                    },
                     "updated_at": _now(),
+                    "has_geometry": bool(geom_feat and geom_feat.get("geometry")),
                     "hint": "Cliquer pour explorer",
                 },
-                "geometry": None,
+                "geometry": (geom_feat or {}).get("geometry"),
             }
         )
+
+    expected = len(features)
+    geometry_count = sum(1 for f in features if f.get("geometry"))
+    status = _geometry_status(expected, geometry_count)
+    parent = _find_parent_feature(
+        "provinces",
+        province_name,
+        level="province",
+        administrative_level="Province",
+    )
 
     return {
         "_meta": {
@@ -580,13 +740,203 @@ def build_territory_layer(province_name: str, metric_id: str = "priority") -> di
             "level": "territoire",
             "parent_id": province_name,
             "metric": metric,
-            "count": len(features),
+            "count": expected,
             "updated_at": _now(),
-            "geometry_note": "Limites territoire via /api/territorial-intelligence/territories/{id}/map si disponible",
+            "geometry_source": "/map/layers/territoires (PostGIS territoires.geom ou territoires_hierarchie_kmz)",
+            "parent_geometry_source": "/map/layers/provinces",
         },
+        "level": "territoire",
+        "parent": parent,
         "legend": _legend_for(metric["id"]),
-        "features": features,
+        "features": {"type": "FeatureCollection", "features": features},
+        "type": "FeatureCollection",  # compat frontend v1
+        "expected_count": expected,
+        "geometry_count": geometry_count,
+        "geometry_status": status,
+        "message": None
+        if status != "unavailable"
+        else "Les limites détaillées de ce niveau ne sont pas encore disponibles.",
+    }
+
+
+def build_subdivision_layer(
+    territory_name: str,
+    metric_id: str = "priority",
+    province_name: str | None = None,
+) -> dict[str, Any]:
+    """Territoire → secteurs/chefferies/collectivités/cités (couche collectivites)."""
+    metric = next((m for m in METRICS if m["id"] == metric_id), METRICS[0])
+    parent = _find_parent_feature(
+        "territoires",
+        territory_name,
+        province=province_name,
+        level="territoire",
+        administrative_level="Territoire",
+    )
+
+    features = []
+    for feature in (_map_layer_fc("collectivites").get("features") or []):
+        props = feature.get("properties") or {}
+        if not _admin_eq(props.get("territoire"), territory_name):
+            continue
+        if province_name and props.get("province") and not _admin_eq(props.get("province"), province_name):
+            continue
+        name = props.get("nom") or props.get("name")
+        admin_type = (
+            props.get("type_collectivite")
+            or props.get("type")
+            or props.get("administrative_type")
+            or "Collectivité"
+        )
+        measured = _insufficient_metric(metric)
+        # Pas d’agrégat métrique officiel au niveau collectivité → Données insuffisantes (honnête)
+        features.append(
+            {
+                "type": "Feature",
+                "id": props.get("id") or name,
+                "properties": {
+                    "id": props.get("id") or name,
+                    "name": name,
+                    "level": "collectivite",
+                    "administrative_level": str(admin_type),
+                    "administrative_type": str(admin_type),
+                    "parent_id": territory_name,
+                    "territoire": territory_name,
+                    "province": props.get("province") or province_name,
+                    "metric_id": metric["id"],
+                    "metric_label": metric["label"],
+                    **{
+                        k: measured[k]
+                        for k in ("value", "display", "class_id", "class_label", "objects_count", "status", "source")
+                    },
+                    "updated_at": _now(),
+                    "has_geometry": bool(feature.get("geometry")),
+                    "hint": "Cliquer pour explorer",
+                },
+                "geometry": feature.get("geometry"),
+            }
+        )
+
+    expected = len(features)
+    geometry_count = sum(1 for f in features if f.get("geometry"))
+    status = _geometry_status(expected, geometry_count)
+    return {
+        "_meta": {
+            "version": ENGINE_VERSION,
+            "level": "collectivite",
+            "parent_id": territory_name,
+            "metric": metric,
+            "count": expected,
+            "updated_at": _now(),
+            "geometry_source": "/map/layers/collectivites",
+            "note": "Métriques chiffrées non agrégées à ce niveau — classes « Données insuffisantes » si absentes",
+        },
+        "level": "collectivite",
+        "parent": parent,
+        "legend": _legend_for(metric["id"]),
+        "features": {"type": "FeatureCollection", "features": features},
         "type": "FeatureCollection",
+        "expected_count": expected,
+        "geometry_count": geometry_count,
+        "geometry_status": status,
+        "message": None
+        if status != "unavailable"
+        else "Les limites détaillées de ce niveau ne sont pas encore disponibles.",
+    }
+
+
+def build_points_layer(
+    level: str,
+    parent_name: str,
+    metric_id: str = "priority",
+    province_name: str | None = None,
+    territory_name: str | None = None,
+) -> dict[str, Any]:
+    """Groupements / localités : points réels si présents — jamais de géométrie fictive."""
+    metric = next((m for m in METRICS if m["id"] == metric_id), METRICS[0])
+    layer_name = "groupements" if level == "groupement" else "localites"
+    parent_layer = "collectivites" if level == "groupement" else "groupements"
+    parent_level = "collectivite" if level == "groupement" else "groupement"
+    parent_admin = "Collectivité" if level == "groupement" else "Groupement"
+    filter_key = "collectivite" if level == "groupement" else "groupement"
+
+    parent = _find_parent_feature(
+        parent_layer,
+        parent_name,
+        province=province_name,
+        level=parent_level,
+        administrative_level=parent_admin,
+    )
+    # Si parent collectivité sans polygone, tenter contour territoire
+    if not parent and territory_name:
+        parent = _find_parent_feature(
+            "territoires",
+            territory_name,
+            province=province_name,
+            level="territoire",
+            administrative_level="Territoire",
+        )
+
+    features = []
+    for feature in (_map_layer_fc(layer_name).get("features") or []):
+        props = feature.get("properties") or {}
+        if not _admin_eq(props.get(filter_key), parent_name):
+            continue
+        geom = feature.get("geometry")
+        # Points uniquement — ignorer absences
+        name = props.get("nom") or props.get("name")
+        measured = _insufficient_metric(metric)
+        features.append(
+            {
+                "type": "Feature",
+                "id": props.get("id") or name,
+                "properties": {
+                    "id": props.get("id") or name,
+                    "name": name,
+                    "level": level,
+                    "administrative_level": "Groupement" if level == "groupement" else "Localité",
+                    "parent_id": parent_name,
+                    "province": props.get("province") or province_name,
+                    "territoire": props.get("territoire") or territory_name,
+                    "metric_id": metric["id"],
+                    "metric_label": metric["label"],
+                    **{
+                        k: measured[k]
+                        for k in ("value", "display", "class_id", "class_label", "objects_count", "status", "source")
+                    },
+                    "updated_at": _now(),
+                    "has_geometry": bool(geom),
+                    "geometry_kind": (geom or {}).get("type") if isinstance(geom, dict) else None,
+                    "hint": "Cliquer pour explorer",
+                },
+                "geometry": geom,
+            }
+        )
+
+    expected = len(features)
+    geometry_count = sum(1 for f in features if f.get("geometry"))
+    status = _geometry_status(expected, geometry_count)
+    return {
+        "_meta": {
+            "version": ENGINE_VERSION,
+            "level": level,
+            "parent_id": parent_name,
+            "metric": metric,
+            "count": expected,
+            "updated_at": _now(),
+            "geometry_source": f"/map/layers/{layer_name}",
+        },
+        "level": level,
+        "parent": parent,
+        "legend": _legend_for(metric["id"]),
+        "features": {"type": "FeatureCollection", "features": features},
+        "type": "FeatureCollection",
+        "expected_count": expected,
+        "geometry_count": geometry_count,
+        "geometry_status": status,
+        "message": None
+        if status != "unavailable"
+        else "Les limites détaillées de ce niveau ne sont pas encore disponibles.",
     }
 
 

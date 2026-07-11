@@ -67,6 +67,48 @@
 
 .tst-status.is-error { color: #fecaca; }
 .tst-status.is-loading { color: #7dd3fc; }
+.tst-status.is-partial { color: #fbbf24; }
+
+.tst-map-banner {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 500;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  color: #e2e8f0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.tst-map-banner.hidden {
+  display: none;
+}
+
+.tst-banner-back,
+.tst-map-banner [data-tst-back] {
+  border: 0;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  background: #38bdf8;
+  color: #0f172a;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.tst-fallback-msg {
+  color: #fbbf24;
+  font-size: 0.85rem;
+  margin: 0 0 8px;
+}
 
 .tst-layout {
   display: grid;
