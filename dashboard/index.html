@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="modules/shared/ux-premium/ux-premium.css" />
   <link rel="stylesheet" href="modules/shared/decision-workspace/decision-workspace.css" />
   <link rel="stylesheet" href="modules/shared/decision-scenarios/decision-scenarios.css" />
+  <link rel="stylesheet" href="modules/shared/territorial-summary/territorial-summary.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 </head>
 <body>
@@ -758,25 +759,7 @@
             </aside>
 
             <div class="decision-center-map-row">
-              <div class="decision-center-map-shell">
-                <div class="decision-center-map-chrome">
-                  <div class="decision-center-map-toolbar">
-                    <button type="button" class="primary-button cartography-chip-button" id="decision-center-reset-national" disabled>Vue nationale</button>
-                  </div>
-                </div>
-                <div id="decision-center-national-map" class="decision-center-national-map" role="region" aria-label="Carte nationale du centre de décision"></div>
-              </div>
-              <aside class="decision-center-side-panel" aria-label="Classement des sites">
-                <p class="panel-label">Classement</p>
-                <h3>Classement des sites</h3>
-                <div class="decision-center-placeholder-body" id="decision-center-ranking-body">
-                  <div class="ux-state is-empty">
-                    <strong>Classement synchronisé avec la priorisation</strong>
-                    <span>Ouvrez l’onglet Priorisation ou un KPI sites pour afficher le classement opérationnel.</span>
-                    <span class="ux-state-hint">Aucun classement inventé — seules les données calculées apparaissent ici.</span>
-                  </div>
-                </div>
-              </aside>
+              <div class="decision-center-tst-host" id="decision-center-tst-host" aria-label="Tableau de Synthèse Territoriale"></div>
             </div>
 
             <div class="decision-center-lower-row">
@@ -784,9 +767,7 @@
                 <p class="panel-label">Priorisation</p>
                 <h3>Liste des sites prioritaires</h3>
                 <ul class="decision-center-priority-list" id="decision-center-priority-list">
-                  <li>Site prioritaire A — placeholder</li>
-                  <li>Site prioritaire B — placeholder</li>
-                  <li>Site prioritaire C — placeholder</li>
+                  <li>Ouvrez l’onglet Priorisation pour la liste opérationnelle scorée.</li>
                 </ul>
               </section>
               <aside class="decision-center-placeholder-panel" id="decision-center-decision-sheet" aria-label="Fiche décisionnelle">
@@ -1886,6 +1867,12 @@
             <article class="ti-kpi"><p class="summary-label">Confiance</p><p class="summary-value" id="ti-kpi-conf">—</p><span class="ti-status" id="ti-kpi-conf-status"></span></article>
           </div>
 
+          <div class="ti-toolbar-extra" style="margin:8px 0;display:flex;gap:8px;flex-wrap:wrap">
+            <button type="button" class="secondary-button" id="ti-toggle-tst">Afficher la synthèse territoriale</button>
+          </div>
+          <div id="ti-tst-drawer" class="ti-tst-drawer" hidden>
+            <div id="ti-tst-host" class="ti-tst-host" aria-label="Synthèse territoriale optionnelle"></div>
+          </div>
           <div class="ti-main">
             <section>
               <div id="ti-map" class="ti-map" aria-label="Carte territoriale"></div>
@@ -2180,6 +2167,8 @@
   <script src="modules/shared/ux-premium/ux-premium.js"></script>
   <script src="modules/shared/decision-workspace/decision-workspace.js"></script>
   <script src="modules/shared/decision-scenarios/decision-scenarios.js"></script>
+  <script src="modules/shared/territorial-summary/territorial-context.js"></script>
+  <script src="modules/shared/territorial-summary/territorial-summary.js"></script>
   <script src="modules/decision-experience/decision-experience.js"></script>
   <!-- decision-center.js avant app.js : app.js boot immédiat (readyState interactive) sinon rate l'init des onglets -->
   <script src="modules/decision-center/decision-center.js"></script>

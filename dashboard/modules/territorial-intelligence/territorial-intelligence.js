@@ -387,6 +387,45 @@
     document.querySelector('#ti-open-ccn')?.addEventListener('click', () => {
       global.location.hash = 'ccn';
     });
+    document.querySelector('#ti-toggle-tst')?.addEventListener('click', () => {
+      const drawer = document.querySelector('#ti-tst-drawer');
+      const mapSection = document.querySelector('#ti-map')?.closest('section');
+      const btn = document.querySelector('#ti-toggle-tst');
+      if (!drawer) return;
+      const open = drawer.hasAttribute('hidden');
+      if (open) {
+        drawer.hidden = false;
+        drawer.removeAttribute('hidden');
+        if (mapSection) mapSection.hidden = true;
+        if (btn) btn.textContent = 'Masquer la synthèse territoriale';
+        // Une seule carte : détruire temporairement la carte TI si active
+        if (tiState.map) {
+          try { tiState.map.remove(); } catch (_e) { /* */ }
+          tiState.map = null;
+          tiState.layer = null;
+          const el = document.querySelector('#ti-map');
+          if (el) { el.innerHTML = ''; delete el._leaflet_id; }
+        }
+        if (global.TerritorialSummary?.mount) {
+          if (tiState.tstInstance?.destroy) tiState.tstInstance.destroy();
+          global.TerritorialSummary.mount('#ti-tst-host', {
+            metric: global.TerritorialContext?.get()?.metric || 'priority',
+            preserveContext: true,
+          }).then((api) => { tiState.tstInstance = api; });
+        }
+      } else {
+        drawer.hidden = true;
+        drawer.setAttribute('hidden', '');
+        if (mapSection) mapSection.hidden = false;
+        if (btn) btn.textContent = 'Afficher la synthèse territoriale';
+        if (tiState.tstInstance?.destroy) {
+          tiState.tstInstance.destroy();
+          tiState.tstInstance = null;
+        }
+        ensureMap();
+        global.setTimeout(() => tiState.map?.invalidateSize(), 80);
+      }
+    });
   }
 
   function initializeTerritorialIntelligenceModule() {

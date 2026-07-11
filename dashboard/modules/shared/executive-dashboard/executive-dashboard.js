@@ -40,10 +40,9 @@
       global.EdvsCharts.heatmap(payload.heatmap || { title: 'Heatmap', rows: [], cols: [], matrix: [] }),
     ].join('');
     const mapHtml = `
-      <section class="edvs-card">
-        <header class="edvs-card-header"><h3>Carte nationale</h3></header>
-        <div id="edvs-cockpit-map" class="edvs-cockpit-map" aria-label="Carte nationale de pilotage"></div>
-        <p class="edvs-muted">${global.EdvsUtils.escapeHtml(payload.map?.note || '')}</p>
+      <section class="edvs-card edvs-tst-card">
+        <header class="edvs-card-header"><h3>Tableau de Synthèse Territoriale</h3></header>
+        <div id="edvs-tst-host" class="edvs-tst-host" aria-label="Synthèse territoriale DG"></div>
       </section>
       ${global.EdvsCards.renderRanking({ title: 'Top priorités sites', items: payload.rankings?.sites_priority || [], color: 'orange' })}
     `;
@@ -74,7 +73,22 @@
         global.location.hash = btn.getAttribute('data-route-jump');
       });
     });
-    ensureMap(payload.map?.center, payload.map?.zoom);
+    // Une seule carte : TST (pas de double Leaflet avec l’ancien #edvs-cockpit-map)
+    if (state.map) {
+      try { state.map.remove(); } catch (_e) { /* */ }
+      state.map = null;
+    }
+    const tstHost = document.querySelector('#edvs-tst-host');
+    if (tstHost && global.TerritorialSummary?.mount) {
+      if (state.tstInstance?.destroy) state.tstInstance.destroy();
+      global.TerritorialSummary.mount(tstHost, {
+        metric: global.TerritorialContext?.get()?.metric || 'priority',
+        preserveContext: true,
+        showLegend: true,
+        showKpis: true,
+        allowDrilldown: true,
+      }).then((api) => { state.tstInstance = api; });
+    }
   }
 
   function initializeExecutiveCockpitModule() {

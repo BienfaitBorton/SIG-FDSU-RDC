@@ -2228,7 +2228,7 @@
 
     if (tabId === 'vue-nationale') {
       loadNationalPanel(false);
-      initializeDecisionCenterNationalMap();
+      mountDecisionCenterTst();
       loadBusinessArchitecturePanel(false);
       loadSites40ProgramPanel(false);
       loadSites300ProgramPanel(false);
@@ -2279,10 +2279,43 @@
     }
   }
 
+  function mountDecisionCenterTst() {
+    const host = document.querySelector('#decision-center-tst-host');
+    if (!host || !global.TerritorialSummary?.mount) return;
+    if (decisionCenterState.tstInstance?.resize) {
+      decisionCenterState.tstInstance.resize();
+      return;
+    }
+    const run = () => global.TerritorialSummary.mount(host, {
+      metric: global.TerritorialContext?.get()?.metric || 'priority',
+      level: 'province',
+      preserveContext: true,
+      showLegend: true,
+      showKpis: true,
+      allowDrilldown: true,
+      onSelectionChange: (entity) => {
+        if (global.TerritorialContext) global.TerritorialContext.select(entity);
+      },
+    }).then((api) => {
+      decisionCenterState.tstInstance = api;
+    }).catch(() => {
+      decisionCenterState.tstInstance = null;
+      host.classList.add('tst-root');
+      host.innerHTML = global.UxPremium?.stateHtml
+        ? global.UxPremium.stateHtml('error', 'TST indisponible', 'Vérifier l’API /api/territorial-summary.')
+        : '<p class="tst-status is-error">TST indisponible</p>';
+      // Une nouvelle tentative après chargement API
+      global.setTimeout(() => {
+        if (!decisionCenterState.tstInstance) run();
+      }, 1500);
+    });
+    run();
+  }
+
   function initializeDecisionCenterNationalMap() {
+    // Conservé pour compatibilité Priorisation / appels legacy — vue nationale utilise le TST.
     const shared = getShared();
     if (typeof global.L === 'undefined' || !shared.fetchApiJson) return;
-
     const mapElement = document.querySelector('#decision-center-national-map');
     if (!mapElement) return;
 
@@ -2387,7 +2420,7 @@
 
     if (decisionCenterState.activeTab === 'vue-nationale') {
       loadNationalPanel(false);
-      initializeDecisionCenterNationalMap();
+      mountDecisionCenterTst();
       loadBusinessArchitecturePanel(false);
       loadSites40ProgramPanel(false);
       loadSites300ProgramPanel(false);

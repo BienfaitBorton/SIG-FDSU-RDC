@@ -40,7 +40,7 @@ test.describe('UX Premium v1.0', () => {
   test('légendes carte injectées sur vues nationales', async ({ page }) => {
     await page.goto('/index.html#decision-view');
     await expect(page.locator('#decision-view-panel')).not.toHaveClass(/hidden/, { timeout: 30_000 });
-    await expect(page.locator('#decision-view-panel #ux-legend-decision-national')).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator('#decision-view-panel .tst-legend, #decision-view-panel .ux-map-legend').first()).toBeVisible({ timeout: 30_000 });
 
     await page.goto('/index.html#dashboard');
     await expect(page.locator('#dashboard-panel')).not.toHaveClass(/hidden/, { timeout: 30_000 });

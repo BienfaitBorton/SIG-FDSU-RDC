@@ -44,6 +44,7 @@ from api.routes import (
     executive,
     coverage,
     spatial_matching,
+    territorial_summary,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -907,6 +908,11 @@ app.include_router(
     spatial_matching.router,
     prefix="/api/spatial-matching",
     tags=["National Spatial Matching Engine"],
+)
+app.include_router(
+    territorial_summary.router,
+    prefix="/api/territorial-summary",
+    tags=["Tableau de Synthèse Territoriale"],
 )
 
 @app.get("/", tags=["Root"])

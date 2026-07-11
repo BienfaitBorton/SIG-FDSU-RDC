@@ -149,6 +149,19 @@
   min-height: 420px;
 }
 
+.decision-center-tst-host {
+  min-height: 480px;
+  grid-column: 1 / -1;
+}
+
+.decision-center-map-row:has(.decision-center-tst-host) {
+  grid-template-columns: 1fr;
+}
+
+.edvs-tst-host {
+  min-height: 420px;
+}
+
 .decision-center-map-shell {
   position: relative;
   min-height: 420px;

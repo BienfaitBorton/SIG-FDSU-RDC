@@ -1,0 +1,226 @@
+/**
+ * Tableau de Synthèse Territoriale — styles
+ */
+
+.tst-root {
+  display: grid;
+  gap: 12px;
+  min-height: 420px;
+}
+
+.tst-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tst-metric-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.tst-metric-select {
+  min-width: 220px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.92);
+  color: inherit;
+}
+
+.tst-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.tst-crumb {
+  border: 0;
+  background: transparent;
+  color: var(--edvs-blue, #38bdf8);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 2px 4px;
+}
+
+.tst-crumb.is-current {
+  color: var(--text, #e2e8f0);
+  font-weight: 600;
+  cursor: default;
+}
+
+.tst-crumb-sep {
+  color: var(--text-muted, #94a3b8);
+}
+
+.tst-status {
+  font-size: 0.78rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.tst-status.is-error { color: #fecaca; }
+.tst-status.is-loading { color: #7dd3fc; }
+
+.tst-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(240px, 3fr);
+  gap: 12px;
+  min-height: 380px;
+}
+
+.tst-map-shell {
+  position: relative;
+  min-height: 380px;
+  border-radius: 16px;
+  overflow: visible;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(15, 23, 42, 0.92);
+}
+
+.tst-map {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+}
+
+.tst-legend {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 800;
+  max-width: 220px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.94);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  font-size: 0.72rem;
+}
+
+.tst-legend-title {
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+.tst-legend ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.tst-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tst-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tst-panel {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(2, 6, 23, 0.4);
+  max-height: 560px;
+  overflow: auto;
+}
+
+.tst-summary-head h3 {
+  margin: 0.15rem 0 0.5rem;
+}
+
+.tst-summary-fields {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.tst-summary-fields div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  font-size: 0.84rem;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.tst-summary-fields dt {
+  color: var(--text-muted, #94a3b8);
+}
+
+.tst-summary-fields dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+}
+
+.tst-source {
+  margin: 0.25rem 0;
+  font-size: 0.75rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.tst-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tst-territory-list {
+  display: grid;
+  gap: 6px;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.tst-territory-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(15, 23, 42, 0.85);
+  color: inherit;
+  cursor: pointer;
+}
+
+.tst-territory-item:hover {
+  border-color: rgba(56, 189, 248, 0.45);
+}
+
+/* Couleurs légende UxPremium pour classes TST */
+.ux-swatch.is-critical { background: #ef4444; }
+.ux-swatch.is-high { background: #f97316; }
+.ux-swatch.is-medium { background: #ca8a04; }
+.ux-swatch.is-low { background: #4ade80; }
+.ux-swatch.is-none { background: #94a3b8; }
+.ux-swatch.is-insufficient { background: #64748b; }
+
+@media (max-width: 960px) {
+  .tst-layout {
+    grid-template-columns: 1fr;
+  }
+  .tst-map-shell {
+    min-height: 300px;
+  }
+}
