@@ -45,6 +45,7 @@ from api.routes import (
     coverage,
     spatial_matching,
     territorial_summary,
+    national_data_fabric,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -913,6 +914,11 @@ app.include_router(
     territorial_summary.router,
     prefix="/api/territorial-summary",
     tags=["Tableau de Synthèse Territoriale"],
+)
+app.include_router(
+    national_data_fabric.router,
+    prefix="/api/national-data-fabric",
+    tags=["National Data Fabric"],
 )
 
 @app.get("/", tags=["Root"])
