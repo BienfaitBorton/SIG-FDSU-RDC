@@ -46,6 +46,7 @@ from api.routes import (
     spatial_matching,
     territorial_summary,
     national_data_fabric,
+    transport,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -919,6 +920,11 @@ app.include_router(
     national_data_fabric.router,
     prefix="/api/national-data-fabric",
     tags=["National Data Fabric"],
+)
+app.include_router(
+    transport.router,
+    prefix="/api/transport",
+    tags=["Transport & Accessibility Intelligence"],
 )
 
 @app.get("/", tags=["Root"])

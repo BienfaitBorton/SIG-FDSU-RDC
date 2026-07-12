@@ -151,9 +151,16 @@ def test_quality_indicators_population_nci():
 
 
 def test_quality_planned_is_insufficient():
-    q = ndf.compute_quality("transport")
+    q = ndf.compute_quality("energy")
     assert q["summary"]["measured"] == 0
     assert all(i["display"] == "Données insuffisantes" for i in q["indicators"])
+
+
+def test_transport_registry_active():
+    detail = ndf.get_registry("transport")
+    assert detail is not None
+    assert detail["registry"]["status"] == "active"
+    assert "/api/transport" in (detail["registry"].get("apis") or [])
 
 
 def test_consumers_compatibility_engines():

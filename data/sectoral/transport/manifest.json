@@ -1,0 +1,32 @@
+{
+  "_meta": {
+    "title": "Transport — Routes principales",
+    "generated_at": "2026-07-12T10:23:49.138756+00:00",
+    "schema_version": "1.0"
+  },
+  "heritage": "Routes_principales.shp.kmz (OSM / référentiel routier)",
+  "sources": [
+    {
+      "role": "raw_kmz",
+      "path": "data/raw/Routes_principales.shp.kmz",
+      "sha256": "629fc9040f79096ce969911f8b115701e195882e6bbd6ef42b5cc9572cb01685",
+      "preserved_original": true,
+      "not_served_in_production": true
+    }
+  ],
+  "outputs": {
+    "geojson": "data/sectoral/transport/processed/routes_principales.geojson",
+    "quality": "data/sectoral/transport/quality/routes_quality_report.json"
+  },
+  "counts": {
+    "placemarks": 6512,
+    "accepted": 6512,
+    "rejected": 0,
+    "without_name": 5705,
+    "outside_rdc_bbox": 1,
+    "by_nature": {
+      "Route primaire": 5300,
+      "Voie rapide": 1212
+    }
+  }
+}

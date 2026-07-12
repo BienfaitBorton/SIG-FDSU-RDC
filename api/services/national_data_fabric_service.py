@@ -349,6 +349,8 @@ def compute_quality(registry_id: str) -> dict[str, Any]:
 
     if baseline == "nci_quality_report":
         indicators = _quality_from_nci()
+    elif baseline == "transport_quality_report":
+        indicators = _quality_from_transport()
     elif baseline == "master_registry":
         indicators = _quality_from_master()
     elif baseline == "official_referentials":
@@ -389,6 +391,62 @@ def compute_quality(registry_id: str) -> dict[str, Any]:
             "insufficient": len(QUALITY_DIMENSIONS) - measured,
         },
     }
+
+
+def _quality_from_transport() -> list[dict[str, Any]]:
+    try:
+        from api.services import transport_service
+
+        report = transport_service.get_quality_report() or {}
+        pipe = report.get("pipeline_report") or {}
+        counts = pipe.get("counts") or {}
+        checks = {c.get("code"): c for c in (pipe.get("checks") or [])}
+        db = report.get("database_stats") or {}
+        accepted = counts.get("accepted") or db.get("routes_total")
+        unnamed = counts.get("without_name")
+        outside = counts.get("outside_rdc_bbox")
+        invalid = (checks.get("invalid_geometry") or {}).get("count")
+        generated = (pipe.get("_meta") or {}).get("generated_at")
+        return [
+            _measured(
+                "completeness",
+                accepted,
+                f"Routes acceptées : {accepted}",
+                "transport quality / pipeline",
+            )
+            if accepted is not None
+            else _insufficient("completeness"),
+            _measured(
+                "freshness",
+                1 if generated else None,
+                f"Pipeline : {generated}" if generated else "Données insuffisantes",
+                "routes_quality_report._meta",
+            ),
+            _measured(
+                "coherence",
+                unnamed if unnamed is not None else None,
+                f"Sans nom : {unnamed} ; hors RDC bbox : {outside}",
+                "pipeline checks",
+            )
+            if unnamed is not None
+            else _insufficient("coherence"),
+            _measured(
+                "geometry",
+                invalid if invalid is not None else db.get("invalid_geom"),
+                f"Géométries invalides (pipeline) : {invalid}",
+                "invalid_geometry check",
+            )
+            if invalid is not None or db.get("invalid_geom") is not None
+            else _insufficient("geometry"),
+            _measured(
+                "precision",
+                None,
+                "CRS EPSG:4326 — précision source OSM",
+                "crs",
+            ),
+        ]
+    except Exception:
+        return [_insufficient(d, "Rapport transport indisponible") for d in QUALITY_DIMENSIONS]
 
 
 def _quality_from_nci() -> list[dict[str, Any]]:

@@ -42,7 +42,7 @@ CRITERIA_WEIGHTS: dict[str, float] = {
     "sante": 0.0,
     "education": 0.0,
     "energie": 0.0,
-    "routes": 0.0,
+    "routes": 0.10,
 }
 
 PENDING_SECTORIAL_CRITERIA = [
@@ -52,7 +52,6 @@ PENDING_SECTORIAL_CRITERIA = [
     "sante",
     "education",
     "energie",
-    "routes",
 ]
 
 REL_NEAREST_INFRA = "nearest_infrastructure"
@@ -174,6 +173,24 @@ def _score_execution_status(site_status: str | None, program_code: str) -> tuple
     return 60.0, site_status or "Statut non renseigné"
 
 
+def _score_routes(site_row: dict[str, Any]) -> tuple[float, str, dict[str, Any]]:
+    """Critère accessibilité routière — score transparent via transport_service."""
+    lon = site_row.get("longitude")
+    lat = site_row.get("latitude")
+    if lon is None or lat is None:
+        return 0.0, "Accessibilité : Données insuffisantes (site non géoréférencé)", {}
+    try:
+        from api.services import transport_service
+
+        result = transport_service.site_accessibility(lon=float(lon), lat=float(lat))
+        scored = result.get("accessibility") or {}
+        if scored.get("score") is None:
+            return 0.0, "Accessibilité : Données insuffisantes (aucune route proche)", result
+        return float(scored["score"]), scored.get("justification") or "Accessibilité calculée", result
+    except Exception:
+        return 0.0, "Accessibilité : Données insuffisantes (référentiel transport indisponible)", {}
+
+
 def compute_site_score(site_row: dict[str, Any], relations: list[dict[str, Any]]) -> dict[str, Any]:
     program_code = site_row.get("program_code") or ""
     program_status = site_row.get("program_status")
@@ -245,6 +262,16 @@ def compute_site_score(site_row: dict[str, Any], relations: list[dict[str, Any]]
         "weight": CRITERIA_WEIGHTS["statut_execution"],
         "label": exec_label,
         "criterion_id": "classe_strategique",
+    }
+
+    routes_score, routes_label, routes_payload = _score_routes(site_row)
+    criteria_scores["routes"] = {
+        "score": routes_score,
+        "weight": CRITERIA_WEIGHTS["routes"],
+        "label": routes_label,
+        "criterion_id": "accessibilite",
+        "nearest_road": (routes_payload or {}).get("nearest_road"),
+        "accessibility": (routes_payload or {}).get("accessibility"),
     }
 
     pending_sectorial = [

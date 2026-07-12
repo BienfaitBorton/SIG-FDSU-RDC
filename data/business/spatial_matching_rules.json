@@ -16,6 +16,9 @@
     "NEAR_ADMINISTRATION",
     "NEAR_FIBER",
     "NEAR_BACKBONE",
+    "NEAR_MAIN_ROAD",
+    "WITHIN_ROAD_CORRIDOR",
+    "ROAD_ACCESSIBILITY",
     "WITHIN_TERRITORY",
     "CANDIDATE_FOR_MISSION",
     "OVERLAPS_EXISTING_COVERAGE"
@@ -35,7 +38,10 @@
     "health_proximity": 5000,
     "school_proximity": 3000,
     "market_proximity": 3000,
-    "administration_proximity": 5000
+    "administration_proximity": 5000,
+    "nearest_main_road": 50000,
+    "road_corridor": 2000,
+    "road_accessibility": 15000
   },
   "matching": {
     "default_max_distance_m": 25000,

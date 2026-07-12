@@ -7,6 +7,7 @@
  * via registerDomainAdapter(domainId, adapter).
  */
 (function initDecisionWorkspace(global) {
+  const API_BASE = `${global.location.protocol}//${global.location.hostname}:8001`;
   const LEVELS = [
     { id: 'rdc', label: 'RDC' },
     { id: 'province', label: 'Province' },
@@ -121,6 +122,10 @@
             <h3>Historique</h3>
             <div class="dw-section-body" id="decision-workspace-history-body"></div>
           </section>
+          <section class="dw-section" id="decision-workspace-transport" data-dw-section="transport" hidden>
+            <h3>Transport</h3>
+            <div class="dw-section-body" id="decision-workspace-transport-body"></div>
+          </section>
           <section class="dw-section dw-section-scaffold" id="decision-workspace-compare" data-dw-section="comparison" hidden>
             <h3>Comparaison</h3>
             <div class="dw-section-body" id="decision-workspace-compare-body"></div>
@@ -201,6 +206,8 @@
     const recoSection = document.querySelector('#decision-workspace-reco');
     const historyBody = document.querySelector('#decision-workspace-history-body');
     const historySection = document.querySelector('#decision-workspace-history');
+    const transportBody = document.querySelector('#decision-workspace-transport-body');
+    const transportSection = document.querySelector('#decision-workspace-transport');
     const compareBody = document.querySelector('#decision-workspace-compare-body');
     const compareSection = document.querySelector('#decision-workspace-compare');
 
@@ -265,6 +272,45 @@
         </ul>
         <p class="dw-hint">Historique session (socle v1.1) — persistance Master Registry / connaissances prévue ultérieurement.</p>
       `;
+    }
+
+    if (transportSection && transportBody) {
+      transportSection.hidden = false;
+      transportBody.innerHTML = global.UxPremium?.stateHtml
+        ? global.UxPremium.stateHtml('loading', 'Accessibilité', 'Chargement du référentiel transport…')
+        : '<p>Chargement transport…</p>';
+      const siteId = state.selection?.id || state.selection?.site_id;
+      const url = siteId
+        ? `${API_BASE}/api/transport/accessibility?site_id=${encodeURIComponent(siteId)}`
+        : `${API_BASE}/api/transport/panel`;
+      fetch(url, { headers: { Accept: 'application/json' }, cache: 'no-store' })
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error('transport'))))
+        .then((data) => {
+          const acc = data.accessibility || data.site_accessibility?.accessibility || {};
+          const road = data.nearest_road || data.site_accessibility?.nearest_road || {};
+          if (!road.id && acc.display === 'Données insuffisantes') {
+            transportBody.innerHTML = global.UxPremium?.stateHtml
+              ? global.UxPremium.stateHtml('empty', 'Transport', 'Données insuffisantes — sélectionnez un site géoréférencé ou importez les routes.')
+              : '<p>Données insuffisantes</p>';
+            return;
+          }
+          transportBody.innerHTML = `
+            <dl class="dw-transport-fields">
+              <div><dt>Route la plus proche</dt><dd>${escapeHtml(road.nom || 'Sans nom')}</dd></div>
+              <div><dt>Distance</dt><dd>${road.distance_m != null ? `${Math.round(road.distance_m)} m` : 'Données insuffisantes'}</dd></div>
+              <div><dt>Type</dt><dd>${escapeHtml(road.type_route || '—')}</dd></div>
+              <div><dt>État</dt><dd>${escapeHtml(road.etat || 'Non renseigné')}</dd></div>
+              <div><dt>Score</dt><dd>${escapeHtml(acc.display || 'Données insuffisantes')}</dd></div>
+              <div><dt>Niveau</dt><dd>${escapeHtml(acc.class_label || '—')}</dd></div>
+            </dl>
+            <p class="dw-hint"><strong>Justification :</strong> ${escapeHtml(acc.justification || '—')}</p>
+          `;
+        })
+        .catch(() => {
+          transportBody.innerHTML = global.UxPremium?.stateHtml
+            ? global.UxPremium.stateHtml('error', 'Transport indisponible', 'Vérifier /api/transport (mode DB + pipeline import).')
+            : '<p>Transport indisponible</p>';
+        });
     }
 
     if (compareSection && compareBody) {

@@ -1,0 +1,52 @@
+{
+  "_meta": {
+    "generated_at": "2026-07-12T10:23:47.633845+00:00",
+    "source_file": "Routes_principales.shp.kmz",
+    "pipeline": "import_routes_principales_kmz.py",
+    "crs": "EPSG:4326"
+  },
+  "counts": {
+    "placemarks": 6512,
+    "accepted": 6512,
+    "rejected": 0,
+    "without_name": 5705,
+    "outside_rdc_bbox": 1,
+    "by_nature": {
+      "Route primaire": 5300,
+      "Voie rapide": 1212
+    }
+  },
+  "checks": [
+    {
+      "code": "invalid_geometry",
+      "label": "Géométries invalides / manquantes",
+      "severity": "error",
+      "count": 0
+    },
+    {
+      "code": "duplicate_routes",
+      "label": "Routes dupliquées (source_id)",
+      "severity": "warning",
+      "count": 0
+    },
+    {
+      "code": "unnamed_routes",
+      "label": "Routes sans nom",
+      "severity": "info",
+      "count": 5705
+    },
+    {
+      "code": "outside_rdc",
+      "label": "Routes hors emprise RDC (bbox)",
+      "severity": "warning",
+      "count": 1
+    },
+    {
+      "code": "incoherent_segments",
+      "label": "Tronçons très courts (< 5 m)",
+      "severity": "info",
+      "count": 55
+    }
+  ],
+  "rejected_sample": []
+}

@@ -213,6 +213,14 @@ METRICS: list[dict[str, Any]] = [
         "aggregation": "COUNT CCN GROUP BY province",
     },
     {
+        "id": "accessibility",
+        "label": "Accessibilité",
+        "unit": "score",
+        "description": "Score moyen d'accessibilité routière des sites FDSU (distance + type de route — formule documentée).",
+        "source": "transport.routes + programs.fdsu_sites via /api/transport",
+        "aggregation": "AVG(accessibility_score) GROUP BY province — sites géoréférencés uniquement",
+    },
+    {
         "id": "data_quality",
         "label": "Qualité des données",
         "unit": "score",
@@ -331,7 +339,14 @@ def _ccn_by_province() -> dict[str, int]:
     return {_norm(k): int(v or 0) for k, v in by_p.items()}
 
 
-def _metric_value(metric_id: str, site_row: dict | None, cov_row: dict | None, health: int | None, ccn: int | None) -> dict[str, Any]:
+def _metric_value(
+    metric_id: str,
+    site_row: dict | None,
+    cov_row: dict | None,
+    health: int | None,
+    ccn: int | None,
+    access: dict | None = None,
+) -> dict[str, Any]:
     """Retourne value, class, status, objects_count."""
     insufficient = {
         "value": None,
@@ -427,6 +442,19 @@ def _metric_value(metric_id: str, site_row: dict | None, cov_row: dict | None, h
             "class_label": _count_class_label(ccn, [1, 3, 10]),
             "objects_count": ccn,
             "status": "ok" if ccn else "partial",
+        }
+    if mid == "accessibility":
+        if not access or access.get("avg_score") is None:
+            return insufficient
+        score = float(access["avg_score"])
+        # Réutilise classes priorité (score 0-100) — plus haut = meilleure accessibilité
+        return {
+            "value": score,
+            "display": str(score),
+            "class_id": _priority_class(score),
+            "class_label": f"Accessibilité {score}",
+            "objects_count": int(access.get("sites_scored") or 0),
+            "status": "ok",
         }
     if mid == "data_quality":
         if not cov_row:
@@ -543,6 +571,9 @@ def build_province_layer(metric_id: str = "priority") -> dict[str, Any]:
     coverage = _coverage_by_province()
     health = _health_by_province()
     ccn = _ccn_by_province()
+    access = {}
+    if metric["id"] == "accessibility":
+        access = _safe(lambda: __import__("api.services.transport_service", fromlist=["accessibility_by_province"]).accessibility_by_province(), {}) or {}
 
     # Union of province names from real sources
     names: dict[str, str] = {}
@@ -558,6 +589,9 @@ def build_province_layer(metric_id: str = "priority") -> dict[str, Any]:
     for key, _v in ccn.items():
         if key and key not in {"#n/a", "n/a", "non renseigné"} and key not in names:
             names[key] = key.title()
+    for key, _v in access.items():
+        if key and key not in {"#n/a", "n/a", "non renseigné"} and key not in names:
+            names[key] = key.title()
 
     features = []
     for key, display_name in sorted(names.items(), key=lambda x: x[1]):
@@ -570,8 +604,9 @@ def build_province_layer(metric_id: str = "priority") -> dict[str, Any]:
             c = 0
         elif not ccn:
             c = None
+        acc = access.get(key)
 
-        measured = _metric_value(metric["id"], site_row, cov_row, h, c)
+        measured = _metric_value(metric["id"], site_row, cov_row, h, c, access=acc)
         features.append(
             {
                 "type": "Feature",
@@ -599,6 +634,7 @@ def build_province_layer(metric_id: str = "priority") -> dict[str, Any]:
                     "localities_covered": (cov_row or {}).get("localities_covered"),
                     "health_facilities": h,
                     "ccn": c,
+                    "accessibility_avg": (acc or {}).get("avg_score"),
                     "hint": "Cliquer pour explorer",
                 },
                 "geometry": None,  # géométrie fournie côté client via /map/layers/provinces

@@ -13,7 +13,7 @@ const FDSU_ZONE_DEFINITIONS = {
   ET: { nom: 'Zone Est', colorVar: '--zone-et' },
 };
 const FDSU_ZONE_CODES = ['ND', 'OT', 'CE', 'SD', 'ET'];
-const FDSU_LAYER_STACK_ORDER = ['rdcBoundary', 'zones', 'provinces', 'territoires', 'collectivites', 'groupements', 'villages', 'sites', 'sites_all', 'sites_40', 'sites_300', 'telecom_vodacom', 'telecom_orange', 'telecom_fiber_mw', 'telecom_fiberco', 'telecom_fttx', 'spatial_relations', 'asset_need_matches', 'missions'];
+const FDSU_LAYER_STACK_ORDER = ['rdcBoundary', 'zones', 'provinces', 'territoires', 'collectivites', 'groupements', 'villages', 'sites', 'sites_all', 'sites_40', 'sites_300', 'telecom_vodacom', 'telecom_orange', 'telecom_fiber_mw', 'telecom_fiberco', 'telecom_fttx', 'routes_principales', 'spatial_relations', 'asset_need_matches', 'missions'];
 const FDSU_SITES_PROGRAM_LAYERS = {
   sites_all: {
     label: 'Tous les sites',
@@ -68,6 +68,15 @@ const TELECOM_LAYERS = {
     pendingMessage: 'Données télécom disponibles en mode DB',
     color: '#7c3aed',
     fillColor: '#a78bfa',
+  },
+};
+const TRANSPORT_LAYERS = {
+  routes_principales: {
+    label: 'Routes principales',
+    apiPath: '/api/transport/layers/routes_principales',
+    pendingMessage: 'Routes disponibles en mode DB après import pipeline',
+    color: '#b45309',
+    fillColor: '#f59e0b',
   },
 };
 const SPATIAL_ANALYSIS_LAYERS = {
@@ -2226,6 +2235,18 @@ function initializeCartographyModule() {
       pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#7c3aed', '#a78bfa', 7),
       onEachFeature: (feature, layer) => onTelecomEachFeature(feature, layer, 'telecom_fttx'),
     }),
+    routes_principales: L.geoJSON(null, {
+      style: () => ({ color: '#b45309', weight: 2.5, opacity: 0.85 }),
+      onEachFeature: (feature, layer) => {
+        const p = feature?.properties || {};
+        const html = `<strong>${p.nom || 'Sans nom'}</strong><br>Type : ${p.type || '—'}<br>Longueur : ${p.longueur_km != null ? `${p.longueur_km} km` : '—'}<br>Source : ${p.source || '—'}<br>État : ${p.etat || 'Non renseigné'}`;
+        if (window.SigMapTooltips?.bind) {
+          window.SigMapTooltips.bind(layer, { ...p, nom: p.nom, tooltip_html: html }, 'transport_route', { sticky: true });
+        } else if (layer.bindTooltip) {
+          layer.bindTooltip(html, { sticky: true, className: 'sig-map-tooltip' });
+        }
+      },
+    }),
     spatial_relations: L.geoJSON(null, {
       style: () => ({ color: '#0d9488', weight: 2, opacity: 0.75, dashArray: '4 6' }),
       onEachFeature: (feature, layer) => onSpatialRelationEachFeature(feature, layer),
@@ -2591,6 +2612,7 @@ function isFdsuSitesProgramLayer(layerKey) {
 function getCartographyLayerLabel(layerKey) {
   if (FDSU_SITES_PROGRAM_LAYERS[layerKey]) return FDSU_SITES_PROGRAM_LAYERS[layerKey].label;
   if (TELECOM_LAYERS[layerKey]) return TELECOM_LAYERS[layerKey].label;
+  if (TRANSPORT_LAYERS[layerKey]) return TRANSPORT_LAYERS[layerKey].label;
   if (SPATIAL_ANALYSIS_LAYERS[layerKey]) return SPATIAL_ANALYSIS_LAYERS[layerKey].label;
   return WEB_SIG_LAYER_DEFINITIONS[layerKey]?.label || layerKey;
 }
@@ -2756,6 +2778,10 @@ function isTelecomLayer(layerKey) {
   return Boolean(TELECOM_LAYERS[layerKey]);
 }
 
+function isTransportLayer(layerKey) {
+  return Boolean(TRANSPORT_LAYERS[layerKey]);
+}
+
 function resolveTelecomDataPath(definition) {
   if (!definition) return null;
   if (canUseProgramDbData() && definition.apiPath) return definition.apiPath;
@@ -2875,6 +2901,43 @@ function ensureTelecomLayerLoaded(layerKey) {
   return cartographyState.layerLoadPromises[layerKey];
 }
 
+function ensureTransportLayerLoaded(layerKey) {
+  const definition = TRANSPORT_LAYERS[layerKey];
+  if (!definition) return Promise.resolve([]);
+  if (cartographyState.layerLoadPromises[layerKey]) {
+    return cartographyState.layerLoadPromises[layerKey];
+  }
+  const layer = cartographyState.layers[layerKey];
+  if ((layer?.getLayers?.().length ?? 0) > 0) {
+    return Promise.resolve(layer.getLayers());
+  }
+  const sourcePath = definition.apiPath;
+  cartographyState.layerLoadPromises[layerKey] = fetchJson(sourcePath)
+    .then((geojson) => {
+      if (!layer) return [];
+      if (!geojson || !Array.isArray(geojson.features) || geojson.features.length === 0) {
+        cartographyState.layerStatus[layerKey] = false;
+        cartographyState.features[layerKey] = [];
+        return [];
+      }
+      layer.clearLayers();
+      cartographyState.featureLayers[layerKey] = {};
+      layer.addData(geojson);
+      cartographyState.features[layerKey] = geojson.features;
+      cartographyState.layerStatus[layerKey] = true;
+      return layer.getLayers();
+    })
+    .catch(() => {
+      cartographyState.layerStatus[layerKey] = false;
+      cartographyState.features[layerKey] = [];
+      return [];
+    })
+    .finally(() => {
+      cartographyState.layerLoadPromises[layerKey] = null;
+    });
+  return cartographyState.layerLoadPromises[layerKey];
+}
+
 function resolveFdsuProgramDataPath(definition, panelFormat) {
   if (!definition) return null;
   if (canUseProgramDbData()) {
@@ -2952,7 +3015,7 @@ function ensureFdsuSitesProgramLayerLoaded(layerKey) {
 }
 
 function isManagedCartographyLayer(layerKey) {
-  return Boolean(WEB_SIG_LAYER_DEFINITIONS[layerKey]) || layerKey === 'zones' || isFdsuSitesProgramLayer(layerKey) || isTelecomLayer(layerKey) || isSpatialAnalysisLayer(layerKey);
+  return Boolean(WEB_SIG_LAYER_DEFINITIONS[layerKey]) || layerKey === 'zones' || isFdsuSitesProgramLayer(layerKey) || isTelecomLayer(layerKey) || isTransportLayer(layerKey) || isSpatialAnalysisLayer(layerKey);
 }
 
 function ensureCartographyLayerLoaded(layerKey) {
@@ -2965,6 +3028,9 @@ function ensureCartographyLayerLoaded(layerKey) {
   }
   if (isTelecomLayer(layerKey)) {
     return ensureTelecomLayerLoaded(layerKey);
+  }
+  if (isTransportLayer(layerKey)) {
+    return ensureTransportLayerLoaded(layerKey);
   }
   if (isFdsuSitesProgramLayer(layerKey)) {
     return ensureFdsuSitesProgramLayerLoaded(layerKey);

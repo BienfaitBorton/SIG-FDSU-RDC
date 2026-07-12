@@ -186,6 +186,8 @@ def _run_invest_priority(context: dict[str, Any]) -> dict[str, Any]:
             _link("Panneau national", "/api/decision/national-panel"),
             _link("KPI sites prioritaires", "/api/decision/explain-kpi?kpi_key=sites_priority"),
             _link("Matrice de priorisation", "data/business/priority_matrix.json", "file"),
+            _link("Accessibilité transport", "/api/transport/formula"),
+            _link("Qualité routes", "/api/transport/quality"),
         ],
         "analysis": {
             "program_code": program,
@@ -426,22 +428,35 @@ def _run_investment_impact(context: dict[str, Any]) -> dict[str, Any]:
         if asset_id
         else {}
     ) or {}
+    access = None
+    if asset_id and str(asset_id).isdigit():
+        access = _safe(
+            lambda: __import__("api.services.transport_service", fromlist=["site_accessibility"]).site_accessibility(
+                site_id=int(asset_id)
+            ),
+            {},
+        )
 
     imp = impact.get("impact") or impact
     pop = imp.get("population_impacted")
     locs = imp.get("localities_impacted")
+    acc = (access or {}).get("accessibility") or {}
+    road = (access or {}).get("nearest_road") or {}
 
     return {
         "executive_summary": (
             f"Impact estimé pour l’actif {asset_id or '—'} : "
             f"{locs if locs is not None else '—'} localités, "
             f"population {pop if pop is not None else 'non disponible'} "
-            f"(moteur spatial NSME — aucune valeur inventée)."
+            f"(moteur spatial NSME — aucune valeur inventée). "
+            f"Accessibilité : {acc.get('display') or 'Données insuffisantes'}"
+            f"{(' — ' + str(road.get('nom'))) if road.get('nom') else ''}."
         ),
         "data_used": [
             _link("Impact NSME", f"/api/spatial-matching/assets/{asset_id}/impact") if asset_id else _link("NSME", "/api/spatial-matching/statistics"),
             _link("Explication spatiale", f"/api/spatial-matching/assets/{asset_id}/explain") if asset_id else _link("Règles NSME", "/api/spatial-matching/rules"),
             _link("Dossier de décision", f"/api/decision/case/{asset_id}") if asset_id else _link("Explainable engine", "/api/decision/pdf-template"),
+            _link("Accessibilité", f"/api/transport/accessibility?site_id={asset_id}") if asset_id else _link("Transport", "/api/transport/statistics"),
         ],
         "analysis": {
             "asset_id": asset_id,
@@ -449,6 +464,17 @@ def _run_investment_impact(context: dict[str, Any]) -> dict[str, Any]:
             "site": site,
             "impact": imp,
             "spatial_explain": explain,
+            "accessibility": access,
+            "access_level": acc.get("class_label"),
+            "nearest_road_distance_m": road.get("distance_m"),
+            "constraints": [
+                c
+                for c in [
+                    "Distance route élevée" if (road.get("distance_m") or 0) > 5000 else None,
+                    "Score accessibilité faible" if (acc.get("score") or 100) < 40 else None,
+                ]
+                if c
+            ],
         },
         "kpis": [
             _kpi("Actif", asset_id or "—", color="blue"),
@@ -526,6 +552,16 @@ def _run_dg_dossier(context: dict[str, Any]) -> dict[str, Any]:
         else {}
     ) or {}
     template = _safe(explainable_decision_service.pdf_template, {}) or {}
+    access = None
+    if asset_id and str(asset_id).isdigit():
+        access = _safe(
+            lambda: __import__("api.services.transport_service", fromlist=["site_accessibility"]).site_accessibility(
+                site_id=int(asset_id)
+            ),
+            {},
+        )
+    acc = (access or {}).get("accessibility") or {}
+    road = (access or {}).get("nearest_road") or {}
 
     summary = case.get("summary") or {}
     headline = summary.get("headline") if isinstance(summary, dict) else summary
@@ -535,12 +571,14 @@ def _run_dg_dossier(context: dict[str, Any]) -> dict[str, Any]:
             headline
             or f"Dossier de décision prêt pour l’actif {asset_id or '—'} — "
             "assemblage automatique via Explainable Decision Engine (aucune recommandation sans justification)."
+            f" Accessibilité : {acc.get('display') or 'Données insuffisantes'}."
         ),
         "data_used": [
             _link("Dossier de décision", f"/api/decision/case/{asset_id}") if asset_id else _link("PDF template", "/api/decision/pdf-template"),
             _link("Justification", f"/api/decision/explain/{asset_id}") if asset_id else _link("Doctrines", "/api/decision/doctrine/DOCTRINE_SITES_FDSU"),
             _link("Modèle PDF DG", "/api/decision/pdf-template"),
             _link("Historique des cas", "/api/decision/case-history"),
+            _link("Transport / accessibilité", f"/api/transport/accessibility?site_id={asset_id}") if asset_id else _link("Transport", "/api/transport/panel"),
         ],
         "analysis": {
             "asset_id": asset_id,
@@ -548,12 +586,24 @@ def _run_dg_dossier(context: dict[str, Any]) -> dict[str, Any]:
             "case_sections": list(case.keys()),
             "template_id": template.get("id") or template.get("_meta", {}).get("id"),
             "site": site,
+            "accessibility": access,
+            "nearest_road": road.get("nom"),
+            "nearest_road_distance_m": road.get("distance_m"),
+            "access_level": acc.get("class_label"),
+            "access_constraints": [
+                c
+                for c in [
+                    "Éloignement routier" if (road.get("distance_m") or 0) > 5000 else None,
+                    "Accès difficile" if (acc.get("score") or 100) < 40 else None,
+                ]
+                if c
+            ],
         },
         "kpis": [
             _kpi("Actif", asset_id or "—", color="blue"),
             _kpi("Confiance", (case.get("confidence") or explained.get("confidence") or "—"), color="green"),
             _kpi("Score", (case.get("score") or {}).get("value") if isinstance(case.get("score"), dict) else case.get("score") or "—", color="orange"),
-            _kpi("Sections dossier", len(case.keys()), color="purple"),
+            _kpi("Accessibilité", acc.get("display") or "Données insuffisantes", color="purple"),
         ],
         "charts": {
             "treemap": {

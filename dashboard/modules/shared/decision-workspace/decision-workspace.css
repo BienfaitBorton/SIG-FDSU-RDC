@@ -161,6 +161,34 @@ body.decision-workspace-open .decision-detail-topbar-copy .panel-label::after {
   color: var(--edvs-blue, #38bdf8);
 }
 
+.dw-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.dw-transport-fields {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+
+.dw-transport-fields div {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.dw-transport-fields dt {
+  margin: 0;
+  color: var(--text-muted, #94a3b8);
+}
+
+.dw-transport-fields dd {
+  margin: 0;
+  font-weight: 600;
+}
+
 @media (max-width: 960px) {
   .dw-trail-step {
     padding: 5px 8px;

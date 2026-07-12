@@ -423,6 +423,79 @@ def match_asset_to_public_infrastructure(asset: dict[str, Any]) -> list[dict[str
     return infra_matches
 
 
+def match_site_to_roads(asset: dict[str, Any], max_distance_m: float | None = None) -> list[dict[str, Any]]:
+    """NSME — Nearest Road / Road Corridor / Road Accessibility (données transport.routes)."""
+    lon = asset.get("longitude")
+    lat = asset.get("latitude")
+    if lon is None or lat is None:
+        return []
+    rules = get_rules()
+    radii = rules.get("service_radii_m") or {}
+    nearest_max = float(max_distance_m or radii.get("nearest_main_road") or 50000)
+    corridor_m = float(radii.get("road_corridor") or 2000)
+
+    try:
+        from api.services import transport_service
+
+        road = transport_service.nearest_road(float(lon), float(lat), max_distance_m=nearest_max)
+        if not road:
+            return []
+        scored = transport_service.compute_accessibility_score(road.get("distance_m"), road.get("type_route"))
+        distance = float(road.get("distance_m") or 0)
+        base = {
+            "asset_type": "fdsu_site",
+            "asset_id": asset.get("id") or asset.get("site_id"),
+            "need_type": "transport_road",
+            "need_id": f"ROAD::{road.get('id')}",
+            "distance_m": round(distance, 1),
+            "service_radius_m": nearest_max,
+            "population_impacted": None,
+            "confidence_level": "medium",
+            "calculation_method": "postgis_nearest_road",
+            "properties": {
+                "road_name": road.get("nom"),
+                "road_type": road.get("type_route"),
+                "road_etat": road.get("etat"),
+                "accessibility_score": scored.get("score"),
+                "accessibility_justification": scored.get("justification"),
+            },
+        }
+        matches = [
+            {
+                **base,
+                "relation_type": "NEAR_MAIN_ROAD",
+                "properties": {**base["properties"], "nsme_profile": "Nearest Road"},
+            },
+            {
+                **base,
+                "relation_type": "ROAD_ACCESSIBILITY",
+                "need_id": f"ACCESS::{road.get('id')}",
+                "properties": {
+                    **base["properties"],
+                    "nsme_profile": "Road Accessibility",
+                    "class_label": scored.get("class_label"),
+                },
+            },
+        ]
+        if distance <= corridor_m:
+            matches.append(
+                {
+                    **base,
+                    "relation_type": "WITHIN_ROAD_CORRIDOR",
+                    "need_id": f"CORRIDOR::{road.get('id')}",
+                    "service_radius_m": corridor_m,
+                    "properties": {
+                        **base["properties"],
+                        "nsme_profile": "Road Corridor",
+                        "corridor_m": corridor_m,
+                    },
+                }
+            )
+        return matches
+    except Exception:
+        return []
+
+
 def match_asset_to_needs(
     asset_type: str,
     asset_id: str | int,
@@ -472,6 +545,7 @@ def match_asset_to_needs(
                 matches.append(cand)
         impact_extra = match_asset_to_public_infrastructure(asset)
         matches.extend(impact_extra)
+        matches.extend(match_site_to_roads(asset, max_distance_m=max_m))
     elif asset_type == "ccn":
         ccns = _load_ccn_assets()
         asset = next(
