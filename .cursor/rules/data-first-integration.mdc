@@ -1,0 +1,19 @@
+---
+description: Data First Integration — obligatoire avant tout nouveau module SIG-FDSU
+alwaysApply: true
+---
+
+# Data First Integration Policy
+
+Devise officielle :
+
+> Chaque décision doit exploiter toutes les connaissances actuellement disponibles, tout en indiquant explicitement les connaissances encore manquantes.
+
+Avant tout nouveau développement :
+
+1. Consulter `PROJECT_MANAGEMENT/ARCHITECTURE/DATA_FIRST_INTEGRATION_POLICY.md` et l’audit v1.
+2. Interdit de créer un module sans exploiter les données déjà présentes pertinentes.
+3. Interdit d’afficher « UI non branchée » si les données existent — utiliser les maturités : Opérationnel / Partiel / En cours d’intégration / Anomalie.
+4. Un `0` spatial sans explication (aucune relation / recherche non exécutée / référentiel absent / calcul non branché) est interdit.
+5. Une anomalie d’intégration (données présentes non exploitées) est bloquante (Integrity Gate).
+6. Ne pas inventer d’objets, scores ou relations pour imiter une maquette.
