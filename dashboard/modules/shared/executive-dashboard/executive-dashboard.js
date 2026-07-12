@@ -1,14 +1,5 @@
 (function initExecutiveCockpit(global) {
-  const API_BASE = 'http://127.0.0.1:8001';
-  const state = { initialized: false, map: null, payload: null };
-
-  function fetchJson(path) {
-    return fetch(`${API_BASE}${path}`, { headers: { Accept: 'application/json' }, cache: 'no-store' })
-      .then((r) => {
-        if (!r.ok) throw new Error(path);
-        return r.json();
-      });
-  }
+  const state = { initialized: false, map: null, payload: null, tstInstance: null };
 
   function ensureMap(center, zoom) {
     if (typeof global.L === 'undefined') return;
@@ -26,130 +17,78 @@
     global.setTimeout(() => state.map.invalidateSize(), 80);
   }
 
+  /** @deprecated EDVS cockpit classique — remplacé par Executive Situation Room v1 */
   function renderCockpit(payload) {
+    if (global.ExecutiveSituationRoom?.mount) {
+      const root = document.querySelector('#edvs-cockpit-root');
+      return global.ExecutiveSituationRoom.mount(root).then((esrPayload) => {
+        state.payload = esrPayload;
+      });
+    }
+    // Repli minimal si module ESR absent
     const root = document.querySelector('#edvs-cockpit-root');
     if (!root || !global.EdvsLayout) return;
     state.payload = payload;
-    const kpiHtml = global.EdvsKpi.renderKpiGrid(payload.kpis || []);
-    const chartsHtml = [
-      global.EdvsCharts.stackedBar({ title: 'Programmes FDSU', ...(payload.stacked || {}) }),
-      global.EdvsCharts.radar({ title: 'Portrait connaissance', ...(payload.radar || {}) }),
-      global.EdvsCharts.gauge(payload.gauges?.[0] || { title: 'Maturité', value: 0 }),
-      global.EdvsCharts.waterfall(payload.waterfall || { title: 'Doctrine', steps: [] }),
-      global.EdvsCharts.treemap(payload.treemap || { title: 'Répartition', items: [] }),
-      global.EdvsCharts.heatmap(payload.heatmap || { title: 'Heatmap', rows: [], cols: [], matrix: [] }),
-    ].join('');
-    const mapHtml = `
-      <section class="edvs-card edvs-tst-card">
-        <header class="edvs-card-header"><h3>Tableau de Synthèse Territoriale</h3></header>
-        <div id="edvs-tst-host" class="edvs-tst-host" aria-label="Synthèse territoriale DG"></div>
-      </section>
-      ${global.EdvsCards.renderRanking({ title: 'Top priorités sites', items: payload.rankings?.sites_priority || [], color: 'orange' })}
-    `;
-    const textHtml = [
-      global.EdvsCards.renderAlertList({ title: 'Alertes', items: payload.alerts || [] }),
-      global.EdvsCards.renderRecommendationCards({ title: 'Recommandations explicables', items: payload.recommendations || [] }),
-      global.EdvsCards.renderTimeline({ title: 'Historique décisions / jalons', items: payload.timeline || [] }),
-      global.EdvsCards.renderRanking({ title: 'Top provinces CCN (DEMO)', items: payload.rankings?.provinces_ccn || [] }),
-    ].join('');
-
     root.innerHTML = global.EdvsLayout.shell({
       eyebrow: 'Salle de Pilotage DG',
       title: 'Salle de Pilotage DG',
-      subtitle: 'Histoire visuelle nationale — Base nationale de connaissances · Centre de Décision · Intelligence territoriale · CCN',
-      actionsHtml: `
-        <button type="button" class="secondary-button" data-route-jump="decision-view">Centre de Décision</button>
-        <button type="button" class="secondary-button" data-route-jump="territorial-intelligence">Intelligence territoriale</button>
-        <button type="button" class="primary-button" id="edvs-sdg-present-btn">Présenter le raisonnement</button>
-      `,
-      mapHtml,
-      chartsHtml,
-      kpiHtml,
-      textHtml,
+      subtitle: 'Executive Situation Room indisponible — mode cockpit réduit',
+      actionsHtml: '<button type="button" class="secondary-button" data-route-jump="decision-view">Centre de Décision</button>',
+      mapHtml: `<section class="edvs-card"><div id="edvs-tst-host" class="edvs-tst-host"></div></section>`,
+      chartsHtml: '',
+      kpiHtml: global.EdvsKpi?.renderKpiGrid?.(payload.kpis || []) || '',
+      textHtml: global.EdvsCards?.renderAlertList?.({ title: 'Alertes', items: payload.alerts || [] }) || '',
     });
-
-    global.EdvsLayout.bindPresentationControls(root);
     root.querySelectorAll('[data-route-jump]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        global.location.hash = btn.getAttribute('data-route-jump');
-      });
+      btn.addEventListener('click', () => { global.location.hash = btn.getAttribute('data-route-jump'); });
     });
-    root.querySelector('#edvs-sdg-present-btn')?.addEventListener('click', () => {
-      const sel = global.TerritorialContext?.get()?.selection;
-      const siteId = sel?.site_id || sel?.id;
-      // Si une province/territoire est sélectionné sans site, ouvrir le Centre puis laisser le DG choisir ;
-      // sinon ouvrir l’analyse d’impact du site courant / top prioritaire.
-      if (siteId && (sel?.level === 'site' || sel?.entity_type === 'site' || sel?.kind === 'site')) {
-        global.location.hash = `spatial-impact/site/${encodeURIComponent(siteId)}`;
-        global.setTimeout(() => global.SpatialDecisionGraph?.startPresentation?.(), 1200);
-        return;
-      }
-      // Fallback : ouvrir le premier site prioritaire via hash connu de démo / moteur
-      fetch(`${global.location.protocol}//${global.location.hostname}:8001/api/decision/sites/priorities?program_code=sites_40&limit=1`, {
-        headers: { Accept: 'application/json' },
-        cache: 'no-store',
-      })
-        .then((r) => (r.ok ? r.json() : null))
-        .then((payload) => {
-          const site = (payload?.sites || [])[0];
-          const id = site?.site_id || site?.id || 7;
-          global.sessionStorage?.setItem('fdsu.sdg.autoPresent', '1');
-          global.location.hash = `spatial-impact/site/${encodeURIComponent(id)}?program_code=${encodeURIComponent(site?.program_code || 'sites_40')}`;
-        })
-        .catch(() => {
-          global.sessionStorage?.setItem('fdsu.sdg.autoPresent', '1');
-          global.location.hash = 'spatial-impact/site/7?program_code=sites_40';
-        });
-    });
-    // Une seule carte : TST (pas de double Leaflet avec l’ancien #edvs-cockpit-map)
-    if (state.map) {
-      try { state.map.remove(); } catch (_e) { /* */ }
-      state.map = null;
-    }
-    const tstHost = document.querySelector('#edvs-tst-host');
-    if (tstHost && global.TerritorialSummary?.mount) {
-      if (state.tstInstance?.destroy) state.tstInstance.destroy();
-      global.TerritorialSummary.mount(tstHost, {
-        metric: global.TerritorialContext?.get()?.metric || 'priority',
-        preserveContext: true,
-        showLegend: true,
-        showKpis: true,
-        allowDrilldown: true,
-        onSelectionChange: (entity) => {
-          if (global.TerritorialContext) global.TerritorialContext.select(entity);
-          if (!entity || !global.TerritorialDigitalTwin?.open) return;
-          const level = entity.level || entity.entity_type;
-          const id = entity.id || entity.entity_id || entity.name;
-          if ((level === 'province' || level === 'territoire') && id) {
-            global.TerritorialDigitalTwin.open({
-              entityType: level,
-              entityId: id,
-              returnHash: 'salle-pilotage',
-            });
-          }
-        },
-      }).then((api) => { state.tstInstance = api; });
-    }
   }
 
   function initializeExecutiveCockpitModule() {
     const banner = document.querySelector('#edvs-cockpit-banner');
-    if (banner) banner.textContent = 'Chargement de la salle de pilotage…';
-    return fetchJson('/api/executive/cockpit')
+    if (banner) banner.textContent = 'Chargement de la Situation Room…';
+    const root = document.querySelector('#edvs-cockpit-root');
+    if (!root) return Promise.resolve();
+
+    // Détruire l’ancienne carte Leaflet legacy si présente (éviter double instance)
+    if (state.map) {
+      try { state.map.remove(); } catch (_e) { /* */ }
+      state.map = null;
+    }
+
+    if (global.ExecutiveSituationRoom?.mount) {
+      return global.ExecutiveSituationRoom.mount(root)
+        .then((payload) => {
+          state.payload = payload;
+          state.initialized = true;
+          if (banner) {
+            const ver = payload?._meta?.version || 'esr-1.0.0';
+            banner.textContent = `Executive Situation Room · ${ver} · parcours Situation → Décision`;
+          }
+          global.EdvsLayout?.bindPresentationControls?.(document);
+        })
+        .catch(() => {
+          if (banner) banner.textContent = 'Situation Room indisponible — vérifier /api/executive/situation-room';
+        });
+    }
+
+    // Repli : ancien cockpit
+    const API_BASE = `${global.location.protocol}//${global.location.hostname}:8001`;
+    return fetch(`${API_BASE}/api/executive/cockpit`, { headers: { Accept: 'application/json' }, cache: 'no-store' })
+      .then((r) => {
+        if (!r.ok) throw new Error('cockpit');
+        return r.json();
+      })
       .then((payload) => {
         renderCockpit(payload);
-        if (banner) {
-          banner.textContent = `Sources consolidées · doctrine métier ${payload.doctrine?.id || '—'} v${payload.doctrine?.version || '—'}`;
-        }
+        if (banner) banner.textContent = 'Salle de Pilotage DG (cockpit)';
         state.initialized = true;
-        global.EdvsLayout.bindPresentationControls(document);
       })
       .catch(() => {
-        if (banner) banner.textContent = 'Salle de pilotage indisponible — vérifier le service de pilotage.';
+        if (banner) banner.textContent = 'Salle de pilotage indisponible.';
       });
   }
 
-  /** Helpers d’intégration pour les modules existants */
   function mountKpiStrip(selector, items) {
     const node = document.querySelector(selector);
     if (!node || !global.EdvsKpi) return;
@@ -176,6 +115,8 @@
     initializeExecutiveCockpitModule,
     mountKpiStrip,
     mountPresentationButton,
+    renderCockpit,
+    ensureMap,
     state,
   };
   global.initializeExecutiveCockpitModule = initializeExecutiveCockpitModule;
