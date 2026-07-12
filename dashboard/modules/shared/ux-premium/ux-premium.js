@@ -206,14 +206,10 @@
         { className: 'is-fail', label: 'Échec / à corriger' },
       ],
     });
-    mountMapLegend('#dxl-map', {
-      id: 'ux-legend-dxl',
-      title: 'Légende',
-      items: [
-        { className: 'is-site', label: 'Actif' },
-        { className: 'is-uncovered', label: 'Besoin / localité' },
-      ],
-    });
+    // #dxl-map : légende gérée exclusivement par Spatial Decision Graph (Analyse d’Impact Territorial)
+    // — ne pas installer la légende générique « Actif / Besoin-localité ».
+    const staleDxlLegend = document.querySelector('#ux-legend-dxl');
+    if (staleDxlLegend) staleDxlLegend.remove();
     mountMapLegend('#decision-detail-map', {
       id: 'ux-legend-decision-detail',
       title: 'Légende',
