@@ -12,9 +12,22 @@
   pointer-events: auto;
 }
 
-.decision-experience-module.is-loading {
-  pointer-events: auto;
-  opacity: 1;
+.dxl-tech-details {
+  margin-top: 0.65rem;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.dxl-tech-details pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0.35rem 0 0;
+  max-height: 8rem;
+  overflow: auto;
+}
+
+.dxl-error-actions {
+  margin-top: 0.5rem;
 }
 
 .dxl-topbar {

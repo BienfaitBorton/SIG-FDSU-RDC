@@ -301,11 +301,17 @@ def decision_case(
     asset_type: str | None = Query(None, description="ccn | site"),
     program_code: str | None = Query(None),
 ) -> dict[str, Any]:
-    result = explainable_decision_service.get_decision_case(
-        asset_id,
-        asset_type=asset_type,
-        program_code=program_code,
-    )
+    try:
+        result = explainable_decision_service.get_decision_case(
+            asset_id,
+            asset_type=asset_type,
+            program_code=program_code,
+        )
+    except Exception as exc:  # noqa: BLE001 — ne jamais exposer Extra data / stack au client
+        raise HTTPException(
+            status_code=503,
+            detail="Dossier de décision temporairement indisponible. Réessayez.",
+        ) from exc
     if not result:
         raise HTTPException(status_code=404, detail="Dossier de décision introuvable pour cet actif.")
     return result

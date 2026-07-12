@@ -48,12 +48,36 @@ def _now() -> str:
 def _load_json(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {}
-    return json.loads(path.read_text(encoding="utf-8"))
+    raw = path.read_text(encoding="utf-8")
+    if not raw.strip():
+        return {}
+    try:
+        data = json.loads(raw)
+        return data if isinstance(data, dict) else {}
+    except json.JSONDecodeError:
+        # Fichier concaténé / corrompu : récupérer le premier objet JSON valide
+        try:
+            data, _end = json.JSONDecoder().raw_decode(raw)
+            return data if isinstance(data, dict) else {}
+        except Exception:
+            return {}
+
+
+def _load_history_payload() -> dict[str, Any]:
+    payload = _load_json(HISTORY_PATH)
+    if not isinstance(payload, dict):
+        return {"_meta": {"title": "Historique des Dossiers de Décision"}, "history": []}
+    if "history" not in payload or not isinstance(payload.get("history"), list):
+        return {"_meta": payload.get("_meta") or {"title": "Historique des Dossiers de Décision"}, "history": []}
+    return payload
 
 
 def _save_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    # Écriture atomique pour éviter la corruption (JSON concaténé)
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    tmp.replace(path)
 
 
 def engine_meta() -> dict[str, Any]:
@@ -103,25 +127,30 @@ def load_doctrine_by_id(doctrine_id: str) -> dict[str, Any] | None:
 
 
 def _append_history(entry: dict[str, Any]) -> None:
-    payload = _load_json(HISTORY_PATH)
-    history = list(payload.get("history") or [])
-    history.insert(0, entry)
-    payload = {
-        "_meta": {
-            "title": "Historique des Dossiers de Décision",
-            "updated_at": _now(),
-            "count": len(history[:500]),
-        },
-        "history": history[:500],
-    }
-    _save_json(HISTORY_PATH, payload)
+    """Journalisation best-effort — ne doit jamais faire échouer un dossier."""
+    try:
+        payload = _load_history_payload()
+        history = list(payload.get("history") or [])
+        history.insert(0, entry)
+        payload = {
+            "_meta": {
+                "title": "Historique des Dossiers de Décision",
+                "updated_at": _now(),
+                "count": len(history[:500]),
+            },
+            "history": history[:500],
+        }
+        _save_json(HISTORY_PATH, payload)
+    except Exception:
+        # Historique non bloquant
+        return
 
 
 def get_case_history(case_id: str | None = None, limit: int = 50) -> dict[str, Any]:
-    payload = _load_json(HISTORY_PATH)
+    payload = _load_history_payload()
     history = list(payload.get("history") or [])
     if case_id:
-        history = [h for h in history if h.get("case_id") == case_id or h.get("asset_id") == case_id]
+        history = [h for h in history if h.get("case_id") == case_id or str(h.get("asset_id")) == str(case_id)]
     return {
         "_meta": {"title": "Traçabilité décisions", "count": len(history[:limit])},
         "history": history[:limit],
@@ -462,7 +491,7 @@ def build_ccn_case(ccn_id: str) -> dict[str, Any] | None:
 
 
 def build_site_case(site_id: str, program_code: str | None = None) -> dict[str, Any] | None:
-    from api.services import fdsu_site_priority_service, knowledge_hub_service
+    from api.services import knowledge_hub_service, site_entity_resolver
 
     doctrine_bundle = load_doctrine_by_id("DOCTRINE_SITES_FDSU")
     if not doctrine_bundle or doctrine_bundle.get("planned"):
@@ -471,15 +500,13 @@ def build_site_case(site_id: str, program_code: str | None = None) -> dict[str, 
     matrix = doctrine_bundle.get("matrix") or _load_json(MATRIX_PATH)
     doctrine_meta = doctrine.get("_meta") or {}
 
-    try:
-        sid = int(re.sub(r"[^\d]", "", str(site_id)) or site_id)
-    except ValueError:
+    resolved = site_entity_resolver.resolve_site(site_id, program_code=program_code, entity_type="site")
+    if not resolved or not resolved.get("resolved"):
         return None
 
-    explained = fdsu_site_priority_service.explain_site(sid, program_code=program_code)
-    if not explained:
-        return None
+    explained = resolved.get("explained") or {}
     site = explained.get("site") or {}
+    sid = int(resolved["site_id"])
     criteria_raw = (explained.get("explanation") or {}).get("criteria") or {}
     if isinstance(criteria_raw, dict):
         criteria_pairs = list(criteria_raw.items())
@@ -557,8 +584,9 @@ def build_site_case(site_id: str, program_code: str | None = None) -> dict[str, 
     score = float(site.get("priority_score") or 0)
     level = str(site.get("priority_level") or "low")
     label = site.get("priority_level_label") or level
+    display_name = site.get("site_name") or site.get("name") or site.get("site_code") or str(sid)
     summary = (
-        f"Recommandation Site « {site.get('site_name') or site.get('site_code')} » — "
+        f"Recommandation Site « {display_name} » — "
         f"score {score}/100 ({label}). Doctrine {doctrine_meta.get('title')} v{doctrine_meta.get('version')}."
     )
     case_id = f"DCF-SITE-{site.get('site_id') or sid}"
@@ -593,13 +621,21 @@ def build_site_case(site_id: str, program_code: str | None = None) -> dict[str, 
         case_id=case_id,
         asset={
             "asset_type": "SITE",
-            "id": site.get("site_id"),
+            "id": site.get("site_id") or sid,
+            "site_id": site.get("site_id") or sid,
             "business_id": site.get("site_code"),
-            "name": site.get("site_name"),
+            "site_code": site.get("site_code"),
+            "name": display_name,
+            "site_name": display_name,
             "province": site.get("province"),
             "territoire": site.get("territoire"),
             "program_code": site.get("program_code"),
             "zone": site.get("zone"),
+            "latitude": site.get("latitude"),
+            "longitude": site.get("longitude"),
+            "priority_score": score,
+            "priority_level": level,
+            "priority_level_label": label,
         },
         score=score,
         priority_level=level,
@@ -610,6 +646,7 @@ def build_site_case(site_id: str, program_code: str | None = None) -> dict[str, 
         justification=justification,
         data_used={
             "source": f"programme {site.get('program_code')}",
+            "resolver": "site_entity_resolver",
             "fields": {
                 "population": site.get("population"),
                 "distance": site.get("distance"),

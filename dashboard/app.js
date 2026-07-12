@@ -832,6 +832,24 @@ function setActiveModule(moduleKey) {
   } else {
     document.body.classList.remove('decision-detail-open');
     document.body.classList.remove('territorial-twin-open');
+    // Integrity Gate : aucun voile / mode présentation fantôme entre modules
+    document.body.classList.remove('edvs-presentation-mode');
+    const presentationBar = document.querySelector('#edvs-presentation-bar');
+    if (presentationBar) {
+      presentationBar.hidden = true;
+      presentationBar.setAttribute('aria-hidden', 'true');
+    }
+    const esrDrawer = document.querySelector('#esr-explain-drawer');
+    if (esrDrawer) {
+      esrDrawer.hidden = true;
+      esrDrawer.setAttribute('aria-hidden', 'true');
+    }
+    if (typeof window.ExecutiveSituationRoom?.stopPresentation === 'function') {
+      window.ExecutiveSituationRoom.stopPresentation();
+    }
+    if (typeof window.EdvsLayout?.setPresentationMode === 'function') {
+      window.EdvsLayout.setPresentationMode(false);
+    }
     if (typeof window.TerritorialDigitalTwin?.close === 'function') {
       window.TerritorialDigitalTwin.close();
     }
@@ -845,6 +863,14 @@ function setActiveModule(moduleKey) {
       detailPanel.style.opacity = '';
       detailPanel.style.filter = '';
       detailPanel.style.pointerEvents = '';
+    }
+    const loadingOverlay = document.querySelector('#decision-detail-loading-overlay');
+    if (loadingOverlay) {
+      loadingOverlay.hidden = true;
+      loadingOverlay.setAttribute('aria-hidden', 'true');
+      loadingOverlay.style.display = 'none';
+      loadingOverlay.style.pointerEvents = 'none';
+      loadingOverlay.style.opacity = '0';
     }
   }
 
