@@ -45,6 +45,47 @@
     return new Intl.NumberFormat('fr-FR').format(n);
   }
 
+  function formatUserDate(value) {
+    if (value == null || value === '' || value === '—') return '—';
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return String(value);
+    return new Intl.DateTimeFormat('fr-FR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(d);
+  }
+
+  function humanText(value, fallback = '') {
+    if (value == null || value === '') return fallback;
+    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+      return String(value);
+    }
+    if (Array.isArray(value)) {
+      return value.map((item) => humanText(item)).filter(Boolean).join(' · ') || fallback;
+    }
+    if (typeof value === 'object') {
+      for (const key of ['text', 'recommendation', 'label', 'title', 'detail', 'display', 'value', 'message']) {
+        if (value[key] != null && value[key] !== '') return humanText(value[key], fallback);
+      }
+      return fallback;
+    }
+    return fallback;
+  }
+
+  function matrixLabel(matrix) {
+    if (!matrix) return 'Matrice de priorisation des sites FDSU';
+    if (typeof matrix === 'string') {
+      if (matrix.includes('priority_matrix') || matrix.includes('/')) {
+        return 'Matrice de priorisation des sites FDSU';
+      }
+      return matrix;
+    }
+    return humanText(matrix.label || matrix.id || matrix.title, 'Matrice de priorisation des sites FDSU');
+  }
+
   function summarizePayload(payload) {
     if (payload == null) return null;
     if (typeof payload !== 'object') return { type: typeof payload };
@@ -364,10 +405,31 @@
     const host = document.querySelector('#dxl-section-summary');
     if (!host) return;
     const site = caseFile?.asset || caseFile?.site || {};
-    const score = site.priority_score ?? caseFile?.score;
-    const level = site.priority_level_label || site.priority_level || caseFile?.priority_level || '—';
-    const confidence = caseFile?.confidence?.level || caseFile?.confidence_level || impact?.confidence_level || '—';
-    const reco = caseFile?.recommendation_text || caseFile?.summary || caseFile?.recommendation?.text || 'Recommandation en cours de consolidation.';
+    const scoreObj = caseFile?.score;
+    const scoreRaw = site.priority_score
+      ?? (scoreObj && typeof scoreObj === 'object' ? scoreObj.global : scoreObj)
+      ?? caseFile?.summary?.score;
+    const score = humanText(scoreRaw, '—');
+    const level = humanText(
+      site.priority_level_label
+        || site.priority_level
+        || (scoreObj && typeof scoreObj === 'object' ? (scoreObj.priority_label || scoreObj.priority_level) : null)
+        || caseFile?.priority_level
+        || caseFile?.summary?.priority_label,
+      '—',
+    );
+    const confidence = humanText(
+      caseFile?.confidence?.level || caseFile?.confidence_level || impact?.confidence_level,
+      '—',
+    );
+    const reco = humanText(
+      caseFile?.recommendation_text
+        || caseFile?.summary?.recommendation
+        || caseFile?.summary?.text
+        || caseFile?.recommendation?.text
+        || caseFile?.summary,
+      'Recommandation en cours de consolidation.',
+    );
     host.innerHTML = `
       <div class="dxl-summary-grid">
         <div>
@@ -461,7 +523,11 @@
     host.innerHTML = `
       <p class="dxl-kicker">Risques et données manquantes</p>
       <ul>${(risks.length ? risks : [{ label: 'Aucun risque critique signalé' }]).map((r) => `<li>${escapeHtml(r.label || r.type || r)}</li>`).join('')}</ul>
-      <p><strong>Lacunes :</strong> ${escapeHtml((missing || []).join(', ') || '—')}</p>
+      <p><strong>Lacunes :</strong> ${escapeHtml(
+        (missing && missing.length)
+          ? missing.map((m) => humanText(m)).filter(Boolean).join(', ')
+          : 'Aucune lacune identifiée'
+      )}</p>
     `;
   }
 
@@ -475,9 +541,14 @@
       <dl class="dxl-meta">
         <div><dt>Doctrine</dt><dd>${escapeHtml(meta.title || doctrine.title || doctrine.id || '—')}</dd></div>
         <div><dt>Version</dt><dd>${escapeHtml(meta.version || doctrine.version || '—')}</dd></div>
-        <div><dt>Matrice</dt><dd>${escapeHtml(caseFile?.matrix?.ref || caseFile?.matrix || 'Matrice nationale de priorisation')}</dd></div>
+        <div><dt>Matrice</dt><dd>${escapeHtml(matrixLabel(caseFile?.matrix))}</dd></div>
         <div><dt>Moteur</dt><dd>Moteur de décision explicable FDSU</dd></div>
-        <div><dt>Généré le</dt><dd>${escapeHtml(caseFile?.generated_at || caseFile?._meta?.generated_at || '—')}</dd></div>
+        <div><dt>Généré le</dt><dd>${escapeHtml(formatUserDate(caseFile?.generated_at || caseFile?._meta?.generated_at))}</dd></div>
+        <details class="dxl-tech-trace">
+          <summary>Détail technique (traçabilité)</summary>
+          <p>Réf. matrice : <code>${escapeHtml(caseFile?.matrix?.ref || '—')}</code></p>
+          <p>Horodatage ISO : <code>${escapeHtml(caseFile?.generated_at || caseFile?._meta?.generated_at || '—')}</code></p>
+        </details>
       </dl>
     `;
   }
@@ -485,28 +556,48 @@
   function renderRecommendation(caseFile) {
     const host = document.querySelector('#dxl-section-reco');
     if (!host) return;
+    const reco = humanText(
+      caseFile?.recommendation_text
+        || caseFile?.summary?.recommendation
+        || caseFile?.summary?.text
+        || caseFile?.summary,
+      'Consolider la connaissance territoriale avant arbitrage final.',
+    );
+    const next = humanText(caseFile?.next_action, 'Comparer avec les besoins NCI associés et préparer l’arbitrage.');
     host.innerHTML = `
       <p class="dxl-kicker">Recommandation rédigée</p>
-      <p>${escapeHtml(caseFile?.recommendation_text || caseFile?.summary || 'Consolider la connaissance territoriale avant arbitrage final.')}</p>
-      <p><strong>Suite recommandée :</strong> ${escapeHtml(caseFile?.next_action || 'Préparer une mission de terrain et comparer avec les besoins NCI associés.')}</p>
+      <p>${escapeHtml(reco)}</p>
+      <p><strong>Suite recommandée :</strong> ${escapeHtml(next)}</p>
     `;
   }
 
   function renderActions() {
     const host = document.querySelector('#dxl-actions');
     if (!host) return;
+    const caps = global.CapabilityRegistry;
+    const missionOk = caps?.isEnabled?.('mission_planning');
+    const simOk = caps?.isEnabled?.('simulation');
+    const pdfOk = caps?.isEnabled?.('export_pdf');
+    const pptOk = caps?.isEnabled?.('export_powerpoint');
+    const excelOk = caps?.isEnabled?.('export_excel') !== false;
+
     host.innerHTML = `
       <button type="button" class="secondary-button" data-dxl-action="back">← Retour</button>
       <button type="button" class="secondary-button" data-dxl-action="map">Voir sur la carte</button>
       <button type="button" class="secondary-button" data-dxl-action="ti">Intelligence territoriale</button>
       <button type="button" class="secondary-button" data-dxl-action="explain">Expliquer</button>
       <button type="button" class="secondary-button" data-dxl-action="spatial">Impact spatial</button>
-      <button type="button" class="secondary-button" data-dxl-action="mission">Préparer une mission</button>
-      <button type="button" class="secondary-button" data-dxl-action="export">Exporter Excel</button>
-      <button type="button" class="secondary-button" data-dxl-action="pdf" title="Export PDF en préparation">Préparer PDF</button>
-      <button type="button" class="secondary-button" data-dxl-action="ppt" title="Export PowerPoint en préparation">Préparer PowerPoint</button>
-      <button type="button" class="secondary-button" data-dxl-action="simulate">Simulation future</button>
+      ${missionOk ? '<button type="button" class="secondary-button" data-dxl-action="mission">Préparer une mission</button>' : ''}
+      <button type="button" class="secondary-button" data-dxl-action="export" data-capability="export_excel" ${excelOk ? '' : 'disabled'}>Exporter Excel</button>
+      <button type="button" class="secondary-button" data-dxl-action="pdf" data-capability="export_pdf" ${pdfOk ? '' : 'disabled'} title="${escapeHtml(caps?.reason?.('export_pdf') || 'Export PDF non encore activé pour ce dossier')}">Préparer PDF</button>
+      <button type="button" class="secondary-button" data-dxl-action="ppt" data-capability="export_powerpoint" ${pptOk ? '' : 'disabled'} title="${escapeHtml(caps?.reason?.('export_powerpoint') || 'Export PowerPoint non encore activé pour ce dossier')}">Préparer PowerPoint</button>
+      ${simOk ? '<button type="button" class="secondary-button" data-dxl-action="simulate">Simulation</button>' : ''}
     `;
+    if (caps?.applyButton) {
+      caps.applyButton(host.querySelector('[data-dxl-action="pdf"]'), 'export_pdf');
+      caps.applyButton(host.querySelector('[data-dxl-action="ppt"]'), 'export_powerpoint');
+      caps.applyButton(host.querySelector('[data-dxl-action="export"]'), 'export_excel');
+    }
   }
 
   function emptyService(key) {
@@ -970,11 +1061,88 @@
   }
 
   function goBack() {
+    try {
+      const raw = global.sessionStorage?.getItem('fdsu.decisionCase.returnHash');
+      if (raw) {
+        global.sessionStorage.removeItem('fdsu.decisionCase.returnHash');
+        global.location.hash = raw.replace(/^#/, '');
+        return;
+      }
+    } catch (_err) { /* private mode */ }
     if (global.history.length > 1) {
       global.history.back();
       return;
     }
     global.location.hash = 'decision-view';
+  }
+
+  function notify(message, isError) {
+    if (typeof global.UxPremium?.notify === 'function') {
+      global.UxPremium.notify(message, isError ? 'error' : 'info');
+      return;
+    }
+    setStatus(message, Boolean(isError));
+  }
+
+  function openMapForCurrentSite() {
+    const caseFile = state.payload?.caseFile || state.payload?.decisionCase || {};
+    const site = caseFile.asset || caseFile.site || {};
+    const program = site.program_code || state.programCode || '';
+    const focus = {
+      site_id: state.assetId || site.site_id || site.id,
+      site_code: site.site_code || site.business_id,
+      program_code: program,
+      latitude: site.latitude ?? site.lat,
+      longitude: site.longitude ?? site.lon ?? site.lng,
+    };
+    try {
+      global.sessionStorage?.setItem('fdsu.map.focusSite', JSON.stringify(focus));
+    } catch (_err) { /* */ }
+    if (typeof global.openDecisionSiteOnMap === 'function') {
+      global.openDecisionSiteOnMap(focus);
+      return;
+    }
+    global.location.hash = 'map';
+  }
+
+  async function exportCaseExcel(btn) {
+    if (!state.assetId) {
+      notify('Aucun dossier à exporter.', true);
+      return;
+    }
+    const caps = global.CapabilityRegistry;
+    if (caps && caps.isEnabled('export_excel') === false) {
+      notify(caps.reason('export_excel'), true);
+      return;
+    }
+    caps?.setBusy?.(btn, true, 'Export Excel…');
+    const type = state.assetType || 'site';
+    const qs = state.programCode ? `?program_code=${encodeURIComponent(state.programCode)}` : '';
+    const url = `${API_BASE}/api/exports/decision-case/${encodeURIComponent(type)}/${encodeURIComponent(state.assetId)}/excel${qs}`;
+    try {
+      const response = await fetch(url, { headers: { Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }, cache: 'no-store' });
+      if (!response.ok) {
+        const detail = await response.json().catch(() => ({}));
+        throw new Error(detail.detail || `Export impossible (${response.status})`);
+      }
+      const blob = await response.blob();
+      if (!blob || blob.size < 32) throw new Error('Fichier Excel vide');
+      const disposition = response.headers.get('Content-Disposition') || '';
+      const match = /filename="?([^"]+)"?/i.exec(disposition);
+      const filename = match?.[1] || response.headers.get('X-FDSU-Export-Filename') || `Dossier_decision_${state.assetId}.xlsx`;
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = objectUrl;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(objectUrl);
+      notify(`Export Excel téléchargé : ${filename}`);
+    } catch (err) {
+      console.error('[DXL] export excel', err);
+      notify(err.message || 'Export Excel impossible.', true);
+    } finally {
+      caps?.setBusy?.(btn, false);
+    }
   }
 
   function bindEvents() {
@@ -986,18 +1154,15 @@
 
     root.addEventListener('click', (event) => {
       const btn = event.target?.closest?.('[data-dxl-action]');
-      if (!btn) return;
+      if (!btn || btn.disabled) return;
       const action = btn.getAttribute('data-dxl-action');
-      if (action === 'back') goBack();
+      if (action === 'back') {
+        goBack();
+        return;
+      }
       if (action === 'map') {
-        global.location.hash = 'map';
-        global.setTimeout(() => {
-          const checkbox = document.querySelector('input[data-layer="asset_need_matches"]');
-          if (checkbox && !checkbox.checked) {
-            checkbox.checked = true;
-            checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-          }
-        }, 300);
+        openMapForCurrentSite();
+        return;
       }
       if (action === 'ti') {
         const tid = state.payload?.caseFile?.asset?.territoire
@@ -1005,20 +1170,44 @@
           || state.payload?.ti?.profile?.id
           || state.payload?.ti?.territory_id
           || state.payload?.decisionCase?.asset?.territoire;
-        global.location.hash = tid
-          ? `territorial-intelligence/${encodeURIComponent(tid)}`
-          : 'territorial-intelligence';
+        if (!tid) {
+          notify('Rattachement territorial absent — impossible d’ouvrir l’analyse territoriale pour ce site.', true);
+          return;
+        }
+        global.location.hash = `territorial-intelligence/${encodeURIComponent(tid)}`;
+        return;
       }
-      if (action === 'explain') document.querySelector('#dxl-section-why')?.scrollIntoView({ behavior: 'smooth' });
-      if (action === 'spatial' && state.assetId) {
+      if (action === 'explain') {
+        const why = document.querySelector('#dxl-section-why');
+        if (!why) {
+          notify('Section d’explication indisponible.', true);
+          return;
+        }
+        why.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!why.textContent?.trim() || /non encore disponible/i.test(why.textContent)) {
+          notify('Justification en cours de chargement ou encore partielle.');
+        }
+        return;
+      }
+      if (action === 'spatial') {
+        if (!state.assetId) {
+          notify('Identifiant d’actif manquant pour l’impact spatial.', true);
+          return;
+        }
         global.location.hash = `spatial-impact/${state.assetType || 'site'}/${encodeURIComponent(state.assetId)}`;
+        return;
       }
-      if (action === 'mission') setStatus('Action : préparer une mission — contexte conservé dans le dossier');
-      if (action === 'export') setStatus('Export Excel : utilisez l’export du Centre de Décision pour le programme concerné');
-      if (action === 'pdf') setStatus('Préparation PDF : fonctionnalité en cours — dossier prêt à être exporté prochainement');
-      if (action === 'ppt') setStatus('Préparation PowerPoint : fonctionnalité en cours — structure DXL prête');
-      if (action === 'simulate') setStatus('Simulation future : bascule vers l’onglet Simulations du Centre de Décision');
-      if (action === 'simulate') global.setTimeout(() => { global.location.hash = 'decision-view'; }, 600);
+      if (action === 'export') {
+        exportCaseExcel(btn);
+        return;
+      }
+      if (action === 'pdf') {
+        notify(global.CapabilityRegistry?.reason?.('export_pdf') || 'Export PDF non encore activé pour ce dossier');
+        return;
+      }
+      if (action === 'ppt') {
+        notify(global.CapabilityRegistry?.reason?.('export_powerpoint') || 'Export PowerPoint non encore activé pour ce dossier');
+      }
     });
 
     global.document.addEventListener('keydown', (event) => {
@@ -1029,6 +1218,12 @@
   }
 
   function openDecisionCase(assetType, assetId, programCode) {
+    try {
+      const current = (global.location.hash || '').replace(/^#/, '');
+      if (current && !current.startsWith('decision-case')) {
+        global.sessionStorage?.setItem('fdsu.decisionCase.returnHash', current);
+      }
+    } catch (_err) { /* */ }
     const qs = programCode ? `?program_code=${encodeURIComponent(programCode)}` : '';
     global.location.hash = `decision-case/${assetType}/${encodeURIComponent(assetId)}${qs}`;
   }
@@ -1040,26 +1235,35 @@
   function initializeDecisionExperienceModule() {
     bindEvents();
     state.initialized = true;
-    const parsed = parseHash();
-    if (!parsed) {
-      setStatus('Aucun dossier sélectionné', true);
-      setLoading(false);
-      return;
+
+    function bootParsed() {
+      const parsed = parseHash();
+      if (!parsed) {
+        setStatus('Aucun dossier sélectionné', true);
+        setLoading(false);
+        return;
+      }
+      state.mode = parsed.mode;
+      state.assetType = parsed.assetType;
+      state.assetId = parsed.assetId;
+      state.programCode = parsed.programCode;
+      const boot = parsed.mode === 'spatial-impact'
+        ? loadSpatialImpact(parsed.assetType, parsed.assetId)
+        : parsed.mode === 'coverage-detail'
+          ? loadCoverageDetail(parsed.assetId)
+          : loadDecisionCase(parsed.assetType, parsed.assetId, parsed.programCode);
+      Promise.resolve(boot).catch((err) => {
+        console.error('[DXL] initialisation module', err);
+        setLoading(false);
+        setStatus(`Chargement interrompu : ${humanizeFetchError(err)}`, true);
+      });
     }
-    state.mode = parsed.mode;
-    state.assetType = parsed.assetType;
-    state.assetId = parsed.assetId;
-    state.programCode = parsed.programCode;
-    const boot = parsed.mode === 'spatial-impact'
-      ? loadSpatialImpact(parsed.assetType, parsed.assetId)
-      : parsed.mode === 'coverage-detail'
-        ? loadCoverageDetail(parsed.assetId)
-        : loadDecisionCase(parsed.assetType, parsed.assetId, parsed.programCode);
-    Promise.resolve(boot).catch((err) => {
-      console.error('[DXL] initialisation module', err);
-      setLoading(false);
-      setStatus(`Chargement interrompu : ${humanizeFetchError(err)}`, true);
-    });
+
+    if (global.CapabilityRegistry?.load) {
+      global.CapabilityRegistry.load().finally(() => bootParsed());
+    } else {
+      bootParsed();
+    }
   }
 
   global.openDecisionCase = openDecisionCase;

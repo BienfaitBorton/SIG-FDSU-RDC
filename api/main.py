@@ -48,6 +48,7 @@ from api.routes import (
     national_data_fabric,
     transport,
     territorial_digital_twin,
+    exports,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -931,6 +932,11 @@ app.include_router(
     territorial_digital_twin.router,
     prefix="/api/territorial-digital-twin",
     tags=["Territorial Digital Twin"],
+)
+app.include_router(
+    exports.router,
+    prefix="/api/exports",
+    tags=["Exports partages FDSU"],
 )
 
 @app.get("/", tags=["Root"])

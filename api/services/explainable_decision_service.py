@@ -252,7 +252,10 @@ def _build_case_shell(
             "hardcoded_forbidden": doctrine_meta.get("hardcoded_forbidden", True),
         },
         "matrix": {
-            "id": (doctrine.get("priority_matrix") or {}).get("id") or (matrix.get("_meta") or {}).get("title"),
+            "id": (doctrine.get("priority_matrix") or {}).get("id") or (matrix.get("_meta") or {}).get("title") or "Matrice de priorisation des sites FDSU",
+            "label": (doctrine.get("priority_matrix") or {}).get("label")
+            or (matrix.get("_meta") or {}).get("title")
+            or "Matrice de priorisation des sites FDSU",
             "ref": (doctrine.get("priority_matrix") or {}).get("ref") or "data/business/priority_matrix.json",
             "levels": (doctrine.get("priority_matrix") or {}).get("levels") or matrix.get("priority_levels"),
             "source": (matrix.get("_meta") or {}).get("source_documents"),
@@ -574,10 +577,16 @@ def build_site_case(site_id: str, program_code: str | None = None) -> dict[str, 
         nci_context = None
 
     if nci_context:
+        priority = nci_context.get("priority") or {}
+        if isinstance(priority, dict):
+            priority_txt = ", ".join(f"{k}: {v}" for k, v in priority.items() if v is not None)
+        else:
+            priority_txt = str(priority) if priority is not None else "—"
+        remaining = ((nci_context.get("population") or {}).get("remaining"))
         summary = (
             f"{summary} Contexte besoins NCI: NDCI={nci_context.get('ndci')}, "
-            f"population restante={((nci_context.get('population') or {}).get('remaining'))}, "
-            f"priorités={nci_context.get('priority')}."
+            f"population restante={remaining}, "
+            f"priorités={priority_txt}."
         )
 
     shell = _build_case_shell(
@@ -618,18 +627,17 @@ def build_site_case(site_id: str, program_code: str | None = None) -> dict[str, 
         impacts=impacts,
         risks=risks,
         assumptions=[
-            "Les seuils de priorité sont lus depuis priority_matrix.json.",
+            "Les seuils de priorité sont lus depuis la matrice de priorisation des sites FDSU.",
             "Les pondérations Sites sont lues depuis la doctrine Sites v1.",
             "Les indicateurs NIF restent structure_only tant que non sourcés.",
             "Le contexte NCI (population/priorité/distance/catégorie/infra) complète doctrine et matrice.",
         ],
         sources=[
-            doctrine_meta.get("source_document"),
-            "data/business/doctrines/sites_doctrine_v1.json",
-            "data/business/priority_matrix.json",
-            "data/knowledge/national_indicators.json",
-            "data/coverage/aggregates.json",
-            "/api/coverage",
+            doctrine_meta.get("source_document") or "Doctrine Sites FDSU",
+            "Matrice de priorisation des sites FDSU",
+            "Indicateurs nationaux (Knowledge Hub)",
+            "Agrégats de couverture nationale (NCI)",
+            "API Couverture nationale",
         ],
         confidence=confidence,
         summary=summary,

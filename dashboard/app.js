@@ -9857,6 +9857,69 @@ function openSites40ProgramOnMap() {
   activate();
 }
 
+function openDecisionSiteOnMap(focus = {}) {
+  const siteId = focus.site_id || focus.id;
+  const program = String(focus.program_code || '').toLowerCase();
+  const layerKey = program.includes('300') ? 'sites_300' : (program.includes('40') ? 'sites_40' : 'sites_40');
+  navigateTo('map');
+  const activate = () => {
+    if (!cartographyState.initialized || !cartographyState.map) {
+      window.setTimeout(activate, 120);
+      return;
+    }
+    const ensure = layerKey === 'sites_300'
+      ? ensureFdsuSitesProgramLayerLoaded('sites_300')
+      : ensureFdsuSitesProgramLayerLoaded('sites_40');
+    ensure.then(() => {
+      const layer = cartographyState.layers[layerKey];
+      if (!layer) {
+        window.setTimeout(activate, 120);
+        return;
+      }
+      const checkbox = document.querySelector(`input[data-layer="${layerKey}"]`);
+      setCartographyLayerVisible(layerKey, true, checkbox).finally(() => {
+        if (checkbox && !checkbox.checked) checkbox.checked = true;
+        if (!cartographyState.map.hasLayer(layer)) layer.addTo(cartographyState.map);
+        refreshCartographicLayerPresentation();
+        openCartographyDrawerPanel('layers');
+
+        let matched = null;
+        layer.eachLayer((lyr) => {
+          if (matched) return;
+          const props = lyr.feature?.properties || {};
+          const candidates = [props.site_id, props.id, props.site_code, props.code, props.business_id]
+            .map((v) => String(v ?? ''));
+          if (siteId && candidates.includes(String(siteId))) matched = lyr;
+          if (focus.site_code && candidates.includes(String(focus.site_code))) matched = lyr;
+        });
+
+        if (matched) {
+          try {
+            if (matched.getLatLng) {
+              cartographyState.map.setView(matched.getLatLng(), Math.max(cartographyState.map.getZoom(), 10));
+            } else if (matched.getBounds) {
+              cartographyState.map.fitBounds(matched.getBounds().pad(0.3));
+            }
+            if (typeof matched.openPopup === 'function') matched.openPopup();
+            if (typeof matched.fire === 'function') matched.fire('click');
+          } catch (_e) { /* */ }
+          return;
+        }
+
+        const lat = Number(focus.latitude);
+        const lon = Number(focus.longitude);
+        if (Number.isFinite(lat) && Number.isFinite(lon)) {
+          cartographyState.map.setView([lat, lon], Math.max(cartographyState.map.getZoom(), 10));
+          return;
+        }
+        fitLayerBounds(layer);
+      });
+    });
+  };
+  activate();
+}
+
+window.openDecisionSiteOnMap = openDecisionSiteOnMap;
 window.openSites40ProgramOnMap = openSites40ProgramOnMap;
 window.openSites300ProgramOnMap = openSites300ProgramOnMap;
 window.backToDashboard = backToDashboard;

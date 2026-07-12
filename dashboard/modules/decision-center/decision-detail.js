@@ -230,11 +230,17 @@
   function renderActions(actions) {
     const host = document.querySelector('#decision-detail-actions');
     if (!host) return;
-    if (!actions?.length) {
+    const caps = global.CapabilityRegistry;
+    const filtered = (actions || []).filter((action) => {
+      if (action.id === 'prepare_mission') return caps?.isEnabled?.('mission_planning');
+      if (action.id === 'simulate_investment') return caps?.isEnabled?.('simulation');
+      return true;
+    });
+    if (!filtered.length) {
       host.innerHTML = '';
       return;
     }
-    host.innerHTML = actions.map((action) => `
+    host.innerHTML = filtered.map((action) => `
       <button type="button" class="secondary-button" data-detail-action="${escapeHtml(action.id)}">${escapeHtml(action.label)}</button>
     `).join('');
   }
@@ -539,7 +545,14 @@
       return;
     }
     if (actionId === 'open_ti') {
-      global.location.hash = 'territorial-intelligence';
+      const sel = state.payload?.items?.rows?.find((row) => String(row.site_id || row.id) === String(state.selectionId))
+        || state.payload?.items?.rows?.[0];
+      const tid = sel?.territoire || sel?.territory_id || sel?.territory_name;
+      if (!tid) {
+        setStatus('Rattachement territorial absent pour l’analyse territoriale.');
+        return;
+      }
+      global.location.hash = `territorial-intelligence/${encodeURIComponent(tid)}`;
       return;
     }
     if (actionId === 'explain') {
@@ -547,12 +560,12 @@
       return;
     }
     if (actionId === 'prepare_mission') {
-      setStatus('Action : préparer une mission — contexte KPI conservé');
+      // Capacité absente — ne doit plus apparaître actif
+      setStatus(global.CapabilityRegistry?.reason?.('mission_planning') || 'Préparation de mission non encore disponible');
       return;
     }
     if (actionId === 'simulate_investment') {
-      global.location.hash = 'decision-view';
-      setStatus('Simulation : retour Centre de Décision (onglet Simulations)');
+      setStatus(global.CapabilityRegistry?.reason?.('simulation') || 'Simulation non encore branchée');
     }
   }
 
