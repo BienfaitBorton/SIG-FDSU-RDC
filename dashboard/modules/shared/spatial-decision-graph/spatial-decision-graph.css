@@ -1,0 +1,207 @@
+/* Spatial Decision Graph v2.0 — Analyse d’Impact Territorial */
+
+.sdg-shell {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sdg-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.sdg-step-label {
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.sdg-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.85fr) minmax(0, 1.4fr);
+  gap: 0.75rem;
+}
+
+.sdg-side {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem;
+}
+
+.sdg-side h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.sdg-subtitle {
+  margin: 0 0 0.75rem;
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.sdg-why-block {
+  border-top: 1px solid #e2e8f0;
+  padding: 0.55rem 0;
+}
+
+.sdg-why-block header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.sdg-why-block[data-status="unavailable"] {
+  opacity: 0.7;
+}
+
+.sdg-why-block small {
+  color: #64748b;
+}
+
+.sdg-map-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sdg-legend,
+.sdg-filters {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid #e2e8f0;
+  padding: 0.55rem 0.7rem;
+}
+
+.sdg-kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #0e7490;
+}
+
+.sdg-legend ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.sdg-legend-btn {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  padding: 0.25rem 0.45rem;
+  font: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.sdg-legend-btn.is-off,
+.sdg-filter.is-off {
+  opacity: 0.45;
+}
+
+.sdg-legend-btn.is-future {
+  opacity: 0.55;
+}
+
+.sdg-swatch {
+  width: 0.7rem;
+  height: 0.7rem;
+  display: inline-block;
+  border: 1px solid #0f172a;
+}
+
+.sdg-legend-btn em {
+  font-style: normal;
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.sdg-legend-count,
+.sdg-legend-hint {
+  margin: 0 0 0.35rem;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.sdg-legend-btn:focus-visible,
+.sdg-filter input:focus-visible,
+#sdg-present-btn:focus-visible,
+#sdg-stop-btn:focus-visible {
+  outline: 2px solid #0e7490;
+  outline-offset: 2px;
+}
+
+.sdg-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.sdg-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+}
+
+.sdg-filter span {
+  border-bottom: 2px solid currentColor;
+  padding-bottom: 0.05rem;
+}
+
+.sdg-tip,
+.sdg-popup {
+  min-width: 180px;
+  max-width: 260px;
+}
+
+.sdg-tip p,
+.sdg-popup p {
+  margin: 0.2rem 0;
+  font-size: 0.85rem;
+}
+
+.sdg-tip span {
+  color: #64748b;
+  margin-right: 0.35rem;
+}
+
+.sdg-why {
+  margin-top: 0.4rem !important;
+  color: #0f172a;
+}
+
+.sdg-popup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+}
+
+.sdg-popup-actions .secondary-button {
+  font-size: 0.78rem;
+  padding: 0.25rem 0.45rem;
+}
+
+@media (max-width: 960px) {
+  .sdg-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sdg-edge,
+  .sdg-node,
+  .sdg-node-site {
+    transition: none !important;
+  }
+}

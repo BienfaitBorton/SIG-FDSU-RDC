@@ -493,9 +493,9 @@ def _run_investment_impact(context: dict[str, Any]) -> dict[str, Any]:
             }
         },
         "map": {
-            "label": "Impact spatial",
+            "label": "Analyse d’Impact Territorial",
             "hash": f"spatial-impact/site/{asset_id}" if asset_id else "decision-view",
-            "hint": "Vue Spatial Impact (DXL) synchronisée avec besoins et localités.",
+            "hint": "Graphe décisionnel territorial (SDG) synchronisé avec besoins et localités.",
         },
         "justification": {
             "why": explain.get("summary")
@@ -517,7 +517,7 @@ def _run_investment_impact(context: dict[str, Any]) -> dict[str, Any]:
             },
         ],
         "actions": [
-            _action("open_impact", "Impact spatial", hash_route=f"spatial-impact/site/{asset_id}" if asset_id else "decision-view"),
+            _action("open_impact", "Analyse d’Impact Territorial", hash_route=f"spatial-impact/site/{asset_id}" if asset_id else "decision-view"),
             _action("open_case", "Dossier de décision", hash_route=f"decision-case/site/{asset_id}?program_code={program}" if asset_id else "decision-view"),
         ],
         "visualizations": ["kpi_strip", "waterfall", "impact_map", "recommendation_list"],

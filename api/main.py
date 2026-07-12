@@ -49,6 +49,7 @@ from api.routes import (
     transport,
     territorial_digital_twin,
     exports,
+    spatial_decision_graph,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -937,6 +938,11 @@ app.include_router(
     exports.router,
     prefix="/api/exports",
     tags=["Exports partages FDSU"],
+)
+app.include_router(
+    spatial_decision_graph.router,
+    prefix="/api/spatial-decision-graph",
+    tags=["Spatial Decision Graph"],
 )
 
 @app.get("/", tags=["Root"])

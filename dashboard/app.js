@@ -169,6 +169,7 @@ const ROUTE_TO_MODULE = {
   decision_workspace: 'decision_detail',
   'decision-case': 'decision_experience',
   'spatial-impact': 'decision_experience',
+  'analyse-impact-territorial': 'decision_experience',
   'coverage-detail': 'decision_experience',
   'ccn-detail': 'decision_experience',
   decision_experience: 'decision_experience',
@@ -9743,7 +9744,7 @@ function getModuleFromRoute(route) {
     return 'decision_detail';
   }
   if (raw.startsWith('decision-scenario')) return 'centre_decision';
-  if (raw.startsWith('decision-case') || raw.startsWith('spatial-impact') || raw.startsWith('coverage-detail') || raw.startsWith('ccn-detail')) {
+  if (raw.startsWith('decision-case') || raw.startsWith('spatial-impact') || raw.startsWith('analyse-impact-territorial') || raw.startsWith('coverage-detail') || raw.startsWith('ccn-detail')) {
     return 'decision_experience';
   }
   if (raw.startsWith('territorial-intelligence/')) return 'territorial_intelligence';
@@ -9760,6 +9761,7 @@ function navigateTo(moduleOrRoute) {
     || raw.startsWith('decision-scenario/')
     || raw.startsWith('decision-case/')
     || raw.startsWith('spatial-impact/')
+    || raw.startsWith('analyse-impact-territorial/')
     || raw.startsWith('coverage-detail/')
     || raw.startsWith('ccn-detail/')
     || raw.startsWith('territorial-intelligence/')

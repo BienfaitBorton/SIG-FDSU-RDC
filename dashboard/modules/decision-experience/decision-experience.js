@@ -8,7 +8,7 @@
   const API_BASE = `${global.location.protocol}//${global.location.hostname}:8001`;
 
   const SERVICE_LABELS = {
-    impact: 'Impact spatial',
+    impact: 'Analyse d’Impact Territorial',
     needs: 'Needs',
     explain: 'Explain',
     coverage: 'Coverage',
@@ -258,7 +258,10 @@
         programCode: params.get('program_code'),
       };
     }
-    if (parts[0] === 'spatial-impact' && parts[1] && parts[2]) {
+    if (
+      (parts[0] === 'spatial-impact' || parts[0] === 'analyse-impact-territorial')
+      && parts[1] && parts[2]
+    ) {
       return {
         mode: 'spatial-impact',
         assetType: parts[1],
@@ -586,7 +589,7 @@
       <button type="button" class="secondary-button" data-dxl-action="map">Voir sur la carte</button>
       <button type="button" class="secondary-button" data-dxl-action="ti">Intelligence territoriale</button>
       <button type="button" class="secondary-button" data-dxl-action="explain">Expliquer</button>
-      <button type="button" class="secondary-button" data-dxl-action="spatial">Impact spatial</button>
+      <button type="button" class="secondary-button" data-dxl-action="spatial">Analyse d’Impact Territorial</button>
       ${missionOk ? '<button type="button" class="secondary-button" data-dxl-action="mission">Préparer une mission</button>' : ''}
       <button type="button" class="secondary-button" data-dxl-action="export" data-capability="export_excel" ${excelOk ? '' : 'disabled'}>Exporter Excel</button>
       <button type="button" class="secondary-button" data-dxl-action="pdf" data-capability="export_pdf" ${pdfOk ? '' : 'disabled'} title="${escapeHtml(caps?.reason?.('export_pdf') || 'Export PDF non encore activé pour ce dossier')}">Préparer PDF</button>
@@ -731,7 +734,7 @@
     const title = document.querySelector('#dxl-title');
     if (title) {
       const name = needs?.asset?.site_name || decisionCase?.asset?.site_name || assetId;
-      title.textContent = `Impact spatial — ${name}`;
+      title.textContent = `Analyse d’Impact Territorial — ${name}`;
     }
 
     // Résumé : ne dépend pas d’explain
@@ -745,8 +748,8 @@
       },
       summary: explain?.summary
         || (services.impact.status === 'loaded'
-          ? 'Impact spatial calculé à partir des correspondances Actifs ↔ Besoins.'
-          : 'Dossier d’impact spatial — certaines sources sont encore en cours de consolidation.'),
+          ? 'Analyse d’Impact Territorial construite à partir des correspondances NSME.'
+          : 'Dossier d’impact territorial — certaines sources sont encore en cours de consolidation.'),
       confidence_level: explain?.confidence_level || impact?.impact?.confidence_level,
       recommendation_text: explain?.summary || decisionCase?.recommendation_text,
     };
@@ -769,30 +772,43 @@
           impactHost.insertAdjacentHTML('beforeend', `<div class="dxl-kpi-strip" style="margin-top:0.75rem">${statsBits.join('')}</div>`);
         }
       } else if (services.impact.status === 'loading') {
-        impactHost.innerHTML = softLoadingHtml('Chargement de l’impact spatial…');
+        impactHost.innerHTML = softLoadingHtml('Chargement de l’analyse d’impact territorial…');
       } else {
         impactHost.innerHTML = softErrorHtml(
-          'Impact spatial indisponible',
+          'Analyse d’Impact Territorial indisponible',
           services.impact.error || 'Le service d’impact n’a pas répondu.',
           'Les autres volets (besoins, carte, explication) restent affichés s’ils sont disponibles.',
         );
       }
     }
 
-    // Carte — message d’état sans dupliquer
+    // Carte + Spatial Decision Graph — une instance Leaflet DXL, sans superposition NSME
     const mapSection = document.querySelector('#dxl-map')?.closest('.dxl-section');
     mapSection?.querySelectorAll(':scope > .dxl-panel-soft-error').forEach((el) => el.remove());
     try {
-      if (services.map.status === 'loaded' && mapPayload) {
+      const map = ensureMap();
+      if (map && state.layer) {
+        // Vider le calque DXL : le graphe décisionnel remplace les segments génériques NSME
+        state.layer.clearLayers();
+      }
+      if (map && global.SpatialDecisionGraph?.loadAndMount) {
+        global.SpatialDecisionGraph.loadAndMount(
+          map,
+          'site',
+          assetId,
+          needs?.asset?.program_code || decisionCase?.asset?.program_code || state.programCode,
+        ).then(() => {
+          if (global.sessionStorage?.getItem('fdsu.sdg.autoPresent') === '1') {
+            global.sessionStorage.removeItem('fdsu.sdg.autoPresent');
+            global.setTimeout(() => global.SpatialDecisionGraph?.startPresentation?.(), 400);
+          }
+        }).catch((err) => {
+          console.warn('[DXL] Spatial Decision Graph', err);
+          // Repli : fond NSME si le graphe est indisponible
+          if (services.map.status === 'loaded' && mapPayload) renderMapFromNsme(mapPayload);
+        });
+      } else if (services.map.status === 'loaded' && mapPayload) {
         renderMapFromNsme(mapPayload);
-      } else {
-        ensureMap();
-        if (mapSection && services.map.status === 'error') {
-          const note = document.createElement('p');
-          note.className = 'dxl-panel-soft-error';
-          note.innerHTML = `<strong>Carte indisponible</strong> — ${escapeHtml(services.map.error || 'Le service cartographique n’a pas répondu.')}`;
-          document.querySelector('#dxl-map')?.before(note);
-        }
       }
     } catch (mapErr) {
       console.warn('[DXL] rendu carte', mapErr);
@@ -897,7 +913,7 @@
 
   async function loadSpatialImpact(assetType, assetId) {
     setLoading(true);
-    setStatus('Chargement de l’impact spatial…');
+      setStatus('Chargement de l’analyse d’impact territorial…');
     try {
       const services = await loadSpatialImpactData(assetType, assetId);
       state.payload = {
@@ -924,11 +940,11 @@
     } catch (err) {
       // Ne devrait quasiment jamais arriver (tracedFetch ne throw pas)
       console.error('[DXL] loadSpatialImpact erreur fatale', err);
-      setStatus(`Impact spatial — erreur inattendue : ${humanizeFetchError(err)}`, true);
+      setStatus(`Analyse d’Impact Territorial — erreur inattendue : ${humanizeFetchError(err)}`, true);
       const summary = document.querySelector('#dxl-section-summary');
       if (summary) {
         summary.innerHTML = softErrorHtml(
-          'Espace d’impact spatial indisponible',
+          'Analyse d’Impact Territorial indisponible',
           humanizeFetchError(err),
           'Réessayez après vérification de l’API NSME.',
         );
@@ -1034,7 +1050,7 @@
         const host = document.querySelector('#dxl-section-impact');
         if (host) {
           host.innerHTML = softErrorHtml(
-            'Impact spatial indisponible',
+            'Analyse d’Impact Territorial indisponible',
             impactRes.error || 'Le service d’impact n’a pas répondu.',
             'Le reste du dossier reste consultable.',
           );

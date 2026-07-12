@@ -60,6 +60,7 @@
       actionsHtml: `
         <button type="button" class="secondary-button" data-route-jump="decision-view">Centre de Décision</button>
         <button type="button" class="secondary-button" data-route-jump="territorial-intelligence">Intelligence territoriale</button>
+        <button type="button" class="primary-button" id="edvs-sdg-present-btn">Présenter le raisonnement</button>
       `,
       mapHtml,
       chartsHtml,
@@ -72,6 +73,33 @@
       btn.addEventListener('click', () => {
         global.location.hash = btn.getAttribute('data-route-jump');
       });
+    });
+    root.querySelector('#edvs-sdg-present-btn')?.addEventListener('click', () => {
+      const sel = global.TerritorialContext?.get()?.selection;
+      const siteId = sel?.site_id || sel?.id;
+      // Si une province/territoire est sélectionné sans site, ouvrir le Centre puis laisser le DG choisir ;
+      // sinon ouvrir l’analyse d’impact du site courant / top prioritaire.
+      if (siteId && (sel?.level === 'site' || sel?.entity_type === 'site' || sel?.kind === 'site')) {
+        global.location.hash = `spatial-impact/site/${encodeURIComponent(siteId)}`;
+        global.setTimeout(() => global.SpatialDecisionGraph?.startPresentation?.(), 1200);
+        return;
+      }
+      // Fallback : ouvrir le premier site prioritaire via hash connu de démo / moteur
+      fetch(`${global.location.protocol}//${global.location.hostname}:8001/api/decision/sites/priorities?program_code=sites_40&limit=1`, {
+        headers: { Accept: 'application/json' },
+        cache: 'no-store',
+      })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((payload) => {
+          const site = (payload?.sites || [])[0];
+          const id = site?.site_id || site?.id || 7;
+          global.sessionStorage?.setItem('fdsu.sdg.autoPresent', '1');
+          global.location.hash = `spatial-impact/site/${encodeURIComponent(id)}?program_code=${encodeURIComponent(site?.program_code || 'sites_40')}`;
+        })
+        .catch(() => {
+          global.sessionStorage?.setItem('fdsu.sdg.autoPresent', '1');
+          global.location.hash = 'spatial-impact/site/7?program_code=sites_40';
+        });
     });
     // Une seule carte : TST (pas de double Leaflet avec l’ancien #edvs-cockpit-map)
     if (state.map) {
