@@ -492,6 +492,20 @@
 
     attach({ kpiCode: kpiKey, returnHash: state.returnHash, trail: state.trail });
 
+    if (context.twin === true || context.mode === 'territorial-twin') {
+      const entity = state.selection || context.entity || {};
+      const entityType = context.entityType || entity.entity_type || entity.level || 'territoire';
+      const entityId = context.entityId || entity.entity_id || entity.id || entity.name;
+      if (entityType && entityId && global.TerritorialDigitalTwin?.open) {
+        global.TerritorialDigitalTwin.open({
+          entityType,
+          entityId,
+          returnHash: state.returnHash,
+        });
+        return;
+      }
+    }
+
     if (kpiKey && typeof global.openDecisionDetail === 'function') {
       global.openDecisionDetail(kpiKey);
     } else if (kpiKey) {
@@ -499,6 +513,16 @@
       const useAlias = context.useWorkspaceHash === true;
       global.location.hash = useAlias ? `decision-workspace/${slug}` : `decision-detail/${slug}`;
     }
+  }
+
+  function openTwin(entityType, entityId, options = {}) {
+    return open({
+      ...options,
+      twin: true,
+      entityType,
+      entityId,
+      entity: { entity_type: entityType, entity_id: entityId, id: entityId, level: entityType },
+    });
   }
 
   function restoreContextFromStorage() {
@@ -534,6 +558,7 @@
     attach,
     detach,
     open,
+    openTwin,
     selectEntity,
     setTrail,
     drillToTrailIndex,

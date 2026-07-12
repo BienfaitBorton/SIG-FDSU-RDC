@@ -1,0 +1,216 @@
+/* Territorial Digital Twin — mode Decision Workspace */
+
+#decision-detail-panel.is-territorial-twin .decision-detail-topbar .panel-label::after {
+  content: " · Jumeau territorial";
+  font-weight: 500;
+  opacity: 0.75;
+}
+
+.tdt-root {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem 1.25rem;
+  background:
+    radial-gradient(1200px 400px at 10% -10%, rgba(14, 116, 144, 0.08), transparent 60%),
+    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1px solid #cbd5e1;
+}
+
+.tdt-root[hidden] {
+  display: none !important;
+}
+
+.tdt-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.tdt-kicker {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #0e7490;
+}
+
+.tdt-header h2 {
+  margin: 0.15rem 0;
+  font-size: 1.45rem;
+  color: #0f172a;
+}
+
+.tdt-subtitle {
+  margin: 0;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.tdt-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tdt-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.tdt-crumb {
+  border: 0;
+  background: transparent;
+  color: #0e7490;
+  cursor: pointer;
+  padding: 0.15rem 0.25rem;
+  font: inherit;
+}
+
+.tdt-crumb.is-current,
+.tdt-crumb:disabled {
+  color: #0f172a;
+  font-weight: 600;
+  cursor: default;
+}
+
+.tdt-status {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.tdt-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.9fr);
+  gap: 1rem;
+}
+
+.tdt-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tdt-section {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem 0.9rem;
+}
+
+.tdt-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.tdt-section-head h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+.tdt-section-body {
+  color: #334155;
+  font-size: 0.92rem;
+}
+
+.tdt-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  padding: 0.15rem 0.45rem;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  background: #f8fafc;
+}
+
+.tdt-badge-success { border-color: #86efac; color: #166534; background: #f0fdf4; }
+.tdt-badge-partial { border-color: #7dd3fc; color: #075985; background: #f0f9ff; }
+.tdt-badge-unavailable { border-color: #cbd5e1; color: #64748b; }
+.tdt-badge-error { border-color: #fca5a5; color: #991b1b; background: #fef2f2; }
+.tdt-badge-loading { border-color: #fde68a; color: #92400e; background: #fffbeb; }
+
+.tdt-kv {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.tdt-kv li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.25rem;
+}
+
+.tdt-kv span { color: #64748b; }
+.tdt-kv strong { color: #0f172a; text-align: right; }
+
+.tdt-lead { margin: 0 0 0.5rem; font-weight: 600; color: #0f172a; }
+.tdt-note, .tdt-meta { margin: 0.5rem 0 0; color: #64748b; font-size: 0.82rem; }
+.tdt-demo { color: #92400e; font-weight: 600; }
+
+.tdt-empty {
+  padding: 0.5rem 0;
+  color: #475569;
+}
+
+.tdt-empty strong { display: block; margin-bottom: 0.25rem; color: #0f172a; }
+
+.tdt-list { margin: 0.25rem 0 0; padding-left: 1.1rem; }
+.tdt-timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.tdt-timeline li { display: grid; gap: 0.1rem; border-left: 2px solid #94a3b8; padding-left: 0.6rem; }
+.tdt-timeline time { font-size: 0.78rem; color: #64748b; }
+
+.tdt-side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: sticky;
+  top: 0.5rem;
+  align-self: start;
+}
+
+.tdt-kpis {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.tdt-kpi {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  padding: 0.55rem 0.65rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.tdt-kpi span { font-size: 0.75rem; color: #64748b; }
+.tdt-kpi strong { font-size: 1.05rem; color: #0f172a; }
+
+.tdt-map-host {
+  min-height: 320px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+}
+
+.tdt-map-host .tst-root {
+  min-height: 320px;
+}
+
+@media (max-width: 960px) {
+  .tdt-layout {
+    grid-template-columns: 1fr;
+  }
+  .tdt-side {
+    position: static;
+  }
+}

@@ -271,6 +271,21 @@
     }
     // Fermer immédiatement le drawer legacy pour éviter tout voile résiduel
     closeKpiDetail();
+    // KPI territoriaux : ouvrir le jumeau si une sélection TST existe
+    const territorialKpis = new Set(['provinces', 'territoires', 'population_covered', 'population_uncovered']);
+    if (territorialKpis.has(kpiKey) && global.TerritorialDigitalTwin?.open) {
+      const sel = global.TerritorialContext?.get()?.selection;
+      const level = sel?.level || sel?.entity_type;
+      const id = sel?.id || sel?.entity_id || sel?.name;
+      if ((level === 'province' || level === 'territoire') && id) {
+        global.TerritorialDigitalTwin.open({
+          entityType: level,
+          entityId: id,
+          returnHash: 'decision-view',
+        });
+        return;
+      }
+    }
     // Santé : ouvrir l'analyse détaillée (carte + liste + graphiques)
     if (typeof global.openDecisionDetail === 'function') {
       global.openDecisionDetail(kpiKey);
@@ -1301,6 +1316,7 @@
             <button type="button" class="secondary-button decision-engine-detail-btn" data-site-id="${escapeHtml(site.site_id)}" data-program-code="${escapeHtml(site.program_code || decisionCenterState.decisionEngineProgram || '')}">
               Voir le détail
             </button>
+            ${site.territoire ? `<button type="button" class="secondary-button decision-engine-tdt-btn" data-territory="${escapeHtml(site.territoire)}" data-province="${escapeHtml(site.province || '')}">Profil territorial</button>` : ''}
           </td>
         </tr>
       `;
@@ -1308,8 +1324,21 @@
 
     tbody.querySelectorAll('tr[data-site-id]').forEach((row) => {
       row.addEventListener('click', (event) => {
-        if (event.target?.closest?.('.decision-engine-detail-btn')) return;
+        if (event.target?.closest?.('.decision-engine-detail-btn') || event.target?.closest?.('.decision-engine-tdt-btn')) return;
         selectDecisionEngineSite(Number(row.dataset.siteId) || row.dataset.siteId);
+      });
+    });
+    tbody.querySelectorAll('.decision-engine-tdt-btn').forEach((btn) => {
+      btn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const territory = btn.getAttribute('data-territory');
+        if (territory && global.TerritorialDigitalTwin?.open) {
+          global.TerritorialDigitalTwin.open({
+            entityType: 'territoire',
+            entityId: territory,
+            returnHash: 'decision-view',
+          });
+        }
       });
     });
   }

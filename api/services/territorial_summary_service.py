@@ -1014,6 +1014,11 @@ def build_entity_summary(level: str, entity_id: str, name: str | None = None) ->
             },
             "fields": fields,
             "actions": [
+                {
+                    "id": "open_tdt",
+                    "label": "Ouvrir le profil territorial",
+                    "hash": f"territorial-twin/province/{entity_id}",
+                },
                 {"id": "open_ti", "label": "Ouvrir l’analyse territoriale", "hash": "territorial-intelligence"},
                 {"id": "open_decision", "label": "Ouvrir le Centre de Décision", "hash": "decision-view"},
                 {"id": "open_sites", "label": "Voir les sites", "hash": "decision-detail/sites-prioritaires"},
@@ -1032,6 +1037,7 @@ def build_entity_summary(level: str, entity_id: str, name: str | None = None) ->
         field("Confiance", p.get("confidence_level"), "TI profile"),
         field("Population", (p.get("population") or {}).get("value") if isinstance(p.get("population"), dict) else p.get("population"), "TI profile"),
     ]
+    twin_id = entity_id or p.get("territory_id") or display_name
     return {
         "_meta": {"version": ENGINE_VERSION, "updated_at": _now()},
         "entity": {
@@ -1043,6 +1049,11 @@ def build_entity_summary(level: str, entity_id: str, name: str | None = None) ->
         },
         "fields": fields,
         "actions": [
+            {
+                "id": "open_tdt",
+                "label": "Ouvrir le profil territorial",
+                "hash": f"territorial-twin/territoire/{twin_id}",
+            },
             {"id": "open_ti", "label": "Ouvrir l’analyse territoriale", "hash": f"territorial-intelligence/{entity_id}"},
             {"id": "open_decision", "label": "Ouvrir le Centre de Décision", "hash": "decision-view"},
             {"id": "open_sites", "label": "Voir les sites", "hash": "decision-detail/sites-prioritaires"},

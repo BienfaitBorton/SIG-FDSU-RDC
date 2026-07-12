@@ -71,6 +71,7 @@
       layer: null,
       parentLayer: null,
       abort: null,
+      summaryAbort: null,
       requestSeq: 0,
       geometryCache: { provinces: null, territoires: null },
       layerPayload: null,
@@ -472,14 +473,19 @@
         renderSummary(null);
         return;
       }
+      // Abort dédié : ne pas partager state.abort avec loadLayer (sinon le résumé est
+      // annulé immédiatement au drill-down et le bouton « profil territorial » disparaît).
+      if (state.summaryAbort) state.summaryAbort.abort();
+      state.summaryAbort = new global.AbortController();
       const params = new URLSearchParams({
         level: entity.level,
         id: entity.id,
         name: entity.name || '',
       });
-      fetchJson(`/api/territorial-summary/entity?${params}`, state.abort?.signal)
+      fetchJson(`/api/territorial-summary/entity?${params}`, state.summaryAbort.signal)
         .then(renderSummary)
-        .catch(() => {
+        .catch((err) => {
+          if (err && err.name === 'AbortError') return;
           renderSummary({
             entity,
             fields: [{ label: 'État', display: 'Données insuffisantes', source: 'TST' }],
@@ -798,6 +804,7 @@
     function destroy() {
       state.destroyed = true;
       if (state.abort) state.abort.abort();
+      if (state.summaryAbort) state.summaryAbort.abort();
       if (state.unsubContext) state.unsubContext();
       [state.layer, state.parentLayer].forEach((layer) => {
         if (!layer) return;

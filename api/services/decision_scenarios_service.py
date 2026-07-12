@@ -404,7 +404,8 @@ def _run_territory_priority(context: dict[str, Any]) -> dict[str, Any]:
         "recommendations": recommendations
         or [{"title": "Ouvrir le profil complet", "detail": name, "hash": f"territorial-intelligence/{territory_id}"}],
         "actions": [
-            _action("open_ti", "Ouvrir le profil", hash_route=f"territorial-intelligence/{territory_id}"),
+            _action("open_tdt", "Ouvrir le profil territorial", hash_route=f"territorial-twin/territoire/{territory_id}"),
+            _action("open_ti", "Ouvrir le profil TI", hash_route=f"territorial-intelligence/{territory_id}"),
             _action("open_detail", "KPI territoires", hash_route="decision-detail/territoires"),
         ],
         "visualizations": ["kpi_strip", "gauge", "territory_map", "recommendation_list"],

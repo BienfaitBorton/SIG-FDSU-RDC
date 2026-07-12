@@ -163,6 +163,8 @@ const ROUTE_TO_MODULE = {
   salle_pilotage: 'salle_pilotage',
   'decision-detail': 'decision_detail',
   'decision-workspace': 'decision_detail',
+  'territorial-twin': 'decision_detail',
+  territorial_twin: 'decision_detail',
   decision_detail: 'decision_detail',
   decision_workspace: 'decision_detail',
   'decision-case': 'decision_experience',
@@ -799,17 +801,25 @@ function setActiveModule(moduleKey) {
   }
 
   if (normalizedModule === 'decision_detail') {
-    if (typeof window.initializeDecisionDetailModule === 'function') {
-      window.initializeDecisionDetailModule();
+    const twinHash = (window.location.hash || '').replace(/^#/, '').startsWith('territorial-twin');
+    if (twinHash && typeof window.TerritorialDigitalTwin?.syncFromHash === 'function') {
+      window.TerritorialDigitalTwin.syncFromHash();
     } else {
-      window.setTimeout(() => {
-        if (typeof window.initializeDecisionDetailModule === 'function') {
-          window.initializeDecisionDetailModule();
-        }
-      }, 0);
-    }
-    if (window.decisionDetailState?.map) {
-      window.setTimeout(() => window.decisionDetailState.map.invalidateSize(), 0);
+      if (typeof window.TerritorialDigitalTwin?.close === 'function') {
+        window.TerritorialDigitalTwin.close();
+      }
+      if (typeof window.initializeDecisionDetailModule === 'function') {
+        window.initializeDecisionDetailModule();
+      } else {
+        window.setTimeout(() => {
+          if (typeof window.initializeDecisionDetailModule === 'function') {
+            window.initializeDecisionDetailModule();
+          }
+        }, 0);
+      }
+      if (window.decisionDetailState?.map) {
+        window.setTimeout(() => window.decisionDetailState.map.invalidateSize(), 0);
+      }
     }
   } else if (normalizedModule === 'decision_experience') {
     if (typeof window.initializeDecisionExperienceModule === 'function') {
@@ -820,12 +830,17 @@ function setActiveModule(moduleKey) {
     }
   } else {
     document.body.classList.remove('decision-detail-open');
+    document.body.classList.remove('territorial-twin-open');
+    if (typeof window.TerritorialDigitalTwin?.close === 'function') {
+      window.TerritorialDigitalTwin.close();
+    }
     if (typeof window.DecisionWorkspace?.detach === 'function') {
       window.DecisionWorkspace.detach();
     }
     const detailPanel = document.querySelector('#decision-detail-panel');
     if (detailPanel) {
       detailPanel.classList.remove('is-loading');
+      detailPanel.classList.remove('is-territorial-twin');
       detailPanel.style.opacity = '';
       detailPanel.style.filter = '';
       detailPanel.style.pointerEvents = '';
@@ -9724,7 +9739,9 @@ function getRouteFromHash() {
 
 function getModuleFromRoute(route) {
   const raw = String(route || '').trim();
-  if (raw.startsWith('decision-detail') || raw.startsWith('decision-workspace')) return 'decision_detail';
+  if (raw.startsWith('decision-detail') || raw.startsWith('decision-workspace') || raw.startsWith('territorial-twin')) {
+    return 'decision_detail';
+  }
   if (raw.startsWith('decision-scenario')) return 'centre_decision';
   if (raw.startsWith('decision-case') || raw.startsWith('spatial-impact') || raw.startsWith('coverage-detail') || raw.startsWith('ccn-detail')) {
     return 'decision_experience';
@@ -9739,6 +9756,7 @@ function navigateTo(moduleOrRoute) {
   if (
     raw.startsWith('decision-detail/')
     || raw.startsWith('decision-workspace/')
+    || raw.startsWith('territorial-twin/')
     || raw.startsWith('decision-scenario/')
     || raw.startsWith('decision-case/')
     || raw.startsWith('spatial-impact/')

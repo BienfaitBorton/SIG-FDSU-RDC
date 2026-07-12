@@ -87,6 +87,19 @@
         showLegend: true,
         showKpis: true,
         allowDrilldown: true,
+        onSelectionChange: (entity) => {
+          if (global.TerritorialContext) global.TerritorialContext.select(entity);
+          if (!entity || !global.TerritorialDigitalTwin?.open) return;
+          const level = entity.level || entity.entity_type;
+          const id = entity.id || entity.entity_id || entity.name;
+          if ((level === 'province' || level === 'territoire') && id) {
+            global.TerritorialDigitalTwin.open({
+              entityType: level,
+              entityId: id,
+              returnHash: 'salle-pilotage',
+            });
+          }
+        },
       }).then((api) => { state.tstInstance = api; });
     }
   }
