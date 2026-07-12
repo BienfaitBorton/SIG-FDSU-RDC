@@ -1,0 +1,9 @@
+{
+  "_meta": {
+    "title": "National Data Fabric — Extensions (enregistrements dynamiques)",
+    "version": "ndf-1.0.0",
+    "updated_at": "2026-07-12T00:00:00+00:00",
+    "rule": "Fichier écrit uniquement via register_registry() — ne pas dupliquer les IDs du catalogue cœur."
+  },
+  "registries": []
+}
