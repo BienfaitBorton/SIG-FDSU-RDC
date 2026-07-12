@@ -160,6 +160,8 @@ def nearest_facility(
             "facilities": [],
             "message": "aucune donnée santé disponible",
             "data_available": False,
+            "referential": "health.health_facilities",
+            "srid": 4326,
         }
 
     filters = ["f.geom IS NOT NULL", "ST_DWithin(origin.geom, f.geom::geography, %s)"]
@@ -178,6 +180,8 @@ def nearest_facility(
             f.id, f.official_code, f.name, f.facility_type_code,
             t.name AS facility_type_name,
             f.province_name, f.territory_name,
+            ST_Y(f.geom) AS latitude,
+            ST_X(f.geom) AS longitude,
             ST_Distance(origin.geom, f.geom::geography) AS distance_m
         FROM origin
         JOIN health.health_facilities f ON TRUE
@@ -197,6 +201,8 @@ def nearest_facility(
         "radius_m": radius_m,
         "facilities": facilities,
         "data_available": True,
+        "referential": "health.health_facilities",
+        "srid": 4326,
         "message": None if facilities else "Aucune structure sanitaire dans le rayon",
     }
 

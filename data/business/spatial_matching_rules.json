@@ -2,15 +2,17 @@
   "_meta": {
     "title": "National Spatial Matching Engine — règles spatiales",
     "schema_version": "1.0.0",
-    "updated_at": "2026-07-11",
+    "updated_at": "2026-07-12",
     "engine": "nsme-1.0.0",
-    "note": "Rayons et règles configurables — ne pas hardcoder dans les services."
+    "note": "Rayons et règles configurables — ne pas hardcoder dans les services. Santé: health_proximity/health_service_area=5km (NEAR/WITHIN), health_nearest_max=25km (NEAREST), source=health.health_facilities."
   },
   "relation_types": [
     "SERVES_LOCALITY",
     "IMPACTS_POPULATION",
     "CONNECTS_CCN",
     "NEAR_HEALTH_FACILITY",
+    "NEAREST_HEALTH_FACILITY",
+    "WITHIN_HEALTH_SERVICE_AREA",
     "NEAR_SCHOOL",
     "NEAR_MARKET",
     "NEAR_ADMINISTRATION",
@@ -36,6 +38,9 @@
     "fiber_connection": 5000,
     "backbone_connection": 15000,
     "health_proximity": 5000,
+    "health_service_area": 5000,
+    "health_nearest_max": 25000,
+    "health_max_matches": 15,
     "school_proximity": 3000,
     "market_proximity": 3000,
     "administration_proximity": 5000,

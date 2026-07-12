@@ -386,15 +386,19 @@ def match_ccn_to_population(
 
 
 def match_asset_to_public_infrastructure(asset: dict[str, Any]) -> list[dict[str, Any]]:
-    """Utilise les infos NCI infra_* de localités déjà matchées ou proches."""
+    """Utilise les infos NCI infra_* de localités déjà matchées ou proches.
+
+    Ne produit jamais de relation Santé fictive : les établissements réels
+    viennent exclusivement de match_site_to_health_facilities (PostGIS).
+    """
     matches = match_site_to_uncovered_localities(asset)
     infra_matches = []
     for m in matches:
         infra = m.get("infrastructure_type")
         if not infra:
             continue
-        relation = "NEAR_HEALTH_FACILITY"
         low = str(infra).lower()
+        relation = None
         if "école" in low or "ecole" in low or "school" in low:
             relation = "NEAR_SCHOOL"
         elif "marché" in low or "marche" in low or "market" in low:
@@ -405,6 +409,25 @@ def match_asset_to_public_infrastructure(asset: dict[str, Any]) -> list[dict[str
             relation = "NEAR_FIBER"
         elif "backbone" in low:
             relation = "NEAR_BACKBONE"
+        elif any(
+            token in low
+            for token in (
+                "santé",
+                "sante",
+                "hôpital",
+                "hopital",
+                "health",
+                "hgr",
+                "poste de santé",
+                "centre de santé",
+            )
+        ):
+            # Libellé NCI seulement hors mode DB — en DB, health.health_facilities fait foi
+            if DATA_MODE == "db":
+                continue
+            relation = "NEAR_HEALTH_FACILITY"
+        if not relation:
+            continue
         infra_matches.append(
             {
                 **m,
@@ -496,6 +519,155 @@ def match_site_to_roads(asset: dict[str, Any], max_distance_m: float | None = No
         return []
 
 
+def match_site_to_health_facilities(
+    asset: dict[str, Any],
+    max_distance_m: float | None = None,
+) -> list[dict[str, Any]]:
+    """NSME — relations Santé depuis health.health_facilities (PostGIS), aucune invention."""
+    lon = asset.get("longitude")
+    lat = asset.get("latitude")
+    if lon is None or lat is None:
+        return []
+
+    rules = get_rules()
+    radii = rules.get("service_radii_m") or {}
+    matching = rules.get("matching") or {}
+    proximity_m = float(radii.get("health_proximity") or 5000)
+    service_area_m = float(radii.get("health_service_area") or proximity_m)
+    nearest_max_m = float(max_distance_m or radii.get("health_nearest_max") or max(proximity_m, 25000))
+    limit = int(radii.get("health_max_matches") or matching.get("max_matches_per_asset") or 15)
+    # Rayon de requête = max(proximité, nearest_max) pour couvrir NEAREST hors petit rayon
+    query_radius = max(proximity_m, nearest_max_m, service_area_m)
+
+    try:
+        from api.services import health_service
+
+        payload = health_service.nearest_facility(
+            float(lat),
+            float(lon),
+            radius_m=query_radius,
+            limit=limit,
+        )
+    except Exception:
+        return []
+
+    if not payload.get("data_available"):
+        return []
+
+    facilities = list(payload.get("facilities") or [])
+    if not facilities:
+        return []
+
+    asset_id = asset.get("id") or asset.get("site_id")
+    site_code = asset.get("site_code") or str(asset_id)
+    matches: list[dict[str, Any]] = []
+    nearest = facilities[0]
+
+    for idx, fac in enumerate(facilities):
+        distance = float(fac.get("distance_m") or 0)
+        fac_id = fac.get("id")
+        fac_name = fac.get("name") or f"Établissement {fac_id}"
+        type_code = fac.get("facility_type_code")
+        type_name = fac.get("facility_type_name") or type_code
+        need_lon = fac.get("longitude")
+        need_lat = fac.get("latitude")
+        confidence = "high" if distance <= proximity_m and fac_name and type_code else "medium"
+        base_props = {
+            "infra_label": fac_name,
+            "facility_name": fac_name,
+            "facility_type_code": type_code,
+            "facility_type_name": type_name,
+            "class_label": type_name,
+            "official_code": fac.get("official_code"),
+            "province_name": fac.get("province_name"),
+            "territory_name": fac.get("territory_name"),
+            "need_lon": need_lon,
+            "need_lat": need_lat,
+            "asset_lon": float(lon),
+            "asset_lat": float(lat),
+            "referential": "health.health_facilities",
+            "srid": 4326,
+            "health_proximity_m": proximity_m,
+            "health_service_area_m": service_area_m,
+            "health_nearest_max_m": nearest_max_m,
+            "data_date": None,
+        }
+        base = {
+            "asset_type": "fdsu_site",
+            "asset_id": asset_id,
+            "asset_business_id": site_code,
+            "need_type": "health_facility",
+            "need_id": f"HEALTH::{fac_id}",
+            "distance_m": round(distance, 1),
+            "service_radius_m": proximity_m,
+            "population_impacted": None,
+            "localities_impacted": None,
+            "infrastructure_type": type_name,
+            "priority_level": None,
+            "category": "health",
+            "confidence_level": confidence,
+            "source_asset": "programs.fdsu_sites",
+            "source_need": "health.health_facilities",
+            "calculation_method": "postgis_nearest_health",
+            "province": asset.get("province") or fac.get("province_name"),
+            "territoire": asset.get("territoire") or fac.get("territory_name"),
+            "program_code": asset.get("program_code"),
+            "properties": base_props,
+        }
+
+        # NEAREST — uniquement le plus proche (dans nearest_max)
+        if idx == 0 and distance <= nearest_max_m:
+            matches.append(
+                {
+                    **base,
+                    "relation_type": "NEAREST_HEALTH_FACILITY",
+                    "need_id": f"HEALTH_NEAREST::{fac_id}",
+                    "service_radius_m": nearest_max_m,
+                    "properties": {
+                        **base_props,
+                        "nsme_profile": "Nearest Health Facility",
+                        "is_nearest": True,
+                    },
+                }
+            )
+
+        # NEAR — dans le rayon de proximité configuré
+        if distance <= proximity_m:
+            matches.append(
+                {
+                    **base,
+                    "relation_type": "NEAR_HEALTH_FACILITY",
+                    "properties": {
+                        **base_props,
+                        "nsme_profile": "Near Health Facility",
+                    },
+                }
+            )
+
+        # WITHIN service area (même rayon métier si distinct)
+        if distance <= service_area_m:
+            matches.append(
+                {
+                    **base,
+                    "relation_type": "WITHIN_HEALTH_SERVICE_AREA",
+                    "need_id": f"HEALTH_AREA::{fac_id}",
+                    "service_radius_m": service_area_m,
+                    "properties": {
+                        **base_props,
+                        "nsme_profile": "Within Health Service Area",
+                        "service_area_m": service_area_m,
+                    },
+                }
+            )
+
+    # Métadonnée de recherche (pour SDG) même si aucun match dans proximity — nearest hors rayon
+    if nearest and not any(m.get("relation_type") == "NEAR_HEALTH_FACILITY" for m in matches):
+        # Recherche exécutée : nearest connu mais hors rayon proximité — déjà couvert par NEAREST si <= nearest_max
+        pass
+
+    return matches
+
+
 def match_asset_to_needs(
     asset_type: str,
     asset_id: str | int,
@@ -546,6 +718,7 @@ def match_asset_to_needs(
         impact_extra = match_asset_to_public_infrastructure(asset)
         matches.extend(impact_extra)
         matches.extend(match_site_to_roads(asset, max_distance_m=max_m))
+        matches.extend(match_site_to_health_facilities(asset, max_distance_m=max_m))
     elif asset_type == "ccn":
         ccns = _load_ccn_assets()
         asset = next(
@@ -903,6 +1076,9 @@ def refresh_matches(
                     "properties": {"aggregate": True, "population_status": impact.get("population_status")},
                 }
             )
+        # Santé PostGIS + routes (référentiels existants)
+        rows.extend(match_site_to_health_facilities(site))
+        rows.extend(match_site_to_roads(site))
         all_matches.extend(rows)
 
     ccn_count = 0
@@ -1053,14 +1229,45 @@ def get_asset_needs(asset_id: str | int, **filters: Any) -> dict[str, Any]:
         }
     })
     if stored:
+        health_types = {"NEAR_HEALTH_FACILITY", "NEAREST_HEALTH_FACILITY", "WITHIN_HEALTH_SERVICE_AREA"}
+        # Exclure les anciennes relations Santé inventées depuis NCI (INFRA::)
+        stored = [
+            m
+            for m in stored
+            if not (
+                m.get("relation_type") in health_types
+                and str(m.get("calculation_method") or "") == "derived_from_nci_infra"
+            )
+        ]
+        has_postgis_health = any(
+            (m.get("relation_type") in health_types)
+            and str(m.get("calculation_method") or "") == "postgis_nearest_health"
+            for m in stored
+        )
+        # Enrichissement live si le refresh antérieur n’incluait pas encore la Santé PostGIS
+        if not has_postgis_health and asset_type in {"fdsu_site", "site", "sites"} and DATA_MODE == "db":
+            site_id = int(asset_id) if str(asset_id).isdigit() else None
+            sites = list_fdsu_sites(asset_id=site_id, limit=1) if site_id else []
+            if sites:
+                health_rows = match_site_to_health_facilities(sites[0], max_distance_m=max_m)
+                if health_rows:
+                    stored = list(stored) + health_rows
         impact = compute_population_impact(stored)
         return {
-            "_meta": {"engine": ENGINE_VERSION, "source": "analysis.asset_need_matches", "generated_at": _now()},
+            "_meta": {
+                "engine": ENGINE_VERSION,
+                "source": "analysis.asset_need_matches",
+                "generated_at": _now(),
+                "health_enriched": not has_postgis_health,
+            },
             "asset_id": asset_id,
             "asset_type": asset_type,
             "match_count": len(stored),
             "matches": stored,
             "impact": impact,
+            "asset": (list_fdsu_sites(asset_id=int(asset_id), limit=1) or [None])[0]
+            if str(asset_id).isdigit()
+            else None,
         }
     # Calcul à la volée si pas encore persisté
     return match_asset_to_needs(asset_type, asset_id, max_distance_km=max_km, relation_type=filters.get("relation_type"))
