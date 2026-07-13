@@ -262,7 +262,10 @@
 }
 .sdg-maturity--operational { color: #4ade80; }
 .sdg-maturity--partial { color: #fbbf24; }
+.sdg-maturity--empty { color: #fbbf24; }
 .sdg-maturity--integrating { color: #38bdf8; }
+.sdg-maturity--demonstration { color: #a78bfa; }
+.sdg-maturity--error,
 .sdg-maturity--anomaly { color: #f87171; }
 .sdg-filter-row.is-anomaly {
   border-left: 2px solid #f87171;

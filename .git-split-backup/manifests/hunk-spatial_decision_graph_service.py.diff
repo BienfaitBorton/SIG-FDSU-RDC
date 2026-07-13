@@ -1,0 +1,137 @@
+diff --git "a/C:\\SIG-FDSU-RDC\\.git-split-backup\\intermediate\\c2\\api\\services\\spatial_decision_graph_service.py" "b/C:\\SIG-FDSU-RDC\\.git-split-backup\\intermediate\\c4\\api\\services\\spatial_decision_graph_service.py"
+index 02e13d5..2d921e6 100644
+--- "a/C:\\SIG-FDSU-RDC\\.git-split-backup\\intermediate\\c2\\api\\services\\spatial_decision_graph_service.py"
++++ "b/C:\\SIG-FDSU-RDC\\.git-split-backup\\intermediate\\c4\\api\\services\\spatial_decision_graph_service.py"
+@@ -52,7 +52,7 @@ CATEGORIES: dict[str, dict[str, Any]] = {
+         "color": "#16a34a",
+         "symbol": "health",
+         "available": True,
+-        "relation_types": ["NEAR_HEALTH_FACILITY"],
++        "relation_types": ["NEAR_HEALTH_FACILITY", "NEAREST_HEALTH_FACILITY", "WITHIN_HEALTH_SERVICE_AREA"],
+     },
+     "telecom": {
+         "id": "telecom",
+@@ -164,6 +164,22 @@ RELATION_STYLES: dict[str, dict[str, Any]] = {
+         "dash": None,
+         "why": "Un établissement de santé du référentiel national se trouve dans le rayon de proximité configuré.",
+     },
++    "NEAREST_HEALTH_FACILITY": {
++        "category": "health",
++        "label": "Établissement de santé le plus proche",
++        "color": "#15803d",
++        "weight": 3,
++        "dash": None,
++        "why": "Établissement de santé le plus proche du site — accessibilité sanitaire de référence.",
++    },
++    "WITHIN_HEALTH_SERVICE_AREA": {
++        "category": "health",
++        "label": "Dans la zone de service santé",
++        "color": "#22c55e",
++        "weight": 2,
++        "dash": "4 4",
++        "why": "Le site se trouve dans la zone de service sanitaire configurée autour de l’établissement.",
++    },
+     "NEAR_SCHOOL": {
+         "category": "education",
+         "label": "Proximité école",
+@@ -314,10 +330,19 @@ def _probe_referential_availability(lon: float | None, lat: float | None) -> dic
+     probes["health"] = {
+         "referential_exists": bool(health_count and int(health_count) > 0),
+         "record_count": health_count,
+-        "nsme_wired": False,
+-        "nsme_source": None,
++        "nsme_wired": True,
++        "nsme_source": "health.health_facilities",
+         "search_radius_m": None,
+     }
++    try:
++        from api.services.spatial_matching_service import get_rules
++
++        radii = (get_rules().get("service_radii_m") or {})
++        probes["health"]["search_radius_m"] = radii.get("health_proximity") or 5000
++        probes["health"]["nearest_max_m"] = radii.get("health_nearest_max") or 25000
++    except Exception:
++        probes["health"]["search_radius_m"] = 5000
++        probes["health"]["nearest_max_m"] = 25000
+ 
+     route_stats = _safe(
+         lambda: __import__("api.services.transport_service", fromlist=["get_statistics"]).get_statistics(),
+@@ -443,6 +468,21 @@ def _classify_category_emptiness(
+             ),
+         }
+ 
++    if cat_id == "health" and ref_exists and nsme_wired and not produced:
++        # Recherche PostGIS exécutée (match_site_to_health) — 0 dans le rayon
++        note = (
++            f"Recherche exécutée sur le référentiel Santé : "
++            f"aucun établissement trouvé dans le rayon de {radius_km} km."
++            if radius_km is not None
++            else "Recherche exécutée sur le référentiel Santé : aucun établissement trouvé dans le rayon configuré."
++        )
++        return {
++            "status": "empty",
++            "maturity": "partial" if matches else "partial",
++            "empty_reason": "no_relations_found",
++            "integration_case": 1,
++            "note": note,
++        }
+ 
+     if ref_exists and nsme_wired and not produced and matches:
+         suffix = f" — {probe.get('record_count')} objets" if probe.get("record_count") else ""
+@@ -512,6 +552,8 @@ def _human_source(raw: Any) -> str:
+         "analysis.asset_need_matches": "Correspondances spatiales NSME",
+         "transport.routes": "Routes principales",
+         "postgis_nearest_road": "Analyse PostGIS — route la plus proche",
++        "health.health_facilities": "Référentiel Santé (health.health_facilities)",
++        "postgis_nearest_health": "Analyse PostGIS — établissement de santé",
+     }
+     if text in mapping:
+         return mapping[text]
+@@ -609,6 +651,16 @@ def build_graph(asset_type: str, asset_id: str, *, program_code: str | None = No
+ 
+     needs = _safe(lambda: nsme.get_asset_needs(asset_id, asset_type="fdsu_site" if asset_type in {"site", "fdsu_site"} else asset_type, limit=200), {}) or {}
+     matches = list(needs.get("matches") or [])
++    # Filtrer les anciennes relations Santé dérivées NCI (non PostGIS) — source unique = health.health_facilities
++    matches = [
++        m
++        for m in matches
++        if not (
++            str(m.get("relation_type") or "")
++            in {"NEAR_HEALTH_FACILITY", "NEAREST_HEALTH_FACILITY", "WITHIN_HEALTH_SERVICE_AREA"}
++            and str(m.get("calculation_method") or "") == "derived_from_nci_infra"
++        )
++    ]
+     if not matches and needs.get("_meta", {}).get("status") == "not_found":
+         return None
+ 
+@@ -836,6 +888,30 @@ def build_graph(asset_type: str, asset_id: str, *, program_code: str | None = No
+             }
+         )
+ 
++    # Santé : si seulement NEAREST hors rayon de proximité — préciser l’absence dans le rayon configuré
++    health_probe = referential_probes.get("health") or {}
++    prox_m = health_probe.get("search_radius_m") or 5000
++    prox_km = round(float(prox_m) / 1000, 1)
++    near_in_radius = any(
++        str(m.get("relation_type") or "") in {"NEAR_HEALTH_FACILITY", "WITHIN_HEALTH_SERVICE_AREA"}
++        and str(m.get("calculation_method") or "") == "postgis_nearest_health"
++        for m in matches
++    )
++    nearest_only = any(
++        str(m.get("relation_type") or "") == "NEAREST_HEALTH_FACILITY"
++        and str(m.get("calculation_method") or "") == "postgis_nearest_health"
++        for m in matches
++    )
++    if nearest_only and not near_in_radius:
++        for c in category_stats:
++            if c["id"] == "health" and c.get("status") == "active":
++                c["maturity"] = "partial"
++                c["note"] = (
++                    f"Recherche exécutée sur le référentiel Santé : aucun établissement trouvé "
++                    f"dans le rayon de {prox_km} km (établissement le plus proche hors rayon)."
++                )
++                break
++
+     why_panel = _build_why_panel(asset, impact, case, matches, edges)
+     decision_summary = _build_decision_summary(asset, impact, case, edges, category_stats)
+     kpis = _build_kpis(asset, impact, edges, category_stats, case)

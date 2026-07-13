@@ -1,0 +1,101 @@
+diff --git "a/C:\\SIG-FDSU-RDC\\.git-split-backup\\intermediate\\c2\\dashboard\\modules\\shared\\spatial-decision-graph\\spatial-decision-graph.js" "b/C:\\SIG-FDSU-RDC\\.git-split-backup\\intermediate\\c4\\dashboard\\modules\\shared\\spatial-decision-graph\\spatial-decision-graph.js"
+index fa669d5..b5d479c 100644
+--- "a/C:\\SIG-FDSU-RDC\\.git-split-backup\\intermediate\\c2\\dashboard\\modules\\shared\\spatial-decision-graph\\spatial-decision-graph.js"
++++ "b/C:\\SIG-FDSU-RDC\\.git-split-backup\\intermediate\\c4\\dashboard\\modules\\shared\\spatial-decision-graph\\spatial-decision-graph.js"
+@@ -138,6 +138,7 @@
+           <span class="sdg-tech-name" title="Nom technique">${escapeHtml('Spatial Decision Graph')}</span>
+         </div>
+         <div class="sdg-toolbar-actions">
++          <button type="button" class="secondary-button" id="sdg-refresh-btn">Recalculer les relations spatiales</button>
+           <button type="button" class="primary-button" id="sdg-present-btn">Présenter le raisonnement</button>
+           <button type="button" class="secondary-button" id="sdg-stop-btn" hidden>Interrompre</button>
+           <span class="sdg-step-label" id="sdg-step-label" aria-live="polite"></span>
+@@ -211,6 +212,11 @@
+         startPresentation();
+         return;
+       }
++      const refresh = event.target?.closest?.('#sdg-refresh-btn');
++      if (refresh) {
++        refreshSpatialRelations(refresh);
++        return;
++      }
+       const stop = event.target?.closest?.('#sdg-stop-btn');
+       if (stop) {
+         stopPresentation(true);
+@@ -905,6 +911,68 @@
+     next();
+   }
+ 
++  function refreshSpatialRelations(btn) {
++    const meta = state.graph?._meta || {};
++    const assetId = meta.asset_id;
++    if (!assetId || !state.map) {
++      const label = document.querySelector('#sdg-step-label');
++      if (label) label.textContent = 'Recalcul impossible — actif non identifié.';
++      return;
++    }
++    if (btn?.disabled) return;
++    if (btn) {
++      btn.disabled = true;
++      btn.setAttribute('aria-busy', 'true');
++      btn.textContent = 'Recalcul en cours…';
++    }
++    const label = document.querySelector('#sdg-step-label');
++    if (label) label.textContent = 'Recalcul des relations spatiales (NSME)…';
++
++    const body = {
++      asset_id: Number.isFinite(Number(assetId)) ? Number(assetId) : assetId,
++      persist: true,
++      include_ccn: true,
++      program_code: meta.program_code || undefined,
++    };
++
++    fetch(`${API_BASE}/api/spatial-matching/refresh`, {
++      method: 'POST',
++      headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
++      cache: 'no-store',
++      body: JSON.stringify(body),
++    })
++      .then(async (r) => {
++        const data = await r.json().catch(() => ({}));
++        if (!r.ok) {
++          throw new Error(data.detail || `Recalcul impossible (${r.status})`);
++        }
++        return data;
++      })
++      .then((data) => {
++        const written = data.matches_written ?? data.details?.matches_written ?? data._meta?.matches_written;
++        const msg = written != null
++          ? `Recalcul terminé — ${written} relation(s) créée(s) ou mise(s) à jour.`
++          : (data.message || 'Recalcul terminé.');
++        if (label) label.textContent = msg;
++        const type = meta.asset_type || 'site';
++        const pc = meta.program_code;
++        return loadAndMount(state.map, type, assetId, pc).then(() => {
++          if (label) label.textContent = msg;
++        });
++      })
++      .catch((err) => {
++        if (label) {
++          label.textContent = `Recalcul impossible — ${err?.message || err}`;
++        }
++      })
++      .finally(() => {
++        if (btn) {
++          btn.disabled = false;
++          btn.removeAttribute('aria-busy');
++          btn.textContent = 'Recalculer les relations spatiales';
++        }
++      });
++  }
+ 
+   /* ── Public API ───────────────────────────────────────────────── */
+ 
+@@ -983,6 +1051,7 @@
+     loadAndMount,
+     startPresentation,
+     stopPresentation,
++    refreshSpatialRelations,
+     state,
+   };
+ })(typeof window !== 'undefined' ? window : globalThis);

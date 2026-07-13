@@ -1,0 +1,7 @@
+A	PROJECT_MANAGEMENT/ARCHITECTURE/DATA_FIRST_INTEGRATION_AUDIT_V1.md
+A	PROJECT_MANAGEMENT/ARCHITECTURE/INTEGRITY_GATE_REPORT_V1.md
+M	api/services/health_service.py
+M	api/services/spatial_decision_graph_service.py
+M	api/services/spatial_matching_service.py
+M	dashboard/modules/shared/spatial-decision-graph/spatial-decision-graph.js
+M	data/business/spatial_matching_rules.json

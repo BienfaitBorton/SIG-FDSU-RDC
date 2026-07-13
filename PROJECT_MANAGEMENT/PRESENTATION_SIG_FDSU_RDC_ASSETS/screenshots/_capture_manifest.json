@@ -1,0 +1,232 @@
+[
+  {
+    "file": "01_dashboard_national_01.png",
+    "route": "#dashboard",
+    "description": "Dashboard national ? vue compl?te",
+    "viewport": "1440?900",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : TABLEAU DE BORD Tableau de bord Version 1.0 🔍 🔔 RD Administrateur En ligne ZONES FDSU 5 PROVINCES 26 TERRIT"
+  },
+  {
+    "file": "01_dashboard_national_02.png",
+    "route": "#dashboard",
+    "description": "Dashboard national ? variante viewport large",
+    "viewport": "1728?1000",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : TABLEAU DE BORD Tableau de bord Version 1.0 🔍 🔔 RD Administrateur En ligne ZONES FDSU 5 PROVINCES 26 TERRIT"
+  },
+  {
+    "file": "02_cartographie_nationale_01.png",
+    "route": "#map",
+    "description": "Cartographie nationale ? vue initiale",
+    "viewport": "1440?900",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : CARTOGRAPHIE Cartographie Version 1.0 🔍 🔔 RD Administrateur En ligne Vue nationale Cartographie libre Recherche "
+  },
+  {
+    "file": "02_cartographie_nationale_02.png",
+    "route": "#map",
+    "description": "Cartographie nationale ? variante viewport large",
+    "viewport": "1728?1000",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : CARTOGRAPHIE Cartographie Version 1.0 🔍 🔔 RD Administrateur En ligne Vue nationale Cartographie libre Recherche "
+  },
+  {
+    "file": "03_centre_decision_01.png",
+    "route": "#decision-view",
+    "description": "Centre de D?cision ? vue principale",
+    "viewport": "1440?900",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : CENTRE DE DÉCISION FDSU Centre de Décision FDSU Version 1.0 🔍 🔔 RD Administrateur En ligne MODULE STRATÉGIQUE "
+  },
+  {
+    "file": "03_centre_decision_02.png",
+    "route": "#decision-scenario",
+    "description": "Centre de D?cision ? sc?nario",
+    "viewport": "1728?1000",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : CENTRE DE DÉCISION FDSU Centre de Décision FDSU Version 1.0 🔍 🔔 RD Administrateur En ligne MODULE STRATÉGIQUE "
+  },
+  {
+    "file": "04_territorial_intelligence_dungu_01.png",
+    "route": "#territorial-intelligence/TERRITOIRE-05-002",
+    "description": "Territorial Intelligence ? Dungu",
+    "viewport": "1440?900",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : INTELLIGENCE TERRITORIALE Intelligence territoriale Version 1.0 🔍 🔔 RD Administrateur En ligne INTELLIGENCE TER"
+  },
+  {
+    "file": "04_territorial_intelligence_dungu_02.png",
+    "route": "#territorial-intelligence/TERRITOIRE-05-002",
+    "description": "Territorial Intelligence ? Dungu variante large",
+    "viewport": "1728?1000",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : INTELLIGENCE TERRITORIALE Intelligence territoriale Version 1.0 🔍 🔔 RD Administrateur En ligne INTELLIGENCE TER"
+  },
+  {
+    "file": "05_salle_pilotage_01.png",
+    "route": "#salle-pilotage",
+    "description": "Executive Situation Room ? vue principale",
+    "viewport": "1440?900",
+    "outcome": "capture_error: TimeoutError: page.goto: Timeout 90000ms exceeded.\nCall log:\n  - navigating to \"http://127.0.0.1:8000/index.html#salle-pilotage\", waiting until \"networkidle\"\n",
+    "pageErrors": [],
+    "title": "",
+    "bodyPreview": ""
+  },
+  {
+    "file": "05_salle_pilotage_02.png",
+    "route": "#edvs-cockpit",
+    "description": "Executive Situation Room ? cockpit",
+    "viewport": "1728?1000",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : TABLEAU DE BORD Tableau de bord Version 1.0 🔍 🔔 RD Administrateur En ligne ZONES FDSU 5 PROVINCES 26 TERRIT"
+  },
+  {
+    "file": "06_spatial_decision_graph_01.png",
+    "route": "#spatial-impact/site/29?program_code=sites_40",
+    "description": "Analyse d?Impact Territorial ? site 29",
+    "viewport": "1440?900",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : DOSSIER DE DÉCISION Dossier de décision Version 1.0 🔍 🔔 RD Administrateur En ligne ← Retour DOSSIER DE DÉCISION"
+  },
+  {
+    "file": "06_spatial_decision_graph_02.png",
+    "route": "#analyse-impact-territorial/site/29?program_code=sites_40",
+    "description": "Spatial Decision Graph ? alias analyse impact",
+    "viewport": "1728?1000",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : DOSSIER DE DÉCISION Dossier de décision Version 1.0 🔍 🔔 RD Administrateur En ligne ← Retour DOSSIER DE DÉCISION"
+  },
+  {
+    "file": "07_dossier_decision_01.png",
+    "route": "#decision-case/site/29?program_code=sites_40",
+    "description": "Dossier de D?cision ? site 29",
+    "viewport": "1440?900",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : DOSSIER DE DÉCISION Dossier de décision Version 1.0 🔍 🔔 RD Administrateur En ligne ← Retour DOSSIER DE DÉCISION"
+  },
+  {
+    "file": "07_dossier_decision_02.png",
+    "route": "#decision-detail/sites",
+    "description": "Decision Workspace ? vue d?tail",
+    "viewport": "1728?1000",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : ANALYSE DÉTAILLÉE Analyse détaillée Version 1.0 🔍 🔔 RD Administrateur En ligne ← Retour au Centre de Décision A"
+  },
+  {
+    "file": "08_ccn_01.png",
+    "route": "#ccn",
+    "description": "Centres Communautaires Num?riques ? vue principale",
+    "viewport": "1440?900",
+    "outcome": "capture_error: Error: page.screenshot: Protocol error (Page.captureScreenshot): Unable to capture screenshot\nCall log:\n  - taking page screenshot\n  - waiting for fonts to load...\n  - fonts loaded",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : CENTRES COMMUNAUTAIRES Centres Communautaires Version 1.0 🔍 🔔 RD Administrateur En ligne CAPABILITY 02 — MODULE"
+  },
+  {
+    "file": "08_ccn_02.png",
+    "route": "#ccn-detail",
+    "description": "CCN ? vue d?tail",
+    "viewport": "1728?1000",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : DOSSIER DE DÉCISION Dossier de décision Version 1.0 🔍 🔔 RD Administrateur En ligne ← Retour DOSSIER DE DÉCISION"
+  },
+  {
+    "file": "09_referentiel_administratif_01.png",
+    "route": "#administratif",
+    "description": "R?f?rentiel administratif ? vue principale",
+    "viewport": "1440?900",
+    "outcome": "capture_error: TimeoutError: page.goto: Timeout 90000ms exceeded.\nCall log:\n  - navigating to \"http://127.0.0.1:8000/index.html#administratif\", waiting until \"networkidle\"\n",
+    "pageErrors": [],
+    "title": "",
+    "bodyPreview": ""
+  },
+  {
+    "file": "10_referentiel_sante_01.png",
+    "route": "#health",
+    "description": "R?f?rentiel Sant? ? vue principale",
+    "viewport": "1728?1000",
+    "outcome": "capture_error: TimeoutError: page.goto: Timeout 90000ms exceeded.\nCall log:\n  - navigating to \"http://127.0.0.1:8000/index.html#health\", waiting until \"networkidle\"\n",
+    "pageErrors": [],
+    "title": "",
+    "bodyPreview": ""
+  },
+  {
+    "file": "11_referentiel_telecom_01.png",
+    "route": "#telecom",
+    "description": "R?f?rentiel T?l?communications ? vue principale",
+    "viewport": "1440?900",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : TABLEAU DE BORD Tableau de bord Version 1.0 🔍 🔔 RD Administrateur En ligne ZONES FDSU 5 PROVINCES 26 TERRIT"
+  },
+  {
+    "file": "12_programmes_fdsu_01.png",
+    "route": "#sites",
+    "description": "Programmes FDSU ? vue sites",
+    "viewport": "1728?1000",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : SITES FDSU Sites FDSU Version 1.0 🔍 🔔 RD Administrateur En ligne SITES FDSU Inventaire des sites 0 site Modul"
+  },
+  {
+    "file": "12_programmes_fdsu_02.png",
+    "route": "#priorisation",
+    "description": "Programmes FDSU ? vue priorisation",
+    "viewport": "1440?900",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : TABLEAU DE BORD Tableau de bord Version 1.0 🔍 🔔 RD Administrateur En ligne ZONES FDSU 5 PROVINCES 26 TERRIT"
+  },
+  {
+    "file": "13_twin_territorial_01.png",
+    "route": "#territorial-twin/territoire/TERRITOIRE-05-002",
+    "description": "Territorial Digital Twin ? Dungu",
+    "viewport": "1728?1000",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : ANALYSE DÉTAILLÉE Analyse détaillée Version 1.0 🔍 🔔 RD Administrateur En ligne ← Retour au Centre de Décision A"
+  },
+  {
+    "file": "14_sources_donnees_01.png",
+    "route": "#sources",
+    "description": "Explorateur de Sources ? vue principale",
+    "viewport": "1440?900",
+    "outcome": "captured",
+    "pageErrors": [],
+    "title": "SIG-FDSU RDC - Interface de gestion",
+    "bodyPreview": "FDSU SIG-FDSU RDC Interface de pilotage 🏠 Tableau de bord 🗺️ Cartographie 🎯 Centre de Décision DG Salle de Pilotage DG TI Intelligence territoriale CCN Centres Communautaires 🧭 Référentiel administratif 🗂️ Gestion des Référentiels 🧪 Explorateur de Sources 📍 Sites FDSU CCN Aide à la décision CNCT Base nationale de connaissances ENR Assistant d’enrichissement GEO Géocodage FDSU ⬆️ Import ⬇️ Export 📊 Statistiques 👥 Utilisateurs ⚙️ Paramètres Identité FDSU RDC MODULE : EXPLORATEUR DE SOURCES Explorateur de Sources Version 1.0 🔍 🔔 RD Administrateur En ligne EXPLORATEUR DE SOURCES"
+  }
+]

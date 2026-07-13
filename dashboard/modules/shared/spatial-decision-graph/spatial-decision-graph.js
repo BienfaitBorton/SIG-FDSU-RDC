@@ -522,15 +522,24 @@
         : status === 'empty'
           ? 'Aucune relation pour ce site'
           : '');
-      const maturity = f.maturity || (status === 'future' ? 'integrating' : status === 'empty' ? 'partial' : 'operational');
+      const maturity = f.maturity || (status === 'future' ? 'integrating' : status === 'empty' ? 'empty' : 'operational');
       const maturityLabel = {
         operational: 'Opérationnel',
-        partial: 'Partiellement intégré',
+        empty: 'Aucun objet trouvé',
+        partial: 'Partiel',
         integrating: 'En cours d’intégration',
-        anomaly: 'Anomalie d’intégration',
+        error: 'Erreur d’intégration',
+        demonstration: 'Démonstration / partiel',
+        anomaly: 'Erreur d’intégration',
       }[maturity] || maturity;
+      const nearest = f.nearest_context;
+      const nearestLine = nearest
+        ? ` Plus proche : ${nearest.name || 'objet'}${nearest.operator ? ` (${nearest.operator})` : ''}${nearest.distance_km != null ? ` — ${nearest.distance_km} km` : ''}.`
+        : '';
+      const impactLine = f.business_impact ? ` Impact : ${f.business_impact}` : '';
+      const fullNote = `${note || ''}${nearestLine}${impactLine}`.trim();
       return `
-        <div class="sdg-filter-row${disabled ? ' is-disabled' : ''}${!checked && !disabled ? ' is-off' : ''}${maturity === 'anomaly' ? ' is-anomaly' : ''}"
+        <div class="sdg-filter-row${disabled ? ' is-disabled' : ''}${!checked && !disabled ? ' is-off' : ''}${maturity === 'error' || maturity === 'anomaly' ? ' is-anomaly' : ''}"
              role="listitem" data-status="${escapeHtml(status)}" data-maturity="${escapeHtml(maturity)}">
           <label class="sdg-filter">
             <input type="checkbox"
@@ -543,10 +552,10 @@
                   aria-hidden="true">${symbolGlyph(symbol)}</span>
             <span class="sdg-filter-label">${escapeHtml(f.label)}</span>
             <span class="sdg-filter-color" style="background:${escapeHtml(f.color || '#94a3b8')}" title="${escapeHtml(f.color || '')}" aria-hidden="true"></span>
-            <span class="sdg-filter-count" title="${escapeHtml(note || '')}">${Number(f.count || 0)}</span>
+            <span class="sdg-filter-count" title="${escapeHtml(fullNote || '')}">${Number(f.count || 0)}</span>
           </label>
           ${!disabled ? `<button type="button" class="secondary-button sdg-btn-sm sdg-isolate-btn" data-sdg-isolate="${escapeHtml(f.id)}" aria-label="Isoler ${escapeHtml(f.label)}">Isoler</button>` : ''}
-          <p class="sdg-filter-note"><span class="sdg-maturity sdg-maturity--${escapeHtml(maturity)}">${escapeHtml(maturityLabel)}</span>${note ? ` — ${escapeHtml(note)}` : ''}</p>
+          <p class="sdg-filter-note"><span class="sdg-maturity sdg-maturity--${escapeHtml(maturity)}">${escapeHtml(maturityLabel)}</span>${fullNote ? ` — ${escapeHtml(fullNote)}` : ''}</p>
         </div>
       `;
     }).join('');
@@ -674,11 +683,17 @@
           const display = unavailable
             ? 'Non disponible'
             : (k.display != null && k.display !== '' ? k.display : String(k.value));
+          const note = k.note || '';
+          const nearest = k.detail && k.detail.nearest_context;
+          const nearestTxt = nearest
+            ? `Plus proche : ${nearest.name || ''}${nearest.distance_km != null ? ` — ${nearest.distance_km} km` : ''}`
+            : '';
           return `
             <article class="sdg-kpi" data-status="${escapeHtml(unavailable ? 'unavailable' : (k.status || 'success'))}">
               <span class="sdg-kpi-label">${escapeHtml(k.label || k.id)}</span>
               <strong class="sdg-kpi-value">${escapeHtml(display)}</strong>
-              ${k.note && unavailable ? `<small>${escapeHtml(k.note)}</small>` : ''}
+              ${note ? `<small>${escapeHtml(note)}</small>` : ''}
+              ${nearestTxt ? `<small>${escapeHtml(nearestTxt)}</small>` : ''}
             </article>
           `;
         }).join('')}

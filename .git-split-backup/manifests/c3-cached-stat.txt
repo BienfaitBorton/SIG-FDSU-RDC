@@ -1,0 +1,5 @@
+ .cursor/rules/data-first-integration.mdc           |  19 +++
+ .../DATA_FIRST_INTEGRATION_AUDIT_V1.md             | 153 +++++++++++++++++++++
+ .../ARCHITECTURE/DATA_FIRST_INTEGRATION_POLICY.md  |  96 +++++++++++++
+ .../ARCHITECTURE/INTEGRITY_GATE_REPORT_V1.md       |  89 ++++++++++++
+ 4 files changed, 357 insertions(+)

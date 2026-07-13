@@ -1,0 +1,16 @@
+ .cursor/rules/e2e-integrity-gate.mdc               |   19 +
+ .../ARCHITECTURE/E2E_INTEGRITY_GATE.md             |   50 +
+ api/routes/decision_engine.py                      |   16 +-
+ api/services/explainable_decision_service.py       |   89 +-
+ api/services/site_entity_resolver.py               |   90 ++
+ dashboard/app.js                                   |   26 +
+ dashboard/index.html                               |    4 +
+ .../decision-case-controller.js                    |  187 +++
+ .../decision-experience/decision-error-handler.js  |   57 +
+ .../decision-experience/decision-experience.css    |   19 +-
+ .../decision-experience/decision-experience.js     | 1228 +-------------------
+ dashboard/modules/decision-experience/dxl-core.js  |  753 ++++++++++++
+ .../executive-situation-room.css                   |   78 +-
+ tests/e2e/integrity-gate-decision-case.spec.js     |  122 ++
+ tests/test_integrity_gate_decision_case.py         |   67 ++
+ 15 files changed, 1579 insertions(+), 1226 deletions(-)

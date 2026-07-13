@@ -39,6 +39,7 @@ Le Gate **bloque les futurs sprints fonctionnels** tant que les anomalies 🔴 P
 | A12 | Reference catalog endpoints sous-utilisés | 4 | P3 | Documentée |
 | A13 | Analysis `/site/{id}` non utilisé modules | 4 | P3 | Documentée |
 | A14 | **Santé 37k** — NSME branché sur `health.health_facilities` | **4→1** | **P0** | **Corrigé** — relations PostGIS ; SDG maturité 🟢/🟡 |
+| A15 | **Profil territorial incomplet** malgré admin/santé/télécom/routes | **4** | **P0** | **Corrigé** — `TerritorialProfileService` (2026-07-13) |
 
 ---
 
@@ -49,7 +50,8 @@ Le Gate **bloque les futurs sprints fonctionnels** tant que les anomalies 🔴 P
 3. **SDG** : payload `data_first.anomalies[]`.  
 4. **UI SDG** : pastilles de maturité dans les filtres ; panneau détail enrichi.  
 5. **Audit + Gate Report** complets.  
-6. **P0 Santé (2026-07-12)** : `match_site_to_health_facilities` → `health.health_facilities` ; relations NEAREST / NEAR / WITHIN ; rayons dans `spatial_matching_rules.json` ; refresh UI SDG ; suppression des fausses relations Santé dérivées NCI en mode DB.
+6. **P0 Santé (2026-07-12)** : matching PostGIS `health.health_facilities`.  
+7. **P0 Profil territorial (2026-07-13)** : resolver + composition Data First ; superficie, groupements, localités, santé spatiale, télécom, routes ; voir `TERRITORIAL_DATA_FIRST_COMPLETENESS_AUDIT_V1.md`.
 
 ---
 

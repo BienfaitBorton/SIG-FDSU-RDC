@@ -265,22 +265,188 @@ def get_statistics() -> dict[str, Any]:
     }
 
 
+def nearest_infrastructure(
+    lat: float,
+    lon: float,
+    *,
+    radius_m: float = 25000,
+    limit: int = 15,
+) -> dict[str, Any]:
+    """Infrastructures télécom (nœuds / sites) les plus proches — PostGIS geography SRID 4326."""
+    stats = get_statistics()
+    referential_count = int(stats.get("infrastructure_count") or 0)
+    if referential_count <= 0:
+        return {
+            "data_available": False,
+            "search_executed": False,
+            "referential_count": 0,
+            "radius_m": radius_m,
+            "facilities": [],
+            "nearest": None,
+        }
+    with connect_db() as conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(
+                """
+                SELECT
+                    i.id,
+                    i.infra_code,
+                    i.infra_name,
+                    i.infra_type,
+                    i.technology,
+                    i.source_file,
+                    i.province,
+                    i.territoire,
+                    i.latitude,
+                    i.longitude,
+                    o.operator_code,
+                    o.operator_name,
+                    ST_Distance(
+                        i.geom::geography,
+                        ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+                    ) AS distance_m
+                FROM telecom.infrastructure i
+                JOIN telecom.operators o ON o.id = i.operator_id
+                WHERE i.geom IS NOT NULL
+                  AND ST_DWithin(
+                    i.geom::geography,
+                    ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography,
+                    %s
+                  )
+                ORDER BY i.geom::geography <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+                LIMIT %s
+                """,
+                (lon, lat, lon, lat, radius_m, lon, lat, limit),
+            )
+            rows = [_serialize_row(dict(r)) for r in cur.fetchall()]
+            # Si rien dans le rayon demandé, remonter le plus proche absolu (contexte hors rayon)
+            nearest_absolute = None
+            if not rows:
+                cur.execute(
+                    """
+                    SELECT
+                        i.id,
+                        i.infra_code,
+                        i.infra_name,
+                        i.infra_type,
+                        i.technology,
+                        i.source_file,
+                        i.province,
+                        i.territoire,
+                        i.latitude,
+                        i.longitude,
+                        o.operator_code,
+                        o.operator_name,
+                        ST_Distance(
+                            i.geom::geography,
+                            ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+                        ) AS distance_m
+                    FROM telecom.infrastructure i
+                    JOIN telecom.operators o ON o.id = i.operator_id
+                    WHERE i.geom IS NOT NULL
+                    ORDER BY i.geom::geography <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+                    LIMIT 1
+                    """,
+                    (lon, lat, lon, lat),
+                )
+                abs_row = cur.fetchone()
+                nearest_absolute = _serialize_row(dict(abs_row)) if abs_row else None
+    return {
+        "data_available": True,
+        "search_executed": True,
+        "referential_count": referential_count,
+        "radius_m": radius_m,
+        "facilities": rows,
+        "nearest": rows[0] if rows else nearest_absolute,
+        "nearest_outside_radius": nearest_absolute if not rows else None,
+        "object_kind": "infrastructure_node",
+    }
+
+
+def nearest_network_line(
+    lat: float,
+    lon: float,
+    *,
+    radius_m: float = 25000,
+) -> dict[str, Any]:
+    """Tronçon / ligne réseau fibre le plus proche — distinct des nœuds FTTX."""
+    stats = get_statistics()
+    line_count = int(stats.get("network_line_count") or 0)
+    if line_count <= 0:
+        return {
+            "data_available": False,
+            "search_executed": False,
+            "referential_count": 0,
+            "radius_m": radius_m,
+            "nearest": None,
+        }
+    with connect_db() as conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(
+                """
+                SELECT
+                    l.id,
+                    l.line_code,
+                    l.line_name,
+                    l.line_type,
+                    l.technology,
+                    l.source_file,
+                    o.operator_code,
+                    o.operator_name,
+                    ST_Distance(
+                        l.geom::geography,
+                        ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+                    ) AS distance_m,
+                    ST_Y(ST_ClosestPoint(l.geom, ST_SetSRID(ST_MakePoint(%s, %s), 4326))) AS latitude,
+                    ST_X(ST_ClosestPoint(l.geom, ST_SetSRID(ST_MakePoint(%s, %s), 4326))) AS longitude
+                FROM telecom.network_lines l
+                JOIN telecom.operators o ON o.id = l.operator_id
+                WHERE l.geom IS NOT NULL
+                ORDER BY l.geom::geography <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+                LIMIT 1
+                """,
+                (lon, lat, lon, lat, lon, lat, lon, lat),
+            )
+            row = cur.fetchone()
+            nearest = _serialize_row(dict(row)) if row else None
+    within = bool(nearest and float(nearest.get("distance_m") or 0) <= float(radius_m))
+    return {
+        "data_available": True,
+        "search_executed": True,
+        "referential_count": line_count,
+        "radius_m": radius_m,
+        "nearest": nearest,
+        "within_radius": within,
+        "object_kind": "network_line",
+    }
+
+
 def get_nearby_sites(
     latitude: float | None = None,
     longitude: float | None = None,
     radius_meters: float | None = None,
     limit: int = 100,
 ) -> dict[str, Any]:
+    if latitude is None or longitude is None:
+        return {
+            "status": "insufficient",
+            "message": "Coordonnées du site requises pour l’analyse de proximité télécom.",
+            "items": [],
+        }
+    radius = float(radius_meters or 25000)
+    payload = nearest_infrastructure(float(latitude), float(longitude), radius_m=radius, limit=limit)
     return {
-        "status": "prepared",
-        "message": "Analyse de proximite sites FDSU / infrastructures telecom a implementer.",
+        "status": "success" if payload.get("search_executed") else "unavailable",
+        "message": None,
         "query": {
             "latitude": latitude,
             "longitude": longitude,
-            "radius_meters": radius_meters,
+            "radius_meters": radius,
             "limit": limit,
         },
-        "items": [],
+        "items": payload.get("facilities") or [],
+        "nearest": payload.get("nearest"),
+        "referential_count": payload.get("referential_count"),
     }
 
 

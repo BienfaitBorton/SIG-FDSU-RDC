@@ -668,6 +668,466 @@ def match_site_to_health_facilities(
     return matches
 
 
+def match_site_to_telecom(
+    asset: dict[str, Any],
+    max_distance_m: float | None = None,
+) -> list[dict[str, Any]]:
+    """NSME — nœuds télécom / fibre PostGIS (telecom.infrastructure + network_lines)."""
+    lon = asset.get("longitude")
+    lat = asset.get("latitude")
+    if lon is None or lat is None:
+        return []
+
+    rules = get_rules()
+    radii = rules.get("service_radii_m") or {}
+    proximity_m = float(max_distance_m or radii.get("telecom_proximity") or radii.get("backbone_connection") or 25000)
+    fiber_m = float(radii.get("fiber_connection") or 5000)
+    nearest_max_m = float(radii.get("telecom_nearest_max") or max(proximity_m, 50000))
+    limit = int(radii.get("telecom_max_matches") or (rules.get("matching") or {}).get("max_matches_per_asset") or 15)
+
+    try:
+        from api.services import telecom_service
+
+        payload = telecom_service.nearest_infrastructure(
+            float(lat),
+            float(lon),
+            radius_m=max(proximity_m, nearest_max_m),
+            limit=limit,
+        )
+        line_payload = telecom_service.nearest_network_line(float(lat), float(lon), radius_m=max(fiber_m, proximity_m))
+    except Exception:
+        return []
+
+    if not payload.get("data_available") and not line_payload.get("data_available"):
+        return []
+
+    asset_id = asset.get("id") or asset.get("site_id")
+    site_code = asset.get("site_code") or str(asset_id)
+    matches: list[dict[str, Any]] = []
+    facilities = list(payload.get("facilities") or [])
+    nearest = payload.get("nearest") or payload.get("nearest_outside_radius")
+
+    for idx, fac in enumerate(facilities):
+        distance = float(fac.get("distance_m") or 0)
+        fac_id = fac.get("id")
+        name = fac.get("infra_name") or fac.get("infra_code") or f"Infrastructure {fac_id}"
+        infra_type = str(fac.get("infra_type") or "")
+        technology = str(fac.get("technology") or "")
+        operator = fac.get("operator_name") or fac.get("operator_code")
+        tech_low = f"{infra_type} {technology}".lower()
+        is_fiber = any(tok in tech_low for tok in ("fiber", "fibre", "fttx", "ftth", "backbone"))
+        conf = "high" if distance <= proximity_m and name else "medium"
+        base_props = {
+            "infra_label": name,
+            "infra_name": name,
+            "infra_type": infra_type,
+            "technology": technology,
+            "operator_name": operator,
+            "operator_code": fac.get("operator_code"),
+            "class_label": f"{operator or 'Opérateur'} — {infra_type or technology or 'infrastructure'}",
+            "need_lon": fac.get("longitude"),
+            "need_lat": fac.get("latitude"),
+            "asset_lon": float(lon),
+            "asset_lat": float(lat),
+            "referential": "telecom.infrastructure",
+            "object_kind": "infrastructure_node",
+            "srid": 4326,
+            "telecom_proximity_m": proximity_m,
+            "telecom_nearest_max_m": nearest_max_m,
+            "referential_count": payload.get("referential_count"),
+        }
+        base = {
+            "asset_type": "fdsu_site",
+            "asset_id": asset_id,
+            "asset_business_id": site_code,
+            "need_type": "telecom_infrastructure",
+            "need_id": f"TEL::{fac_id}",
+            "distance_m": round(distance, 1),
+            "service_radius_m": proximity_m,
+            "population_impacted": None,
+            "localities_impacted": None,
+            "infrastructure_type": infra_type or technology,
+            "priority_level": None,
+            "category": "telecom",
+            "confidence_level": conf,
+            "source_asset": "programs.fdsu_sites",
+            "source_need": "telecom.infrastructure",
+            "calculation_method": "postgis_nearest_telecom",
+            "province": asset.get("province") or fac.get("province"),
+            "territoire": asset.get("territoire") or fac.get("territoire"),
+            "program_code": asset.get("program_code"),
+            "properties": base_props,
+        }
+
+        if idx == 0 and distance <= nearest_max_m:
+            matches.append(
+                {
+                    **base,
+                    "relation_type": "NEAREST_TELECOM_INFRA",
+                    "need_id": f"TEL_NEAREST::{fac_id}",
+                    "service_radius_m": nearest_max_m,
+                    "properties": {**base_props, "nsme_profile": "Nearest Telecom", "is_nearest": True},
+                }
+            )
+        if distance <= proximity_m:
+            rel = "NEAR_FIBER" if is_fiber else "NEAR_BACKBONE"
+            matches.append(
+                {
+                    **base,
+                    "relation_type": rel,
+                    "properties": {**base_props, "nsme_profile": "Near Telecom Infrastructure"},
+                }
+            )
+
+    # Contexte hors rayon : nearest absolu sans relation "NEAR" dans le rayon
+    if nearest and not any(m.get("relation_type") in {"NEAR_FIBER", "NEAR_BACKBONE"} for m in matches):
+        distance = float(nearest.get("distance_m") or 0)
+        if distance > proximity_m:
+            fac_id = nearest.get("id")
+            name = nearest.get("infra_name") or nearest.get("infra_code") or f"Infrastructure {fac_id}"
+            matches.append(
+                {
+                    "asset_type": "fdsu_site",
+                    "asset_id": asset_id,
+                    "asset_business_id": site_code,
+                    "need_type": "telecom_infrastructure",
+                    "need_id": f"TEL_CONTEXT::{fac_id}",
+                    "relation_type": "NEAREST_TELECOM_INFRA",
+                    "distance_m": round(distance, 1),
+                    "service_radius_m": nearest_max_m,
+                    "population_impacted": None,
+                    "category": "telecom",
+                    "confidence_level": "medium",
+                    "source_asset": "programs.fdsu_sites",
+                    "source_need": "telecom.infrastructure",
+                    "calculation_method": "postgis_nearest_telecom",
+                    "province": asset.get("province"),
+                    "territoire": asset.get("territoire"),
+                    "program_code": asset.get("program_code"),
+                    "properties": {
+                        "infra_label": name,
+                        "infra_name": name,
+                        "infra_type": nearest.get("infra_type"),
+                        "technology": nearest.get("technology"),
+                        "operator_name": nearest.get("operator_name"),
+                        "operator_code": nearest.get("operator_code"),
+                        "class_label": f"{nearest.get('operator_name') or 'Opérateur'} — hors rayon",
+                        "need_lon": nearest.get("longitude"),
+                        "need_lat": nearest.get("latitude"),
+                        "asset_lon": float(lon),
+                        "asset_lat": float(lat),
+                        "referential": "telecom.infrastructure",
+                        "object_kind": "infrastructure_node",
+                        "outside_search_radius": True,
+                        "telecom_proximity_m": proximity_m,
+                        "referential_count": payload.get("referential_count"),
+                        "nsme_profile": "Nearest Telecom Outside Radius",
+                        "is_nearest": True,
+                    },
+                }
+            )
+
+    # Tronçon fibre distinct des nœuds
+    line = line_payload.get("nearest")
+    if line and line_payload.get("data_available"):
+        distance = float(line.get("distance_m") or 0)
+        line_id = line.get("id")
+        line_name = line.get("line_name") or line.get("line_code") or f"Tronçon fibre {line_id}"
+        line_base = {
+            "asset_type": "fdsu_site",
+            "asset_id": asset_id,
+            "asset_business_id": site_code,
+            "need_type": "telecom_network_line",
+            "need_id": f"FIBER_LINE::{line_id}",
+            "distance_m": round(distance, 1),
+            "service_radius_m": fiber_m,
+            "category": "telecom",
+            "confidence_level": "medium",
+            "source_asset": "programs.fdsu_sites",
+            "source_need": "telecom.network_lines",
+            "calculation_method": "postgis_nearest_fiber_line",
+            "province": asset.get("province"),
+            "territoire": asset.get("territoire"),
+            "program_code": asset.get("program_code"),
+            "properties": {
+                "infra_label": line_name,
+                "line_name": line_name,
+                "line_type": line.get("line_type"),
+                "technology": line.get("technology"),
+                "operator_name": line.get("operator_name"),
+                "operator_code": line.get("operator_code"),
+                "class_label": f"Tronçon fibre — {line.get('operator_name') or line.get('operator_code') or 'réseau'}",
+                "need_lon": line.get("longitude"),
+                "need_lat": line.get("latitude"),
+                "asset_lon": float(lon),
+                "asset_lat": float(lat),
+                "referential": "telecom.network_lines",
+                "object_kind": "network_line",
+                "fiber_connection_m": fiber_m,
+                "referential_count": line_payload.get("referential_count"),
+                "within_radius": bool(line_payload.get("within_radius")),
+                "nsme_profile": "Nearest Fiber Line",
+            },
+        }
+        if distance <= fiber_m:
+            matches.append({**line_base, "relation_type": "NEAR_FIBER"})
+        else:
+            matches.append({**line_base, "relation_type": "NEAREST_FIBER_LINE", "need_id": f"FIBER_LINE_NEAREST::{line_id}"})
+
+    # Marqueur de recherche exécutée même sans objet (pour SDG)
+    if payload.get("search_executed") and not matches:
+        matches.append(
+            {
+                "asset_type": "fdsu_site",
+                "asset_id": asset_id,
+                "asset_business_id": site_code,
+                "need_type": "telecom_infrastructure",
+                "need_id": f"TEL_SEARCH::{asset_id}",
+                "relation_type": "TELECOM_SEARCH_EXECUTED",
+                "distance_m": None,
+                "service_radius_m": proximity_m,
+                "category": "telecom",
+                "confidence_level": "high",
+                "source_asset": "programs.fdsu_sites",
+                "source_need": "telecom.infrastructure",
+                "calculation_method": "postgis_nearest_telecom",
+                "properties": {
+                    "search_executed": True,
+                    "referential_count": payload.get("referential_count"),
+                    "telecom_proximity_m": proximity_m,
+                    "nsme_profile": "Telecom Search Executed",
+                    "suppress_graph_edge": True,
+                },
+            }
+        )
+    return matches
+
+
+def match_site_to_neighbor_fdsu(
+    asset: dict[str, Any],
+    max_distance_m: float | None = None,
+) -> list[dict[str, Any]]:
+    """NSME — autres sites FDSU proches / même programme (aucune invention)."""
+    lon = asset.get("longitude")
+    lat = asset.get("latitude")
+    asset_id = asset.get("id") or asset.get("site_id")
+    if lon is None or lat is None or asset_id is None:
+        return []
+
+    rules = get_rules()
+    radii = rules.get("service_radii_m") or {}
+    radius_m = float(max_distance_m or radii.get("fdsu_site_proximity") or 25000)
+    service_radius = _radius_for_asset("fdsu_site")
+    program_code = asset.get("program_code")
+
+    neighbors = list_fdsu_sites(limit=5000)
+    matches: list[dict[str, Any]] = []
+    site_code = asset.get("site_code") or str(asset_id)
+
+    for other in neighbors:
+        other_id = other.get("id")
+        if other_id is None or int(other_id) == int(asset_id):
+            continue
+        o_lat, o_lon = other.get("latitude"), other.get("longitude")
+        if o_lat is None or o_lon is None:
+            continue
+        distance = _haversine_m(float(lat), float(lon), float(o_lat), float(o_lon))
+        if distance > radius_m:
+            continue
+
+        same_program = bool(
+            program_code
+            and other.get("program_code")
+            and str(other.get("program_code")).lower() == str(program_code).lower()
+        )
+        other_prog = str(other.get("program_code") or "")
+        in_sites_40 = "sites_40" in other_prog.lower() or "sites40" in other_prog.lower()
+        in_sites_300 = "sites_300" in other_prog.lower() or "sites300" in other_prog.lower()
+        in_20476 = "20476" in other_prog or "20_476" in other_prog or "20476" in str(other.get("program_name") or "")
+
+        name = other.get("site_name") or other.get("site_code") or f"Site {other_id}"
+        base_props = {
+            "infra_label": name,
+            "site_name": name,
+            "site_code": other.get("site_code"),
+            "neighbor_program_code": other.get("program_code"),
+            "neighbor_program_name": other.get("program_name"),
+            "class_label": other.get("program_name") or other.get("program_code") or "Site FDSU",
+            "need_lon": float(o_lon),
+            "need_lat": float(o_lat),
+            "asset_lon": float(lon),
+            "asset_lat": float(lat),
+            "referential": "programs.fdsu_sites",
+            "fdsu_site_proximity_m": radius_m,
+            "same_program": same_program,
+            "in_sites_40": in_sites_40,
+            "in_sites_300": in_sites_300,
+            "in_program_20476": in_20476,
+        }
+        base = {
+            "asset_type": "fdsu_site",
+            "asset_id": asset_id,
+            "asset_business_id": site_code,
+            "need_type": "fdsu_site",
+            "need_id": f"FDSU::{other_id}",
+            "distance_m": round(distance, 1),
+            "service_radius_m": radius_m,
+            "category": "fdsu_sites",
+            "confidence_level": "high" if distance <= radius_m else "medium",
+            "source_asset": "programs.fdsu_sites",
+            "source_need": "programs.fdsu_sites",
+            "calculation_method": "haversine_fdsu_neighbors",
+            "province": other.get("province") or asset.get("province"),
+            "territoire": other.get("territoire") or asset.get("territoire"),
+            "program_code": program_code,
+            "properties": base_props,
+        }
+
+        matches.append({**base, "relation_type": "NEAR_FDSU_SITE", "properties": {**base_props, "nsme_profile": "Near FDSU Site"}})
+        if distance <= max(service_radius, radius_m):
+            matches.append(
+                {
+                    **base,
+                    "relation_type": "OVERLAPPING_SERVICE_AREA",
+                    "need_id": f"FDSU_OVERLAP::{other_id}",
+                    "properties": {**base_props, "nsme_profile": "Overlapping Service Area", "service_radius_m": service_radius},
+                }
+            )
+        if same_program:
+            matches.append(
+                {
+                    **base,
+                    "relation_type": "SAME_PROGRAM",
+                    "need_id": f"FDSU_PROG::{other_id}",
+                    "properties": {**base_props, "nsme_profile": "Same Program"},
+                }
+            )
+            matches.append(
+                {
+                    **base,
+                    "relation_type": "COMPLEMENTS_FDSU_SITE",
+                    "need_id": f"FDSU_COMP::{other_id}",
+                    "properties": {**base_props, "nsme_profile": "Complements FDSU Site"},
+                }
+            )
+
+    # Toujours tracer la recherche (même sans voisin)
+    if not matches:
+        matches.append(
+            {
+                "asset_type": "fdsu_site",
+                "asset_id": asset_id,
+                "asset_business_id": site_code,
+                "need_type": "fdsu_site",
+                "need_id": f"FDSU_SEARCH::{asset_id}",
+                "relation_type": "FDSU_SEARCH_EXECUTED",
+                "distance_m": None,
+                "service_radius_m": radius_m,
+                "category": "fdsu_sites",
+                "confidence_level": "high",
+                "source_asset": "programs.fdsu_sites",
+                "source_need": "programs.fdsu_sites",
+                "calculation_method": "haversine_fdsu_neighbors",
+                "properties": {
+                    "search_executed": True,
+                    "fdsu_site_proximity_m": radius_m,
+                    "suppress_graph_edge": True,
+                    "nsme_profile": "FDSU Neighbor Search Executed",
+                },
+            }
+        )
+    return matches
+
+
+def match_site_to_near_ccn(
+    asset: dict[str, Any],
+    max_distance_m: float | None = None,
+) -> list[dict[str, Any]]:
+    """NSME — CCN du jeu DEMO proches du site (pas de référentiel production)."""
+    lon = asset.get("longitude")
+    lat = asset.get("latitude")
+    if lon is None or lat is None:
+        return []
+
+    rules = get_rules()
+    radii = rules.get("service_radii_m") or {}
+    radius_m = float(max_distance_m or radii.get("ccn_community_impact") or 10000)
+    asset_id = asset.get("id") or asset.get("site_id")
+    site_code = asset.get("site_code") or str(asset_id)
+    ccns = _load_ccn_assets()
+    matches: list[dict[str, Any]] = []
+
+    for ccn in ccns:
+        distance = _haversine_m(float(lat), float(lon), float(ccn["latitude"]), float(ccn["longitude"]))
+        if distance > radius_m:
+            continue
+        name = ccn.get("name") or ccn.get("business_id") or f"CCN {ccn.get('id')}"
+        matches.append(
+            {
+                "asset_type": "fdsu_site",
+                "asset_id": asset_id,
+                "asset_business_id": site_code,
+                "need_type": "ccn",
+                "need_id": f"CCN::{ccn.get('business_id') or ccn.get('id')}",
+                "relation_type": "NEAR_CCN",
+                "distance_m": round(distance, 1),
+                "service_radius_m": radius_m,
+                "category": "ccn",
+                "confidence_level": "medium",
+                "source_asset": "programs.fdsu_sites",
+                "source_need": "demo_ccn.json",
+                "calculation_method": "haversine_demo_ccn",
+                "province": ccn.get("province") or asset.get("province"),
+                "territoire": ccn.get("territoire") or asset.get("territoire"),
+                "program_code": asset.get("program_code"),
+                "properties": {
+                    "infra_label": name,
+                    "ccn_name": name,
+                    "ccn_type": ccn.get("ccn_type"),
+                    "class_label": "CCN DEMO",
+                    "need_lon": ccn["longitude"],
+                    "need_lat": ccn["latitude"],
+                    "asset_lon": float(lon),
+                    "asset_lat": float(lat),
+                    "referential": "demo_ccn.json",
+                    "demonstration": True,
+                    "ccn_proximity_m": radius_m,
+                    "nsme_profile": "Near Demo CCN",
+                },
+            }
+        )
+
+    if not matches:
+        matches.append(
+            {
+                "asset_type": "fdsu_site",
+                "asset_id": asset_id,
+                "asset_business_id": site_code,
+                "need_type": "ccn",
+                "need_id": f"CCN_SEARCH::{asset_id}",
+                "relation_type": "CCN_SEARCH_EXECUTED",
+                "distance_m": None,
+                "service_radius_m": radius_m,
+                "category": "ccn",
+                "confidence_level": "medium",
+                "source_asset": "programs.fdsu_sites",
+                "source_need": "demo_ccn.json",
+                "calculation_method": "haversine_demo_ccn",
+                "properties": {
+                    "search_executed": True,
+                    "demonstration": True,
+                    "referential_count": len(ccns),
+                    "ccn_proximity_m": radius_m,
+                    "suppress_graph_edge": True,
+                    "nsme_profile": "Demo CCN Search Executed",
+                },
+            }
+        )
+    return matches
+
+    return matches
+
+
 def match_asset_to_needs(
     asset_type: str,
     asset_id: str | int,
@@ -716,9 +1176,19 @@ def match_asset_to_needs(
                 }
                 matches.append(cand)
         impact_extra = match_asset_to_public_infrastructure(asset)
+        # Exclure les dérivations NCI fibre/backbone désormais couvertes par PostGIS télécom
+        impact_extra = [
+            m
+            for m in impact_extra
+            if str(m.get("relation_type") or "") not in {"NEAR_FIBER", "NEAR_BACKBONE"}
+            or str(m.get("calculation_method") or "") != "derived_from_nci_infra"
+        ]
         matches.extend(impact_extra)
         matches.extend(match_site_to_roads(asset, max_distance_m=max_m))
         matches.extend(match_site_to_health_facilities(asset, max_distance_m=max_m))
+        matches.extend(match_site_to_telecom(asset, max_distance_m=max_m))
+        matches.extend(match_site_to_neighbor_fdsu(asset, max_distance_m=max_m))
+        matches.extend(match_site_to_near_ccn(asset, max_distance_m=max_m))
     elif asset_type == "ccn":
         ccns = _load_ccn_assets()
         asset = next(
@@ -1076,9 +1546,12 @@ def refresh_matches(
                     "properties": {"aggregate": True, "population_status": impact.get("population_status")},
                 }
             )
-        # Santé PostGIS + routes (référentiels existants)
+        # Santé / routes / télécom / sites FDSU voisins / CCN DEMO (référentiels existants)
         rows.extend(match_site_to_health_facilities(site))
         rows.extend(match_site_to_roads(site))
+        rows.extend(match_site_to_telecom(site))
+        rows.extend(match_site_to_neighbor_fdsu(site))
+        rows.extend(match_site_to_near_ccn(site))
         all_matches.extend(rows)
 
     ccn_count = 0
@@ -1244,14 +1717,46 @@ def get_asset_needs(asset_id: str | int, **filters: Any) -> dict[str, Any]:
             and str(m.get("calculation_method") or "") == "postgis_nearest_health"
             for m in stored
         )
-        # Enrichissement live si le refresh antérieur n’incluait pas encore la Santé PostGIS
-        if not has_postgis_health and asset_type in {"fdsu_site", "site", "sites"} and DATA_MODE == "db":
+        telecom_methods = {"postgis_nearest_telecom", "postgis_nearest_fiber_line"}
+        has_postgis_telecom = any(str(m.get("calculation_method") or "") in telecom_methods for m in stored)
+        has_fdsu_neighbors = any(
+            str(m.get("relation_type") or "")
+            in {
+                "NEAR_FDSU_SITE",
+                "SAME_PROGRAM",
+                "COMPLEMENTS_FDSU_SITE",
+                "OVERLAPPING_SERVICE_AREA",
+                "FDSU_SEARCH_EXECUTED",
+            }
+            for m in stored
+        )
+        has_ccn_near = any(
+            str(m.get("relation_type") or "") in {"NEAR_CCN", "CCN_SEARCH_EXECUTED", "CONNECTS_CCN"}
+            for m in stored
+        )
+        has_roads = any(
+            str(m.get("relation_type") or "") in {"NEAR_MAIN_ROAD", "ROAD_ACCESSIBILITY", "WITHIN_ROAD_CORRIDOR"}
+            for m in stored
+        )
+        # Enrichissement live si le refresh antérieur n’incluait pas encore ces domaines
+        if asset_type in {"fdsu_site", "site", "sites"} and DATA_MODE == "db":
             site_id = int(asset_id) if str(asset_id).isdigit() else None
             sites = list_fdsu_sites(asset_id=site_id, limit=1) if site_id else []
             if sites:
-                health_rows = match_site_to_health_facilities(sites[0], max_distance_m=max_m)
-                if health_rows:
-                    stored = list(stored) + health_rows
+                site = sites[0]
+                extra: list[dict[str, Any]] = []
+                if not has_postgis_health:
+                    extra.extend(match_site_to_health_facilities(site, max_distance_m=max_m))
+                if not has_roads:
+                    extra.extend(match_site_to_roads(site, max_distance_m=max_m))
+                if not has_postgis_telecom:
+                    extra.extend(match_site_to_telecom(site, max_distance_m=max_m))
+                if not has_fdsu_neighbors:
+                    extra.extend(match_site_to_neighbor_fdsu(site, max_distance_m=max_m))
+                if not has_ccn_near:
+                    extra.extend(match_site_to_near_ccn(site, max_distance_m=max_m))
+                if extra:
+                    stored = list(stored) + extra
         impact = compute_population_impact(stored)
         return {
             "_meta": {

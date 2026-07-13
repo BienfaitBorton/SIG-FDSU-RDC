@@ -1,0 +1,2 @@
+ ...ROJECT_MANAGEMENT\\ARCHITECTURE\\INTEGRITY_GATE_REPORT_V1.md" | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)

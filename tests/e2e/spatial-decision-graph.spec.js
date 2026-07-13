@@ -49,7 +49,7 @@ test.describe('Spatial Decision Graph v2.1', () => {
       );
       expect(graph.ok(), `site ${site.id}`).toBeTruthy();
       const body = await graph.json();
-      expect(body._meta?.version).toMatch(/^sdg-2\.1/);
+      expect(body._meta?.version).toMatch(/^sdg-2\.[12]/);
       expect(body._meta?.title_ui).toMatch(/Analyse d’Impact Territorial|Analyse d'Impact Territorial/);
       expect(body.center?.kind).toBe('site');
       expect(body.center?.name).toBeTruthy();

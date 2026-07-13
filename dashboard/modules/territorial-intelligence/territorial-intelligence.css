@@ -71,11 +71,22 @@
 }
 
 .ti-status.is-unavailable,
-.ti-status.is-not_sourced { color: #fca5a5; }
+.ti-status.is-not_sourced,
+.ti-status.is-integration_anomaly,
+.ti-status.is-error { color: #fca5a5; }
 .ti-status.is-partial,
-.ti-status.is-estimated { color: #fde68a; }
-.ti-status.is-confirmed { color: #86efac; }
+.ti-status.is-estimated,
+.ti-status.is-integration_pending { color: #fde68a; }
+.ti-status.is-confirmed,
+.ti-status.is-operational { color: #86efac; }
 .ti-status.is-demonstration { color: #93c5fd; }
+.ti-field-note {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.82rem;
+  opacity: 0.85;
+  color: #cbd5e1;
+}
 
 .ti-main {
   display: grid;
@@ -151,4 +162,190 @@
   .ti-main {
     grid-template-columns: 1fr;
   }
+}
+
+.ti-kpi-line.is-clickable {
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 2px 4px;
+}
+.ti-kpi-line.is-clickable:hover {
+  background: rgba(56, 189, 248, 0.12);
+}
+
+.ti-explain-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.ti-explain-card {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.ti-explain-card.is-pending {
+  opacity: 0.75;
+  border-style: dashed;
+}
+
+.ti-explain-card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.ti-explain-card h4 {
+  margin: 0;
+  font-size: 0.92rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.ti-explain-headline {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 650;
+  color: #f8fafc;
+}
+
+.ti-explain-label {
+  margin: 0 0 2px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+}
+
+.ti-explain-card ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.ti-explain-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.ti-sections {
+  max-height: min(72vh, 900px);
+}
+
+.ti-detail-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1200;
+  width: min(560px, 96vw);
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto auto auto auto 1fr auto auto;
+  gap: 8px;
+  padding: 14px 16px 18px;
+  background: rgba(8, 15, 30, 0.97);
+  border-left: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+.ti-detail-drawer[hidden] {
+  display: none !important;
+}
+
+.ti-detail-drawer__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.ti-detail-drawer__header h3 {
+  margin: 2px 0 0;
+  font-size: 1.05rem;
+}
+
+.ti-detail-drawer__toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ti-detail-drawer__toolbar input,
+.ti-detail-drawer__toolbar select {
+  flex: 1;
+  min-width: 140px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(15, 23, 42, 0.7);
+  color: inherit;
+}
+
+.ti-detail-meta,
+.ti-detail-impact {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #cbd5e1;
+}
+
+.ti-detail-table-wrap {
+  overflow: auto;
+  min-height: 0;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 10px;
+}
+
+.ti-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.ti-detail-table th,
+.ti-detail-table td {
+  padding: 7px 8px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  text-align: left;
+  vertical-align: top;
+}
+
+.ti-detail-table th {
+  position: sticky;
+  top: 0;
+  background: rgba(15, 23, 42, 0.95);
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.ti-detail-row {
+  cursor: pointer;
+}
+
+.ti-detail-row:hover {
+  background: rgba(56, 189, 248, 0.12);
+}
+
+.ti-detail-drawer__footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.ti-detail-tech {
+  margin: 0;
+  max-height: 140px;
+  overflow: auto;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.8);
+  font-size: 0.72rem;
+  color: #94a3b8;
 }

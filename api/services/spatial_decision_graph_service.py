@@ -9,7 +9,17 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
-ENGINE_VERSION = "sdg-2.1.0"
+ENGINE_VERSION = "sdg-2.2.0"
+
+# Statuts officiels utilisateur (Data First + No Black Box)
+OFFICIAL_STATUS = {
+    "operational": {"label": "Opérationnel", "code": "operational"},
+    "empty": {"label": "Aucun objet trouvé", "code": "empty"},
+    "integrating": {"label": "En cours d’intégration", "code": "integration_pending"},
+    "error": {"label": "Erreur d’intégration", "code": "error"},
+    "partial": {"label": "Partiel", "code": "partial"},
+    "demonstration": {"label": "Démonstration / partiel", "code": "demonstration"},
+}
 
 # Catégories UI — certaines futures restent disponibles=False
 CATEGORIES: dict[str, dict[str, Any]] = {
@@ -43,8 +53,12 @@ CATEGORIES: dict[str, dict[str, Any]] = {
         "color": "#b45309",
         "symbol": "site",
         "available": True,
-        "relation_types": ["NEAR_FDSU_SITE"],
-        "note": "Affiché uniquement si le NSME fournit une relation entre sites",
+        "relation_types": [
+            "NEAR_FDSU_SITE",
+            "SAME_PROGRAM",
+            "COMPLEMENTS_FDSU_SITE",
+            "OVERLAPPING_SERVICE_AREA",
+        ],
     },
     "health": {
         "id": "health",
@@ -60,7 +74,12 @@ CATEGORIES: dict[str, dict[str, Any]] = {
         "color": "#06b6d4",
         "symbol": "tower",
         "available": True,
-        "relation_types": ["NEAR_FIBER", "NEAR_BACKBONE"],
+        "relation_types": [
+            "NEAR_FIBER",
+            "NEAR_BACKBONE",
+            "NEAREST_TELECOM_INFRA",
+            "NEAREST_FIBER_LINE",
+        ],
     },
     "roads": {
         "id": "roads",
@@ -93,7 +112,7 @@ CATEGORIES: dict[str, dict[str, Any]] = {
         "symbol": "school",
         "available": False,
         "relation_types": ["NEAR_SCHOOL"],
-        "note": "Éducation — données non encore intégrées",
+        "note": "Éducation — référentiel non encore importé.",
     },
     "energy": {
         "id": "energy",
@@ -102,7 +121,7 @@ CATEGORIES: dict[str, dict[str, Any]] = {
         "symbol": "bolt",
         "available": False,
         "relation_types": [],
-        "note": "Énergie — données non encore intégrées",
+        "note": "Énergie — référentiel non encore importé.",
     },
     "markets": {
         "id": "markets",
@@ -111,7 +130,7 @@ CATEGORIES: dict[str, dict[str, Any]] = {
         "symbol": "market",
         "available": False,
         "relation_types": ["NEAR_MARKET"],
-        "note": "Marchés / économie — données non encore intégrées",
+        "note": "Marchés / économie — référentiel non encore importé.",
     },
     "needs": {
         "id": "needs",
@@ -147,6 +166,30 @@ RELATION_STYLES: dict[str, dict[str, Any]] = {
         "weight": 2,
         "dash": "4 4",
         "why": "Un autre site FDSU à proximité peut coordonner ou compléter l’intervention.",
+    },
+    "SAME_PROGRAM": {
+        "category": "fdsu_sites",
+        "label": "Même programme FDSU",
+        "color": "#92400e",
+        "weight": 2,
+        "dash": "6 3",
+        "why": "Ce site appartient au même programme FDSU que le site étudié.",
+    },
+    "COMPLEMENTS_FDSU_SITE": {
+        "category": "fdsu_sites",
+        "label": "Complémentarité de sites",
+        "color": "#a16207",
+        "weight": 2,
+        "dash": "4 4",
+        "why": "Les deux sites du même programme peuvent se compléter dans le territoire.",
+    },
+    "OVERLAPPING_SERVICE_AREA": {
+        "category": "fdsu_sites",
+        "label": "Zones de service qui se chevauchent",
+        "color": "#b45309",
+        "weight": 1,
+        "dash": "2 4",
+        "why": "Les rayons de service des deux sites se chevauchent — risque de redondance ou opportunité de coordination.",
     },
     "CANDIDATE_FOR_MISSION": {
         "category": "needs",
@@ -214,11 +257,27 @@ RELATION_STYLES: dict[str, dict[str, Any]] = {
     },
     "NEAR_BACKBONE": {
         "category": "telecom",
-        "label": "Backbone proche",
+        "label": "Infrastructure télécom proche",
         "color": "#0891b2",
         "weight": 2,
         "dash": "6 4",
-        "why": "Un backbone proche structure le raccordement national.",
+        "why": "Une infrastructure télécom proche structure le potentiel de couverture.",
+    },
+    "NEAREST_TELECOM_INFRA": {
+        "category": "telecom",
+        "label": "Infrastructure télécom la plus proche",
+        "color": "#0e7490",
+        "weight": 3,
+        "dash": None,
+        "why": "Infrastructure télécom la plus proche du site — référence de couverture pour la décision.",
+    },
+    "NEAREST_FIBER_LINE": {
+        "category": "telecom",
+        "label": "Tronçon fibre le plus proche",
+        "color": "#155e75",
+        "weight": 2,
+        "dash": "4 4",
+        "why": "Tronçon / ligne réseau fibre le plus proche — distinct des nœuds FTTX.",
     },
     "NEAR_MAIN_ROAD": {
         "category": "roads",
@@ -365,18 +424,6 @@ def _probe_referential_availability(lon: float | None, lat: float | None) -> dic
         "nsme_source": "transport.routes PostGIS",
     }
 
-    tel_stats = _safe(
-        lambda: __import__("api.services.telecom_service", fromlist=["get_statistics"]).get_statistics(),
-        {},
-    ) or {}
-    tel_n = tel_stats.get("total") or tel_stats.get("infrastructure_total") or tel_stats.get("count")
-    probes["telecom"] = {
-        "referential_exists": bool(tel_n and int(tel_n) > 0) or Path("data/sectoral/telecom").exists(),
-        "record_count": tel_n,
-        "nsme_wired": True,
-        "nsme_source": "NCI infra / fibre labels",
-    }
-
     ccn_path = Path("data/programs/ccn/demo_ccn.json")
     ccn_n = None
     if ccn_path.exists():
@@ -394,8 +441,57 @@ def _probe_referential_availability(lon: float | None, lat: float | None) -> dic
         "referential_exists": bool(ccn_n and ccn_n > 0),
         "record_count": ccn_n,
         "nsme_wired": True,
-        "nsme_source": "demo_ccn.json",
+        "nsme_source": "demo_ccn.json (démonstration)",
+        "demonstration": True,
     }
+
+    tel_stats = _safe(
+        lambda: __import__("api.services.telecom_service", fromlist=["get_statistics"]).get_statistics(),
+        {},
+    ) or {}
+    tel_n = (
+        tel_stats.get("infrastructure_count")
+        or tel_stats.get("total_objects")
+        or tel_stats.get("total")
+        or tel_stats.get("count")
+    )
+    line_n = tel_stats.get("network_line_count")
+    probes["telecom"] = {
+        "referential_exists": bool(tel_n and int(tel_n) > 0) or Path("data/sectoral/telecom").exists(),
+        "record_count": tel_n,
+        "network_line_count": line_n,
+        "nsme_wired": True,
+        "nsme_source": "telecom.infrastructure + telecom.network_lines",
+        "search_radius_m": None,
+        "demonstration": False,
+    }
+    try:
+        from api.services.spatial_matching_service import get_rules
+
+        radii = get_rules().get("service_radii_m") or {}
+        probes["telecom"]["search_radius_m"] = radii.get("telecom_proximity") or 25000
+        probes["telecom"]["fiber_radius_m"] = radii.get("fiber_connection") or 5000
+        probes["roads"]["search_radius_m"] = radii.get("nearest_main_road") or 50000
+        probes["roads"]["corridor_m"] = radii.get("road_corridor") or 2000
+        probes["fdsu_sites"] = {
+            "referential_exists": True,
+            "record_count": None,
+            "nsme_wired": True,
+            "nsme_source": "programs.fdsu_sites",
+            "search_radius_m": radii.get("fdsu_site_proximity") or 25000,
+        }
+        probes["ccn"]["search_radius_m"] = radii.get("ccn_community_impact") or 10000
+        probes["ccn"]["demonstration"] = True
+        probes["ccn"]["nsme_source"] = "demo_ccn.json (démonstration)"
+    except Exception:
+        probes["telecom"]["search_radius_m"] = 25000
+        probes["fdsu_sites"] = {
+            "referential_exists": True,
+            "record_count": None,
+            "nsme_wired": True,
+            "nsme_source": "programs.fdsu_sites",
+            "search_radius_m": 25000,
+        }
 
     probes["localities"] = {
         "referential_exists": Path("data/coverage/localities_uncovered.jsonl").exists(),
@@ -404,18 +500,58 @@ def _probe_referential_availability(lon: float | None, lat: float | None) -> dic
         "nsme_source": "NCI localities_uncovered",
     }
     probes["population"] = dict(probes["localities"])
-    probes["fdsu_sites"] = {
-        "referential_exists": True,
-        "record_count": None,
-        "nsme_wired": False,
-        "nsme_source": None,
-    }
+    if "fdsu_sites" not in probes:
+        probes["fdsu_sites"] = {
+            "referential_exists": True,
+            "record_count": None,
+            "nsme_wired": True,
+            "nsme_source": "programs.fdsu_sites",
+            "search_radius_m": 25000,
+        }
     probes["admin"] = {"referential_exists": True, "nsme_wired": True, "nsme_source": "NCI / admin derived"}
     probes["needs"] = {"referential_exists": True, "nsme_wired": True, "nsme_source": "CANDIDATE_FOR_MISSION"}
     probes["education"] = {"referential_exists": False, "nsme_wired": False}
     probes["energy"] = {"referential_exists": False, "nsme_wired": False}
     probes["markets"] = {"referential_exists": False, "nsme_wired": False}
     return probes
+
+
+def _km(radius_m: Any) -> float | None:
+    if radius_m is None:
+        return None
+    try:
+        return round(float(radius_m) / 1000.0, 1)
+    except (TypeError, ValueError):
+        return None
+
+
+def _nearest_from_matches(matches: list[dict[str, Any]], relation_types: set[str]) -> dict[str, Any] | None:
+    candidates = [m for m in matches if str(m.get("relation_type") or "") in relation_types]
+    if not candidates:
+        return None
+    candidates.sort(key=lambda m: float(m.get("distance_m") or 1e12))
+    m = candidates[0]
+    props = m.get("properties") or {}
+    name = (
+        props.get("infra_label")
+        or props.get("facility_name")
+        or props.get("site_name")
+        or props.get("road_name")
+        or props.get("ccn_name")
+        or props.get("line_name")
+        or m.get("need_id")
+    )
+    return {
+        "name": name,
+        "type": props.get("infra_type") or props.get("facility_type_name") or props.get("road_type") or props.get("line_type") or props.get("class_label"),
+        "operator": props.get("operator_name") or props.get("operator_code"),
+        "distance_m": m.get("distance_m"),
+        "distance_km": round(float(m["distance_m"]) / 1000.0, 1) if m.get("distance_m") is not None else None,
+        "outside_search_radius": bool(props.get("outside_search_radius")),
+        "object_kind": props.get("object_kind"),
+        "relation_type": m.get("relation_type"),
+        "source": m.get("source_need"),
+    }
 
 
 def _classify_category_emptiness(
@@ -427,17 +563,93 @@ def _classify_category_emptiness(
     matches: list[dict[str, Any]],
     probe: dict[str, Any],
 ) -> dict[str, Any]:
-    """Classe CAS 1–4 Data First pour une catégorie SDG."""
+    """Classe les domaines selon le modèle officiel des statuts (Data First)."""
     rel_types = set(cat.get("relation_types") or [])
-    produced = bool(rel_types & nsme_rel_types) or count > 0
+    graph_rel_types = rel_types  # relations métier affichables
+    produced = bool(graph_rel_types & nsme_rel_types) or count > 0
+    search_markers = {
+        "fdsu_sites": {"FDSU_SEARCH_EXECUTED"},
+        "telecom": {"TELECOM_SEARCH_EXECUTED", "NEAREST_TELECOM_INFRA", "NEAREST_FIBER_LINE", "NEAR_FIBER", "NEAR_BACKBONE"},
+        "ccn": {"CCN_SEARCH_EXECUTED", "NEAR_CCN", "CONNECTS_CCN"},
+        "health": {"NEAR_HEALTH_FACILITY", "NEAREST_HEALTH_FACILITY", "WITHIN_HEALTH_SERVICE_AREA"},
+        "roads": {"NEAR_MAIN_ROAD", "ROAD_ACCESSIBILITY", "WITHIN_ROAD_CORRIDOR"},
+    }
+    search_executed = bool(nsme_rel_types & search_markers.get(cat_id, graph_rel_types)) or bool(
+        any(
+            (m.get("properties") or {}).get("search_executed")
+            and str(m.get("category") or "") == cat_id
+            for m in matches
+        )
+    )
+    # Si des matches du domaine existent (même hors rayon), la recherche a eu lieu
+    domain_matches = [
+        m
+        for m in matches
+        if str(m.get("relation_type") or "") in (graph_rel_types | search_markers.get(cat_id, set()))
+        or str(m.get("category") or "") == cat_id
+    ]
+    if domain_matches:
+        search_executed = True
+
+    # Admin / besoins : dérivés des localités NCI — si localités cherchées, la recherche domaine est considérée exécutée
+    if cat_id in {"admin", "needs", "education", "markets"}:
+        locality_searched = any(
+            str(m.get("relation_type") or "") in {"SERVES_LOCALITY", "IMPACTS_POPULATION", "CANDIDATE_FOR_MISSION"}
+            or str(m.get("calculation_method") or "") == "derived_from_nci_infra"
+            for m in matches
+        )
+        if locality_searched:
+            search_executed = True
+        if cat_id in {"education", "markets"} and not cat.get("available", True):
+            pass  # futur : laisser integrating
+        elif cat_id == "admin" and not produced and locality_searched:
+            # pas d'infra admin dans les localités matchées → aucun objet trouvé, pas une erreur
+            search_executed = True
+        elif cat_id == "needs" and not produced and locality_searched:
+            search_executed = True
+
+    nearest = None
+    if cat_id == "telecom":
+        nearest = _nearest_from_matches(
+            matches, {"NEAREST_TELECOM_INFRA", "NEAR_FIBER", "NEAR_BACKBONE", "NEAREST_FIBER_LINE"}
+        )
+    elif cat_id == "roads":
+        nearest = _nearest_from_matches(matches, {"NEAR_MAIN_ROAD", "ROAD_ACCESSIBILITY", "WITHIN_ROAD_CORRIDOR"})
+    elif cat_id == "health":
+        nearest = _nearest_from_matches(
+            matches, {"NEAREST_HEALTH_FACILITY", "NEAR_HEALTH_FACILITY", "WITHIN_HEALTH_SERVICE_AREA"}
+        )
+    elif cat_id == "fdsu_sites":
+        nearest = _nearest_from_matches(
+            matches, {"NEAR_FDSU_SITE", "SAME_PROGRAM", "COMPLEMENTS_FDSU_SITE", "OVERLAPPING_SERVICE_AREA"}
+        )
+    elif cat_id == "ccn":
+        nearest = _nearest_from_matches(matches, {"NEAR_CCN", "CONNECTS_CCN"})
+
+    radius_m = probe.get("search_radius_m")
+    radius_km = _km(radius_m)
+    ref_count = probe.get("record_count")
+    ref_exists = probe.get("referential_exists")
+    nsme_wired = probe.get("nsme_wired", True)
+
+    def _impact(msg: str) -> str:
+        return msg
 
     if cat_id == "site" or count > 0:
+        note = cat.get("note")
+        if cat_id == "telecom" and nearest and nearest.get("outside_search_radius"):
+            # relations hors rayon seules → traité plus bas ; ici count>0 peut être nearest-only
+            pass
         return {
             "status": "active",
             "maturity": "operational",
             "empty_reason": None,
             "integration_case": None,
-            "note": cat.get("note"),
+            "note": note,
+            "search_executed": True,
+            "nearest_context": nearest,
+            "business_impact": None,
+            "official_status": "operational",
         }
 
     if not cat.get("available", True):
@@ -446,76 +658,152 @@ def _classify_category_emptiness(
             "maturity": "integrating",
             "empty_reason": "referential_absent",
             "integration_case": 3,
-            "note": cat.get("note")
-            or f"{cat.get('label')} — données non encore intégrées (En cours d’intégration).",
+            "note": cat.get("note") or f"{cat.get('label')} — référentiel non encore importé.",
+            "search_executed": False,
+            "nearest_context": None,
+            "business_impact": "Ce domaine ne peut pas encore influencer la décision.",
+            "official_status": "integration_pending",
         }
 
-    # Catégorie disponible mais count=0
-    ref_exists = probe.get("referential_exists")
-    nsme_wired = probe.get("nsme_wired", True)
-    radius_m = probe.get("search_radius_m")
-    radius_km = round(float(radius_m) / 1000, 1) if radius_m else None
+    if probe.get("demonstration") and cat_id == "ccn":
+        note = (
+            "Aucun CCN du jeu DEMO trouvé dans ce territoire."
+            if search_executed and not produced
+            else cat.get("note")
+        )
+        if produced:
+            note = "CCN issu du jeu de démonstration — référentiel production non encore intégré."
+        return {
+            "status": "empty" if not produced else "active",
+            "maturity": "demonstration" if not produced else "partial",
+            "empty_reason": None if produced else "no_relations_found",
+            "integration_case": 3,
+            "note": note or "Jeu CCN de démonstration — couverture partielle.",
+            "search_executed": search_executed,
+            "nearest_context": nearest,
+            "business_impact": "Les CCN DEMO ne doivent pas être traités comme un référentiel production.",
+            "official_status": "demonstration",
+            "reference_available": True,
+            "relation_count": count,
+        }
 
     if ref_exists and not nsme_wired:
         return {
             "status": "empty",
-            "maturity": "anomaly",
-            "empty_reason": "search_not_executed",
+            "maturity": "partial",
+            "empty_reason": "search_not_wired",
             "integration_case": 2,
             "note": (
-                f"Anomalie d’intégration — le référentiel « {cat.get('label')} » existe, "
-                "mais aucune recherche spatiale NSME n’est câblée pour cette catégorie."
+                f"Le référentiel « {cat.get('label')} » existe"
+                + (f" ({ref_count} objets)" if ref_count else "")
+                + ", mais la recherche spatiale n’est pas encore branchée pour ce domaine."
             ),
+            "search_executed": False,
+            "nearest_context": None,
+            "business_impact": "Ce domaine ne peut pas encore être exploité dans la décision.",
+            "official_status": "partial",
         }
 
-    if cat_id == "health" and ref_exists and nsme_wired and not produced:
-        # Recherche PostGIS exécutée (match_site_to_health) — 0 dans le rayon
-        note = (
-            f"Recherche exécutée sur le référentiel Santé : "
-            f"aucun établissement trouvé dans le rayon de {radius_km} km."
-            if radius_km is not None
-            else "Recherche exécutée sur le référentiel Santé : aucun établissement trouvé dans le rayon configuré."
-        )
+    if ref_exists and nsme_wired and search_executed and not produced:
+        # Aucun objet trouvé dans le rayon — statut métier clair
+        if cat_id == "fdsu_sites":
+            note = (
+                f"Aucun autre site FDSU trouvé dans le rayon analysé"
+                f"{f' ({radius_km} km)' if radius_km is not None else ''}."
+            )
+            impact = "Pas de coordination immédiate avec un autre site FDSU dans ce rayon."
+        elif cat_id == "telecom":
+            bits = [
+                f"Aucune infrastructure trouvée dans un rayon de {radius_km} km."
+                if radius_km is not None
+                else "Aucune infrastructure trouvée dans le rayon analysé."
+            ]
+            if ref_count:
+                bits.append(f"Référentiel analysé : {int(ref_count):,} infrastructures.".replace(",", " "))
+            if nearest:
+                nearest_label = nearest.get("name") or "Infrastructure"
+                op = f" ({nearest.get('operator')})" if nearest.get("operator") else ""
+                dist = f" — {nearest.get('distance_km')} km" if nearest.get("distance_km") is not None else ""
+                bits.append(f"Infrastructure la plus proche : {nearest_label}{op}{dist}.")
+            note = " ".join(bits)
+            impact = "Le raccordement nécessitera probablement une extension de couverture ou une solution alternative."
+        elif cat_id == "roads":
+            radius_txt = f" ({radius_km} km)" if radius_km is not None else ""
+            bits = [f"Aucune route trouvée dans le rayon analysé{radius_txt}."]
+            if ref_count:
+                bits.append(f"Référentiel : {int(ref_count):,} objets.".replace(",", " "))
+            if nearest:
+                bits.append(
+                    f"Route la plus proche : {nearest.get('name') or 'Route'}"
+                    + (f" — {nearest.get('distance_km')} km" if nearest.get("distance_km") is not None else "")
+                    + "."
+                )
+            note = " ".join(bits)
+            impact = "L’accessibilité terrain doit être vérifiée avant déploiement."
+        elif cat_id == "health":
+            if radius_km is not None:
+                note = (
+                    "Recherche exécutée sur le référentiel Santé : aucun établissement trouvé "
+                    f"dans le rayon de {radius_km} km."
+                )
+            else:
+                note = "Recherche exécutée : aucun établissement de santé trouvé dans le rayon."
+            if nearest:
+                dist_txt = ""
+                if nearest.get("distance_km") is not None:
+                    dist_txt = f" — {nearest.get('distance_km')} km"
+                note += f" Établissement le plus proche : {nearest.get('name')}{dist_txt}."
+            impact = "L’offre de santé locale n’est pas documentée dans le rayon de service."
+        else:
+            suffix = f" ({ref_count} objets)" if ref_count else ""
+            radius_txt = f" dans un rayon de {radius_km} km" if radius_km is not None else ""
+            note = (
+                f"Aucun objet « {cat.get('label')} » trouvé{radius_txt} "
+                f"après recherche spatiale ; référentiel disponible{suffix}."
+            )
+            impact = f"Le domaine « {cat.get('label')} » n’apporte pas de relation utile pour ce site."
         return {
             "status": "empty",
-            "maturity": "partial" if matches else "partial",
+            "maturity": "empty",
             "empty_reason": "no_relations_found",
             "integration_case": 1,
             "note": note,
+            "search_executed": True,
+            "nearest_context": nearest,
+            "business_impact": _impact(impact),
+            "official_status": "empty",
+            "reference_available": True,
+            "relation_count": 0,
+            "radius_m": radius_m,
         }
 
-    if ref_exists and nsme_wired and not produced and matches:
-        suffix = f" — {probe.get('record_count')} objets" if probe.get("record_count") else ""
+    if ref_exists and nsme_wired and not search_executed and not domain_matches:
         return {
             "status": "empty",
-            "maturity": "partial",
-            "empty_reason": "no_relations_found",
-            "integration_case": 1,
-            "note": (
-                f"Aucune relation « {cat.get('label')} » trouvée pour ce site "
-                f"(recherche NSME exécutée ; référentiel disponible{suffix})."
-            ),
-        }
-
-    if ref_exists and nsme_wired and not matches:
-        return {
-            "status": "empty",
-            "maturity": "anomaly",
-            "empty_reason": "search_not_executed",
+            "maturity": "error",
+            "empty_reason": "search_failed",
             "integration_case": 2,
             "note": (
-                "Anomalie d’intégration — le référentiel existe, mais le NSME n’a renvoyé aucune "
-                "correspondance pour ce site (rafraîchissement / mode DB / table d’analyse à vérifier)."
+                f"Erreur d’intégration — le référentiel « {cat.get('label')} » existe, "
+                "mais la recherche spatiale n’a pas pu être exécutée pour ce site."
             ),
+            "search_executed": False,
+            "nearest_context": None,
+            "business_impact": "Impossible d’exploiter ce domaine tant que l’erreur technique n’est pas corrigée.",
+            "official_status": "error",
         }
 
     if ref_exists and nsme_wired and not produced:
         return {
             "status": "empty",
-            "maturity": "partial",
+            "maturity": "empty",
             "empty_reason": "no_relations_found",
             "integration_case": 1,
-            "note": f"Aucune relation « {cat.get('label')} » pour ce site après recherche spatiale.",
+            "note": f"Aucun objet « {cat.get('label')} » trouvé après recherche spatiale.",
+            "search_executed": search_executed,
+            "nearest_context": nearest,
+            "business_impact": None,
+            "official_status": "empty",
         }
 
     return {
@@ -524,6 +812,10 @@ def _classify_category_emptiness(
         "empty_reason": "no_relations_found",
         "integration_case": 1,
         "note": cat.get("note") or f"Aucune relation pour « {cat.get('label')} ».",
+        "search_executed": search_executed,
+        "nearest_context": nearest,
+        "business_impact": None,
+        "official_status": "partial",
     }
 
 
@@ -755,16 +1047,20 @@ def build_graph(asset_type: str, asset_id: str, *, program_code: str | None = No
         rel = str(match.get("relation_type") or "")
         if not rel:
             continue
+        props = match.get("properties") or {}
+        if props.get("suppress_graph_edge"):
+            continue
+        if rel.endswith("_SEARCH_EXECUTED"):
+            continue
         style = RELATION_STYLES.get(rel) or {
             "category": "needs",
             "label": rel,
             "color": "#dc2626",
             "weight": 2,
             "dash": "4 4",
-            "why": "Relation spatiale issue du moteur NSME.",
+            "why": "Relation spatiale issue du moteur de correspondance spatiale.",
         }
         cat = style["category"]
-        props = match.get("properties") or {}
         need_lon = props.get("need_lon")
         need_lat = props.get("need_lat")
         if (need_lon is None or need_lat is None) and cat == "roads":
@@ -778,6 +1074,8 @@ def build_graph(asset_type: str, asset_id: str, *, program_code: str | None = No
             or props.get("infra_label")
             or props.get("road_name")
             or props.get("ccn_name")
+            or props.get("site_name")
+            or props.get("line_name")
             or match.get("need_id")
             or style["label"]
         )
@@ -864,6 +1162,7 @@ def build_graph(asset_type: str, asset_id: str, *, program_code: str | None = No
     category_stats = []
     referential_probes = _probe_referential_availability(a_lon, a_lat)
     nsme_rel_types = {str(m.get("relation_type") or "") for m in matches}
+    domain_statuses: list[dict[str, Any]] = []
     for cat_id, cat in CATEGORIES.items():
         count = 1 if cat_id == "site" else counts.get(cat_id, 0)
         empty_meta = _classify_category_emptiness(
@@ -874,6 +1173,31 @@ def build_graph(asset_type: str, asset_id: str, *, program_code: str | None = No
             matches=matches,
             probe=referential_probes.get(cat_id) or {},
         )
+        # Télécom / santé : nearest hors rayon ≠ opérationnel dans le rayon
+        if cat_id in {"telecom", "health"} and count > 0:
+            in_radius_rels = {
+                "telecom": {"NEAR_FIBER", "NEAR_BACKBONE"},
+                "health": {"NEAR_HEALTH_FACILITY", "WITHIN_HEALTH_SERVICE_AREA"},
+            }[cat_id]
+            has_in_radius = any(str(m.get("relation_type") or "") in in_radius_rels for m in matches)
+            only_outside = not has_in_radius and any(
+                (m.get("properties") or {}).get("outside_search_radius")
+                or str(m.get("relation_type") or "") in {"NEAREST_TELECOM_INFRA", "NEAREST_FIBER_LINE", "NEAREST_HEALTH_FACILITY"}
+                for m in matches
+            )
+            if only_outside:
+                empty_meta = _classify_category_emptiness(
+                    cat_id,
+                    cat,
+                    count=0,
+                    nsme_rel_types=nsme_rel_types,
+                    matches=matches,
+                    probe=referential_probes.get(cat_id) or {},
+                )
+                empty_meta["maturity"] = "empty"
+                empty_meta["official_status"] = "empty"
+                empty_meta["status"] = "empty"
+                count = 0  # KPI / filtre : 0 dans le rayon ; nearest_context porte le hors rayon
         category_stats.append(
             {
                 **cat,
@@ -883,38 +1207,44 @@ def build_graph(asset_type: str, asset_id: str, *, program_code: str | None = No
                 "empty_reason": empty_meta.get("empty_reason"),
                 "integration_case": empty_meta.get("integration_case"),
                 "note": empty_meta.get("note") or cat.get("note"),
+                "search_executed": empty_meta.get("search_executed"),
+                "nearest_context": empty_meta.get("nearest_context"),
+                "business_impact": empty_meta.get("business_impact"),
+                "official_status": empty_meta.get("official_status") or empty_meta.get("maturity"),
                 "visible_default": empty_meta["status"] == "active",
                 "filterable": empty_meta["status"] == "active" and cat_id != "site",
             }
         )
+        if cat_id != "site":
+            probe = referential_probes.get(cat_id) or {}
+            domain_statuses.append(
+                {
+                    "domain": cat_id,
+                    "status": empty_meta.get("official_status") or empty_meta.get("maturity"),
+                    "reference_available": bool(probe.get("referential_exists") if "referential_exists" in probe else cat.get("available", True)),
+                    "search_executed": bool(empty_meta.get("search_executed")),
+                    "relation_count": count if cat_id != "site" else 1,
+                    "nearest_context": empty_meta.get("nearest_context"),
+                    "radius": {
+                        "value_m": probe.get("search_radius_m"),
+                        "value_km": _km(probe.get("search_radius_m")),
+                        "fiber_m": probe.get("fiber_radius_m"),
+                        "rule": probe.get("nsme_source"),
+                    },
+                    "source": probe.get("nsme_source") or cat.get("note"),
+                    "confidence": "élevée" if empty_meta.get("maturity") == "operational" else (
+                        "moyenne" if empty_meta.get("search_executed") else "à confirmer"
+                    ),
+                    "message": empty_meta.get("note"),
+                    "business_impact": empty_meta.get("business_impact"),
+                }
+            )
 
-    # Santé : si seulement NEAREST hors rayon de proximité — préciser l’absence dans le rayon configuré
-    health_probe = referential_probes.get("health") or {}
-    prox_m = health_probe.get("search_radius_m") or 5000
-    prox_km = round(float(prox_m) / 1000, 1)
-    near_in_radius = any(
-        str(m.get("relation_type") or "") in {"NEAR_HEALTH_FACILITY", "WITHIN_HEALTH_SERVICE_AREA"}
-        and str(m.get("calculation_method") or "") == "postgis_nearest_health"
-        for m in matches
-    )
-    nearest_only = any(
-        str(m.get("relation_type") or "") == "NEAREST_HEALTH_FACILITY"
-        and str(m.get("calculation_method") or "") == "postgis_nearest_health"
-        for m in matches
-    )
-    if nearest_only and not near_in_radius:
-        for c in category_stats:
-            if c["id"] == "health" and c.get("status") == "active":
-                c["maturity"] = "partial"
-                c["note"] = (
-                    f"Recherche exécutée sur le référentiel Santé : aucun établissement trouvé "
-                    f"dans le rayon de {prox_km} km (établissement le plus proche hors rayon)."
-                )
-                break
+    # Santé / télécom : nearest hors rayon déjà traité dans la classification ci-dessus
 
     why_panel = _build_why_panel(asset, impact, case, matches, edges)
     decision_summary = _build_decision_summary(asset, impact, case, edges, category_stats)
-    kpis = _build_kpis(asset, impact, edges, category_stats, case)
+    kpis = _build_kpis(asset, impact, edges, category_stats, case, referential_probes=referential_probes)
     missing = [
         {
             "category": c["id"],
@@ -993,10 +1323,28 @@ def build_graph(asset_type: str, asset_id: str, *, program_code: str | None = No
                 "empty_reason": c.get("empty_reason"),
                 "integration_case": c.get("integration_case"),
                 "note": c.get("note"),
+                "search_executed": c.get("search_executed"),
+                "nearest_context": c.get("nearest_context"),
+                "business_impact": c.get("business_impact"),
+                "official_status": c.get("official_status"),
             }
             for c in category_stats
             if c["id"] != "site"
         ],
+        "domain_statuses": domain_statuses,
+        "radii": {
+            "principal_m": ((impact or {}).get("service_area") or {}).get("service_radius_m")
+            or _safe(lambda: __import__("api.services.spatial_matching_service", fromlist=["_radius_for_asset"])._radius_for_asset("fdsu_site"), 15000),
+            "by_domain_m": {
+                "health": (referential_probes.get("health") or {}).get("search_radius_m"),
+                "roads": (referential_probes.get("roads") or {}).get("search_radius_m"),
+                "telecom": (referential_probes.get("telecom") or {}).get("search_radius_m"),
+                "fiber": (referential_probes.get("telecom") or {}).get("fiber_radius_m"),
+                "ccn": (referential_probes.get("ccn") or {}).get("search_radius_m"),
+                "fdsu_sites": (referential_probes.get("fdsu_sites") or {}).get("search_radius_m"),
+            },
+            "source": "spatial_matching_rules.json",
+        },
         "data_first": {
             "policy": "DATA_FIRST_INTEGRATION_POLICY",
             "motto": "Chaque décision doit exploiter toutes les connaissances actuellement disponibles, tout en indiquant explicitement les connaissances encore manquantes.",
@@ -1008,7 +1356,7 @@ def build_graph(asset_type: str, asset_id: str, *, program_code: str | None = No
                     "note": c.get("note"),
                 }
                 for c in category_stats
-                if c.get("maturity") == "anomaly"
+                if c.get("maturity") == "error"
             ],
         },
         "actions": {
@@ -1083,14 +1431,32 @@ def _build_decision_summary(asset, impact, case, edges, categories) -> dict[str,
     }
 
 
-def _build_kpis(asset, impact, edges, categories, case) -> list[dict[str, Any]]:
+def _build_kpis(asset, impact, edges, categories, case, referential_probes=None) -> list[dict[str, Any]]:
     impact_body = (impact or {}).get("impact") or impact or {}
+    service_area = (impact or {}).get("service_area") or {}
+    probes = referential_probes or {}
 
-    def kpi(kid, label, value, *, unit=None, status="success", note=None):
+    def kpi(kid, label, value, *, unit=None, status="success", note=None, detail=None):
         if status == "unavailable":
-            return {"id": kid, "label": label, "value": None, "display": "Non disponible", "status": status, "note": note}
+            return {
+                "id": kid,
+                "label": label,
+                "value": None,
+                "display": "Non disponible",
+                "status": status,
+                "note": note,
+                "detail": detail,
+            }
         if value is None:
-            return {"id": kid, "label": label, "value": None, "display": "Non disponible", "status": "unavailable", "note": note}
+            return {
+                "id": kid,
+                "label": label,
+                "value": None,
+                "display": "Non disponible",
+                "status": "unavailable",
+                "note": note,
+                "detail": detail,
+            }
         return {
             "id": kid,
             "label": label,
@@ -1098,10 +1464,41 @@ def _build_kpis(asset, impact, edges, categories, case) -> list[dict[str, Any]]:
             "display": f"{value}{(' ' + unit) if unit else ''}",
             "status": status,
             "note": note,
+            "detail": detail,
         }
 
     by_cat = {c["id"]: c for c in categories}
-    radius = impact_body.get("service_radius_m") or impact_body.get("radius_m")
+    radius = (
+        service_area.get("service_radius_m")
+        or impact_body.get("service_radius_m")
+        or impact_body.get("radius_m")
+    )
+    if radius is None:
+        try:
+            from api.services.spatial_matching_service import _radius_for_asset
+
+            radius = _radius_for_asset("fdsu_site")
+        except Exception:
+            radius = 15000
+
+    radius_detail = {
+        "principal_m": radius,
+        "principal_km": _km(radius),
+        "by_domain_km": {
+            "santé": _km((probes.get("health") or {}).get("search_radius_m") or 5000),
+            "routes": _km((probes.get("roads") or {}).get("search_radius_m") or 50000),
+            "télécom": _km((probes.get("telecom") or {}).get("search_radius_m") or 25000),
+            "fibre": _km((probes.get("telecom") or {}).get("fiber_radius_m") or 5000),
+        },
+        "rule": "configurable_buffer",
+        "source": "spatial_matching_rules.json",
+    }
+    radius_note = (
+        f"Rayon principal : {_km(radius)} km · "
+        f"Santé : {radius_detail['by_domain_km']['santé']} km · "
+        f"Routes : {radius_detail['by_domain_km']['routes']} km · "
+        f"Télécom : {radius_detail['by_domain_km']['télécom']} km"
+    )
 
     def cat_kpi(kid, label, cat_id, *, future_note=None):
         cat = by_cat.get(cat_id) or {}
@@ -1111,19 +1508,44 @@ def _build_kpis(asset, impact, edges, categories, case) -> list[dict[str, Any]]:
         count = cat.get("count")
         if count is None:
             return kpi(kid, label, None, status="unavailable", note=cat.get("note"))
-        # count == 0 → zéro calculé (référentiel intégré, aucune relation pour ce site)
-        return kpi(kid, label, count, status="success", note=cat.get("note") if count == 0 else None)
+        note = cat.get("note") if count == 0 or cat.get("maturity") in {"empty", "partial", "demonstration"} else None
+        nearest = cat.get("nearest_context")
+        detail = {
+            "maturity": cat.get("maturity"),
+            "nearest_context": nearest,
+            "business_impact": cat.get("business_impact"),
+            "search_executed": cat.get("search_executed"),
+        }
+        display_status = "success"
+        if cat.get("maturity") == "demonstration":
+            display_status = "partial"
+        elif count == 0 and cat.get("maturity") == "empty":
+            display_status = "empty"
+        return kpi(kid, label, count, status=display_status, note=note, detail=detail)
 
     locs_val = impact_body.get("localities_impacted")
     if locs_val is None:
         locs_val = by_cat.get("localities", {}).get("count")
 
     return [
-        kpi("radius", "Rayon / zone d’influence", radius, unit="m", status="success" if radius is not None else "unavailable"),
+        kpi(
+            "radius",
+            "Rayon / zone d’influence",
+            radius,
+            unit="m",
+            status="success",
+            note=radius_note,
+            detail=radius_detail,
+        ),
         kpi("localities", "Localités concernées", locs_val if locs_val is not None else 0, status="success"),
-        kpi("population", "Population concernée", impact_body.get("population_impacted"), status="success" if impact_body.get("population_impacted") is not None else "unavailable"),
+        kpi(
+            "population",
+            "Population concernée",
+            impact_body.get("population_impacted"),
+            status="success" if impact_body.get("population_impacted") is not None else "unavailable",
+        ),
         cat_kpi("health", "Établissements de santé", "health"),
-        cat_kpi("education", "Écoles", "education", future_note="Éducation — données non encore intégrées"),
+        cat_kpi("education", "Écoles", "education", future_note="Éducation — référentiel non encore importé"),
         cat_kpi("telecom", "Infrastructures télécom", "telecom"),
         cat_kpi("roads", "Routes principales", "roads"),
         cat_kpi("ccn", "CCN", "ccn"),
@@ -1131,7 +1553,9 @@ def _build_kpis(asset, impact, edges, categories, case) -> list[dict[str, Any]]:
         kpi(
             "data_quality",
             "Qualité des données",
-            ((case or {}).get("confidence") or {}).get("label") if isinstance((case or {}).get("confidence"), dict) else None,
+            ((case or {}).get("confidence") or {}).get("label")
+            if isinstance((case or {}).get("confidence"), dict)
+            else None,
             status="partial",
         ),
     ]

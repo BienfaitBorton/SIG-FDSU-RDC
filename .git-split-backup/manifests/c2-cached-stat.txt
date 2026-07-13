@@ -1,0 +1,10 @@
+ .../ARCHITECTURE/DXL_MODULE_SPLIT_IG_SDG.md        |  37 +
+ .../ARCHITECTURE/SPATIAL_DECISION_GRAPH_V2.md      | 191 +----
+ api/services/spatial_decision_graph_service.py     | 538 +++++++++++++-
+ .../spatial-impact-controller.js                   | 530 ++++++++++++++
+ .../spatial-decision-graph.css                     | 659 ++++++++++++++---
+ .../spatial-decision-graph.js                      | 807 +++++++++++++++++----
+ dashboard/modules/shared/ux-premium/ux-premium.js  |  12 +-
+ tests/e2e/spatial-decision-graph.spec.js           | 195 ++---
+ tests/test_spatial_decision_graph.py               | 100 ++-
+ 9 files changed, 2578 insertions(+), 491 deletions(-)

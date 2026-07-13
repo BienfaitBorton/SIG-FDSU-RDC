@@ -15,6 +15,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from psycopg2.extras import RealDictCursor
+
+from api.config import DATA_MODE, connect_db
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 NOMENCLATURE_PATH = PROJECT_ROOT / "data" / "reports" / "fdsu_nomenclature.json"
 HIERARCHY_PATH = PROJECT_ROOT / "data" / "reports" / "territory_hierarchy" / "territoires_hierarchie_kmz.report.json"
@@ -53,7 +57,18 @@ def field(
         "status": status,
         "source": source,
         "note": note,
-        "available": status in {STATUS_CONFIRMED, STATUS_ESTIMATED, STATUS_PARTIAL, STATUS_DEMONSTRATION}
+        "available": status
+        in {
+            STATUS_CONFIRMED,
+            STATUS_ESTIMATED,
+            STATUS_PARTIAL,
+            STATUS_DEMONSTRATION,
+            "operational",
+            "partial",
+            "estimated",
+            "confirmed",
+            "demonstration",
+        }
         and value is not None,
     }
 
@@ -362,113 +377,85 @@ def _score_sites(sites: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def build_territorial_profile(territory_id: str, *, light: bool = False) -> dict[str, Any] | None:
-    ref = _resolve_territory_ref(territory_id)
-    if not ref:
+    """Profil territorial — délègue au TerritorialProfileService (Data First / source unique)."""
+    from api.services import territorial_profile_service as tps
+
+    composed = tps.build_composed_profile(territory_id, light=light)
+    if not composed:
         return None
 
-    name = ref["territory_name"]
-    province = ref.get("province")
-    zone = ref.get("fdsu_zone")
+    adapted = tps.to_territorial_intelligence_profile(composed)
+    profile = adapted["profile"]
+    name = profile.get("territory_name")
+    province = profile.get("province")
+    zone = profile.get("fdsu_zone")
 
+    # Enrichissements historiques encore consommés par map / recommendations
     sites_40 = _program_sites("sites_40", name)
     sites_300 = _program_sites("sites_300", name)
     sites_20476 = _program_sites("sites_20476", name)
     all_program_sites = sites_20476 or sites_300 or sites_40
-
-    populations = [int(s["population"]) for s in all_program_sites if s.get("population") not in (None, "")]
     distances = [float(s["distance"]) for s in all_program_sites if s.get("distance") not in (None, "")]
 
-    population_field = (
-        field(sum(populations), STATUS_PARTIAL, source="programmes sites (somme populations sites)", note="Somme des populations des sites programme — pas un recensement territorial officiel.")
-        if populations
-        else unavailable("Population territoriale officielle non sourcée")
-    )
-    area_field = unavailable("Superficie (km²) non sourcée dans les référentiels actuels")
-    density_field = unavailable("Densité non calculable sans superficie sourcée")
-
-    hierarchy = _hierarchy_feature(name, province)
-    localities_count = unavailable("Nombre de localités non consolidé")
-    groupements_count = unavailable("Nombre de groupements non consolidé")
-    if hierarchy:
-        # Prefer explicit counts if present; otherwise leave unavailable
-        for key, target in (("nb_localites", "localities"), ("nb_groupements", "groupements")):
-            val = hierarchy.get(key) or (hierarchy.get("attributs") or {}).get(key)
-            if val is not None:
-                if target == "localities":
-                    localities_count = field(val, STATUS_PARTIAL, source="territory_hierarchy")
-                else:
-                    groupements_count = field(val, STATUS_PARTIAL, source="territory_hierarchy")
-
-    health = {"count": 0, "items": [], "status": STATUS_UNAVAILABLE}
-    telecom = {"count": None, "items": [], "status": STATUS_NOT_SOURCED}
-    ccn = {"count": 0, "items": [], "status": STATUS_UNAVAILABLE}
-    coverage = {"available": False, "status": STATUS_UNAVAILABLE}
+    health_block = composed.get("health") or {}
+    telecom_block = composed.get("telecom") or {}
+    ccn_block = composed.get("ccn") or {}
+    coverage = composed.get("coverage") or _safe_coverage(name)
     scored_sites: list[dict[str, Any]] = []
-
     if not light:
-        health = _safe_health(name, province)
-        telecom = _safe_telecom(name, province)
-        ccn = _safe_ccn(name, province)
-        coverage = _safe_coverage(name)
         scored_sites = _score_sites(all_program_sites[:200])
-    else:
-        coverage = _safe_coverage(name)
 
-    avg_score = None
-    top_level = None
-    if scored_sites:
-        avg_score = round(sum(float(s["priority_score"]) for s in scored_sites) / len(scored_sites), 1)
-        top_level = scored_sites[0].get("priority_level")
+    health = {
+        "count": (health_block.get("total") or {}).get("value") or 0,
+        "items": [],
+        "status": (health_block.get("total") or {}).get("status") or STATUS_UNAVAILABLE,
+        "source": (health_block.get("total") or {}).get("source"),
+        "note": (health_block.get("total") or {}).get("note"),
+        "by_type": health_block.get("by_type") or {},
+    }
+    telecom = {
+        "count": (telecom_block.get("infrastructures") or {}).get("value"),
+        "items": [],
+        "status": (telecom_block.get("infrastructures") or {}).get("status") or STATUS_NOT_SOURCED,
+        "source": (telecom_block.get("infrastructures") or {}).get("source"),
+        "note": (telecom_block.get("infrastructures") or {}).get("note"),
+    }
+    ccn = {
+        "count": (ccn_block.get("count") or {}).get("value") or 0,
+        "items": [],
+        "status": (ccn_block.get("count") or {}).get("status") or STATUS_UNAVAILABLE,
+        "source": (ccn_block.get("count") or {}).get("source"),
+        "note": (ccn_block.get("count") or {}).get("note"),
+        "data_class": ccn_block.get("data_class"),
+    }
 
-    missing = []
-    if population_field["status"] == STATUS_UNAVAILABLE:
-        missing.append("population_officielle")
-    if area_field["status"] == STATUS_UNAVAILABLE:
-        missing.append("area_km2")
-    if health["status"] in {STATUS_UNAVAILABLE, STATUS_NOT_SOURCED} or health.get("count") == 0:
-        missing.append("services_sante_complets")
-    if telecom["status"] in {STATUS_UNAVAILABLE, STATUS_NOT_SOURCED}:
-        missing.append("telecom_territorial")
-    if ccn.get("count") == 0:
-        missing.append("ccn")
-
-    confidence = "medium"
-    if len(missing) >= 4:
-        confidence = "low"
-    elif scored_sites and population_field["available"]:
-        confidence = "medium"
-    if scored_sites and health.get("count"):
-        confidence = "high" if len(missing) <= 2 else "medium"
-
-    profile = {
-        "territory_id": ref["territory_id"],
+    population_field = profile["population"]
+    area_field = profile["area_km2"]
+    density_field = profile["density"]
+    localities_count = profile["localities_count"]
+    groupements_count = profile["groupements_count"]
+    missing = list(adapted.get("data_gaps") or [])
+    avg_score = (adapted["sections"]["priority"]["score"] or {}).get("value")
+    top_level = (adapted["sections"]["priority"]["level"] or {}).get("value")
+    confidence = profile.get("confidence_level") or "medium"
+    ref = {
+        "territory_id": profile.get("territory_id"),
         "territory_name": name,
         "province": province,
         "fdsu_zone": zone,
-        "administrative_code": ref.get("administrative_code"),
-        "province_code": ref.get("province_code"),
-        "population": population_field,
-        "area_km2": area_field,
-        "density": density_field,
-        "localities_count": localities_count,
-        "groupements_count": groupements_count,
-        "data_quality": "partial" if missing else "good",
-        "confidence_level": confidence,
-        "last_updated": _now(),
-        "sources": [
-            "data/master/registry.json",
-            "data/reports/fdsu_nomenclature.json",
-            "data/programs/sites_*/",
-            "/api/health",
-            "/api/telecom",
-            "/api/ccn",
-            "/api/knowledge",
-            "/api/decision",
-            "/api/coverage",
-        ],
-        "is_demo_focus": _norm(name) == DEMO_FOCUS_NAME,
-        "engine_version": ENGINE_VERSION,
+        "administrative_code": profile.get("administrative_code"),
+        "province_code": profile.get("province_code"),
+        "nb_sites_reference": (composed.get("entity") or {}).get("registry", {}).get("nb_sites_reference")
+        if isinstance((composed.get("entity") or {}).get("registry"), dict)
+        else None,
     }
+    # nb_sites from registry attributes
+    try:
+        reg = _resolve_territory_ref(territory_id) or {}
+        ref["nb_sites_reference"] = reg.get("nb_sites_reference")
+        ref["administrative_code"] = reg.get("administrative_code") or ref.get("administrative_code")
+    except Exception:
+        pass
 
     if light:
         profile["priority"] = {
@@ -477,185 +464,96 @@ def build_territorial_profile(territory_id: str, *, light: bool = False) -> dict
         }
         return profile
 
-    # Full portrait sections
-    synthesis = {
-        "province": field(province, STATUS_CONFIRMED, source="master_registry / nomenclature"),
-        "fdsu_zone": field(zone, STATUS_CONFIRMED, source="nomenclature FDSU"),
-        "population": population_field,
-        "area_km2": area_field,
-        "density": density_field,
-        "localities": localities_count,
-        "groupements": groupements_count,
-        "administrative_code": field(ref.get("administrative_code"), STATUS_CONFIRMED, source="nomenclature"),
-        "nb_sites_reference_nomenclature": field(
-            ref.get("nb_sites_reference"),
-            STATUS_CONFIRMED if ref.get("nb_sites_reference") is not None else STATUS_UNAVAILABLE,
-            source="fdsu_nomenclature",
-            note="Référence nomenclature (peut différer du stock programme national).",
-        ),
-    }
+    hierarchy = _hierarchy_feature(name, province)
 
-    digital = {
-        "operateurs_presents": not_sourced("Ventilation opérateurs par territoire non disponible"),
-        "infrastructures_telecom": field(
-            telecom.get("count"),
-            telecom.get("status", STATUS_NOT_SOURCED),
-            source=telecom.get("source"),
-            note=telecom.get("note"),
+    # Sections Data First (source unique) + enrichissements historiques
+    sections = dict(adapted.get("sections") or {})
+    digital = dict(sections.get("digital") or {})
+    digital["distance_moyenne_sites"] = field(
+        round(sum(distances) / len(distances), 1) if distances else None,
+        STATUS_PARTIAL if distances else STATUS_UNAVAILABLE,
+        source="programmes sites.distance",
+        note="Moyenne des distances renseignées sur les sites programme du territoire.",
+    )
+    digital["zones_peu_desservies"] = field(
+        sum(
+            1
+            for s in all_program_sites
+            if str(s.get("distance_level") or "").lower() in {"far", "éloigné", "eloigne", "high"}
         ),
-        "fibre": not_sourced("Couche fibre non filtrée par territoire"),
-        "backbone": not_sourced("Backbone non sourcé au niveau territoire"),
-        "couverture_disponible": not_sourced("Indicateur de couverture territoriale non valorisé (NIF structure_only)"),
-        "distance_moyenne_sites": field(
-            round(sum(distances) / len(distances), 1) if distances else None,
-            STATUS_PARTIAL if distances else STATUS_UNAVAILABLE,
-            source="programmes sites.distance",
-            note="Moyenne des distances renseignées sur les sites programme du territoire.",
+        STATUS_PARTIAL if all_program_sites else STATUS_UNAVAILABLE,
+        source="sites.distance_level",
+    )
+    sections["digital"] = digital
+
+    accessibility = dict(sections.get("accessibility") or {})
+    accessibility["aerodromes"] = field(
+        any(
+            "airport" in str(s.get("nearest_site") or "").lower()
+            or "aerodrome" in str(s.get("site_name") or "").lower()
+            for s in all_program_sites
         ),
-        "zones_peu_desservies": field(
-            sum(1 for s in all_program_sites if str(s.get("distance_level") or "").lower() in {"far", "éloigné", "eloigne", "high"}),
-            STATUS_PARTIAL if all_program_sites else STATUS_UNAVAILABLE,
-            source="sites.distance_level",
-        ),
-        "sites_fdsu_presents": {
-            "sites_40": field(len(sites_40), STATUS_CONFIRMED, source="data/programs/sites_40"),
-            "sites_300": field(len(sites_300), STATUS_CONFIRMED, source="data/programs/sites_300"),
-            "sites_20476": field(len(sites_20476), STATUS_CONFIRMED, source="data/programs/sites_20476"),
-        },
-        "ccn_presents_ou_proposes": field(
-            ccn.get("count"),
-            ccn.get("status", STATUS_UNAVAILABLE),
-            source=ccn.get("source"),
-            note=ccn.get("note"),
-        ),
-    }
+        STATUS_PARTIAL if all_program_sites else STATUS_NOT_SOURCED,
+        source="indices sites (nearest_site / site_name)",
+        note="Signal faible dérivé des libellés sites — à confirmer.",
+    )
+    sections["accessibility"] = accessibility
 
-    public_services = {
-        "etablissements_sante": field(
-            health.get("count"),
-            health.get("status", STATUS_UNAVAILABLE),
-            source=health.get("source"),
-            note=health.get("note"),
-        ),
-        "ecoles": not_sourced("Référentiel écoles non branché"),
-        "administrations": not_sourced("Référentiel administrations non branché"),
-        "marches": not_sourced("Référentiel marchés non branché"),
-        "health_sample": health.get("items") or [],
-    }
+    public_services = dict(sections.get("public_services") or {})
+    public_services["health_sample"] = health.get("items") or []
+    sections["public_services"] = public_services
 
-    economy = {
-        "agriculture": not_sourced(),
-        "elevage": not_sourced(),
-        "peche": not_sourced(),
-        "commerce": not_sourced(),
-        "mines": not_sourced(),
-        "tourisme": not_sourced(),
-        "autres": not_sourced("Profils socio-économiques CNCT non renseignés pour ce territoire"),
-    }
+    priority = dict(sections.get("priority") or {})
+    priority["sites_scored"] = field(
+        len(scored_sites),
+        STATUS_CONFIRMED if scored_sites else STATUS_UNAVAILABLE,
+        source="priorisation nationale",
+    )
+    priority["top_site"] = scored_sites[0] if scored_sites else None
+    priority["main_factors"] = (
+        ((scored_sites[0].get("criteria_details") or {}).get("top_factors") or []) if scored_sites else []
+    )
+    priority["missing_criteria"] = missing
+    priority["confidence_level"] = confidence
+    sections["priority"] = priority
 
-    accessibility = {
-        "routes": not_sourced(),
-        "pistes": not_sourced(),
-        "ports": not_sourced(),
-        "aerodromes": field(
-            any("airport" in str(s.get("nearest_site") or "").lower() or "aerodrome" in str(s.get("site_name") or "").lower() for s in all_program_sites),
-            STATUS_PARTIAL if all_program_sites else STATUS_NOT_SOURCED,
-            source="indices sites (nearest_site / site_name)",
-            note="Signal faible dérivé des libellés sites — à confirmer.",
-        ),
-        "contraintes_acces": not_sourced(),
-        "enclavement": not_sourced(),
-    }
-
-    energy = {
-        "reseau": not_sourced(),
-        "solaire": not_sourced(),
-        "groupes_electrogenes": not_sourced(),
-        "disponibilite": not_sourced("Domaine énergie non valorisé"),
-    }
-
-    programs = {
-        "sites_40": field(len(sites_40), STATUS_CONFIRMED, source="programmes"),
-        "sites_300": field(len(sites_300), STATUS_CONFIRMED, source="programmes"),
-        "sites_20476": field(len(sites_20476), STATUS_CONFIRMED, source="programmes"),
-        "ccn": field(ccn.get("count"), ccn.get("status", STATUS_UNAVAILABLE), source="/api/ccn", note=ccn.get("note")),
-        "autres": not_sourced(),
-    }
-
-    top_factors = []
-    if scored_sites:
-        details = (scored_sites[0].get("criteria_details") or {}).get("top_factors") or []
-        top_factors = details
-
-    priority = {
-        "score": field(
-            avg_score,
-            STATUS_ESTIMATED if avg_score is not None else STATUS_UNAVAILABLE,
-            source="moyenne scores sites (Doctrine Sites / matrice nationale)",
-            note="Score territorial estimé par agrégation des sites scorés — pas un score officiel territoire.",
-        ),
-        "level": field(
-            top_level,
-            STATUS_ESTIMATED if top_level else STATUS_UNAVAILABLE,
-            source="niveau du site le plus prioritaire",
-        ),
-        "sites_scored": field(len(scored_sites), STATUS_CONFIRMED if scored_sites else STATUS_UNAVAILABLE, source="priorisation nationale"),
-        "top_site": scored_sites[0] if scored_sites else None,
-        "main_factors": top_factors,
-        "missing_criteria": missing,
-        "confidence_level": confidence,
-    }
-
+    # Coverage section — conserver le détail NCI historique
+    cov_status = coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") or coverage.get("status") == "operational" else STATUS_UNAVAILABLE
+    if coverage.get("status") in {"operational", "partial", "confirmed"}:
+        cov_status = coverage.get("status")
     coverage_section = {
-        "population_covered": field(
+        "population_covered": coverage.get("population_covered")
+        if isinstance(coverage.get("population_covered"), dict)
+        else field(
             coverage.get("population_covered"),
-            coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") else STATUS_UNAVAILABLE,
+            cov_status,
             source=coverage.get("source"),
             note=coverage.get("note"),
         ),
-        "population_uncovered": field(
-            coverage.get("population_uncovered"),
-            coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") else STATUS_UNAVAILABLE,
-            source=coverage.get("source"),
-        ),
-        "localities_covered": field(
-            coverage.get("localities_covered"),
-            coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") else STATUS_UNAVAILABLE,
-            source=coverage.get("source"),
-        ),
-        "localities_uncovered": field(
-            coverage.get("localities_uncovered"),
-            coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") else STATUS_UNAVAILABLE,
-            source=coverage.get("source"),
-        ),
-        "categories": field(
-            coverage.get("categories"),
-            coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") else STATUS_UNAVAILABLE,
-            source=coverage.get("source"),
-        ),
-        "priorities": field(
-            coverage.get("priorities"),
-            coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") else STATUS_UNAVAILABLE,
-            source=coverage.get("source"),
-        ),
-        "avg_distance_km": field(
-            coverage.get("avg_distance_km"),
-            coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") else STATUS_UNAVAILABLE,
-            source=coverage.get("source"),
-        ),
-        "ndci": field(
-            coverage.get("ndci"),
-            coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") else STATUS_UNAVAILABLE,
-            source="National Digital Coverage Index (configurable)",
-            note="Indice besoins — distinct du score actifs/sites.",
-        ),
-        "data_quality": field(
-            coverage.get("data_quality_avg"),
-            coverage.get("status", STATUS_UNAVAILABLE) if coverage.get("available") else STATUS_UNAVAILABLE,
-            source="Coverage Data Quality Score",
-        ),
-        "explain": coverage.get("explain"),
+        "population_uncovered": coverage.get("population_uncovered")
+        if isinstance(coverage.get("population_uncovered"), dict)
+        else field(coverage.get("population_uncovered"), cov_status, source=coverage.get("source")),
+        "localities_covered": coverage.get("localities_covered")
+        if isinstance(coverage.get("localities_covered"), dict)
+        else field(coverage.get("localities_covered"), cov_status, source=coverage.get("source")),
+        "localities_uncovered": coverage.get("localities_uncovered")
+        if isinstance(coverage.get("localities_uncovered"), dict)
+        else field(coverage.get("localities_uncovered"), cov_status, source=coverage.get("source")),
+        "ndci": coverage.get("ndci")
+        if isinstance(coverage.get("ndci"), dict)
+        else field(coverage.get("ndci"), cov_status, source="NCI"),
+        "explain": coverage.get("explain") if isinstance(coverage, dict) else None,
     }
+    sections["coverage"] = coverage_section
+    sections["opportunities"] = _build_opportunities(scored_sites, health, ccn, sites_300)
+    sections["risks"] = _build_risks(missing, confidence, distances)
+    if hierarchy:
+        sections.setdefault("synthesis", {})["hierarchy_surface_km2"] = field(
+            ((hierarchy.get("attributs") or {}).get("extended_data") or {}).get("SURFACE"),
+            STATUS_PARTIAL,
+            source="territory_hierarchy KMZ",
+            note="Surface attributaire KMZ (contrôle croisé PostGIS).",
+        )
 
     from api.services import knowledge_hub_service
 
@@ -663,27 +561,24 @@ def build_territorial_profile(territory_id: str, *, light: bool = False) -> dict
     nif = knowledge_hub_service.list_indicators(domain_id="territory")
     kh_coverage = knowledge_hub_service.get_domain("national_coverage")
 
+    profile = {
+        **profile,
+        "sources": list(dict.fromkeys((profile.get("sources") or []) + (composed.get("sources") or []))),
+        "confidence_level": confidence,
+        "is_demo_focus": _norm(name) == DEMO_FOCUS_NAME,
+        "engine_version": ENGINE_VERSION,
+    }
+
     return {
         "_meta": {
             "title": f"Profil Territorial FDSU — {name}",
             "engine_version": ENGINE_VERSION,
-            "principle": "Consolider sans inventer",
+            "composed_engine": (composed.get("_meta") or {}).get("engine"),
+            "principle": "Data First — consolider sans inventer ; blocs indépendants",
             "generated_at": _now(),
         },
         "profile": profile,
-        "sections": {
-            "synthesis": synthesis,
-            "digital": digital,
-            "public_services": public_services,
-            "economy": economy,
-            "accessibility": accessibility,
-            "energy": energy,
-            "programs": programs,
-            "priority": priority,
-            "coverage": coverage_section,
-            "opportunities": _build_opportunities(scored_sites, health, ccn, sites_300),
-            "risks": _build_risks(missing, confidence, distances),
-        },
+        "sections": sections,
         "assets": {
             "sites_sample": all_program_sites[:20],
             "sites_scored_top": scored_sites[:10],
@@ -694,14 +589,36 @@ def build_territorial_profile(territory_id: str, *, light: bool = False) -> dict
             "coverage": coverage,
             "heritage": "Référentiel National des Besoins",
         },
-        "spatial_matching": _safe_spatial_matching(name, profile.get("territory_id") if isinstance(profile, dict) else territory_id),
+        "spatial_matching": _safe_spatial_matching(
+            name, profile.get("territory_id") if isinstance(profile, dict) else territory_id
+        ),
         "knowledge_hub": {
             "domain": (kh_domain or {}).get("domain"),
             "national_coverage": (kh_coverage or {}).get("domain"),
-            "indicators_count": (nif or {}).get("_meta", {}).get("count"),
+            "nif_indicators": nif.get("indicators") if isinstance(nif, dict) else nif,
         },
         "data_gaps": missing,
+        "composed": {
+            "section_status": composed.get("section_status"),
+            "sources": composed.get("sources"),
+            "entity": composed.get("entity"),
+        },
+        "hierarchy_feature": {
+            "available": hierarchy is not None,
+            "name": (hierarchy or {}).get("nom"),
+            "province": (hierarchy or {}).get("province"),
+        },
+        "explainability": _safe_explainability_bundle(territory_id),
     }
+
+
+def _safe_explainability_bundle(territory_id: str) -> dict[str, Any]:
+    try:
+        from api.services import territorial_explainability_service as tex
+
+        return tex.build_explainability_bundle(territory_id) or {}
+    except Exception as exc:  # noqa: BLE001
+        return {"_error": str(exc), "status": "error"}
 
 
 def _safe_spatial_matching(territory_name: str, territory_id: str | None = None) -> dict[str, Any]:
@@ -765,89 +682,279 @@ def _build_risks(missing: list[str], confidence: str, distances: list[float]) ->
 
 
 def build_map_payload(territory_id: str) -> dict[str, Any] | None:
-    profile = build_territorial_profile(territory_id)
-    if not profile:
+    """GeoJSON territorial Data First — toutes les couches réellement disponibles.
+
+    Cause racine historique : seuls boundary + sites_sample (20) + health_sample=[]
+    étaient exposés → carte quasi vide malgré KPI télécom/santé/routes/fibre.
+    """
+    from api.services.territorial_entity_resolver import resolve_territory
+
+    entity = resolve_territory(territory_id)
+    if not entity:
         return None
-    name = profile["profile"]["territory_name"]
-    province = profile["profile"]["province"]
-    features = []
+    db_id = entity.get("db_id")
+    name = entity.get("name")
+    province = entity.get("province")
+    territory_code = entity.get("territory_id") or territory_id
+    features: list[dict[str, Any]] = []
+    layer_counts: dict[str, int] = {}
 
-    hierarchy = _hierarchy_feature(name, province)
-    if hierarchy and hierarchy.get("geometry"):
-        features.append(
-            {
-                "type": "Feature",
-                "geometry": hierarchy["geometry"],
-                "properties": {
-                    "kind": "territory_boundary",
-                    "name": name,
-                    "territory_id": profile["profile"]["territory_id"],
-                },
-            }
-        )
+    def _add(kind: str, geometry: dict[str, Any] | None, props: dict[str, Any]) -> None:
+        if not geometry:
+            return
+        if isinstance(geometry, str):
+            try:
+                geometry = json.loads(geometry)
+            except Exception:
+                return
+        if not isinstance(geometry, dict):
+            return
+        features.append({"type": "Feature", "geometry": geometry, "properties": {"kind": kind, **props}})
+        layer_counts[kind] = layer_counts.get(kind, 0) + 1
 
-    for site in profile["assets"]["sites_sample"]:
-        if site.get("latitude") is None or site.get("longitude") is None:
-            continue
-        features.append(
-            {
-                "type": "Feature",
-                "geometry": {"type": "Point", "coordinates": [site["longitude"], site["latitude"]]},
-                "properties": {
-                    "kind": "site_fdsu",
-                    "id": site.get("site_id"),
-                    "code": site.get("site_code"),
-                    "name": site.get("site_name"),
-                    "program_code": site.get("program_code"),
-                },
-            }
-        )
+    # 1) Limite territoriale PostGIS (prioritaire) puis fallback KMZ hierarchy
+    if DATA_MODE == "db" and db_id:
+        try:
+            with connect_db() as conn:
+                with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                    cur.execute(
+                        """
+                        SELECT ST_AsGeoJSON(geom)::json AS geometry
+                        FROM public.territoires WHERE id = %s AND geom IS NOT NULL
+                        """,
+                        (db_id,),
+                    )
+                    row = cur.fetchone()
+                    if row and row.get("geometry"):
+                        _add(
+                            "territory_boundary",
+                            row["geometry"] if isinstance(row["geometry"], dict) else None,
+                            {"name": name, "territory_id": territory_code},
+                        )
+        except Exception:
+            pass
+    if "territory_boundary" not in layer_counts:
+        hierarchy = _hierarchy_feature(name, province)
+        if hierarchy and hierarchy.get("geometry"):
+            _add(
+                "territory_boundary",
+                hierarchy["geometry"],
+                {"name": name, "territory_id": territory_code},
+            )
 
-    for ccn in profile["assets"]["ccn"]:
-        if ccn.get("latitude") is None or ccn.get("longitude") is None:
-            continue
-        features.append(
-            {
-                "type": "Feature",
-                "geometry": {"type": "Point", "coordinates": [ccn["longitude"], ccn["latitude"]]},
-                "properties": {
-                    "kind": "ccn",
-                    "id": ccn.get("id"),
-                    "name": ccn.get("name"),
-                    "data_class": "demonstration",
-                },
-            }
-        )
+    # 2) Couches métier PostGIS
+    if DATA_MODE == "db" and db_id:
+        try:
+            with connect_db() as conn:
+                with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                    # Santé
+                    cur.execute(
+                        """
+                        SELECT f.id, f.name,
+                               ST_Y(f.geom) AS latitude, ST_X(f.geom) AS longitude,
+                               f.facility_type_code
+                        FROM health.health_facilities f
+                        JOIN public.territoires t ON t.id = %s
+                        WHERE f.geom IS NOT NULL AND ST_Within(f.geom, t.geom)
+                        LIMIT 800
+                        """,
+                        (db_id,),
+                    )
+                    for r in cur.fetchall():
+                        _add(
+                            "health",
+                            {"type": "Point", "coordinates": [float(r["longitude"]), float(r["latitude"])]},
+                            {
+                                "id": r["id"],
+                                "name": r.get("name"),
+                                "type": r.get("facility_type_code") or "OTHER",
+                            },
+                        )
 
-    for facility in profile["assets"]["health_sample"]:
-        lat = facility.get("latitude") or facility.get("lat")
-        lon = facility.get("longitude") or facility.get("lon")
-        if lat is None or lon is None:
-            continue
-        features.append(
-            {
-                "type": "Feature",
-                "geometry": {"type": "Point", "coordinates": [lon, lat]},
-                "properties": {
-                    "kind": "health",
-                    "id": facility.get("id"),
-                    "name": facility.get("name") or facility.get("facility_name"),
-                },
-            }
-        )
+                    # Télécom (hors FTTX) + Fibre nœuds
+                    cur.execute(
+                        """
+                        SELECT i.id, i.infra_name, i.infra_type, i.technology,
+                               i.latitude, i.longitude, o.operator_name
+                        FROM telecom.infrastructure i
+                        JOIN public.territoires t ON t.id = %s
+                        LEFT JOIN telecom.operators o ON o.id = i.operator_id
+                        WHERE i.geom IS NOT NULL AND ST_Intersects(i.geom, t.geom)
+                        LIMIT 500
+                        """,
+                        (db_id,),
+                    )
+                    for r in cur.fetchall():
+                        infra_type = (r.get("infra_type") or "").lower()
+                        is_fiber = any(x in infra_type for x in ("fttx", "fibre", "fiber"))
+                        kind = "fiber" if is_fiber else "telecom"
+                        lat, lon = r.get("latitude"), r.get("longitude")
+                        if lat is None or lon is None:
+                            continue
+                        _add(
+                            kind,
+                            {"type": "Point", "coordinates": [float(lon), float(lat)]},
+                            {
+                                "id": r["id"],
+                                "name": r.get("infra_name"),
+                                "type": r.get("infra_type"),
+                                "operator": r.get("operator_name"),
+                                "technology": r.get("technology"),
+                            },
+                        )
+
+                    # Tronçons fibre / network_lines
+                    cur.execute(
+                        """
+                        SELECT nl.id, nl.line_name, nl.line_code, nl.line_type,
+                               ST_AsGeoJSON(ST_Intersection(nl.geom, t.geom))::json AS geometry
+                        FROM telecom.network_lines nl
+                        JOIN public.territoires t ON t.id = %s
+                        WHERE nl.geom IS NOT NULL AND ST_Intersects(nl.geom, t.geom)
+                        LIMIT 300
+                        """,
+                        (db_id,),
+                    )
+                    for r in cur.fetchall():
+                        geom = r.get("geometry")
+                        if isinstance(geom, dict):
+                            _add(
+                                "fiber_line",
+                                geom,
+                                {
+                                    "id": r["id"],
+                                    "name": r.get("line_name") or r.get("line_code"),
+                                    "type": r.get("line_type"),
+                                },
+                            )
+
+                    # Routes
+                    cur.execute(
+                        """
+                        SELECT r.id, r.nom, r.type_route, r.categorie, r.numero,
+                               ST_AsGeoJSON(ST_Intersection(r.geom, t.geom))::json AS geometry
+                        FROM transport.routes r
+                        JOIN public.territoires t ON t.id = %s
+                        WHERE r.geom IS NOT NULL AND ST_Intersects(r.geom, t.geom)
+                        LIMIT 300
+                        """,
+                        (db_id,),
+                    )
+                    for r in cur.fetchall():
+                        geom = r.get("geometry")
+                        if isinstance(geom, dict):
+                            _add(
+                                "route",
+                                geom,
+                                {
+                                    "id": r["id"],
+                                    "name": r.get("nom") or (f"Axe {r.get('numero')}" if r.get("numero") else f"Tronçon {r['id']}"),
+                                    "type": r.get("type_route") or r.get("categorie"),
+                                },
+                            )
+
+                    # Groupements (centroïdes)
+                    cur.execute(
+                        """
+                        SELECT DISTINCT g.id, g.nom, g.code,
+                               ST_Y(ST_Centroid(g.geom)) AS latitude,
+                               ST_X(ST_Centroid(g.geom)) AS longitude
+                        FROM public.groupements g
+                        JOIN public.territoires t ON t.id = %s
+                        LEFT JOIN public.collectivites c ON g.parent_id = c.id AND c.parent_id = t.id
+                        WHERE g.geom IS NOT NULL
+                          AND (c.parent_id = t.id OR g.parent_id = t.id OR ST_Within(g.geom, t.geom))
+                        LIMIT 200
+                        """,
+                        (db_id,),
+                    )
+                    for r in cur.fetchall():
+                        if r.get("latitude") is None or r.get("longitude") is None:
+                            continue
+                        _add(
+                            "groupement",
+                            {"type": "Point", "coordinates": [float(r["longitude"]), float(r["latitude"])]},
+                            {"id": r["id"], "name": r.get("nom"), "code": r.get("code")},
+                        )
+
+                    # Localités (points)
+                    cur.execute(
+                        """
+                        SELECT l.id, l.nom, l.code,
+                               ST_Y(l.geom) AS latitude, ST_X(l.geom) AS longitude
+                        FROM public.localites l
+                        JOIN public.territoires t ON t.id = %s
+                        WHERE l.geom IS NOT NULL AND ST_Within(l.geom, t.geom)
+                        LIMIT 500
+                        """,
+                        (db_id,),
+                    )
+                    for r in cur.fetchall():
+                        if r.get("latitude") is None or r.get("longitude") is None:
+                            continue
+                        _add(
+                            "locality",
+                            {"type": "Point", "coordinates": [float(r["longitude"]), float(r["latitude"])]},
+                            {"id": r["id"], "name": r.get("nom"), "code": r.get("code")},
+                        )
+        except Exception as exc:  # noqa: BLE001
+            layer_counts["_error"] = str(exc)
+
+    # 3) Sites FDSU + CCN (programmes / DEMO) — sans second profil complet lourd
+    try:
+        for program_code in ("sites_20476", "sites_300", "sites_40"):
+            for site in _program_sites(program_code, name)[:250]:
+                if site.get("latitude") is None or site.get("longitude") is None:
+                    continue
+                sid = site.get("site_id") or site.get("id") or site.get("site_code")
+                _add(
+                    "site_fdsu",
+                    {"type": "Point", "coordinates": [float(site["longitude"]), float(site["latitude"])]},
+                    {
+                        "id": sid,
+                        "code": site.get("site_code"),
+                        "name": site.get("site_name"),
+                        "program_code": program_code,
+                    },
+                )
+    except Exception:
+        pass
+    try:
+        from api.services import ccn_operational_service
+
+        listed = ccn_operational_service.list_ccn(territoire=name, limit=50)
+        for ccn in listed.get("ccn") or []:
+            if ccn.get("latitude") is None or ccn.get("longitude") is None:
+                continue
+            _add(
+                "ccn",
+                {"type": "Point", "coordinates": [float(ccn["longitude"]), float(ccn["latitude"])]},
+                {"id": ccn.get("id"), "name": ccn.get("name"), "data_class": "demonstration"},
+            )
+    except Exception:
+        pass
 
     return {
         "_meta": {
             "title": f"Carte territoriale — {name}",
             "feature_count": len(features),
+            "layer_counts": layer_counts,
             "engine_version": ENGINE_VERSION,
+            "data_first": True,
+            "note": "Couches branchées sur PostGIS lorsque disponibles — pas de second calcul inventé.",
         },
-        "territory_id": profile["profile"]["territory_id"],
+        "territory_id": territory_code,
         "legend": [
             {"kind": "territory_boundary", "label": "Limite territoriale"},
             {"kind": "site_fdsu", "label": "Sites FDSU"},
             {"kind": "ccn", "label": "CCN"},
             {"kind": "health", "label": "Santé"},
+            {"kind": "telecom", "label": "Télécom"},
+            {"kind": "fiber", "label": "Fibre (nœuds)"},
+            {"kind": "fiber_line", "label": "Fibre (tronçons)"},
+            {"kind": "route", "label": "Routes"},
+            {"kind": "groupement", "label": "Groupements"},
+            {"kind": "locality", "label": "Localités"},
         ],
         "geojson": {"type": "FeatureCollection", "features": features},
     }

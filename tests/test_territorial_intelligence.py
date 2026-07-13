@@ -25,11 +25,24 @@ def test_dungu_profile_no_invented_values():
     assert profile is not None
     p = profile["profile"]
     assert p["territory_name"] == "DUNGU"
-    assert p["population"]["status"] in {"partial", "confirmed", "unavailable", "not_sourced", "estimated"}
-    assert p["area_km2"]["status"] in {"unavailable", "not_sourced"}
-    assert p["area_km2"]["value"] is None
+    assert p["population"]["status"] in {
+        "partial",
+        "confirmed",
+        "operational",
+        "unavailable",
+        "not_sourced",
+        "estimated",
+        "integration_pending",
+    }
+    # Superficie PostGIS branchée (Data First) — valeur réelle, pas inventée
+    assert p["area_km2"]["status"] in {"operational", "partial", "confirmed"}
+    assert p["area_km2"]["value"] is not None and float(p["area_km2"]["value"]) > 0
+    assert p["localities_count"]["value"] is not None and int(p["localities_count"]["value"]) > 0
+    assert p["groupements_count"]["value"] is not None and int(p["groupements_count"]["value"]) > 0
     assert profile["sections"]["programs"]["sites_20476"]["value"] >= 1
-    assert "area_km2" in profile["data_gaps"] or p["area_km2"]["status"] != "confirmed"
+    health = profile["sections"]["public_services"]["etablissements_sante"]
+    assert health["value"] is not None and int(health["value"]) >= 0
+    assert health["status"] in {"operational", "partial", "confirmed"}
 
 
 def test_api_territories_profile_map_recs_explain():
@@ -83,5 +96,19 @@ def test_generic_not_hardcoded_only_for_dungu():
 def test_missing_data_explicitly_flagged():
     profile = tis.build_territorial_profile("Dungu")
     economy = profile["sections"]["economy"]
-    assert economy["agriculture"]["status"] == "not_sourced"
+    assert economy["agriculture"]["status"] in {"not_sourced", "integration_pending"}
     assert economy["agriculture"]["value"] is None
+
+
+def test_composed_profile_blocks_independent():
+    from api.services import territorial_profile_service as tps
+
+    composed = tps.build_composed_profile("TERRITOIRE-05-002")
+    assert composed is not None
+    assert composed["administrative"]["groupements"]["value"] >= 1
+    assert composed["administrative"]["localites"]["value"] >= 1
+    assert composed["health"]["total"]["value"] >= 0
+    assert composed["geography"]["area_km2"]["value"] is not None
+    assert composed["telecom"]["infrastructures"]["value"] is not None
+    assert composed["transport"]["routes"]["value"] is not None
+    assert "education" in composed["section_status"]

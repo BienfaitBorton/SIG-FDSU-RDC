@@ -1,0 +1,8 @@
+ .../DATA_FIRST_INTEGRATION_AUDIT_V1.md             |   8 +-
+ .../ARCHITECTURE/INTEGRITY_GATE_REPORT_V1.md       |   9 +-
+ api/services/health_service.py                     |   6 +
+ api/services/spatial_decision_graph_service.py     |  82 +++++++-
+ api/services/spatial_matching_service.py           | 213 ++++++++++++++++++++-
+ .../spatial-decision-graph.js                      |  69 +++++++
+ data/business/spatial_matching_rules.json          |   9 +-
+ 7 files changed, 380 insertions(+), 16 deletions(-)

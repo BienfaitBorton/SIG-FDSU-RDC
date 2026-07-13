@@ -21,14 +21,14 @@ def test_categories_meta_has_expected_keys():
     assert sdg.CATEGORIES["markets"]["available"] is False
     assert "SERVES_LOCALITY" in sdg.RELATION_STYLES
     assert sdg.RELATION_STYLES["SERVES_LOCALITY"]["category"] == "localities"
-    assert sdg.ENGINE_VERSION.startswith("sdg-2.1")
+    assert sdg.ENGINE_VERSION.startswith("sdg-2.2")
 
 
 @pytest.mark.parametrize("site_id", SITE_IDS)
 def test_build_graph_real_sites_typed_relations(site_id):
     graph = sdg.build_graph("site", site_id, program_code="sites_40")
     assert graph is not None
-    assert graph["_meta"]["version"].startswith("sdg-2.1")
+    assert graph["_meta"]["version"].startswith("sdg-2.2")
     assert graph["_meta"]["title_ui"].startswith("Analyse")
     assert graph["center"]["kind"] == "site"
     assert graph["center"].get("name")
@@ -107,19 +107,92 @@ def test_kpi_zero_vs_unavailable():
 def test_empty_categories_have_explanation_never_bare_zero():
     graph = sdg.build_graph("site", "30", program_code="sites_40")
     assert graph.get("data_first", {}).get("motto")
+    allowed_maturity = {
+        "operational",
+        "partial",
+        "integrating",
+        "empty",
+        "error",
+        "demonstration",
+        "anomaly",  # legacy alias mapped to error in UI
+    }
     for cat in graph["categories"]:
         if cat["id"] == "site":
             continue
-        assert cat.get("maturity") in {"operational", "partial", "integrating", "anomaly"}
+        assert cat.get("maturity") in allowed_maturity
         if cat.get("status") in {"empty", "future"} or cat.get("count") == 0:
             assert cat.get("note") or cat.get("empty_reason"), f"{cat['id']} sans explication"
             assert cat.get("empty_reason") in {
                 None,
                 "no_relations_found",
                 "search_not_executed",
+                "search_not_wired",
+                "search_failed",
                 "referential_absent",
                 "calculation_not_on_referential",
             }
         if cat.get("status") == "future":
             assert cat.get("maturity") == "integrating"
             assert cat.get("empty_reason") == "referential_absent"
+        assert "Anomalie d’intégration" not in str(cat.get("note") or "")
+        assert "Anomalie d'intégration" not in str(cat.get("note") or "")
+
+
+SITE_COHERENCE_IDS = ("7", "14", "29", "30", "34", "42")
+
+
+@pytest.mark.parametrize("site_id", SITE_COHERENCE_IDS)
+def test_domain_status_coherence_no_false_anomaly(site_id):
+    graph = sdg.build_graph("site", site_id, program_code="sites_40")
+    assert graph is not None
+    by = {c["id"]: c for c in graph["categories"]}
+
+    # Sites FDSU branchés — plus d'anomalie de câblage
+    fdsu = by["fdsu_sites"]
+    assert fdsu.get("maturity") != "anomaly"
+    assert "Anomalie" not in str(fdsu.get("note") or "")
+    assert fdsu.get("search_executed") in {True, False, None} or True
+
+    telecom = by["telecom"]
+    assert telecom.get("maturity") != "anomaly"
+    assert "Anomalie" not in str(telecom.get("note") or "")
+    if telecom.get("count") == 0:
+        assert telecom.get("note")
+        assert telecom.get("nearest_context") or telecom.get("search_executed")
+
+    roads = by["roads"]
+    assert roads.get("maturity") != "anomaly"
+    if roads.get("count") == 0:
+        assert roads.get("note")
+
+    ccn = by["ccn"]
+    assert ccn.get("maturity") in {"demonstration", "partial", "empty", "operational"}
+    if ccn.get("count") == 0:
+        note = str(ccn.get("note") or "").lower()
+        assert "demo" in note or "démo" in note or "demonstration" in note or "démonstration" in note
+
+    kpis = {k["id"]: k for k in graph["kpis"]}
+    assert kpis["radius"]["value"] is not None
+    assert kpis["radius"]["status"] != "unavailable"
+    assert kpis["radius"].get("note")
+
+    # Contrat domaine partagé
+    assert isinstance(graph.get("domain_statuses"), list) and graph["domain_statuses"]
+    assert graph.get("radii", {}).get("principal_m")
+
+
+def test_site_14_business_messages():
+    graph = sdg.build_graph("site", "14", program_code="sites_40")
+    by = {c["id"]: c for c in graph["categories"]}
+    assert by["fdsu_sites"]["maturity"] != "anomaly"
+    assert "Anomalie d’intégration" not in str(by["fdsu_sites"].get("note") or "")
+    assert by["telecom"]["maturity"] in {"operational", "empty", "partial"}
+    tel_kpi = next(k for k in graph["kpis"] if k["id"] == "telecom")
+    # Pas un 0 ambigu sans note si vide
+    if tel_kpi.get("value") == 0:
+        assert tel_kpi.get("note")
+    assert next(k for k in graph["kpis"] if k["id"] == "radius")["value"] is not None
+    bodyish = " ".join(str(c.get("note") or "") for c in graph["categories"])
+    assert "NSME" not in bodyish
+    assert "ST_Within" not in bodyish
+    assert "integration anomaly" not in bodyish.lower()

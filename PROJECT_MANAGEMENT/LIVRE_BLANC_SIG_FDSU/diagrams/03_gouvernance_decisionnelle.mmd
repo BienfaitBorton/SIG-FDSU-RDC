@@ -1,0 +1,10 @@
+flowchart TD
+  DG["Direction Générale"] --> Arbitrage["Arbitrage et orientation"]
+  Copil["Comité de Pilotage"] --> Arbitrage
+  Directions["Directions métiers"] --> Evidence["Faits et exigences métiers"]
+  ExpertsSIG["Experts SIG"] --> Evidence
+  Terrain["Agents terrain"] --> Evidence
+  Evidence --> Platform["SIG-FDSU RDC"]
+  Platform --> Arbitrage
+  Arbitrage --> Suivi["Suivi et évaluation"]
+  Suivi --> Evidence

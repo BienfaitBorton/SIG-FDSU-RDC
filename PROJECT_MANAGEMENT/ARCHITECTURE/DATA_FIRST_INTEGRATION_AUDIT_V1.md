@@ -123,12 +123,14 @@ Voir `INTEGRITY_GATE_REPORT_V1.md` pour la liste priorisée A1–A14.
 | Priorité | Action |
 |---|---|
 | P0 | ~~Brancher NSME sur `health.health_facilities` (CAS 4)~~ **FAIT** |
+| P0 | ~~Profil territorial partagé (admin/santé/télécom/routes/superficie)~~ **FAIT** — voir `TERRITORIAL_DATA_FIRST_COMPLETENESS_AUDIT_V1.md` |
 | P0 | Exposer refresh NSME depuis Decision Center |
 | P1 | Surface NCI / Coverage dans UI ou liens ESR→coverage |
 | P1 | Aligner SDG relation_types ↔ NSME émis |
 | P1 | Consolider Knowledge Hub vs CNCT |
 | P2 | Import sites_20476 + Master SITE |
 | P2 | Explorateur NDF léger |
+| P2 | Fibre linéaire + CCN production |
 | P3 | Référentiels Education / Énergie / Marchés (🔵 normal) |
 
 ---

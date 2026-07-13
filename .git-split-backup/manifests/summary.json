@@ -1,0 +1,59 @@
+{
+  "c1": [
+    ".cursor/rules/e2e-integrity-gate.mdc",
+    "PROJECT_MANAGEMENT/ARCHITECTURE/E2E_INTEGRITY_GATE.md",
+    "api/routes/decision_engine.py",
+    "api/services/explainable_decision_service.py",
+    "api/services/site_entity_resolver.py",
+    "dashboard/app.js",
+    "dashboard/index.html",
+    "dashboard/modules/decision-experience/decision-case-controller.js",
+    "dashboard/modules/decision-experience/decision-error-handler.js",
+    "dashboard/modules/decision-experience/decision-experience.css",
+    "dashboard/modules/decision-experience/decision-experience.js",
+    "dashboard/modules/decision-experience/dxl-core.js",
+    "dashboard/modules/shared/executive-situation-room/executive-situation-room.css",
+    "tests/e2e/integrity-gate-decision-case.spec.js",
+    "tests/test_integrity_gate_decision_case.py"
+  ],
+  "c2": [
+    "PROJECT_MANAGEMENT/ARCHITECTURE/DXL_MODULE_SPLIT_IG_SDG.md",
+    "PROJECT_MANAGEMENT/ARCHITECTURE/SPATIAL_DECISION_GRAPH_V2.md",
+    "api/services/spatial_decision_graph_service.py",
+    "dashboard/modules/decision-experience/spatial-impact-controller.js",
+    "dashboard/modules/shared/spatial-decision-graph/spatial-decision-graph.css",
+    "dashboard/modules/shared/spatial-decision-graph/spatial-decision-graph.js",
+    "dashboard/modules/shared/ux-premium/ux-premium.js",
+    "tests/e2e/spatial-decision-graph.spec.js",
+    "tests/test_spatial_decision_graph.py"
+  ],
+  "c3": [
+    ".cursor/rules/data-first-integration.mdc",
+    "PROJECT_MANAGEMENT/ARCHITECTURE/DATA_FIRST_INTEGRATION_AUDIT_V1.md",
+    "PROJECT_MANAGEMENT/ARCHITECTURE/DATA_FIRST_INTEGRATION_POLICY.md",
+    "PROJECT_MANAGEMENT/ARCHITECTURE/INTEGRITY_GATE_REPORT_V1.md"
+  ],
+  "c4": [
+    "PROJECT_MANAGEMENT/ARCHITECTURE/DATA_FIRST_INTEGRATION_AUDIT_V1.md",
+    "PROJECT_MANAGEMENT/ARCHITECTURE/INTEGRITY_GATE_REPORT_V1.md",
+    "api/services/health_service.py",
+    "api/services/spatial_decision_graph_service.py",
+    "api/services/spatial_matching_service.py",
+    "dashboard/modules/shared/spatial-decision-graph/spatial-decision-graph.js",
+    "data/business/spatial_matching_rules.json"
+  ],
+  "shared_hunks": {
+    "spatial_decision_graph_service.py": "C2=generic maturity/SDG; C4=PostGIS health probe+styles+filter",
+    "spatial-decision-graph.js": "C2=shell/filters/detail; C4=refresh button+API",
+    "DATA_FIRST_INTEGRATION_AUDIT_V1.md": "C3=pre-P0 anomaly; C4=A14 fixed",
+    "INTEGRITY_GATE_REPORT_V1.md": "C3=A14 open; C4=A14/A4 fixed",
+    "index.html + decision-experience.js": "C1=DXL/IG shell (prerequisite for C2)"
+  },
+  "excluded_runtime": [
+    "data/decision/case_history.json",
+    "data/raw/Routes_principales.shp.kmz",
+    "data/sectoral/transport/processed/routes_principales.geojson",
+    "PROJECT_MANAGEMENT/ARCHITECTURE/captures/",
+    ".git-split-backup/"
+  ]
+}

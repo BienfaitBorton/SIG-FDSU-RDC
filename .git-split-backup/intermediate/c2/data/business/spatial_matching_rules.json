@@ -1,0 +1,141 @@
+{
+  "_meta": {
+    "title": "National Spatial Matching Engine — règles spatiales",
+    "schema_version": "1.0.0",
+    "updated_at": "2026-07-11",
+    "engine": "nsme-1.0.0",
+    "note": "Rayons et règles configurables — ne pas hardcoder dans les services."
+  },
+  "relation_types": [
+    "SERVES_LOCALITY",
+    "IMPACTS_POPULATION",
+    "CONNECTS_CCN",
+    "NEAR_HEALTH_FACILITY",
+    "NEAR_SCHOOL",
+    "NEAR_MARKET",
+    "NEAR_ADMINISTRATION",
+    "NEAR_FIBER",
+    "NEAR_BACKBONE",
+    "NEAR_MAIN_ROAD",
+    "WITHIN_ROAD_CORRIDOR",
+    "ROAD_ACCESSIBILITY",
+    "WITHIN_TERRITORY",
+    "CANDIDATE_FOR_MISSION",
+    "OVERLAPS_EXISTING_COVERAGE"
+  ],
+  "service_radii_m": {
+    "site_telecom_default": 15000,
+    "site_by_technology": {
+      "2G": 20000,
+      "3G": 12000,
+      "4G": 8000,
+      "5G": 3000,
+      "unknown": 15000
+    },
+    "ccn_community_impact": 10000,
+    "fiber_connection": 5000,
+    "backbone_connection": 15000,
+    "school_proximity": 3000,
+    "market_proximity": 3000,
+    "administration_proximity": 5000,
+    "nearest_main_road": 50000,
+    "road_corridor": 2000,
+    "road_accessibility": 15000
+  },
+  "matching": {
+    "default_max_distance_m": 25000,
+    "max_matches_per_asset": 80,
+    "min_confidence_to_persist": "low",
+    "prefer_postgis": true,
+    "fallback_file_allowed": true,
+    "batch_site_limit_default": 500,
+    "priority_rank": {
+      "High": 3,
+      "critical": 3,
+      "high": 3,
+      "Medium": 2,
+      "medium": 2,
+      "Low": 1,
+      "low": 1,
+      "unknown": 0
+    }
+  },
+  "impact": {
+    "ndci_gain_per_locality_point": 0.15,
+    "ndci_gain_cap": 12.0,
+    "population_status_when_missing": "non_disponible",
+    "coverage_gain_status": "estime"
+  },
+  "confidence_rules": {
+    "high": {
+      "requires": [
+        "coords_valid",
+        "population",
+        "priority",
+        "distance_m"
+      ]
+    },
+    "medium": {
+      "requires": [
+        "coords_valid",
+        "distance_m"
+      ]
+    },
+    "low": {
+      "requires": [
+        "coords_valid"
+      ]
+    },
+    "partial": {
+      "note": "Au moins une donnée métier manquante"
+    }
+  },
+  "asset_types": {
+    "fdsu_site": {
+      "source": "programs.fdsu_sites",
+      "default_relation": "SERVES_LOCALITY"
+    },
+    "ccn": {
+      "source": "data/programs/ccn/demo_ccn.json",
+      "default_relation": "CONNECTS_CCN",
+      "fallback": "fichier"
+    },
+    "telecom_infrastructure": {
+      "source": "telecom.infrastructure",
+      "default_relation": "NEAR_FIBER"
+    },
+    "health_facility": {
+      "source": "health.health_facilities",
+      "default_relation": "NEAR_HEALTH_FACILITY"
+    }
+  },
+  "need_types": {
+    "uncovered_locality": {
+      "source": "data/coverage/localities_uncovered.jsonl",
+      "heritage": "Référentiel National des Besoins"
+    },
+    "covered_locality": {
+      "source": "data/coverage/localities_covered.jsonl"
+    },
+    "population": {
+      "derived_from": "uncovered_locality.population"
+    },
+    "essential_infrastructure": {
+      "derived_from": [
+        "infra_type",
+        "infra_name"
+      ]
+    }
+  },
+  "quality_checks": [
+    "asset_without_need",
+    "need_without_asset",
+    "excessive_overlap",
+    "multi_asset_locality",
+    "aberrant_distance",
+    "missing_identifier",
+    "incoherent_admin_link"
+  ],
+  "aberrant_distance_m": 100000,
+  "excessive_overlap_threshold": 8
+}

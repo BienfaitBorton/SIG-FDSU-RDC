@@ -1,0 +1,40 @@
+diff --git "a/C:\\SIG-FDSU-RDC\\.git-split-backup\\intermediate\\c3\\PROJECT_MANAGEMENT\\ARCHITECTURE\\DATA_FIRST_INTEGRATION_AUDIT_V1.md" "b/C:\\SIG-FDSU-RDC\\.git-split-backup\\intermediate\\c4\\PROJECT_MANAGEMENT\\ARCHITECTURE\\DATA_FIRST_INTEGRATION_AUDIT_V1.md"
+index 644e4c6..eb0492d 100644
+--- "a/C:\\SIG-FDSU-RDC\\.git-split-backup\\intermediate\\c3\\PROJECT_MANAGEMENT\\ARCHITECTURE\\DATA_FIRST_INTEGRATION_AUDIT_V1.md"
++++ "b/C:\\SIG-FDSU-RDC\\.git-split-backup\\intermediate\\c4\\PROJECT_MANAGEMENT\\ARCHITECTURE\\DATA_FIRST_INTEGRATION_AUDIT_V1.md"
+@@ -18,7 +18,7 @@
+ | Sites / Programme 20476 | Oui | 20 476 fichiers | GeoJSON | priorities + import-national | fdsu_sites_import | Scores si importé | Asset | Decision Center (filtre) | 🟡 |
+ | Master Registry | Oui | Bootstrap (~267) | Partiel | `/api/master/*` | master_registry | Codes FDSU | Identité TDT | Panel Decision Center | 🟡 |
+ | National Data Fabric | Oui | Catalog 18 registres | Meta | `/api/national-data-fabric/*` | ndf_service | Qualité | 42 relations doc. | **Aucun UI** | 🟡 |
+-| Santé | Oui | 37 562 établissements | Points | `/api/health/*` | health_service | Stats, nearest | NEAR_HEALTH (NCI) | Decision Center panel | 🔴* |
++| Santé | Oui | 37 562 établissements | Points | `/api/health/*` | health_service | Stats, nearest PostGIS | NEAREST / NEAR / WITHIN_HEALTH (NSME ← `health.health_facilities`) | SDG + Decision Center | 🟢* |
+ | Télécom / Fibre | Oui | Sectoral + DB | Multi | `/api/telecom/*` | telecom_service | Stats | NEAR_FIBER/BACKBONE | Cartographie + panel | 🟡 |
+ | Routes / Transport | Oui | 6 512 segments | LineString | `/api/transport/*` | transport_service | Accessibilité | NEAR_MAIN_ROAD… | Carte + Workspace | 🟡 |
+ | CCN | Oui | 24 demo | Points | `/api/ccn/*` | ccn_* | Capability | CONNECTS_CCN | Module CCN | 🟡 |
+@@ -28,7 +28,7 @@
+ | Marchés / économie | Non | — | — | — | — | — | NEAR_MARKET (futur) | SDG future | 🔵 |
+ | Agriculture / Climat / Eau / Sécurité | Non (NDF planned) | — | — | — | — | — | — | — | 🔵 |
+ 
+-\* Santé : référentiel peuplé, mais NSME n’interroge pas `health.health_facilities` (dérivation NCI) → **anomalie CAS 4**.
++\* Santé (correctif P0 2026-07-12) : NSME interroge `health.health_facilities` (SRID 4326, GIST). Relations `NEAREST_HEALTH_FACILITY`, `NEAR_HEALTH_FACILITY`, `WITHIN_HEALTH_SERVICE_AREA`. Rayons configurés dans `spatial_matching_rules.json` (`health_proximity` / `health_service_area` = 5 km, `health_nearest_max` = 25 km). Maturité 🟢 Opérationnel si relations PostGIS ; 🟡 Partiel si recherche exécutée sans établissement dans le rayon.
+ 
+ ---
+ 
+@@ -102,7 +102,7 @@
+ | NCI `/api/coverage` | Aucun appel dashboard |
+ | NDF catalog | API-only, pas d’explorateur |
+ | Knowledge Hub `/api/knowledge` | UI utilise CNCT `/knowledge` |
+-| Santé 37k établissements | Pas de matching NSME sur `health.*` |
++| Santé 37k établissements | **Corrigé P0** — matching NSME PostGIS `health.health_facilities` |
+ | Transport stats / nearest | Endpoints non appelés UI |
+ | Telecom infrastructure / nearby-sites | Non appelés |
+ | NSME `POST /refresh` | Jamais depuis l’UI |
+@@ -122,7 +122,7 @@ Voir `INTEGRITY_GATE_REPORT_V1.md` pour la liste priorisée A1–A14.
+ 
+ | Priorité | Action |
+ |---|---|
+-| P0 | Brancher NSME sur `health.health_facilities` (CAS 4) |
++| P0 | ~~Brancher NSME sur `health.health_facilities` (CAS 4)~~ **FAIT** |
+ | P0 | Exposer refresh NSME depuis Decision Center |
+ | P1 | Surface NCI / Coverage dans UI ou liens ESR→coverage |
+ | P1 | Aligner SDG relation_types ↔ NSME émis |

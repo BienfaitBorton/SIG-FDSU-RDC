@@ -1880,12 +1880,43 @@
           <div class="ti-main">
             <section>
               <div id="ti-map" class="ti-map" aria-label="Carte territoriale"></div>
-              <p class="ti-map-legend">Limite · Sites FDSU · CCN · Santé</p>
+              <p class="ti-map-legend">Limite · Sites FDSU · CCN · Santé · Télécom · Fibre · Routes · Groupements · Localités</p>
             </section>
             <section id="ti-sections" class="ti-sections">
               <p>Chargement des sections territoriales…</p>
             </section>
           </div>
+
+          <aside id="ti-detail-drawer" class="ti-detail-drawer" hidden aria-label="Détail territorial">
+            <header class="ti-detail-drawer__header">
+              <div>
+                <p class="panel-label" id="ti-detail-eyebrow">Niveau expert</p>
+                <h3 id="ti-detail-title">Détails</h3>
+              </div>
+              <button type="button" class="secondary-button" id="ti-detail-close">Fermer</button>
+            </header>
+            <div class="ti-detail-drawer__toolbar">
+              <input type="search" id="ti-detail-search" placeholder="Rechercher…" />
+              <select id="ti-detail-filter" aria-label="Filtrer">
+                <option value="">Tous les types</option>
+              </select>
+            </div>
+            <p class="ti-detail-meta" id="ti-detail-meta"></p>
+            <div class="ti-detail-impact" id="ti-detail-impact"></div>
+            <div class="ti-detail-table-wrap">
+              <table class="ti-detail-table" id="ti-detail-table">
+                <thead id="ti-detail-thead"></thead>
+                <tbody id="ti-detail-tbody"></tbody>
+              </table>
+            </div>
+            <footer class="ti-detail-drawer__footer">
+              <button type="button" class="secondary-button" id="ti-detail-prev">Précédent</button>
+              <span id="ti-detail-page">1</span>
+              <button type="button" class="secondary-button" id="ti-detail-next">Suivant</button>
+              <button type="button" class="secondary-button" id="ti-detail-tech-toggle">Détail technique</button>
+            </footer>
+            <pre class="ti-detail-tech" id="ti-detail-tech" hidden></pre>
+          </aside>
         </div>
 
         <div class="module-panel hidden ccn-module" id="ccn-panel" data-module="ccn">

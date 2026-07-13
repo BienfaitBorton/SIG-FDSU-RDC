@@ -1,0 +1,48 @@
+diff --git "a/C:\\SIG-FDSU-RDC\\.git-split-backup\\intermediate\\c3\\PROJECT_MANAGEMENT\\ARCHITECTURE\\INTEGRITY_GATE_REPORT_V1.md" "b/C:\\SIG-FDSU-RDC\\.git-split-backup\\intermediate\\c4\\PROJECT_MANAGEMENT\\ARCHITECTURE\\INTEGRITY_GATE_REPORT_V1.md"
+index e88cb88..69db7a7 100644
+--- "a/C:\\SIG-FDSU-RDC\\.git-split-backup\\intermediate\\c3\\PROJECT_MANAGEMENT\\ARCHITECTURE\\INTEGRITY_GATE_REPORT_V1.md"
++++ "b/C:\\SIG-FDSU-RDC\\.git-split-backup\\intermediate\\c4\\PROJECT_MANAGEMENT\\ARCHITECTURE\\INTEGRITY_GATE_REPORT_V1.md"
+@@ -14,7 +14,7 @@
+ | Zéros SDG sans explication | **Corrigé** — `empty_reason` + maturité |
+ | Panneau détail sélection vide | **Corrigé** — champs métier obligatoires |
+ | Anomalies CAS 2/4 documentées | **Pass** |
+-| Anomalies P0 entièrement résolues (câblage santé NSME) | **Ouvert** — planifié, non inventé dans ce sprint |
++| Anomalies P0 entièrement résolues (câblage santé NSME) | **Pass** — A14 corrigé (PostGIS `health.health_facilities`) |
+ | Commit créé | **Aucun** (consigne sprint) |
+ 
+ Le Gate **bloque les futurs sprints fonctionnels** tant que les anomalies 🔴 P0 listées ci-dessous ne sont pas traitées ou explicitement dérogées.
+@@ -28,7 +28,7 @@ Le Gate **bloque les futurs sprints fonctionnels** tant que les anomalies 🔴 P
+ | A1 | API Coverage/NCI sans module UI | 4 | P1 | Documentée |
+ | A2 | API NDF sans consommateur UI | 4 | P2 | Documentée (by design actuel) |
+ | A3 | Knowledge Hub `/api/knowledge` non appelé | 4 | P1 | Documentée |
+-| A4 | `POST /spatial-matching/refresh` jamais depuis UI | 2 | P0 | Documentée |
++| A4 | `POST /spatial-matching/refresh` jamais depuis UI | 2 | P0 | **Corrigé** — bouton SDG « Recalculer les relations spatiales » |
+ | A5 | Import sites_20476 non branché UI | 4 | P2 | Documentée |
+ | A6 | Master Registry sans entités SITE/CCN | 4 | P2 | Documentée |
+ | A7 | Sous-API Telecom non consommées | 4 | P2 | Documentée |
+@@ -38,7 +38,7 @@ Le Gate **bloque les futurs sprints fonctionnels** tant que les anomalies 🔴 P
+ | A11 | Education/markets `future` vs dérivation NCI possible | 3/1 | P2 | Documentée |
+ | A12 | Reference catalog endpoints sous-utilisés | 4 | P3 | Documentée |
+ | A13 | Analysis `/site/{id}` non utilisé modules | 4 | P3 | Documentée |
+-| A14 | **Santé 37k** non interrogée par NSME (`health.*`) | **4** | **P0** | **Signalée dans SDG** (`maturity=anomaly`) |
++| A14 | **Santé 37k** — NSME branché sur `health.health_facilities` | **4→1** | **P0** | **Corrigé** — relations PostGIS ; SDG maturité 🟢/🟡 |
+ 
+ ---
+ 
+@@ -49,6 +49,7 @@ Le Gate **bloque les futurs sprints fonctionnels** tant que les anomalies 🔴 P
+ 3. **SDG** : payload `data_first.anomalies[]`.  
+ 4. **UI SDG** : pastilles de maturité dans les filtres ; panneau détail enrichi.  
+ 5. **Audit + Gate Report** complets.  
++6. **P0 Santé (2026-07-12)** : `match_site_to_health_facilities` → `health.health_facilities` ; relations NEAREST / NEAR / WITHIN ; rayons dans `spatial_matching_rules.json` ; refresh UI SDG ; suppression des fausses relations Santé dérivées NCI en mode DB.
+ 
+ ---
+ 
+@@ -72,7 +73,7 @@ Pour un site typique (ex. 30 BAKI) :
+ | Catégorie | Lecture Data First |
+ |---|---|
+ | Localités / Population | 🟢 Relations NSME présentes |
+-| Santé | 🔴 Anomalie — référentiel peuplé, matching non sur `health.*` |
++| Santé | 🟢 Opérationnel (PostGIS) ou 🟡 Partiel si 0 dans le rayon documenté |
+ | Routes | 🟡 Aucune relation pour le site **ou** table transport absente |
+ | Télécom | 🟡 Aucune relation NCI fibre pour le site |
+ | CCN | 🟡 Demo présent, pas de CONNECTS_CCN pour ce site |

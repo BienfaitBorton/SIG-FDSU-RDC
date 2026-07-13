@@ -1,0 +1,15 @@
+.cursor/rules/e2e-integrity-gate.mdc
+PROJECT_MANAGEMENT/ARCHITECTURE/E2E_INTEGRITY_GATE.md
+api/routes/decision_engine.py
+api/services/explainable_decision_service.py
+api/services/site_entity_resolver.py
+dashboard/app.js
+dashboard/index.html
+dashboard/modules/decision-experience/decision-case-controller.js
+dashboard/modules/decision-experience/decision-error-handler.js
+dashboard/modules/decision-experience/decision-experience.css
+dashboard/modules/decision-experience/decision-experience.js
+dashboard/modules/decision-experience/dxl-core.js
+dashboard/modules/shared/executive-situation-room/executive-situation-room.css
+tests/e2e/integrity-gate-decision-case.spec.js
+tests/test_integrity_gate_decision_case.py

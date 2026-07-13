@@ -1,0 +1,2197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIG-FDSU RDC - Interface de gestion</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="modules/decision-center/decision-center.css" />
+  <link rel="stylesheet" href="modules/decision-center/decision-detail.css" />
+  <link rel="stylesheet" href="modules/decision-experience/decision-experience.css" />
+  <link rel="stylesheet" href="modules/shared/spatial-decision-graph/spatial-decision-graph.css" />
+  <link rel="stylesheet" href="modules/geocoding/geocoding.css" />
+  <link rel="stylesheet" href="modules/ccn/ccn.css" />
+  <link rel="stylesheet" href="modules/territorial-intelligence/territorial-intelligence.css" />
+  <link rel="stylesheet" href="modules/shared/executive-dashboard/executive-dashboard.css" />
+  <link rel="stylesheet" href="modules/shared/executive-situation-room/executive-situation-room.css" />
+  <link rel="stylesheet" href="modules/shared/ux-premium/ux-premium.css" />
+  <link rel="stylesheet" href="modules/shared/decision-workspace/decision-workspace.css" />
+  <link rel="stylesheet" href="modules/shared/decision-scenarios/decision-scenarios.css" />
+  <link rel="stylesheet" href="modules/shared/territorial-summary/territorial-summary.css" />
+  <link rel="stylesheet" href="modules/shared/territorial-digital-twin/territorial-digital-twin.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">FDSU</div>
+        <div>
+          <p class="brand-title">SIG-FDSU RDC</p>
+          <p class="brand-subtitle">Interface de pilotage</p>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-module="dashboard" data-route="dashboard">
+          <span class="nav-icon">🏠</span>
+          <span>Tableau de bord</span>
+        </button>
+        <button class="nav-item" data-module="cartographie" data-route="map">
+          <span class="nav-icon">🗺️</span>
+          <span>Cartographie</span>
+        </button>
+        <button class="nav-item" data-module="centre_decision" data-route="decision-view">
+          <span class="nav-icon">🎯</span>
+          <span>Centre de Décision</span>
+        </button>
+        <button class="nav-item" data-module="salle_pilotage" data-route="salle-pilotage">
+          <span class="nav-icon">DG</span>
+          <span>Salle de Pilotage DG</span>
+        </button>
+        <button class="nav-item" data-module="territorial_intelligence" data-route="territorial-intelligence">
+          <span class="nav-icon">TI</span>
+          <span>Intelligence territoriale</span>
+        </button>
+        <button class="nav-item" data-module="ccn" data-route="ccn">
+          <span class="nav-icon">CCN</span>
+          <span>Centres Communautaires</span>
+        </button>
+        <button class="nav-item" data-module="referentiel" data-route="referentiel">
+          <span class="nav-icon">🧭</span>
+          <span>Référentiel administratif</span>
+        </button>
+        <button class="nav-item" data-module="gestion_referentiels" data-route="registry">
+          <span class="nav-icon">🗂️</span>
+          <span>Gestion des Référentiels</span>
+        </button>
+        <button class="nav-item" data-module="explorateur_sources" data-route="sources">
+          <span class="nav-icon">🧪</span>
+          <span>Explorateur de Sources</span>
+        </button>
+        <button class="nav-item" data-module="sites" data-route="sites">
+          <span class="nav-icon">📍</span>
+          <span>Sites FDSU</span>
+        </button>
+        <button class="nav-item" data-module="decision" data-route="decision">
+          <span class="nav-icon">CCN</span>
+          <span>Aide à la décision</span>
+        </button>
+        <button class="nav-item" data-module="connaissances" data-route="knowledge">
+          <span class="nav-icon">CNCT</span>
+          <span>Base nationale de connaissances</span>
+        </button>
+        <button class="nav-item" data-module="enrichissement" data-route="enrichment">
+          <span class="nav-icon">ENR</span>
+          <span>Assistant d’enrichissement</span>
+        </button>
+        <button class="nav-item" data-module="geocodage" data-route="geocoding">
+          <span class="nav-icon">GEO</span>
+          <span>Géocodage FDSU</span>
+        </button>
+        <button class="nav-item" data-module="import">
+          <span class="nav-icon">⬆️</span>
+          <span>Import</span>
+        </button>
+        <button class="nav-item" data-module="export">
+          <span class="nav-icon">⬇️</span>
+          <span>Export</span>
+        </button>
+        <button class="nav-item" data-module="statistiques">
+          <span class="nav-icon">📊</span>
+          <span>Statistiques</span>
+        </button>
+        <button class="nav-item" data-module="utilisateurs">
+          <span class="nav-icon">👥</span>
+          <span>Utilisateurs</span>
+        </button>
+        <button class="nav-item" data-module="parametres">
+          <span class="nav-icon">⚙️</span>
+          <span>Paramètres</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-status">
+          <span class="status-label">Identité</span>
+          <strong>FDSU RDC</strong>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div>
+            <p class="page-context">SIG-FDSU RDC • Centre opérationnel</p>
+            <h1 class="page-title">Tableau de bord</h1>
+          </div>
+          <span class="topbar-pill">Version 1.0</span>
+        </div>
+
+        <div class="topbar-actions">
+          <div class="search-field global-search-field">
+            <input id="global-search-input" type="search" placeholder="Rechercher code, nom, activité, défi, site..." aria-label="Recherche globale SIG" autocomplete="off" />
+            <span class="search-icon">🔍</span>
+            <div id="global-search-results" class="global-search-results hidden" role="listbox"></div>
+          </div>
+          <button class="notification-button" aria-label="Notifications">🔔</button>
+          <div class="profile-card">
+            <span class="profile-avatar">RD</span>
+            <div>
+              <p>Administrateur</p>
+              <small>En ligne</small>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="content-area">
+        <div class="dashboard-grid" id="dashboard-panel" data-module="dashboard">
+          <div class="dashboard-main">
+            <div id="dashboard-main-view" class="dashboard-main-view">
+            <div class="summary-grid">
+              <article class="summary-card clickable-summary summary-card-zones" data-detail-page="zones" tabindex="0">
+                <p class="summary-label">Zones FDSU</p>
+                <p class="summary-value" id="stat-zones">5</p>
+              </article>
+              <article class="summary-card clickable-summary" data-detail-page="provinces" tabindex="0">
+                <p class="summary-label">Provinces</p>
+                <p class="summary-value" id="stat-provinces">—</p>
+              </article>
+              <article class="summary-card clickable-summary" data-detail-page="territories" tabindex="0">
+                <p class="summary-label">Territoires</p>
+                <p class="summary-value" id="stat-territoires">—</p>
+              </article>
+              <article class="summary-card clickable-summary" data-detail-page="collectivities" tabindex="0">
+                <p class="summary-label">Collectivités</p>
+                <p class="summary-value" id="stat-collectivites">—</p>
+              </article>
+              <article class="summary-card clickable-summary" data-detail-page="groupements" tabindex="0">
+                <p class="summary-label">Groupements</p>
+                <p class="summary-value" id="stat-groupements">—</p>
+              </article>
+              <article class="summary-card clickable-summary" data-detail-page="localities" tabindex="0">
+                <p class="summary-label">Localités</p>
+                <p class="summary-value" id="stat-villages">—</p>
+              </article>
+              <article class="summary-card clickable-summary" data-detail-page="sites" tabindex="0">
+                <p class="summary-label">Sites FDSU</p>
+                <p class="summary-value" id="stat-sites">—</p>
+              </article>
+              <article class="summary-card clickable-summary" data-detail-page="missions" tabindex="0">
+                <p class="summary-label">Missions</p>
+                <p class="summary-value" id="stat-missions">—</p>
+              </article>
+              <article class="summary-card clickable-summary" data-route="utilisateurs" tabindex="0">
+                <p class="summary-label">Utilisateurs</p>
+                <p class="summary-value" id="stat-utilisateurs">—</p>
+              </article>
+            </div>
+
+            <article class="map-card">
+              <div class="panel-header">
+                <div>
+                  <p class="panel-label">Cartographie nationale</p>
+                  <h2>Centre de pilotage</h2>
+                </div>
+                <span class="panel-badge">Actif</span>
+              </div>
+              <div class="dashboard-map-workspace">
+                <div class="dashboard-national-map-shell dashboard-map-primary">
+                  <div class="map-nav-actions">
+                    <button id="dashboard-map-context-back" type="button" class="table-action-button" disabled>Retour</button>
+                    <button id="dashboard-map-reset-national" type="button" class="primary-button">Vue nationale</button>
+                  </div>
+                  <nav id="dashboard-map-breadcrumb" class="map-breadcrumb" aria-label="Fil d'Ariane cartographie nationale"></nav>
+                  <p id="dashboard-map-message" class="cartography-note" aria-live="polite" hidden></p>
+                  <div id="dashboard-national-map" class="dashboard-national-map" role="region" aria-label="Carte nationale interactive"></div>
+                  <div id="dashboard-map-synchronized-list" class="map-synchronized-list dashboard-national-sync-list"></div>
+                </div>
+                <aside class="dashboard-zones-sidebar sig-inspector-shell" aria-label="Zones FDSU">
+                  <div class="sig-inspector-header dashboard-zones-sidebar-header">
+                    <p class="panel-label">Zones FDSU</p>
+                    <h3>Répartition</h3>
+                  </div>
+                  <ul class="zone-list dashboard-zones-list sig-inspector-body"></ul>
+                </aside>
+              </div>
+            </article>
+
+            <div class="dashboard-status-row">
+              <div class="status-card">
+                <div class="panel-header">
+                  <div>
+                    <p class="panel-label">État global</p>
+                    <h3>Statut API &amp; base</h3>
+                  </div>
+                </div>
+                <ul class="status-list">
+                  <li><span>API</span><strong id="api-status">Chargement...</strong></li>
+                  <li><span>Base de données</span><strong id="db-status">Chargement...</strong></li>
+                  <li><span>Dernière synchronisation</span><strong id="db-sync">—</strong></li>
+                </ul>
+              </div>
+              <div class="status-card secondary-card">
+                <div class="panel-header">
+                  <div>
+                    <p class="panel-label">Import récent</p>
+                    <h3>Dernier import</h3>
+                  </div>
+                </div>
+                <p class="status-card-text" id="last-import">Historique des imports non exposé par l’API.</p>
+              </div>
+              <div class="status-card secondary-card">
+                <div class="panel-header">
+                  <div>
+                    <p class="panel-label">KPI</p>
+                    <h3>Performance</h3>
+                  </div>
+                </div>
+                <p class="status-card-text" id="kpi-summary">Données KPI non disponibles.</p>
+              </div>
+            </div>
+            </div>
+
+            <section id="dashboard-detail-view" class="dashboard-detail-view hidden" aria-hidden="true">
+              <div class="dashboard-detail-header">
+                <button type="button" id="dashboard-detail-back" class="table-action-button">Retour au tableau de bord</button>
+                <div>
+                  <p class="panel-label" id="dashboard-detail-label">Analyse territoriale</p>
+                  <h2 id="dashboard-detail-title">Détail</h2>
+                </div>
+                <p id="dashboard-detail-count" class="dashboard-detail-count"></p>
+              </div>
+              <div class="dashboard-detail-toolbar attribute-toolbar">
+                <input id="dashboard-detail-search" type="search" placeholder="Rechercher..." aria-label="Recherche page analytique" />
+                <select id="dashboard-detail-province-filter" aria-label="Filtre province">
+                  <option value="">Toutes les provinces</option>
+                </select>
+                <select id="dashboard-detail-territory-filter" aria-label="Filtre territoire">
+                  <option value="">Tous les territoires</option>
+                </select>
+              </div>
+              <div class="dashboard-detail-layout">
+                <div id="dashboard-detail-map" class="dashboard-detail-map" role="region" aria-label="Carte analytique"></div>
+                <aside class="dashboard-detail-sidebar sig-inspector-shell">
+                  <div id="dashboard-detail-stats" class="dashboard-detail-stats"></div>
+                  <div id="dashboard-detail-list" class="dashboard-detail-list"></div>
+                </aside>
+              </div>
+            </section>
+
+            <section class="dashboard-workbench hidden" id="dashboard-workbench" aria-hidden="true">
+              <div class="panel-header">
+                <div>
+                  <p class="panel-label" id="dashboard-workbench-label">Navigation métier</p>
+                  <h2 id="dashboard-workbench-title">Liste</h2>
+                </div>
+              </div>
+              <div class="attribute-toolbar">
+                <input id="dashboard-workbench-search" type="search" placeholder="Rechercher..." />
+                <select id="dashboard-workbench-province"><option value="">Toutes les provinces</option></select>
+                <select id="dashboard-workbench-territory"><option value="">Tous les territoires</option></select>
+                <select id="dashboard-workbench-sort"><option value="nom:asc">Nom A-Z</option></select>
+                <select id="dashboard-workbench-page-size"><option value="25" selected>25 / page</option></select>
+              </div>
+              <div class="table-frame attribute-table-frame">
+                <table class="governance-table">
+                  <thead><tr><th>Nom</th><th>Type</th><th>Province</th><th>Territoire</th><th>Qualité</th><th>Action</th></tr></thead>
+                  <tbody id="dashboard-workbench-body"></tbody>
+                </table>
+              </div>
+              <div class="attribute-pagination">
+                <button type="button" id="dashboard-workbench-prev">Précédent</button>
+                <span id="dashboard-workbench-page">Page 1 / 1</span>
+                <button type="button" id="dashboard-workbench-next">Suivant</button>
+              </div>
+            </section>
+          </div>
+
+        </div>
+
+        <div class="module-panel hidden cartography-module" id="cartographie-panel" data-module="cartographie">
+          <div class="cartography-workspace">
+            <div id="cartography-focus-bar" class="cartography-focus-bar" hidden>
+              <button type="button" class="cartography-focus-back" id="carto-focus-back" title="Quitter le Mode Focus">← Retour</button>
+              <p class="cartography-focus-title">Cartographie — Mode Focus</p>
+              <button type="button" class="primary-button cartography-focus-exit" id="carto-focus-exit">Quitter le Mode Focus</button>
+            </div>
+
+            <div class="cartography-toolbar-row" role="toolbar" aria-label="Outils cartographiques">
+              <button id="zoom-auto" type="button" class="primary-button cartography-chip-button">Vue nationale</button>
+              <button id="carto-free-mode" type="button" class="cartography-tool-btn" aria-pressed="false" title="Navigation libre sans contrainte hiérarchique">Cartographie libre</button>
+              <label class="cartography-search-field">
+                <span class="visually-hidden">Recherche cartographique</span>
+                <input id="carto-map-search" type="search" placeholder="Recherche..." aria-label="Recherche cartographique" autocomplete="off" />
+              </label>
+              <div class="cartography-toolbar-actions">
+                <button type="button" class="cartography-tool-btn" data-carto-drawer="layers" aria-expanded="false" title="Couches cartographiques">Couches</button>
+                <button type="button" class="cartography-tool-btn" data-carto-drawer="legend" aria-expanded="false" title="Légende Zones FDSU">Légende</button>
+                <button type="button" class="cartography-tool-btn" data-carto-drawer="entities" aria-expanded="false" title="Entités visibles">Entités</button>
+                <button type="button" class="cartography-tool-btn" id="carto-print-btn" title="Imprimer la carte">Impression</button>
+                <button type="button" class="cartography-tool-btn" id="carto-focus-btn" title="Mode Focus — agrandir la carte dans l'application" aria-pressed="false">Mode Focus</button>
+              </div>
+            </div>
+
+            <div class="cartography-main-row" id="cartography-main-row">
+              <div class="cartography-map-stage" id="cartography-map-stage">
+                <div id="map" class="map-canvas" role="region" aria-label="Carte SIG FDSU RDC"></div>
+
+                <nav id="map-breadcrumb" class="map-breadcrumb cartography-breadcrumb-row cartography-map-overlay" aria-label="Fil d'Ariane cartographique"></nav>
+                <p id="zones-message" class="cartography-note cartography-status-message cartography-map-overlay" aria-live="polite"></p>
+
+                <aside id="carto-map-info-panel" class="cartography-map-info-panel sig-map-info-compact" aria-label="Informations cartographiques">
+                  <button type="button" class="cartography-map-info-close sig-map-info-close" data-carto-map-info-close aria-label="Fermer">×</button>
+                  <dl class="sig-map-info-grid">
+                    <div><dt>Système</dt><dd>WGS84</dd></div>
+                    <div><dt>Zoom</dt><dd id="carto-map-zoom">—</dd></div>
+                    <div><dt>Échelle</dt><dd id="carto-map-scale">—</dd></div>
+                    <div><dt>Coordonnées</dt><dd id="carto-map-position">—</dd></div>
+                  </dl>
+                </aside>
+              </div>
+
+              <aside class="cartography-sidebar sig-inspector-shell hidden" id="cartography-sidebar" aria-label="Panneau latéral cartographique">
+                <div class="cartography-sidebar-panels">
+                  <aside id="carto-drawer-layers" class="cartography-drawer hidden" aria-hidden="true" data-drawer="layers">
+                    <div class="cartography-drawer-header">
+                      <div>
+                        <p class="panel-label">Couches</p>
+                        <h3>Gestionnaire de couches</h3>
+                      </div>
+                      <button type="button" class="cartography-drawer-close" data-carto-drawer-close aria-label="Fermer">×</button>
+                    </div>
+                    <ul class="layer-list cartography-layer-list" id="layer-list">
+                      <li><label><input type="checkbox" data-layer="zones" /> Zones FDSU</label></li>
+                      <li><label><input type="checkbox" data-layer="provinces" /> Provinces</label></li>
+                      <li><label><input type="checkbox" data-layer="territoires" /> Territoires</label></li>
+                      <li><label><input type="checkbox" data-layer="collectivites" /> Collectivités</label></li>
+                      <li><label><input type="checkbox" data-layer="groupements" /> Groupements</label></li>
+                      <li><label><input type="checkbox" data-layer="villages" /> Localités</label></li>
+                      <li class="cartography-layer-group">
+                        <span class="cartography-layer-group-title">Sites FDSU</span>
+                        <ul class="cartography-layer-group-list">
+                          <li><label><input type="checkbox" data-layer="sites_all" /> Tous les sites</label></li>
+                          <li><label><input type="checkbox" data-layer="sites_40" /> Programme Sites 40</label></li>
+                          <li><label><input type="checkbox" data-layer="sites_300" /> Programme Sites 300</label></li>
+                        </ul>
+                      </li>
+                      <li class="cartography-layer-group">
+                        <span class="cartography-layer-group-title">Télécommunications</span>
+                        <ul class="cartography-layer-group-list">
+                          <li><label><input type="checkbox" data-layer="telecom_vodacom" /> Sites Vodacom</label></li>
+                          <li><label><input type="checkbox" data-layer="telecom_orange" /> Infrastructures Orange</label></li>
+                          <li><label><input type="checkbox" data-layer="telecom_fiber_mw" /> Fibre / MW</label></li>
+                          <li><label><input type="checkbox" data-layer="telecom_fiberco" /> Fiberco</label></li>
+                          <li><label><input type="checkbox" data-layer="telecom_fttx" /> FTTX</label></li>
+                          <li><label><input type="checkbox" data-layer="routes_principales" /> Routes principales</label></li>
+                        </ul>
+                      </li>
+                      <li class="cartography-layer-group">
+                        <span class="cartography-layer-group-title">Analyse spatiale</span>
+                        <ul class="cartography-layer-group-list">
+                          <li><label><input type="checkbox" data-layer="spatial_relations" /> Relations spatiales</label></li>
+                          <li><label><input type="checkbox" data-layer="asset_need_matches" /> Correspondance Actifs ↔ Besoins</label></li>
+                        </ul>
+                      </li>
+                      <li><label><input type="checkbox" data-layer="missions" /> Missions</label></li>
+                    </ul>
+                    <div class="cartography-panel-footer">
+                      <button type="button" class="cartography-link-btn" data-carto-drawer="classification">Classification métier</button>
+                      <button type="button" class="cartography-link-btn" data-carto-explorer-open>Explorateur des couches</button>
+                    </div>
+                  </aside>
+
+                  <aside id="carto-drawer-legend" class="cartography-drawer hidden" aria-hidden="true" data-drawer="legend">
+                    <div class="cartography-drawer-header">
+                      <div>
+                        <p class="panel-label">Légende</p>
+                        <h3>Zones FDSU</h3>
+                      </div>
+                      <button type="button" class="cartography-drawer-close" data-carto-drawer-close aria-label="Fermer">×</button>
+                    </div>
+                    <div class="legend-card cartography-drawer-legend">
+                      <p class="legend-title">Zones FDSU</p>
+                      <ul class="legend-list">
+                        <li data-zone="ND" tabindex="0"><span class="legend-swatch legend-nd"></span>ND - Nord</li>
+                        <li data-zone="OT" tabindex="0"><span class="legend-swatch legend-ot"></span>OT - Ouest</li>
+                        <li data-zone="CE" tabindex="0"><span class="legend-swatch legend-ce"></span>CE - Centre</li>
+                        <li data-zone="SD" tabindex="0"><span class="legend-swatch legend-sd"></span>SD - Sud</li>
+                        <li data-zone="ET" tabindex="0"><span class="legend-swatch legend-et"></span>ET - Est</li>
+                      </ul>
+                      <p class="legend-title legend-title-secondary">Hiérarchie administrative</p>
+                      <ul class="legend-list">
+                        <li><span class="legend-swatch legend-boundary"></span>Contour RDC</li>
+                        <li><span class="legend-swatch legend-zone-fill"></span>Zones FDSU</li>
+                        <li><span class="legend-swatch legend-province-line"></span>Provinces</li>
+                        <li><span class="legend-swatch legend-territory-line"></span>Territoires</li>
+                        <li><span class="legend-swatch legend-collectivity-line"></span>Collectivités</li>
+                        <li><span class="legend-swatch legend-groupement-point"></span>Groupements</li>
+                        <li><span class="legend-swatch legend-locality-point"></span>Localités</li>
+                        <li><span class="legend-swatch legend-site-point"></span>Tous les sites FDSU</li>
+                        <li><span class="legend-swatch legend-site-40-point"></span>Programme Sites 40</li>
+                        <li><span class="legend-swatch legend-site-300-point"></span>Programme Sites 300</li>
+                        <li><span class="legend-swatch legend-telecom-vodacom"></span>Sites Vodacom</li>
+                        <li><span class="legend-swatch legend-telecom-orange"></span>Infrastructures Orange</li>
+                        <li><span class="legend-swatch legend-telecom-fiber"></span>Fibre / MW</li>
+                        <li><span class="legend-swatch legend-mission-point"></span>Missions</li>
+                      </ul>
+                    </div>
+                  </aside>
+
+                  <aside id="carto-drawer-entities" class="cartography-drawer hidden" aria-hidden="true" data-drawer="entities">
+                    <div class="cartography-drawer-header">
+                      <div>
+                        <p class="panel-label">Entités</p>
+                        <h3>Entités visibles</h3>
+                      </div>
+                      <button type="button" class="cartography-drawer-close" data-carto-drawer-close aria-label="Fermer">×</button>
+                    </div>
+                    <div id="map-synchronized-list" class="map-synchronized-list cartography-drawer-sync-list"></div>
+                  </aside>
+
+                  <aside id="carto-drawer-info" class="cartography-drawer hidden" aria-hidden="true" data-drawer="info">
+                    <div class="cartography-drawer-header">
+                      <div>
+                        <p class="panel-label">Informations</p>
+                        <h3>Objet sélectionné</h3>
+                      </div>
+                      <button type="button" class="cartography-drawer-close" data-carto-drawer-close aria-label="Fermer">×</button>
+                    </div>
+                    <div class="info-body cartography-drawer-info" id="carto-info">
+                      <p class="zone-detail-empty">Sélectionnez un objet sur la carte pour afficher ses informations.</p>
+                    </div>
+                  </aside>
+
+                  <aside id="carto-drawer-classification" class="cartography-drawer hidden" aria-hidden="true" data-drawer="classification">
+                    <div class="cartography-drawer-header">
+                      <div>
+                        <p class="panel-label">Classification</p>
+                        <h3>Classification métier</h3>
+                      </div>
+                      <button type="button" class="cartography-drawer-close" data-carto-drawer-close aria-label="Fermer">×</button>
+                    </div>
+                    <div class="cartography-classification-panel">
+                      <div class="thematic-controls cartography-thematic-controls">
+                        <label for="thematic-layer-select">Mode thématique</label>
+                        <select id="thematic-layer-select">
+                          <option value="administrative">Mode administratif</option>
+                          <option value="economic">Activités économiques</option>
+                          <option value="agriculture">Potentiel agricole</option>
+                          <option value="mining">Potentiel minier</option>
+                          <option value="network">Couverture réseau</option>
+                          <option value="challenges">Défis</option>
+                          <option value="infrastructure">Infrastructures</option>
+                          <option value="fdsu">Potentiel FDSU</option>
+                        </select>
+                      </div>
+                      <p class="cartography-note">Applique une symbologie métier sur les entités visibles.</p>
+                    </div>
+                  </aside>
+                </div>
+              </aside>
+            </div>
+          </div>
+
+          <section class="attribute-panel cartography-explorer-drawer hidden" id="cartography-explorer-drawer" aria-label="Explorateur attributaire" aria-hidden="true">
+            <div class="cartography-explorer-header">
+              <div class="panel-header">
+                <div>
+                  <p class="panel-label">Attributaire</p>
+                  <h3>Explorateur des couches</h3>
+                </div>
+                <span class="panel-badge" id="attribute-total">0 élément</span>
+              </div>
+              <button type="button" class="cartography-drawer-close" data-carto-explorer-close aria-label="Fermer l'explorateur">×</button>
+            </div>
+            <div class="attribute-toolbar">
+              <select id="attribute-layer-select" aria-label="Couche attributaire">
+                <option value="provinces">Provinces</option>
+                <option value="territoires">Territoires</option>
+                <option value="collectivites">Collectivités</option>
+                <option value="groupements">Groupements</option>
+                <option value="villages">Localités</option>
+                <option value="sites">Sites FDSU</option>
+                <option value="missions">Missions</option>
+              </select>
+              <input id="attribute-search" type="search" placeholder="Rechercher..." aria-label="Recherche attributaire" />
+              <select id="attribute-province-filter" aria-label="Filtre province">
+                <option value="">Toutes les provinces</option>
+              </select>
+              <select id="attribute-territory-filter" aria-label="Filtre territoire">
+                <option value="">Tous les territoires</option>
+              </select>
+            </div>
+            <div class="table-frame attribute-table-frame">
+              <table class="governance-table">
+                <thead>
+                  <tr>
+                    <th>Nom</th>
+                    <th>Type</th>
+                    <th>Province</th>
+                    <th>Territoire</th>
+                    <th>Qualité</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="attribute-table-body"></tbody>
+              </table>
+            </div>
+            <div class="attribute-pagination">
+              <button type="button" id="attribute-prev">Précédent</button>
+              <span id="attribute-page-info">Page 1 / 1</span>
+              <button type="button" id="attribute-next">Suivant</button>
+            </div>
+          </section>
+        </div>
+
+        <div class="module-panel hidden decision-center-module" id="decision-view-panel" data-module="centre_decision">
+          <header class="decision-center-header">
+            <div class="decision-center-header-copy">
+              <p class="panel-label">Module stratégique</p>
+              <h2>Centre de Décision FDSU</h2>
+              <p>Plateforme nationale d'aide à la décision géospatiale — alignée stratégie FDSU–CCN 2026–2030 et matrice de priorisation 300 sites.</p>
+            </div>
+            <div class="decision-center-header-actions" aria-label="Actions du centre de décision">
+              <button type="button" class="secondary-button" id="decision-open-ti-btn" data-route="territorial-intelligence">Intelligence territoriale</button>
+              <button type="button" class="secondary-button" id="decision-open-edvs-btn" data-route="salle-pilotage">Salle de Pilotage DG</button>
+              <button type="button" class="secondary-button" id="decision-open-nsme-map-btn">Carte correspondances</button>
+              <span id="decision-edvs-presentation-slot"></span>
+              <button type="button" class="primary-button" id="decision-center-demo-mode-btn">Mode démonstration</button>
+              <span class="decision-center-action-slot">Export</span>
+              <span class="decision-center-action-slot">Paramètres</span>
+            </div>
+          </header>
+
+          <nav class="decision-center-tabs" id="decision-center-tabs" role="tablist" aria-label="Onglets du centre de décision">
+            <button type="button" class="decision-center-tab is-active" data-decision-tab="vue-nationale" role="tab" aria-selected="true">Vue nationale</button>
+            <button type="button" class="decision-center-tab" data-decision-tab="priorisation" role="tab" aria-selected="false">Priorisation</button>
+            <button type="button" class="decision-center-tab" data-decision-tab="referentiel-national" role="tab" aria-selected="false">Référentiel National</button>
+            <button type="button" class="decision-center-tab" data-decision-tab="referentiels-sectoriels" role="tab" aria-selected="false">Référentiels sectoriels</button>
+            <button type="button" class="decision-center-tab" data-decision-tab="analyse-multicritere" role="tab" aria-selected="false">Analyse multicritère</button>
+            <button type="button" class="decision-center-tab" data-decision-tab="simulations" role="tab" aria-selected="false">Simulations</button>
+            <button type="button" class="decision-center-tab" data-decision-tab="tableaux-de-bord" role="tab" aria-selected="false">Tableaux de bord</button>
+            <button type="button" class="decision-center-tab" data-decision-tab="rapports" role="tab" aria-selected="false">Rapports</button>
+          </nav>
+
+          <section class="decision-center-tab-panel is-active" data-decision-tab-panel="vue-nationale" role="tabpanel">
+            <div id="decision-edvs-kpi-host" class="edvs-kpi-grid" style="margin-bottom:12px"></div>
+            <div id="decision-edvs-charts-host" class="edvs-charts-grid ux-exec-charts" aria-label="Graphiques exécutifs nationaux"></div>
+            <section class="decision-intent-panel" id="decision-intent-panel" aria-label="Questions métier">
+              <div class="decision-intent-header">
+                <p class="panel-label">Aide à la décision</p>
+                <h3>Que voulez-vous décider aujourd’hui ?</h3>
+                <p class="decision-intent-intro">Choisissez une question métier FDSU. Chaque action s’appuie sur les données PostgreSQL/PostGIS et les documents stratégiques intégrés.</p>
+              </div>
+              <div class="decision-intent-grid" id="decision-intent-grid" aria-live="polite">
+                <p class="decision-center-program-loading">Chargement des questions métier…</p>
+              </div>
+            </section>
+
+            <section class="decision-demo-panel" id="decision-demo-panel" aria-label="Mode démonstration" hidden>
+              <div class="decision-demo-header">
+                <div>
+                  <p class="panel-label">Présentation superviseur</p>
+                  <h3>Mode démonstration</h3>
+                  <p>Trois scénarios prêts à cliquer — sans explication technique.</p>
+                </div>
+                <button type="button" class="secondary-button" id="decision-demo-close-btn">Fermer</button>
+              </div>
+              <div class="decision-demo-scenario-nav" id="decision-demo-scenario-nav" role="tablist" aria-label="Scénarios de démonstration"></div>
+              <div class="decision-demo-scenario-body" id="decision-demo-scenario-body" aria-live="polite">
+                <p class="decision-center-program-loading">Chargement des scénarios…</p>
+              </div>
+            </section>
+
+            <div class="decision-center-kpi-grid decision-explainable-kpi-grid" id="decision-center-kpi-grid" aria-live="polite">
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_fdsu">
+                <p class="summary-label">Sites FDSU</p>
+                <p class="summary-value" id="decision-kpi-sites-fdsu">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Nombre total de sites enregistrés dans les programmes FDSU.</p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Programmes FDSU</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="confidence">Confiance : —</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="updated">—</span></p>
+                <p class="kpi-meta kpi-meta-tech" hidden data-kpi-tech="true"><span data-kpi-field="calculation"></span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_fdsu">Voir le détail</button>
+              </article>
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_priority">
+                <p class="summary-label">Sites prioritaires</p>
+                <p class="summary-value" id="decision-kpi-sites-priority">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Sites avec niveau critique ou élevé.</p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Priorisation nationale</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="confidence">Confiance : —</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="updated">—</span></p>
+                <p class="kpi-meta kpi-meta-tech" hidden data-kpi-tech="true"><span data-kpi-field="calculation"></span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_priority">Voir le détail</button>
+              </article>
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_critical">
+                <p class="summary-label">Sites critiques</p>
+                <p class="summary-value" id="decision-kpi-sites-critical">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Intervention immédiate requise.</p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Priorisation nationale</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="confidence">Confiance : —</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="updated">—</span></p>
+                <p class="kpi-meta kpi-meta-tech" hidden data-kpi-tech="true"><span data-kpi-field="calculation"></span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_critical">Voir le détail</button>
+              </article>
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_high">
+                <p class="summary-label">Sites à priorité élevée</p>
+                <p class="summary-value" id="decision-kpi-sites-high">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Déploiement prioritaire dans la séquence nationale.</p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Priorisation nationale</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="confidence">Confiance : —</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="updated">—</span></p>
+                <p class="kpi-meta kpi-meta-tech" hidden data-kpi-tech="true"><span data-kpi-field="calculation"></span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_high">Voir le détail</button>
+              </article>
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="referentials_active">
+                <p class="summary-label">Référentiels actifs</p>
+                <p class="summary-value" id="decision-kpi-referentials-active">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Référentiels sectoriels opérationnels.</p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">National Reference Framework</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="confidence">Confiance : —</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="updated">—</span></p>
+                <p class="kpi-meta kpi-meta-tech" hidden data-kpi-tech="true"><span data-kpi-field="calculation"></span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="referentials_active">Voir le détail</button>
+              </article>
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="referentials_planned">
+                <p class="summary-label">Référentiels planifiés</p>
+                <p class="summary-value" id="decision-kpi-referentials-planned">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Référentiels encore planifiés.</p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">National Reference Framework</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="confidence">Confiance : —</span></p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="updated">—</span></p>
+                <p class="kpi-meta kpi-meta-tech" hidden data-kpi-tech="true"><span data-kpi-field="calculation"></span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="referentials_planned">Voir le détail</button>
+              </article>
+            </div>
+
+            <div class="decision-center-kpi-secondary decision-explainable-kpi-grid" id="decision-center-kpi-secondary" aria-label="Indicateurs opérationnels nationaux">
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_40">
+                <p class="summary-label">Sites 40</p>
+                <p class="summary-value" id="decision-kpi-sites-40">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Programme pilote en exécution.</p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Programme Sites 40</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_40">Voir le détail</button>
+              </article>
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_300">
+                <p class="summary-label">Sites 300</p>
+                <p class="summary-value" id="decision-kpi-sites-300">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Programme planifié (matrice 300 sites).</p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Programme Sites 300</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_300">Voir le détail</button>
+              </article>
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="sites_scored">
+                <p class="summary-label">Sites scorés</p>
+                <p class="summary-value" id="decision-kpi-sites-scored">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Sites scorés par le moteur de décision.</p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Priorisation nationale</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="sites_scored">Voir le détail</button>
+              </article>
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="health_facilities">
+                <p class="summary-label">Référentiel Santé</p>
+                <p class="summary-value" id="decision-kpi-health-facilities">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Établissements sanitaires importés (KMZ national).</p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Référentiel Santé</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="health_facilities">Voir la carte Santé</button>
+              </article>
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="referentials_in_progress">
+                <p class="summary-label">Référentiels en cours</p>
+                <p class="summary-value" id="decision-kpi-referentials-in-progress">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Référentiels en consolidation.</p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">National Reference Framework</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="referentials_in_progress">Voir le détail</button>
+              </article>
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="telecom_objects">
+                <p class="summary-label">Objets télécoms</p>
+                <p class="summary-value" id="decision-kpi-telecom-objects">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Infrastructures télécom nationales.</p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Référentiel Télécom</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="telecom_objects">Voir le détail</button>
+              </article>
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="provinces">
+                <p class="summary-label">Provinces</p>
+                <p class="summary-value" id="decision-kpi-provinces">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Référentiel administratif.</p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Référentiel administratif</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="provinces">Voir le détail</button>
+              </article>
+              <article class="decision-center-kpi-card decision-explainable-kpi" data-kpi-key="territoires">
+                <p class="summary-label">Territoires</p>
+                <p class="summary-value" id="decision-kpi-territoires">—</p>
+                <p class="kpi-definition" data-kpi-field="definition">Référentiel territorial.</p>
+                <p class="kpi-meta kpi-meta-exec"><span data-kpi-field="source">Référentiel administratif</span></p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="territoires">Voir le détail</button>
+              </article>
+            </div>
+
+            <div class="decision-center-kpi-pending decision-explainable-kpi-grid" id="decision-center-kpi-pending" aria-label="Indicateurs prospectifs">
+              <article class="decision-center-kpi-card decision-explainable-kpi is-pending" data-kpi-key="population_covered">
+                <p class="summary-label">Population couverte</p>
+                <p class="summary-value is-pending-value" id="decision-kpi-covered-population">Donnée non encore calculée — nécessite référentiel Population / CCN / Budget.</p>
+                <p class="kpi-definition">Indicateur stratégique FDSU non calculable sans référentiel Population.</p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="population_covered">Voir le détail</button>
+              </article>
+              <article class="decision-center-kpi-card decision-explainable-kpi is-pending" data-kpi-key="population_uncovered">
+                <p class="summary-label">Population non couverte</p>
+                <p class="summary-value is-pending-value" id="decision-kpi-uncovered-population">Donnée non encore calculée — nécessite référentiel Population / CCN / Budget.</p>
+                <p class="kpi-definition">Indicateur stratégique FDSU non calculable sans référentiel Population.</p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="population_uncovered">Voir le détail</button>
+              </article>
+              <article class="decision-center-kpi-card decision-explainable-kpi is-pending" data-kpi-key="planned_ccn">
+                <p class="summary-label">CCN planifiés</p>
+                <p class="summary-value is-pending-value" id="decision-kpi-planned-ccn">Donnée non encore calculée — nécessite référentiel Population / CCN / Budget.</p>
+                <p class="kpi-definition">Inventaire CCN non encore intégré opérationnellement.</p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="planned_ccn">Voir le détail</button>
+              </article>
+              <article class="decision-center-kpi-card decision-explainable-kpi is-pending" data-kpi-key="estimated_investment">
+                <p class="summary-label">Investissement estimé</p>
+                <p class="summary-value is-pending-value" id="decision-kpi-investment">Donnée non encore calculée — nécessite référentiel Population / CCN / Budget.</p>
+                <p class="kpi-definition">Référentiel Budget non branché.</p>
+                <button type="button" class="secondary-button kpi-detail-btn" data-kpi-detail="estimated_investment">Voir le détail</button>
+              </article>
+            </div>
+
+            <aside class="decision-kpi-detail-drawer" id="decision-kpi-detail-drawer" hidden aria-label="Détail KPI">
+              <div class="decision-kpi-detail-header">
+                <h4 id="decision-kpi-detail-title">Détail indicateur</h4>
+                <button type="button" class="secondary-button" id="decision-kpi-detail-close">Fermer</button>
+              </div>
+              <div id="decision-kpi-detail-body" class="decision-kpi-detail-body"></div>
+            </aside>
+
+            <div class="decision-center-map-row">
+              <div class="decision-center-tst-host" id="decision-center-tst-host" aria-label="Tableau de Synthèse Territoriale"></div>
+            </div>
+
+            <div class="decision-center-lower-row">
+              <section class="decision-center-placeholder-panel" aria-label="Sites prioritaires">
+                <p class="panel-label">Priorisation</p>
+                <h3>Liste des sites prioritaires</h3>
+                <ul class="decision-center-priority-list" id="decision-center-priority-list">
+                  <li>Ouvrez l’onglet Priorisation pour la liste opérationnelle scorée.</li>
+                </ul>
+              </section>
+              <aside class="decision-center-placeholder-panel" id="decision-center-decision-sheet" aria-label="Fiche décisionnelle">
+                <p class="panel-label">Analyse</p>
+                <h3>Fiche décisionnelle</h3>
+                <nav class="decision-case-tabs" role="tablist" aria-label="Onglets fiche décisionnelle">
+                  <button type="button" class="decision-case-tab is-active" data-sheet-tab="justification">Justification</button>
+                  <button type="button" class="decision-case-tab" data-sheet-tab="dossier">Dossier de décision</button>
+                </nav>
+                <div class="decision-center-placeholder-body" id="decision-center-decision-sheet-body">
+                  <p>Sélectionnez un site prioritaire (onglet Priorisation → Expliquer) pour afficher la justification.</p>
+                </div>
+              </aside>
+            </div>
+
+            <section class="decision-program-followup" id="decision-program-followup" aria-label="Suivi opérationnel des programmes">
+              <div class="decision-program-followup-header">
+                <div>
+                  <p class="panel-label">Pilotage opérationnel</p>
+                  <h3>Suivi opérationnel des programmes</h3>
+                  <p>Sites 40, Sites 300 et CCN — architecture extensible pour le suivi en direct des projets FDSU.</p>
+                </div>
+              </div>
+              <div class="decision-program-followup-grid" id="decision-program-followup-grid" aria-live="polite">
+                <article class="decision-followup-card" id="decision-followup-sites-40">
+                  <h4>Sites 40</h4>
+                  <p class="decision-center-program-loading">Chargement…</p>
+                </article>
+                <article class="decision-followup-card" id="decision-followup-sites-300">
+                  <h4>Sites 300</h4>
+                  <p class="decision-center-program-loading">Chargement…</p>
+                </article>
+                <article class="decision-followup-card" id="decision-followup-ccn">
+                  <h4>CCN</h4>
+                  <p class="decision-center-program-loading">Chargement…</p>
+                </article>
+              </div>
+              <aside class="decision-ccn-extensions" id="decision-ccn-extensions" data-capability="ccn" aria-label="Extensions futures CCN">
+                <p class="panel-label">Capability CCN — points d’extension (Phase 2)</p>
+                <ul id="decision-ccn-extensions-list" class="decision-ccn-extensions-list">
+                  <li>Priorisation des CCN — à brancher</li>
+                  <li>Simulation d’implantation — à brancher</li>
+                  <li>Suivi des performances — à brancher</li>
+                </ul>
+                <p class="decision-center-program-note">Site FDSU = connectivité · CCN = service numérique — actifs distincts.</p>
+              </aside>
+            </section>
+
+            <section class="decision-center-business-architecture" id="decision-center-business-architecture" aria-label="Architecture métier FDSU">
+              <div class="decision-center-business-architecture-header">
+                <div>
+                  <p class="panel-label">Référentiel métier</p>
+                  <h3>Architecture métier FDSU</h3>
+                  <p class="decision-center-business-architecture-intro">Programmes nationaux FDSU — affichage informatif depuis <code>data/business/</code>.</p>
+                </div>
+              </div>
+              <div class="decision-center-program-grid" id="decision-center-program-grid" aria-live="polite">
+                <p class="decision-center-program-loading">Chargement des programmes FDSU…</p>
+              </div>
+            </section>
+
+            <section class="decision-center-sites-40-panel" id="decision-center-sites-40-panel" aria-label="Programme Sites 40">
+              <div class="decision-center-sites-40-header">
+                <div>
+                  <p class="panel-label">Programme opérationnel</p>
+                  <h3>Programme Sites 40</h3>
+                </div>
+                <button type="button" class="primary-button" id="decision-center-sites-40-map-btn">Voir les sites 40 sur la carte</button>
+              </div>
+              <div class="decision-center-sites-40-body" id="decision-center-sites-40-body">
+                <p class="decision-center-program-loading">Chargement du programme Sites 40…</p>
+              </div>
+            </section>
+
+            <section class="decision-center-sites-40-panel decision-center-sites-300-panel" id="decision-center-sites-300-panel" aria-label="Programme Sites 300">
+              <div class="decision-center-sites-40-header">
+                <div>
+                  <p class="panel-label">Programme planifié</p>
+                  <h3>Programme Sites 300</h3>
+                </div>
+              </div>
+              <div class="decision-center-sites-40-body" id="decision-center-sites-300-body">
+                <p class="decision-center-program-loading">Chargement du programme Sites 300…</p>
+              </div>
+            </section>
+
+            <section class="decision-center-sites-40-panel decision-center-telecom-panel" id="decision-center-telecom-panel" aria-label="Référentiel Télécom">
+              <div class="decision-center-sites-40-header">
+                <div>
+                  <p class="panel-label">Référentiel sectoriel</p>
+                  <h3>Référentiel Télécom</h3>
+                </div>
+              </div>
+              <div class="decision-center-sites-40-body" id="decision-center-telecom-body">
+                <p class="decision-center-program-loading">Chargement du référentiel télécom…</p>
+              </div>
+            </section>
+
+            <section class="decision-center-sites-40-panel decision-center-spatial-panel" id="decision-center-spatial-panel" aria-label="Analyse spatiale">
+              <div class="decision-center-sites-40-header">
+                <div>
+                  <p class="panel-label">Spatial Intelligence Engine</p>
+                  <h3>Analyse spatiale</h3>
+                </div>
+                <button type="button" class="primary-button" id="decision-center-spatial-run-btn">Analyser les programmes</button>
+              </div>
+              <div class="decision-center-sites-40-body" id="decision-center-spatial-body">
+                <p class="decision-center-program-loading">Chargement de l'analyse spatiale…</p>
+              </div>
+            </section>
+          </section>
+
+          <section class="decision-center-tab-panel" data-decision-tab-panel="priorisation" role="tabpanel" hidden>
+            <div class="decision-engine-panel" id="decision-engine-panel" aria-label="Moteur de décision FDSU">
+              <div class="decision-engine-header">
+                <div>
+                  <p class="panel-label">Priorisation nationale</p>
+                  <h3>Priorisation nationale des sites FDSU</h3>
+                </div>
+                <button type="button" class="secondary-button decision-engine-recompute-btn" id="decision-engine-recompute-btn">Recalculer les scores</button>
+              </div>
+
+              <p class="decision-engine-sectorial-banner" id="decision-engine-sectorial-note">
+                Programme national extensible : Sites 40 (pilote) · Sites 300 (première vague / calibration) · Sites 20 476 (national 5 ans). Seuils calibrés sur la matrice 300.
+              </p>
+
+              <div class="decision-engine-controls">
+                <div class="decision-engine-kpi-grid" id="decision-engine-kpi-grid">
+                  <article class="decision-engine-kpi" data-level="total">
+                    <p class="summary-label">Sites scorés</p>
+                    <p class="summary-value" id="decision-engine-kpi-total">—</p>
+                  </article>
+                  <article class="decision-engine-kpi is-critical" data-level="critical">
+                    <p class="summary-label">Critique</p>
+                    <p class="summary-value" id="decision-engine-kpi-critical">—</p>
+                  </article>
+                  <article class="decision-engine-kpi is-high" data-level="high">
+                    <p class="summary-label">Élevée</p>
+                    <p class="summary-value" id="decision-engine-kpi-high">—</p>
+                  </article>
+                  <article class="decision-engine-kpi is-medium" data-level="medium">
+                    <p class="summary-label">Moyenne</p>
+                    <p class="summary-value" id="decision-engine-kpi-medium">—</p>
+                  </article>
+                  <article class="decision-engine-kpi is-low" data-level="low">
+                    <p class="summary-label">Faible</p>
+                    <p class="summary-value" id="decision-engine-kpi-low">—</p>
+                  </article>
+                </div>
+
+                <div class="decision-engine-toolbar">
+                  <span class="decision-engine-filter-label">Programme</span>
+                  <div class="decision-engine-filters" id="decision-engine-program-filters" role="group" aria-label="Filtrer par programme FDSU">
+                    <button type="button" class="decision-engine-filter" data-program-filter="sites_40">Sites 40</button>
+                    <button type="button" class="decision-engine-filter" data-program-filter="sites_300">Sites 300</button>
+                    <button type="button" class="decision-engine-filter is-active" data-program-filter="sites_20476">Sites 20 476</button>
+                  </div>
+                </div>
+
+                <div class="decision-engine-toolbar">
+                  <span class="decision-engine-filter-label">Priorité</span>
+                  <div class="decision-engine-filters" id="decision-engine-filters" role="group" aria-label="Filtrer par niveau de priorité">
+                    <button type="button" class="decision-engine-filter is-active" data-priority-filter="">Tous</button>
+                    <button type="button" class="decision-engine-filter filter-critical" data-priority-filter="critical">Critique</button>
+                    <button type="button" class="decision-engine-filter filter-high" data-priority-filter="high">Élevée</button>
+                    <button type="button" class="decision-engine-filter filter-medium" data-priority-filter="medium">Moyenne</button>
+                    <button type="button" class="decision-engine-filter filter-low" data-priority-filter="low">Faible</button>
+                  </div>
+                  <button type="button" class="secondary-button" id="decision-engine-export-btn">Exporter</button>
+                </div>
+              </div>
+
+              <section class="decision-engine-top-panel" id="decision-engine-top-panel" aria-label="Top priorités nationales">
+                <h4>Top priorités nationales</h4>
+                <ol id="decision-engine-top-list" class="decision-engine-top-list">
+                  <li>Chargement…</li>
+                </ol>
+              </section>
+
+              <aside class="decision-engine-explain" id="decision-engine-explain" hidden>
+                <div class="decision-engine-explain-header">
+                  <h4 id="decision-engine-explain-title">Explication du score</h4>
+                  <button type="button" class="secondary-button" id="decision-engine-explain-close">Fermer</button>
+                </div>
+                <nav class="decision-case-tabs" role="tablist" aria-label="Onglets justification">
+                  <button type="button" class="decision-case-tab is-active" data-decision-case-tab="justification">Justification</button>
+                  <button type="button" class="decision-case-tab" data-decision-case-tab="dossier">Dossier de décision</button>
+                </nav>
+                <div id="decision-engine-explain-body" data-decision-case-panel="justification"></div>
+                <div id="decision-engine-case-body" data-decision-case-panel="dossier" hidden></div>
+              </aside>
+
+              <div class="decision-engine-body" id="decision-engine-body">
+                <div class="decision-engine-map-column">
+                  <div class="decision-engine-map-shell">
+                    <div id="decision-engine-map" class="decision-engine-map" aria-label="Carte des sites priorisés"></div>
+                    <aside class="decision-engine-map-legend" id="decision-engine-map-legend" aria-label="Légende de la carte">
+                      <button type="button" class="decision-engine-legend-toggle" id="decision-engine-legend-toggle" aria-expanded="true">
+                        Légende
+                      </button>
+                      <div class="decision-engine-legend-body" id="decision-engine-legend-body">
+                        <p class="decision-engine-legend-title">Priorité</p>
+                        <ul class="decision-engine-legend-list">
+                          <li><span class="decision-engine-legend-swatch is-critical"></span> Critique</li>
+                          <li><span class="decision-engine-legend-swatch is-high"></span> Élevée</li>
+                          <li><span class="decision-engine-legend-swatch is-medium"></span> Moyenne</li>
+                          <li><span class="decision-engine-legend-swatch is-low"></span> Faible</li>
+                        </ul>
+                        <p class="decision-engine-legend-title">Symboles</p>
+                        <ul class="decision-engine-legend-list">
+                          <li><span class="decision-engine-legend-dot"></span> Site FDSU priorisé</li>
+                          <li><span class="decision-engine-legend-poly"></span> Province (référentiel)</li>
+                        </ul>
+                      </div>
+                    </aside>
+                  </div>
+                </div>
+                <div class="decision-engine-table-column">
+                  <div class="decision-engine-table-toolbar">
+                    <p class="decision-engine-table-caption">Tableau analytique</p>
+                    <button type="button" class="secondary-button" id="decision-engine-table-expand-btn" aria-pressed="false">
+                      Agrandir le tableau
+                    </button>
+                  </div>
+                  <div class="decision-engine-table-frame">
+                    <table class="decision-engine-table" id="decision-engine-table">
+                      <thead>
+                        <tr>
+                          <th scope="col">Site</th>
+                          <th scope="col">Localisation</th>
+                          <th scope="col">Score</th>
+                          <th scope="col">Priorité</th>
+                          <th scope="col">Facteur principal</th>
+                          <th scope="col">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody id="decision-engine-table-body">
+                        <tr><td colspan="6" class="decision-center-program-loading">Chargement des scores…</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="decision-center-tab-panel" data-decision-tab-panel="referentiel-national" role="tabpanel" hidden>
+            <div class="master-registry-panel" id="master-registry-panel" aria-label="Référentiel National des Actifs FDSU">
+              <div class="master-registry-header">
+                <div>
+                  <p class="panel-label">Master Data & Business Registry</p>
+                  <h3>Référentiel National des Actifs FDSU</h3>
+                </div>
+                <p class="master-registry-format">business_id site = <code>FDSU_ND_18_003_10100</code> — jamais SITE-FDSU-######</p>
+              </div>
+
+              <div class="master-registry-kpi-grid" id="master-registry-kpi-grid">
+                <article class="master-registry-kpi">
+                  <p class="summary-label">Entités</p>
+                  <p class="summary-value" id="master-kpi-entities">—</p>
+                </article>
+                <article class="master-registry-kpi">
+                  <p class="summary-label">Doublons (groupes)</p>
+                  <p class="summary-value" id="master-kpi-duplicates">—</p>
+                </article>
+                <article class="master-registry-kpi is-ok">
+                  <p class="summary-label">Codes FDSU valides</p>
+                  <p class="summary-value" id="master-kpi-valid">—</p>
+                </article>
+                <article class="master-registry-kpi is-warn">
+                  <p class="summary-label">Codes FDSU invalides</p>
+                  <p class="summary-value" id="master-kpi-invalid">—</p>
+                </article>
+                <article class="master-registry-kpi">
+                  <p class="summary-label">Sources</p>
+                  <p class="summary-value" id="master-kpi-sources">—</p>
+                </article>
+                <article class="master-registry-kpi">
+                  <p class="summary-label">Événements version</p>
+                  <p class="summary-value" id="master-kpi-versions">—</p>
+                </article>
+                <article class="master-registry-kpi is-score">
+                  <p class="summary-label">Qualité données</p>
+                  <p class="summary-value" id="master-kpi-quality">—</p>
+                </article>
+              </div>
+
+              <div class="master-registry-body">
+                <section class="master-registry-card">
+                  <h4>Nomenclature officielle</h4>
+                  <p id="master-nomenclature-note">Chargement…</p>
+                  <ul id="master-nomenclature-zones" class="master-registry-zones"></ul>
+                </section>
+                <section class="master-registry-card">
+                  <h4>Répartition par type</h4>
+                  <div id="master-type-breakdown" class="master-type-breakdown">Chargement…</div>
+                </section>
+                <section class="master-registry-card">
+                  <h4>Sources</h4>
+                  <div id="master-sources-breakdown" class="master-type-breakdown">Chargement…</div>
+                </section>
+                <section class="master-registry-card">
+                  <h4>Validation / confiance</h4>
+                  <div id="master-quality-breakdown" class="master-type-breakdown">Chargement…</div>
+                </section>
+              </div>
+            </div>
+          </section>
+
+          <section class="decision-center-tab-panel" data-decision-tab-panel="referentiels-sectoriels" role="tabpanel" hidden>
+            <div class="sectorial-referentials-panel" id="sectorial-referentials-panel" aria-label="Référentiels sectoriels">
+              <div class="sectorial-referentials-header">
+                <div>
+                  <p class="panel-label">National Reference Framework</p>
+                  <h3>Référentiels sectoriels</h3>
+                </div>
+              </div>
+
+              <div class="sectorial-catalog-grid" id="sectorial-catalog-grid">
+                <p class="decision-center-program-loading">Chargement du catalogue…</p>
+              </div>
+
+              <section class="sectorial-health-panel" id="sectorial-health-panel" aria-label="Référentiel Santé">
+                <div class="sectorial-health-header">
+                  <div>
+                    <p class="panel-label">Référentiel sectoriel v1.0</p>
+                    <h3>Santé</h3>
+                  </div>
+                  <button type="button" class="secondary-button" id="sectorial-health-import-btn" disabled title="Import futur CSV/Excel/GeoJSON/KMZ">Importer données santé</button>
+                </div>
+
+                <div class="sectorial-health-kpi-grid" id="sectorial-health-kpi-grid">
+                  <article class="sectorial-health-kpi">
+                    <p class="summary-label">Structures</p>
+                    <p class="summary-value" id="sectorial-health-kpi-total">0</p>
+                  </article>
+                  <article class="sectorial-health-kpi">
+                    <p class="summary-label">Hôpitaux</p>
+                    <p class="summary-value" id="sectorial-health-kpi-hospitals">0</p>
+                  </article>
+                  <article class="sectorial-health-kpi">
+                    <p class="summary-label">Centres de santé</p>
+                    <p class="summary-value" id="sectorial-health-kpi-centers">0</p>
+                  </article>
+                  <article class="sectorial-health-kpi">
+                    <p class="summary-label">Postes de santé</p>
+                    <p class="summary-value" id="sectorial-health-kpi-posts">0</p>
+                  </article>
+                  <article class="sectorial-health-kpi">
+                    <p class="summary-label">Géolocalisées</p>
+                    <p class="summary-value" id="sectorial-health-kpi-geo">0</p>
+                  </article>
+                  <article class="sectorial-health-kpi">
+                    <p class="summary-label">Score qualité</p>
+                    <p class="summary-value" id="sectorial-health-kpi-quality">—</p>
+                  </article>
+                </div>
+
+                <div class="sectorial-health-body">
+                  <div class="sectorial-health-map-column">
+                    <div id="sectorial-health-map" class="sectorial-health-map" aria-label="Carte des structures sanitaires"></div>
+                    <p class="sectorial-empty-message" id="sectorial-health-map-message" hidden></p>
+                  </div>
+                  <div class="sectorial-health-table-column">
+                    <div class="sectorial-health-table-frame">
+                      <table class="sectorial-health-table" id="sectorial-health-table">
+                        <thead>
+                          <tr>
+                            <th>Code</th>
+                            <th>Structure</th>
+                            <th>Type</th>
+                            <th>Province</th>
+                          </tr>
+                        </thead>
+                        <tbody id="sectorial-health-table-body">
+                          <tr><td colspan="4" class="decision-center-program-note">Chargement des structures sanitaires…</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="sectorial-health-quality" id="sectorial-health-quality" aria-label="Qualité des données santé">
+                  <div>
+                    <p class="panel-label">Qualité</p>
+                    <h4>Qualité des données</h4>
+                    <ul class="sectorial-health-quality-list" id="sectorial-health-quality-list">
+                      <li>En attente d’import…</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p class="panel-label">Répartition</p>
+                    <h4>Par type</h4>
+                    <ul class="sectorial-health-distribution" id="sectorial-health-by-type">
+                      <li>En attente d’import…</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p class="panel-label">Répartition</p>
+                    <h4>Par province</h4>
+                    <ul class="sectorial-health-distribution" id="sectorial-health-by-province">
+                      <li>En attente d’import…</li>
+                    </ul>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <section class="decision-center-tab-panel" data-decision-tab-panel="analyse-multicritere" role="tabpanel" hidden>
+            <div class="decision-center-tab-placeholder">
+              <p class="panel-label">Analyse multicritère</p>
+              <h3>Espace Analyse multicritère</h3>
+              <p>Structure prête pour les analyses multicritères territoriales.</p>
+            </div>
+          </section>
+
+          <section class="decision-center-tab-panel" data-decision-tab-panel="simulations" role="tabpanel" hidden>
+            <div id="decision-scenarios-root" class="decision-scenarios-root" aria-label="Scénarios décisionnels">
+              <div class="ds-header">
+                <div>
+                  <p class="panel-label">Aide à la décision</p>
+                  <h3>Scénarios décisionnels</h3>
+                  <p>Cas d’usage complets pour le DG, les partenaires et les équipes opérationnelles.</p>
+                </div>
+                <span id="decision-scenarios-status" aria-live="polite">Chargement…</span>
+              </div>
+              <div id="decision-scenarios-catalog" class="ds-catalog" aria-label="Catalogue des scénarios"></div>
+              <div id="decision-scenarios-result" class="ds-result" aria-live="polite"></div>
+            </div>
+          </section>
+
+          <section class="decision-center-tab-panel" data-decision-tab-panel="tableaux-de-bord" role="tabpanel" hidden>
+            <div class="decision-center-tab-placeholder">
+              <p class="panel-label">Tableaux de bord</p>
+              <h3>Espace Tableaux de bord</h3>
+              <p>Structure prête pour les indicateurs décisionnels consolidés.</p>
+            </div>
+          </section>
+
+          <section class="decision-center-tab-panel" data-decision-tab-panel="rapports" role="tabpanel" hidden>
+            <div class="decision-center-tab-placeholder">
+              <p class="panel-label">Rapports</p>
+              <h3>Espace Rapports</h3>
+              <p>Structure prête pour la génération de rapports décisionnels.</p>
+            </div>
+          </section>
+        </div>
+
+        <div class="module-panel hidden" id="referentiel-panel" data-module="referentiel">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Référentiel administratif</p>
+              <h2>Provinces</h2>
+            </div>
+            <span class="panel-badge">Module actif</span>
+          </div>
+
+          <div class="referentiel-content">
+            <section class="referentiel-main">
+              <div class="table-toolbar">
+                <div>
+                  <h3>Liste des provinces</h3>
+                  <p class="toolbar-subtitle">Recherche, tri et sélection des provinces du référentiel administratif.</p>
+                </div>
+                <div>
+                  <input id="province-search" type="search" placeholder="Rechercher une province..." aria-label="Recherche de province" />
+                </div>
+              </div>
+
+              <div class="table-frame">
+                <table class="province-table">
+                  <thead>
+                    <tr>
+                      <th><button type="button" data-key="id">ID</button></th>
+                      <th><button type="button" data-key="nom">Nom</button></th>
+                      <th><button type="button" data-key="code">Code</button></th>
+                      <th><button type="button" data-key="zone">Zone</button></th>
+                      <th><button type="button" data-key="chef_lieu">Chef-lieu</button></th>
+                      <th><button type="button" data-key="population">Population</button></th>
+                      <th><button type="button" data-key="superficie">Superficie</button></th>
+                    </tr>
+                  </thead>
+                  <tbody id="province-table-body">
+                    <tr><td colspan="7" class="empty-state">Chargement des provinces...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <aside class="referentiel-detail-panel">
+              <div class="detail-card">
+                <div class="detail-card-header">
+                  <div>
+                    <p class="panel-label">Fiche détaillée</p>
+                    <h3>Province sélectionnée</h3>
+                  </div>
+                </div>
+                <div class="detail-body" id="province-detail">
+                  <div class="empty-detail">Sélectionnez une province pour afficher les détails.</div>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <div class="module-panel hidden" id="gestion-referentiels-panel" data-module="gestion_referentiels">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Gestion des Référentiels</p>
+              <h2>Centre de gouvernance des données</h2>
+            </div>
+            <span class="panel-badge">Architecture prête</span>
+          </div>
+
+          <section class="governance-kpis" id="governance-kpis"></section>
+
+          <section class="normalization-hub">
+            <div class="panel-header normalization-hub-header">
+              <div>
+                <p class="panel-label">Moteur de normalisation</p>
+                <h3>StagingEntity unifie et restitution des analyses</h3>
+              </div>
+              <span class="panel-badge">Sans écriture BD</span>
+            </div>
+
+            <div class="normalization-summary-grid" id="normalization-summary-grid"></div>
+
+            <div class="normalization-hub-layout">
+              <article class="normalization-statistics-card">
+                <div class="panel-header compact-panel-header">
+                  <div>
+                    <p class="panel-label">Statistiques</p>
+                    <h3>Par niveau administratif</h3>
+                  </div>
+                </div>
+                <div id="normalization-level-stats" class="normalization-level-stats"></div>
+              </article>
+
+              <article class="normalization-report-card">
+                <div class="panel-header compact-panel-header">
+                  <div>
+                    <p class="panel-label">Rapport</p>
+                    <h3>Sortie du moteur</h3>
+                  </div>
+                </div>
+                <pre id="normalization-report-preview" class="normalization-report-preview"></pre>
+              </article>
+            </div>
+          </section>
+
+          <section class="governance-shell">
+            <div class="governance-tabs" id="governance-tabs" role="tablist" aria-label="Onglets de gouvernance"></div>
+
+            <div class="governance-main-layout">
+              <section class="governance-main" aria-live="polite">
+                <div class="governance-toolbar">
+                  <div class="governance-search-wrap">
+                    <label for="governance-search" class="visually-hidden">Recherche gouvernance</label>
+                    <input id="governance-search" type="search" placeholder="Rechercher dans l'onglet actif..." />
+                  </div>
+                  <div class="governance-filters">
+                    <label for="governance-status-filter" class="visually-hidden">Filtre statut</label>
+                    <select id="governance-status-filter">
+                      <option value="">Tous les statuts</option>
+                    </select>
+                    <label for="governance-page-size" class="visually-hidden">Taille de page</label>
+                    <select id="governance-page-size">
+                      <option value="10">10 / page</option>
+                      <option value="25">25 / page</option>
+                      <option value="50">50 / page</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="governance-actions" id="governance-actions"></div>
+
+                <div class="governance-state-wrap">
+                  <div class="governance-state hidden" data-state="loading">
+                    <p>Chargement des données du référentiel...</p>
+                  </div>
+                  <div class="governance-state" data-state="empty">
+                    <p>Aucune donnée connectée pour cet onglet.</p>
+                  </div>
+                  <div class="governance-state hidden" data-state="error">
+                    <p>Erreur de connexion à la source de données.</p>
+                  </div>
+                  <div class="governance-state hidden" data-state="success">
+                    <p>Données chargées avec succès.</p>
+                  </div>
+                </div>
+
+                <div class="table-frame governance-table-frame">
+                  <table class="governance-table" id="governance-table">
+                    <thead id="governance-table-head"></thead>
+                    <tbody id="governance-table-body"></tbody>
+                  </table>
+                </div>
+
+                <div class="governance-pagination">
+                  <button type="button" id="governance-prev" disabled>Précédent</button>
+                  <p id="governance-page-info">Page 1 / 1</p>
+                  <button type="button" id="governance-next" disabled>Suivant</button>
+                </div>
+              </section>
+
+              <aside class="governance-detail-panel" id="governance-detail-panel">
+                <div class="detail-card">
+                  <div class="detail-card-header">
+                    <div>
+                      <p class="panel-label">Détails</p>
+                      <h3 id="governance-detail-title">Aucun élément sélectionné</h3>
+                    </div>
+                  </div>
+                  <div class="detail-body" id="governance-detail-body">
+                    <div class="empty-detail">Sélectionnez une ligne pour afficher la fiche détaillée.</div>
+                  </div>
+                </div>
+
+                <div class="detail-card">
+                  <div class="detail-card-header">
+                    <div>
+                      <p class="panel-label">Workflow publication</p>
+                      <h3>Cycle de vie des données</h3>
+                    </div>
+                  </div>
+                  <div class="publication-flow" id="publication-flow"></div>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-panel hidden decision-detail-module" id="decision-detail-panel" data-module="decision_detail">
+          <header class="decision-detail-topbar" aria-label="Navigation détail KPI">
+            <button type="button" class="secondary-button" id="decision-detail-back-btn">← Retour au Centre de Décision</button>
+            <div class="decision-detail-topbar-copy">
+              <p class="panel-label">Analyse détaillée</p>
+              <h2 id="decision-detail-title">Détail indicateur</h2>
+            </div>
+            <span class="decision-detail-status" id="decision-detail-status" aria-live="polite">Chargement…</span>
+          </header>
+          <!-- Decision Workspace chrome injecté par decision-workspace.js (#decision-workspace-chrome) -->
+          <div class="decision-detail-loading-overlay" id="decision-detail-loading-overlay" hidden aria-hidden="true" style="display:none"></div>
+
+          <section class="decision-detail-header-card" id="decision-detail-header" aria-label="En-tête KPI">
+            <p class="decision-center-program-loading">Chargement du détail…</p>
+          </section>
+
+          <section class="decision-detail-secondary" id="decision-detail-secondary" aria-label="KPI secondaires"></section>
+
+          <section class="decision-detail-filters" id="decision-detail-filters" aria-label="Filtres">
+            <input type="search" id="decision-detail-q" placeholder="Rechercher…" aria-label="Recherche" />
+            <input type="text" id="decision-detail-province" placeholder="Province" aria-label="Province" />
+            <input type="text" id="decision-detail-territoire" placeholder="Territoire" aria-label="Territoire" />
+            <select id="decision-detail-programme" aria-label="Programme">
+              <option value="">Tous programmes</option>
+              <option value="sites_40">Sites 40</option>
+              <option value="sites_300">Sites 300</option>
+              <option value="sites_20476">Sites 20 476</option>
+            </select>
+            <select id="decision-detail-priority" aria-label="Niveau de priorité">
+              <option value="">Tous niveaux</option>
+              <option value="critical">Critique</option>
+              <option value="high">Élevée</option>
+              <option value="medium">Moyenne</option>
+              <option value="low">Faible</option>
+            </select>
+            <button type="button" class="primary-button" id="decision-detail-apply-filters">Filtrer</button>
+          </section>
+
+          <div class="decision-detail-grid">
+            <section class="decision-detail-map-card" aria-label="Carte">
+              <div class="decision-detail-section-head">
+                <h3>Carte</h3>
+                <button type="button" class="secondary-button" id="decision-detail-map-reset">Vue nationale</button>
+              </div>
+              <div id="decision-detail-map" class="decision-detail-map" role="region" aria-label="Carte des objets du KPI"></div>
+              <p class="decision-detail-legend" id="decision-detail-legend"></p>
+            </section>
+            <section class="decision-detail-charts-card" id="decision-detail-charts" aria-label="Graphiques EDVS">
+              <h3>Graphiques</h3>
+              <div id="decision-detail-charts-body"></div>
+            </section>
+          </div>
+
+          <section class="decision-detail-list-card" aria-label="Liste détaillée">
+            <div class="decision-detail-section-head">
+              <h3>Liste détaillée</h3>
+              <span id="decision-detail-list-count">0 élément</span>
+            </div>
+            <div class="decision-detail-table-frame">
+              <table class="decision-detail-table" id="decision-detail-table">
+                <thead id="decision-detail-table-head"></thead>
+                <tbody id="decision-detail-table-body">
+                  <tr><td>Chargement…</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="decision-detail-pagination">
+              <button type="button" class="secondary-button" id="decision-detail-prev">Précédent</button>
+              <span id="decision-detail-page-label">Page 1</span>
+              <button type="button" class="secondary-button" id="decision-detail-next">Suivant</button>
+            </div>
+          </section>
+
+          <section class="decision-detail-explain-card" id="decision-detail-explain" aria-label="Justification">
+            <h3>Justification</h3>
+            <div id="decision-detail-explain-body"></div>
+          </section>
+
+          <section class="decision-detail-actions" id="decision-detail-actions" aria-label="Actions"></section>
+        </div>
+
+        <div class="module-panel hidden decision-experience-module" id="decision-experience-panel" data-module="decision_experience">
+          <header class="dxl-topbar" aria-label="Navigation dossier de décision">
+            <button type="button" class="secondary-button" id="dxl-back-btn">← Retour</button>
+            <div>
+              <p class="panel-label">Dossier de décision</p>
+              <h2 id="dxl-title">Dossier de décision</h2>
+            </div>
+            <span class="dxl-status" id="dxl-status" aria-live="polite">Chargement…</span>
+          </header>
+
+          <section class="dxl-section dxl-services-panel" id="dxl-section-services" aria-label="État des services" hidden>
+            <p class="dxl-kicker">État des services</p>
+            <ul class="dxl-services-list" id="dxl-services-list"></ul>
+          </section>
+
+          <section class="dxl-section" id="dxl-section-summary" aria-label="Résumé exécutif">
+            <p class="dxl-empty">Chargement du résumé…</p>
+          </section>
+
+          <section class="dxl-section" aria-label="Carte interactive">
+            <p class="dxl-kicker">Carte interactive</p>
+            <div id="dxl-map" class="dxl-map" role="region" aria-label="Carte du dossier de décision"></div>
+          </section>
+
+          <section class="dxl-section" id="dxl-section-why" aria-label="Pourquoi"></section>
+          <section class="dxl-section" id="dxl-section-context" aria-label="Contexte territorial"></section>
+          <section class="dxl-section" id="dxl-section-impact" aria-label="Impacts attendus"></section>
+          <section class="dxl-section" id="dxl-section-risks" aria-label="Risques"></section>
+          <section class="dxl-section" id="dxl-section-trace" aria-label="Traçabilité"></section>
+          <section class="dxl-section" id="dxl-section-reco" aria-label="Recommandation"></section>
+          <section class="dxl-actions" id="dxl-actions" aria-label="Actions métier"></section>
+        </div>
+
+        <div class="module-panel hidden" id="sites-panel" data-module="sites">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Sites FDSU</p>
+              <h2>Inventaire des sites</h2>
+            </div>
+            <span class="panel-badge">0 site</span>
+          </div>
+          <p id="sites-module-message">Module Sites FDSU à construire en v0.7.0.</p>
+        </div>
+
+        <div class="module-panel hidden" id="decision-panel" data-module="decision">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Aide à la décision</p>
+              <h2>Moteur de priorisation FDSU</h2>
+            </div>
+            <span class="panel-badge" id="decision-count">0 résultat</span>
+          </div>
+
+          <section class="decision-filters">
+            <select id="decision-use-case" aria-label="Cas d'usage">
+              <option value="localites">Localités prioritaires</option>
+              <option value="territoires">Territoires prioritaires</option>
+              <option value="search">Recherche multicritère</option>
+            </select>
+            <select id="decision-zone" aria-label="Zone FDSU">
+              <option value="">Toutes les zones</option>
+              <option value="ND">Zone Nord</option>
+              <option value="SD">Zone Sud</option>
+              <option value="CE">Zone Centre</option>
+              <option value="OT">Zone Ouest</option>
+              <option value="ET">Zone Est</option>
+            </select>
+            <input id="decision-province" type="search" placeholder="Province" aria-label="Province" />
+            <input id="decision-territoire" type="search" placeholder="Territoire" aria-label="Territoire" />
+            <input id="decision-population" type="number" min="0" step="100" value="3000" aria-label="Population minimale" />
+            <select id="decision-network" aria-label="Couverture réseau">
+              <option value="">Toute couverture</option>
+              <option value="2G">2G présente</option>
+              <option value="3G">3G présente</option>
+              <option value="4G">4G présente</option>
+              <option value="5G">5G présente</option>
+            </select>
+            <select id="decision-health" aria-label="Centre de santé">
+              <option value="">Centre de santé</option>
+              <option value="true">Présent</option>
+              <option value="false">Absent</option>
+            </select>
+            <select id="decision-school" aria-label="École secondaire">
+              <option value="">École secondaire</option>
+              <option value="true">Présente</option>
+              <option value="false">Absente</option>
+            </select>
+            <input id="decision-activity" type="search" placeholder="Activité économique" aria-label="Activité économique" />
+            <input id="decision-potential" type="search" placeholder="Potentiel" aria-label="Potentiel" />
+            <input id="decision-connectivity-score" type="number" min="0" max="100" step="1" placeholder="Score connectivité max" aria-label="Score connectivité maximal" />
+            <input id="decision-priority-score" type="number" min="0" max="100" step="1" placeholder="Priorité min." aria-label="Score priorité minimum" />
+            <input id="decision-search" type="search" placeholder="Recherche" aria-label="Recherche décisionnelle" />
+            <button type="button" class="primary-button" id="decision-run">Filtrer</button>
+          </section>
+
+          <div class="decision-layout">
+            <section class="decision-results">
+              <div class="decision-actions">
+                <button type="button" class="table-action-button" id="decision-export-csv">CSV</button>
+                <button type="button" class="table-action-button" id="decision-export-json">JSON</button>
+              </div>
+              <div class="table-frame attribute-table-frame">
+                <table class="governance-table">
+                  <thead>
+                    <tr>
+                      <th>Priorité</th>
+                      <th>Nom</th>
+                      <th>Zone</th>
+                      <th>Province</th>
+                      <th>Population</th>
+                      <th>4G</th>
+                      <th>Services</th>
+                      <th>Potentiel</th>
+                      <th>Recommandation</th>
+                    </tr>
+                  </thead>
+                  <tbody id="decision-results-body"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <aside class="decision-side">
+              <div id="decision-map" class="decision-map">Carte décisionnelle</div>
+              <div class="decision-card" id="decision-detail">
+                <p class="panel-label">Fiche</p>
+                <h3>Aucun élément sélectionné</h3>
+                <p class="status-card-text">Les champs non renseignés apparaîtront comme donnée à compléter.</p>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <div class="module-panel hidden" id="connaissances-panel" data-module="connaissances">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Base nationale de connaissances</p>
+              <h2>Base nationale de connaissances</h2>
+            </div>
+            <span class="panel-badge">CNCT Sprint 3.2</span>
+          </div>
+
+          <section class="knowledge-kpi-grid">
+            <article class="summary-card"><p class="summary-label">Profils complets</p><p class="summary-value" id="knowledge-complete">0</p></article>
+            <article class="summary-card"><p class="summary-label">Profils incomplets</p><p class="summary-value" id="knowledge-incomplete">0</p></article>
+            <article class="summary-card"><p class="summary-label">Sans photo</p><p class="summary-value" id="knowledge-no-photo">0</p></article>
+            <article class="summary-card"><p class="summary-label">Sans activités</p><p class="summary-value" id="knowledge-no-activities">0</p></article>
+            <article class="summary-card"><p class="summary-label">Sans défis</p><p class="summary-value" id="knowledge-no-challenges">0</p></article>
+            <article class="summary-card"><p class="summary-label">Sans services publics</p><p class="summary-value" id="knowledge-no-services">0</p></article>
+            <article class="summary-card"><p class="summary-label">Sans connectivité</p><p class="summary-value" id="knowledge-no-connectivity">0</p></article>
+            <article class="summary-card"><p class="summary-label">Sans documents</p><p class="summary-value" id="knowledge-no-documents">0</p></article>
+          </section>
+
+          <section class="knowledge-origin-panel" id="knowledge-data-origins"></section>
+
+          <section class="knowledge-layout">
+            <div class="knowledge-main">
+              <div class="attribute-toolbar">
+                <input id="knowledge-search" type="search" placeholder="Rechercher activités, défis, particularités, potentiel, sources, rapports..." aria-label="Recherche CNCT" />
+                <select id="knowledge-priority-filter" aria-label="Filtre priorité">
+                  <option value="">Toutes les priorités</option>
+                  <option value="critique">Critique</option>
+                  <option value="haute">Haute</option>
+                  <option value="normale">Normale</option>
+                </select>
+                <select id="knowledge-sort" aria-label="Tri priorités">
+                  <option value="priority">Priorité</option>
+                  <option value="completeness">Complétude</option>
+                  <option value="missing">Champs manquants</option>
+                  <option value="updated">Dernière mise à jour</option>
+                </select>
+              </div>
+              <div id="knowledge-search-results" class="knowledge-search-results"></div>
+              <div class="table-frame attribute-table-frame">
+                <table class="governance-table">
+                  <thead>
+                    <tr>
+                      <th>Province</th>
+                      <th>Territoire</th>
+                      <th>Complétude</th>
+                      <th>Champs manquants</th>
+                      <th>Priorité</th>
+                      <th>Dernière mise à jour</th>
+                    </tr>
+                  </thead>
+                  <tbody id="knowledge-priority-body"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <aside class="knowledge-profile detail-card">
+              <div class="detail-card-header">
+                <div>
+                  <p class="panel-label">Fiche encyclopédique</p>
+                  <h3 id="knowledge-profile-title">Kinshasa</h3>
+                </div>
+              </div>
+              <div id="knowledge-completeness-bars" class="knowledge-completeness-bars"></div>
+              <div id="knowledge-tabs" class="knowledge-tabs"></div>
+              <div id="knowledge-tab-content" class="knowledge-tab-content"></div>
+              <div class="knowledge-workflow">
+                <span>Recherche</span><span>Propositions</span><span>Comparaison</span><span>Validation</span><span>Publication</span>
+              </div>
+            </aside>
+          </section>
+        </div>
+
+        <div class="module-panel hidden" id="enrichissement-panel" data-module="enrichissement">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Assistant d’enrichissement</p>
+              <h2>Propositions d’enrichissement</h2>
+            </div>
+            <span class="panel-badge">Validation obligatoire</span>
+          </div>
+
+          <section class="enrichment-layout">
+            <div class="enrichment-main">
+              <div class="attribute-toolbar">
+                <select id="enrichment-status-filter" aria-label="Filtre statut">
+                  <option value="">Tous les statuts</option>
+                  <option value="proposé">Proposées</option>
+                  <option value="validé">Validées</option>
+                  <option value="rejeté">Rejetées</option>
+                </select>
+                <select id="enrichment-field-filter" aria-label="Filtre champ">
+                  <option value="">Tous les champs</option>
+                </select>
+                <button type="button" class="table-action-button" id="enrichment-refresh">Rafraîchir</button>
+              </div>
+              <div class="table-frame attribute-table-frame">
+                <table class="governance-table">
+                  <thead>
+                    <tr>
+                      <th>Entité</th>
+                      <th>Champ</th>
+                      <th>Source</th>
+                      <th>Confiance</th>
+                      <th>Statut</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="enrichment-suggestions-body"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <aside class="enrichment-detail detail-card">
+              <div class="detail-card-header">
+                <div>
+                  <p class="panel-label">Revue</p>
+                  <h3 id="enrichment-detail-title">Aucune proposition sélectionnée</h3>
+                </div>
+              </div>
+              <div id="enrichment-detail-body" class="detail-body">
+                <div class="empty-detail">Sélectionnez une proposition pour consulter la source, modifier la valeur, puis accepter ou rejeter.</div>
+              </div>
+            </aside>
+          </section>
+        </div>
+
+        <div class="module-panel hidden" id="explorateur-sources-panel" data-module="explorateur_sources">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Explorateur de Sources</p>
+              <h2>Catalogue géographique en lecture seule</h2>
+            </div>
+            <span class="panel-badge">Sans import BD</span>
+          </div>
+
+          <section class="source-explorer-toolbar">
+            <div class="source-explorer-loader">
+              <label for="source-explorer-report-input">Rapport JSON</label>
+              <input id="source-explorer-report-input" type="file" accept=".json,application/json" />
+              <p>Utiliser un rapport généré par <strong>scripts/explore_source.py</strong>.</p>
+            </div>
+            <button id="source-explorer-extract" type="button" class="governance-action-button" disabled>Extraire</button>
+          </section>
+
+          <section class="source-explorer-kpis">
+            <article class="summary-card">
+              <p class="summary-label">Source</p>
+              <p class="summary-value" id="source-explorer-source-path">Non renseigné</p>
+            </article>
+            <article class="summary-card">
+              <p class="summary-label">Format</p>
+              <p class="summary-value" id="source-explorer-source-format">Non renseigné</p>
+            </article>
+            <article class="summary-card">
+              <p class="summary-label">Objets</p>
+              <p class="summary-value" id="source-explorer-object-count">0</p>
+            </article>
+            <article class="summary-card">
+              <p class="summary-label">Champs</p>
+              <p class="summary-value" id="source-explorer-field-count">0</p>
+            </article>
+            <article class="summary-card">
+              <p class="summary-label">Dossiers</p>
+              <p class="summary-value" id="source-explorer-folder-count">0</p>
+            </article>
+          </section>
+
+          <section class="source-explorer-tags" id="source-explorer-tags"></section>
+
+          <section class="table-frame source-explorer-table">
+            <h3>Catalogue des Données</h3>
+            <table class="governance-table">
+              <thead>
+                <tr>
+                  <th>Nom du dossier</th>
+                  <th>Type</th>
+                  <th>Nombre d'objets</th>
+                  <th>Nombre de champs</th>
+                  <th>Type de géométrie</th>
+                  <th>Qualité</th>
+                  <th>Module SIG conseillé</th>
+                  <th>Liste des attributs</th>
+                </tr>
+              </thead>
+              <tbody id="source-explorer-catalog-body"></tbody>
+            </table>
+          </section>
+
+          <section class="table-frame source-explorer-table">
+            <h3>Dictionnaire de Données</h3>
+            <table class="governance-table">
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Type</th>
+                  <th>Nombre de valeurs</th>
+                  <th>Valeurs uniques</th>
+                  <th>Valeurs nulles</th>
+                  <th>Exemple</th>
+                </tr>
+              </thead>
+              <tbody id="source-explorer-dictionary-body"></tbody>
+            </table>
+          </section>
+        </div>
+
+        <div class="module-panel hidden edvs-module" id="salle-pilotage-panel" data-module="salle_pilotage">
+          <p class="ti-banner" id="edvs-cockpit-banner">Salle de Pilotage DG — Executive Situation Room</p>
+          <div id="edvs-cockpit-root" class="edvs-shell esr-host" aria-live="polite"></div>
+        </div>
+
+        <div class="module-panel hidden ti-module" id="territorial-intelligence-panel" data-module="territorial_intelligence">
+          <div class="ti-header">
+            <div>
+              <p class="panel-label">Intelligence territoriale</p>
+              <h2 id="ti-territory-title">Intelligence Territoriale FDSU</h2>
+              <p>Que sait le FDSU d’un territoire, quels besoins numériques, quelles interventions prioriser ?</p>
+            </div>
+            <div class="ti-toolbar">
+              <button type="button" class="secondary-button" id="ti-back-national">Retour Centre de Décision</button>
+              <button type="button" class="secondary-button" id="ti-open-ccn">Module CCN</button>
+              <span id="ti-edvs-presentation-slot"></span>
+            </div>
+          </div>
+
+          <p class="ti-banner" id="ti-banner">Sélectionnez un territoire. Cas de démonstration prioritaire : Dungu (logique générique).</p>
+
+          <div class="ti-toolbar">
+            <label>Recherche <input type="search" id="ti-search" placeholder="Dungu, Haut-Uele…" /></label>
+            <label>Province <input type="text" id="ti-filter-province" placeholder="HAUT-UELE" /></label>
+            <label>Zone
+              <select id="ti-filter-zone">
+                <option value="">Toutes</option>
+                <option>ND</option><option>SD</option><option>CE</option><option>OT</option><option>ET</option>
+              </select>
+            </label>
+            <label>Territoire <select id="ti-territory-select"><option value="">Chargement…</option></select></label>
+            <button type="button" class="primary-button" id="ti-search-btn">Filtrer</button>
+          </div>
+
+          <div class="ti-kpi-grid" id="ti-edvs-kpi-host" hidden></div>
+          <div class="ti-kpi-grid" id="ti-kpi-legacy">
+            <article class="ti-kpi"><p class="summary-label">Population</p><p class="summary-value" id="ti-kpi-pop">—</p><span class="ti-status" id="ti-kpi-pop-status"></span></article>
+            <article class="ti-kpi"><p class="summary-label">Sites 20 476</p><p class="summary-value" id="ti-kpi-sites">—</p><span class="ti-status" id="ti-kpi-sites-status"></span></article>
+            <article class="ti-kpi"><p class="summary-label">Sites 300</p><p class="summary-value" id="ti-kpi-sites300">—</p><span class="ti-status" id="ti-kpi-sites300-status"></span></article>
+            <article class="ti-kpi"><p class="summary-label">CCN</p><p class="summary-value" id="ti-kpi-ccn">—</p><span class="ti-status" id="ti-kpi-ccn-status"></span></article>
+            <article class="ti-kpi"><p class="summary-label">Santé</p><p class="summary-value" id="ti-kpi-health">—</p><span class="ti-status" id="ti-kpi-health-status"></span></article>
+            <article class="ti-kpi"><p class="summary-label">Score territorial</p><p class="summary-value" id="ti-kpi-score">—</p><span class="ti-status" id="ti-kpi-score-status"></span></article>
+            <article class="ti-kpi"><p class="summary-label">Confiance</p><p class="summary-value" id="ti-kpi-conf">—</p><span class="ti-status" id="ti-kpi-conf-status"></span></article>
+          </div>
+
+          <div class="ti-toolbar-extra" style="margin:8px 0;display:flex;gap:8px;flex-wrap:wrap">
+            <button type="button" class="secondary-button" id="ti-toggle-tst">Afficher la synthèse territoriale</button>
+          </div>
+          <div id="ti-tst-drawer" class="ti-tst-drawer" hidden>
+            <div id="ti-tst-host" class="ti-tst-host" aria-label="Synthèse territoriale optionnelle"></div>
+          </div>
+          <div class="ti-main">
+            <section>
+              <div id="ti-map" class="ti-map" aria-label="Carte territoriale"></div>
+              <p class="ti-map-legend">Limite · Sites FDSU · CCN · Santé</p>
+            </section>
+            <section id="ti-sections" class="ti-sections">
+              <p>Chargement des sections territoriales…</p>
+            </section>
+          </div>
+        </div>
+
+        <div class="module-panel hidden ccn-module" id="ccn-panel" data-module="ccn">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Capability 02 — Module opérationnel v1</p>
+              <h2>Centres Communautaires Numériques</h2>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <span class="panel-badge">DEMO — Doctrine CCN v1</span>
+              <span id="ccn-edvs-presentation-slot"></span>
+            </div>
+          </div>
+
+          <p class="ccn-demo-banner">
+            Jeu de démonstration explicitement marqué DEMO. Site FDSU = connectivité · CCN = service numérique.
+            Pondérations issues de la doctrine versionnée (non hardcodées).
+          </p>
+
+          <div class="ccn-kpi-grid" id="ccn-edvs-kpi-host" hidden></div>
+          <div id="ccn-edvs-charts-host" class="edvs-charts-grid ux-exec-charts" aria-label="Graphiques exécutifs CCN"></div>
+          <div class="ccn-kpi-grid" id="ccn-kpi-grid">
+            <article class="ccn-kpi"><p class="summary-label">Total CCN</p><p class="summary-value" id="ccn-kpi-total">—</p></article>
+            <article class="ccn-kpi"><p class="summary-label">Planifiés</p><p class="summary-value" id="ccn-kpi-planned">—</p></article>
+            <article class="ccn-kpi"><p class="summary-label">Préparation</p><p class="summary-value" id="ccn-kpi-prep">—</p></article>
+            <article class="ccn-kpi"><p class="summary-label">Déploiement</p><p class="summary-value" id="ccn-kpi-deploy">—</p></article>
+            <article class="ccn-kpi is-ok"><p class="summary-label">Opérationnels</p><p class="summary-value" id="ccn-kpi-ops">—</p></article>
+            <article class="ccn-kpi"><p class="summary-label">Population desservie</p><p class="summary-value" id="ccn-kpi-pop">—</p></article>
+            <article class="ccn-kpi"><p class="summary-label">Sites FDSU associés</p><p class="summary-value" id="ccn-kpi-sites">—</p></article>
+            <article class="ccn-kpi"><p class="summary-label">Provinces</p><p class="summary-value" id="ccn-kpi-provinces">—</p></article>
+          </div>
+
+          <div class="ccn-toolbar">
+            <label>Province <select id="ccn-filter-province"><option value="">Toutes</option></select></label>
+            <label>Territoire <select id="ccn-filter-territoire"><option value="">Tous</option></select></label>
+            <label>Zone <select id="ccn-filter-zone"><option value="">Toutes</option><option>ND</option><option>SD</option><option>CE</option><option>OT</option><option>ET</option></select></label>
+            <label>Programme <select id="ccn-filter-program"><option value="">Tous</option><option value="sites_40">Sites 40</option><option value="sites_300">Sites 300</option><option value="sites_20476">Sites 20 476</option></select></label>
+            <label>Statut <select id="ccn-filter-status"><option value="">Tous</option><option value="planned">Planifié</option><option value="preparation">Préparation</option><option value="deploying">Déploiement</option><option value="operational">Opérationnel</option><option value="suspended">Suspendu</option></select></label>
+            <label>Type <select id="ccn-filter-type"><option value="">Tous</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="Z">Z</option></select></label>
+            <button type="button" class="secondary-button" id="ccn-filter-reset">Réinitialiser</button>
+          </div>
+
+          <div class="ccn-body">
+            <section class="ccn-map-column">
+              <div id="ccn-map" class="ccn-map" aria-label="Carte des CCN et Sites FDSU associés"></div>
+              <p class="ccn-map-legend">● CCN &nbsp; ■ Site FDSU &nbsp; — liaison Site→CCN</p>
+            </section>
+            <section class="ccn-table-column">
+              <div class="ccn-table-frame">
+                <table class="ccn-table" id="ccn-table">
+                  <thead>
+                    <tr>
+                      <th>Code</th>
+                      <th>Nom</th>
+                      <th>Province</th>
+                      <th>Territoire</th>
+                      <th>Programme</th>
+                      <th>Type</th>
+                      <th>Statut</th>
+                      <th>Population</th>
+                      <th>Gestionnaire</th>
+                      <th>Site FDSU</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ccn-table-body">
+                    <tr><td colspan="10">Chargement…</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <aside class="ccn-detail" id="ccn-detail" hidden>
+            <div class="ccn-detail-header">
+              <h3 id="ccn-detail-title">Fiche CCN</h3>
+              <button type="button" class="secondary-button" id="ccn-detail-close">Fermer</button>
+            </div>
+            <nav class="ccn-detail-tabs" role="tablist" aria-label="Onglets fiche CCN">
+              <button type="button" class="ccn-detail-tab is-active" data-ccn-tab="fiche">Fiche</button>
+              <button type="button" class="ccn-detail-tab" data-ccn-tab="justification">Justification</button>
+              <button type="button" class="ccn-detail-tab" data-ccn-tab="dossier">Dossier de décision</button>
+            </nav>
+            <div id="ccn-detail-body" class="ccn-detail-body" data-ccn-tab-panel="fiche"></div>
+            <div id="ccn-justification-body" class="ccn-detail-body" data-ccn-tab-panel="justification" hidden></div>
+            <div id="ccn-case-body" class="ccn-detail-body" data-ccn-tab-panel="dossier" hidden></div>
+          </aside>
+
+          <section class="ccn-doctrine-panel" id="ccn-doctrine-panel">
+            <h3>Doctrine CCN FDSU v1</h3>
+            <div id="ccn-doctrine-summary" class="ccn-doctrine-summary">Chargement…</div>
+          </section>
+        </div>
+
+        <div class="module-panel hidden geocoding-module" id="geocodage-panel" data-module="geocodage">
+          <header class="geocoding-header">
+            <div>
+              <p class="panel-label">Module métier</p>
+              <h2>Géocodage Intelligent FDSU</h2>
+              <p>Importer un Excel de sites, contrôler les coordonnées, corriger uniquement les cas invalides, exporter un fichier propre avec traçabilité.</p>
+            </div>
+          </header>
+
+          <section class="geocoding-upload-card" aria-label="Import Excel">
+            <div class="geocoding-upload-row">
+              <label class="geocoding-file-label" for="geocoding-file-input">Fichier Excel (.xlsx)</label>
+              <input type="file" id="geocoding-file-input" accept=".xlsx,.xlsm" />
+              <button type="button" class="primary-button" id="geocoding-analyze-btn">Analyser</button>
+              <button type="button" class="secondary-button" id="geocoding-run-btn" disabled>Lancer le géocodage</button>
+              <button type="button" class="secondary-button" id="geocoding-export-btn" disabled>Exporter Excel</button>
+            </div>
+            <div class="geocoding-options">
+              <label><input type="checkbox" id="geocoding-offline" checked /> Mode offline (référentiel / villes RDC)</label>
+              <label><input type="checkbox" id="geocoding-nominatim" /> Nominatim OSM (limité, réseau)</label>
+            </div>
+            <p class="geocoding-hint">Règle FDSU : les coordonnées déjà valides ne sont jamais écrasées. Seules les valeurs manquantes, hors RDC, (0,0), mal formatées ou génériques répétées sont corrigées.</p>
+          </section>
+
+          <section class="geocoding-kpi-grid" id="geocoding-kpi-grid" aria-live="polite">
+            <article class="summary-card"><p class="summary-label">Lignes analysées</p><p class="summary-value" id="geocoding-kpi-analyzed">—</p></article>
+            <article class="summary-card"><p class="summary-label">Valides conservées</p><p class="summary-value" id="geocoding-kpi-kept">—</p></article>
+            <article class="summary-card"><p class="summary-label">Corrigées</p><p class="summary-value" id="geocoding-kpi-corrected">—</p></article>
+            <article class="summary-card"><p class="summary-label">Approximatives</p><p class="summary-value" id="geocoding-kpi-approx">—</p></article>
+            <article class="summary-card"><p class="summary-label">Non géocodées</p><p class="summary-value" id="geocoding-kpi-failed">—</p></article>
+            <article class="summary-card"><p class="summary-label">Job</p><p class="summary-value" id="geocoding-kpi-job">—</p></article>
+          </section>
+
+          <div class="geocoding-main-grid">
+            <section class="geocoding-table-card" aria-label="Lignes suspectes">
+              <h3>Lignes suspectes / corrigées</h3>
+              <div class="geocoding-table-wrap">
+                <table class="geocoding-table" id="geocoding-results-table">
+                  <thead>
+                    <tr>
+                      <th>Ligne</th>
+                      <th>Site</th>
+                      <th>Ancienne lat/lon</th>
+                      <th>Nouvelle lat/lon</th>
+                      <th>Statut</th>
+                      <th>Source</th>
+                      <th>Commentaire</th>
+                    </tr>
+                  </thead>
+                  <tbody id="geocoding-results-body">
+                    <tr><td colspan="7">Importez un fichier Excel pour démarrer l’analyse.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+            <aside class="geocoding-map-card" aria-label="Carte des points géocodés">
+              <h3>Carte des points</h3>
+              <div id="geocoding-map" class="geocoding-map" role="region" aria-label="Carte géocodage FDSU"></div>
+              <p class="geocoding-hint" id="geocoding-map-message">Les points corrigés ou valides apparaîtront ici après géocodage.</p>
+            </aside>
+          </div>
+
+          <section class="geocoding-anomalies" id="geocoding-anomalies" aria-live="polite">
+            <h3>Anomalies détectées</h3>
+            <ul id="geocoding-anomalies-list"><li>Aucune analyse en cours.</li></ul>
+          </section>
+        </div>
+
+        <div class="module-panel hidden" id="import-panel" data-module="import">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Import</p>
+              <h2>Chargement des données</h2>
+            </div>
+            <span class="panel-badge">Prototype v0.7.2</span>
+          </div>
+          <section class="prototype-panel">
+            <div class="source-explorer-loader">
+              <label for="import-file-input">Fichier à prévisualiser</label>
+              <input id="import-file-input" type="file" accept=".xlsx,.xls,.csv,.kml,.kmz,.geojson,.json,.zip" />
+              <p id="import-file-name">Aucun fichier sélectionné.</p>
+            </div>
+            <div class="attribute-toolbar">
+              <select id="import-sheet-select" class="hidden" aria-label="Feuille Excel"></select>
+              <button id="import-reset" type="button" class="governance-action-button">Réinitialiser import</button>
+              <button id="import-anomaly-report" type="button" class="governance-action-button" disabled>Télécharger rapport d'anomalies</button>
+            </div>
+            <div class="detail-card">
+              <div class="detail-card-header">
+                <div>
+                  <p class="panel-label">Prévisualisation</p>
+                  <h3>Colonnes détectées</h3>
+                </div>
+              </div>
+              <div id="import-preview" class="import-preview">Sélectionnez un fichier Excel, CSV, JSON ou GeoJSON.</div>
+            </div>
+          </section>
+        </div>
+
+        <div class="module-panel hidden" id="export-panel" data-module="export">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Export</p>
+              <h2>Extraction des rapports</h2>
+            </div>
+            <span class="panel-badge">Prototype v0.7.2</span>
+          </div>
+          <section class="prototype-panel">
+            <div class="attribute-toolbar">
+              <select id="export-layer-select" aria-label="Couche à exporter">
+                <option value="provinces">Provinces</option>
+                <option value="territoires">Territoires</option>
+                <option value="collectivites">Collectivités</option>
+                <option value="groupements">Groupements</option>
+                <option value="villages">Localités</option>
+                <option value="sites">Sites FDSU</option>
+              </select>
+              <select id="export-format-select" aria-label="Format d'export">
+                <option value="csv">CSV</option>
+                <option value="json">JSON</option>
+                <option value="geojson">GeoJSON</option>
+                <option value="excel">Excel (CSV v0.7.2)</option>
+                <option value="kml">KML/KMZ à préparer</option>
+              </select>
+              <select id="export-province-filter" aria-label="Filtre province">
+                <option value="">Toutes les provinces</option>
+              </select>
+              <select id="export-territory-filter" aria-label="Filtre territoire">
+                <option value="">Tous les territoires</option>
+              </select>
+              <select id="export-type-filter" aria-label="Filtre type">
+                <option value="">Tous les types</option>
+              </select>
+              <button id="export-run" type="button" class="primary-button">Exporter</button>
+            </div>
+            <div id="export-count" class="cartography-note">0 élément prêt à exporter.</div>
+            <div id="export-status" class="cartography-note">Choisissez une couche et un format.</div>
+          </section>
+        </div>
+
+        <div class="module-panel hidden" id="statistiques-panel" data-module="statistiques">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Statistiques</p>
+              <h2>Analyses & indicateurs</h2>
+            </div>
+            <span class="panel-badge">Bientôt</span>
+          </div>
+          <p>Visualisation des indicateurs de performance et des tendances opérationnelles.</p>
+        </div>
+
+        <div class="module-panel hidden" id="utilisateurs-panel" data-module="utilisateurs">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Utilisateurs</p>
+              <h2>Gestion des accès</h2>
+            </div>
+            <span class="panel-badge">Bientôt</span>
+          </div>
+          <p>Administration des comptes et des profils d’accès.</p>
+        </div>
+
+        <div class="module-panel hidden" id="parametres-panel" data-module="parametres">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Paramètres</p>
+              <h2>Configuration générale</h2>
+            </div>
+            <span class="panel-badge">Bientôt</span>
+          </div>
+          <p>Réglages généraux de l’application et options de personnalisation.</p>
+        </div>
+      </section>
+      <aside id="entity-profile-drawer" class="entity-profile-drawer hidden" aria-live="polite">
+        <div class="entity-profile-header">
+          <div>
+            <p class="panel-label" id="entity-profile-layer">Fiche territoriale</p>
+            <h2 id="entity-profile-title">Aucune entité sélectionnée</h2>
+          </div>
+          <button type="button" id="entity-profile-close" class="table-action-button">Fermer</button>
+        </div>
+        <div id="entity-profile-body" class="entity-profile-body"></div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <script src="modules/shared/map-tooltips.js"></script>
+  <script src="modules/shared/ux-premium/ux-premium.js"></script>
+  <script src="modules/shared/decision-workspace/decision-workspace.js"></script>
+  <script src="modules/shared/decision-scenarios/decision-scenarios.js"></script>
+  <script src="modules/shared/territorial-summary/territorial-context.js"></script>
+  <script src="modules/shared/territorial-summary/territorial-summary.js"></script>
+  <script src="modules/shared/territorial-digital-twin/territorial-digital-twin.js"></script>
+  <script src="modules/shared/capability-registry/capability-registry.js"></script>
+  <script src="modules/shared/spatial-decision-graph/spatial-decision-graph.js"></script>
+  <script src="modules/decision-experience/decision-experience.js"></script>
+  <!-- decision-center.js avant app.js : app.js boot immédiat (readyState interactive) sinon rate l'init des onglets -->
+  <script src="modules/decision-center/decision-center.js"></script>
+  <script src="modules/decision-center/decision-detail.js"></script>
+  <script src="modules/geocoding/geocoding.js"></script>
+  <script src="modules/shared/executive-dashboard/executive-colors.js"></script>
+  <script src="modules/shared/executive-dashboard/executive-icons.js"></script>
+  <script src="modules/shared/executive-dashboard/executive-utils.js"></script>
+  <script src="modules/shared/executive-dashboard/executive-kpi.js"></script>
+  <script src="modules/shared/executive-dashboard/executive-cards.js"></script>
+  <script src="modules/shared/executive-dashboard/executive-charts.js"></script>
+  <script src="modules/shared/executive-dashboard/executive-layout.js"></script>
+  <script src="modules/shared/executive-situation-room/executive-situation-room.js"></script>
+  <script src="modules/shared/executive-dashboard/executive-dashboard.js"></script>
+  <script src="modules/ccn/ccn.js"></script>
+  <script src="modules/territorial-intelligence/territorial-intelligence.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

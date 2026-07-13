@@ -1,0 +1,19 @@
+---
+description: Gate d'intégrité E2E obligatoire avant tout commit — Decision Case DB + anti-voile UI
+alwaysApply: true
+---
+
+# End-to-End Integrity Gate
+
+Avant tout commit ou reprise de sprint :
+
+1. **Aucune nouvelle fonctionnalité** si `#decision-case/site/29?program_code=sites_40` échoue en mode DB.
+2. Valider l’API réelle : `GET /api/decision/case/29?asset_type=site&program_code=sites_40` → **200** + nom métier ≠ « 29 ».
+3. Valider l’UI exacte (pas un autre site, pas de mock).
+4. Interdit à l’écran : `HTTP 4xx/5xx`, `[object Object]`, titre = identifiant seul, score ambigu.
+5. Un seul processus Uvicorn sur `:8001` servant le code courant (`.\start_sig.ps1 -Mode db`).
+6. Aucun overlay fantôme : `edvs-presentation-mode`, loading overlay, drawer ESR, voile blanc.
+7. Zero Decorative Actions : pas de bouton décoratif.
+8. Exécuter : `tests/test_integrity_gate_decision_case.py` et `tests/e2e/integrity-gate-decision-case.spec.js`.
+9. Ne jamais committer `case_history.json` / données runtime / KMZ / GeoJSON générés.
+10. Document de référence : `PROJECT_MANAGEMENT/ARCHITECTURE/E2E_INTEGRITY_GATE.md`.
