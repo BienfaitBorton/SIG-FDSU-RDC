@@ -280,6 +280,20 @@
     }).join('');
   }
 
+  function attachResilientBasemap(map) {
+    if (!map || !global.L) return null;
+    if (typeof global.SigBasemapManager === 'function') {
+      const manager = new global.SigBasemapManager({ timeoutMs: 3000, retries: 1 });
+      manager.attach(map);
+      return manager;
+    }
+    return global.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap &copy; CARTO',
+      maxZoom: 20,
+      subdomains: 'abcd',
+    }).addTo(map);
+  }
+
   function ensureMap() {
     const host = document.querySelector('#decision-detail-map');
     if (!host || !global.L) return null;
@@ -288,10 +302,7 @@
       return state.map;
     }
     state.map = global.L.map(host, { zoomControl: true }).setView([-2.8, 23.5], 5);
-    global.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap',
-      maxZoom: 18,
-    }).addTo(state.map);
+    attachResilientBasemap(state.map);
     state.layer = global.L.layerGroup().addTo(state.map);
     return state.map;
   }

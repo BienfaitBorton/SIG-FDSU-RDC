@@ -330,6 +330,7 @@
                 <button type="button" class="cartography-tool-btn" data-carto-drawer="layers" aria-expanded="false" title="Couches cartographiques">Couches</button>
                 <button type="button" class="cartography-tool-btn" data-carto-drawer="legend" aria-expanded="false" title="Légende Zones FDSU">Légende</button>
                 <button type="button" class="cartography-tool-btn" data-carto-drawer="entities" aria-expanded="false" title="Entités visibles">Entités</button>
+                <button type="button" class="cartography-tool-btn" data-carto-drawer="settings" aria-expanded="false" title="Paramètres cartographie">Paramètres</button>
                 <button type="button" class="cartography-tool-btn" id="carto-print-btn" title="Imprimer la carte">Impression</button>
                 <button type="button" class="cartography-tool-btn" id="carto-focus-btn" title="Mode Focus — agrandir la carte dans l'application" aria-pressed="false">Mode Focus</button>
               </div>
@@ -462,6 +463,42 @@
                     </div>
                     <div class="info-body cartography-drawer-info" id="carto-info">
                       <p class="zone-detail-empty">Sélectionnez un objet sur la carte pour afficher ses informations.</p>
+                    </div>
+                  </aside>
+
+                  <aside id="carto-drawer-settings" class="cartography-drawer hidden" aria-hidden="true" data-drawer="settings">
+                    <div class="cartography-drawer-header">
+                      <div>
+                        <p class="panel-label">Paramètres</p>
+                        <h3>Cartographie</h3>
+                      </div>
+                      <button type="button" class="cartography-drawer-close" data-carto-drawer-close aria-label="Fermer">×</button>
+                    </div>
+                    <div class="cartography-settings-panel" id="carto-basemap-settings">
+                      <fieldset class="cartography-basemap-fieldset">
+                        <legend>Fond de carte</legend>
+                        <p class="cartography-note" id="carto-basemap-status" aria-live="polite">Sélection du fournisseur…</p>
+                        <label class="cartography-basemap-option">
+                          <input type="radio" name="carto-basemap" value="auto" checked />
+                          <span>Automatique (défaut)</span>
+                        </label>
+                        <label class="cartography-basemap-option">
+                          <input type="radio" name="carto-basemap" value="osm" />
+                          <span>OpenStreetMap</span>
+                        </label>
+                        <label class="cartography-basemap-option">
+                          <input type="radio" name="carto-basemap" value="carto" />
+                          <span>CARTO Voyager</span>
+                        </label>
+                        <label class="cartography-basemap-option">
+                          <input type="radio" name="carto-basemap" value="esri_street" />
+                          <span>Esri Street</span>
+                        </label>
+                        <label class="cartography-basemap-option">
+                          <input type="radio" name="carto-basemap" value="esri_imagery" />
+                          <span>Esri Satellite</span>
+                        </label>
+                      </fieldset>
                     </div>
                   </aside>
 
@@ -2199,6 +2236,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <script src="modules/shared/map-tooltips.js"></script>
+  <script src="modules/shared/basemap-manager/basemap-manager.js"></script>
   <script src="modules/shared/ux-premium/ux-premium.js"></script>
   <script src="modules/shared/decision-workspace/decision-workspace.js"></script>
   <script src="modules/shared/decision-scenarios/decision-scenarios.js"></script>

@@ -803,8 +803,58 @@ button {
   /* visible : évite le clipping des .leaflet-tooltip.sig-map-tooltip */
   overflow: visible;
   border: 1px solid rgba(148, 163, 184, 0.14);
-  background: #eef2f7;
+  /* Teinte papier carte — remplacée dès qu'un basemap résilient charge */
+  background: #f4f1e8;
   box-shadow: var(--shadow);
+}
+
+.cartography-map-stage .leaflet-tile-pane {
+  z-index: 200;
+}
+
+.cartography-map-stage .map-canvas .leaflet-tile,
+.cartography-map-stage .cartography-basemap-tiles {
+  filter: none;
+  opacity: 1;
+}
+
+.cartography-settings-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 2px 12px;
+}
+
+.cartography-basemap-fieldset {
+  margin: 0;
+  padding: 12px 14px 14px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cartography-basemap-fieldset legend {
+  padding: 0 6px;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(226, 232, 240, 0.78);
+}
+
+.cartography-basemap-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 4px;
+  cursor: pointer;
+  font-size: 0.92rem;
+  color: rgba(241, 245, 249, 0.92);
+}
+
+.cartography-basemap-option input {
+  accent-color: #38bdf8;
 }
 
 /* Mode Focus : immersion dans l'app — jamais de fullscreen natif navigateur */

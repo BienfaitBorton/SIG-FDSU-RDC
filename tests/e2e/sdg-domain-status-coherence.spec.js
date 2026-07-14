@@ -45,6 +45,23 @@ test.describe('SDG domain status coherence', () => {
     expect(Array.isArray(body.domain_statuses)).toBeTruthy();
   });
 
+  test('API site 26 : référence branchée, recherche exécutée, pas integration_error', async ({ request }) => {
+    const res = await request.get(`${API}/api/spatial-decision-graph/site/26?program_code=sites_40`);
+    expect(res.ok()).toBeTruthy();
+    const body = await res.json();
+    expect(body._meta?.version).toMatch(/^sdg-2\.2/);
+    const domains = Object.fromEntries((body.domain_statuses || []).map((d) => [d.domain, d]));
+    const fdsu = domains.fdsu_sites;
+    expect(fdsu).toBeTruthy();
+    expect(fdsu.reference_available).toBe(true);
+    expect(fdsu.search_executed).toBe(true);
+    expect(fdsu.status).not.toBe('integration_error');
+    expect(['operational', 'empty', 'partial']).toContain(fdsu.status);
+    const radius = (body.kpis || []).find((k) => k.id === 'radius');
+    expect(radius?.value).not.toBeNull();
+    expect(radius?.status).not.toBe('unavailable');
+  });
+
   test('UI dossier site 14 : filtres cohérents, pas de code interne', async ({ page }) => {
     /** @type {string[]} */
     const pageErrors = [];

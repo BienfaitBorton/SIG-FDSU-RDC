@@ -430,6 +430,7 @@ const cartographyState = {
   attributeSortOrder: 'asc',
   selectedFeatureId: null,
   thematicMode: '',
+  basemapManager: null,
 };
 
 const nationalMapState = {
@@ -2167,6 +2168,7 @@ function initializeCartographyModule() {
   setupCartographyFreeMode();
   setupCartographySearch();
   setupCartographyExplorerDrawer();
+  setupCartographyBasemapSettings();
 
   const mapElement = document.querySelector('#map');
   const layerList = document.querySelector('#layer-list');
@@ -2201,10 +2203,7 @@ function initializeCartographyModule() {
     maxBoundsViscosity: 0.65,
   });
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors',
-    maxZoom: 19,
-  }).addTo(cartographyState.map);
+  attachCartographyBasemap(cartographyState.map);
 
   cartographyState.layers = {
     rdcBoundary: L.geoJSON(null, {
@@ -2490,6 +2489,98 @@ function setupCartographyExplorerDrawer() {
   });
   document.querySelectorAll('[data-carto-explorer-close]').forEach((button) => {
     button.addEventListener('click', closeCartographyExplorerDrawer);
+  });
+}
+
+function updateCartographyBasemapStatus(detail = {}) {
+  const status = document.querySelector('#carto-basemap-status');
+  if (!status) return;
+  const preference = detail.preference || cartographyState.basemapManager?.getPreference?.() || 'auto';
+  const label = detail.label || cartographyState.basemapManager?.getActiveProviderLabel?.();
+  if (!label) {
+    status.textContent = preference === 'auto'
+      ? 'Mode automatique — recherche d’un fournisseur disponible…'
+      : 'Application du fond de carte…';
+    return;
+  }
+  const modeLabel = preference === 'auto' ? 'Automatique' : 'Manuel';
+  status.textContent = `Actif : ${label} (${modeLabel})`;
+}
+
+function syncCartographyBasemapRadios(preference) {
+  const value = preference || cartographyState.basemapManager?.getPreference?.() || 'auto';
+  document.querySelectorAll('input[name="carto-basemap"]').forEach((input) => {
+    input.checked = input.value === value;
+  });
+}
+
+function ensureCartographyBasemapManager() {
+  if (cartographyState.basemapManager) return cartographyState.basemapManager;
+  if (typeof window.SigBasemapManager !== 'function') return null;
+  cartographyState.basemapManager = new window.SigBasemapManager({
+    timeoutMs: 3000,
+    retries: 1,
+    onChange: (detail) => {
+      updateCartographyBasemapStatus(detail);
+      syncCartographyBasemapRadios(detail.preference);
+    },
+  });
+  return cartographyState.basemapManager;
+}
+
+function attachCartographyBasemap(map) {
+  const manager = ensureCartographyBasemapManager();
+  if (!manager || !map) {
+    if (typeof L !== 'undefined' && map) {
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        maxZoom: 20,
+        subdomains: 'abcd',
+        className: 'cartography-basemap-tiles',
+      }).addTo(map);
+    }
+    return Promise.resolve(null);
+  }
+  syncCartographyBasemapRadios(manager.getPreference());
+  updateCartographyBasemapStatus({ preference: manager.getPreference() });
+  showZonesMessage('Fond de carte : recherche d’un fournisseur disponible…');
+  return manager.attach(map).then((providerId) => {
+    const label = manager.getActiveProviderLabel() || providerId;
+    if (label) {
+      showZonesMessage(`Fond de carte : ${label}`);
+    }
+    updateCartographyBasemapStatus({
+      preference: manager.getPreference(),
+      label,
+      providerId,
+    });
+    return providerId;
+  });
+}
+
+function setupCartographyBasemapSettings() {
+  if (document.body.dataset.cartographyBasemapSettingsBound === 'true') return;
+  document.body.dataset.cartographyBasemapSettingsBound = 'true';
+
+  const manager = ensureCartographyBasemapManager();
+  if (manager) {
+    syncCartographyBasemapRadios(manager.getPreference());
+    updateCartographyBasemapStatus({ preference: manager.getPreference() });
+  }
+
+  document.querySelectorAll('input[name="carto-basemap"]').forEach((input) => {
+    input.addEventListener('change', () => {
+      if (!input.checked) return;
+      const preference = input.value;
+      const activeManager = ensureCartographyBasemapManager();
+      if (!activeManager) return;
+      updateCartographyBasemapStatus({ preference });
+      showZonesMessage('Fond de carte : bascule en cours…');
+      activeManager.setPreferenceAndAttach(preference).then((providerId) => {
+        const label = activeManager.getActiveProviderLabel() || providerId;
+        if (label) showZonesMessage(`Fond de carte : ${label}`);
+      });
+    });
   });
 }
 

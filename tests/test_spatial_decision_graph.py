@@ -196,3 +196,21 @@ def test_site_14_business_messages():
     assert "NSME" not in bodyish
     assert "ST_Within" not in bodyish
     assert "integration anomaly" not in bodyish.lower()
+
+
+def test_site_26_fdsu_not_integration_error():
+    """Contrat incident : référentiel branché, recherche exécutée, pas d'anomalie FDSU."""
+    graph = sdg.build_graph("site", "26", program_code="sites_40")
+    assert (graph.get("_meta") or {}).get("version", "").startswith("sdg-2.2")
+    statuses = {d["domain"]: d for d in (graph.get("domain_statuses") or [])}
+    fdsu = statuses["fdsu_sites"]
+    assert fdsu.get("reference_available") is True
+    assert fdsu.get("search_executed") is True
+    assert fdsu.get("status") != "integration_error"
+    assert fdsu.get("status") in {"operational", "empty", "partial"}
+    by = {c["id"]: c for c in graph["categories"]}
+    assert by["fdsu_sites"].get("maturity") != "anomaly"
+    assert "Anomalie d’intégration" not in str(by["fdsu_sites"].get("note") or "")
+    radius = next(k for k in graph["kpis"] if k["id"] == "radius")
+    assert radius.get("value") is not None
+    assert radius.get("status") != "unavailable"
