@@ -361,6 +361,7 @@
     if (typeof global.SigBasemapManager === 'function') {
       const manager = new global.SigBasemapManager({ timeoutMs: 3000, retries: 1 });
       manager.attach(map);
+      map.__sigBasemapManager = manager;
       return manager;
     }
     return global.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {

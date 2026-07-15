@@ -65,6 +65,10 @@ test.describe('Spatial Decision Graph v2.1', () => {
         expect(edge.target_label || edge.target_entity?.name).toBeTruthy();
         const contrib = edge.score_contribution || edge.contribution || {};
         expect(['mapped', 'proxy', 'unavailable']).toContain(contrib.status);
+        expect(['direct', 'indirect', 'contextual_evidence', 'not_applicable', 'pending_rule']).toContain(
+          contrib.contribution_type,
+        );
+        expect(String(contrib.role_label || JSON.stringify(contrib)).toLowerCase()).not.toContain('non calculée');
       }
     }
   });

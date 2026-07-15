@@ -186,7 +186,7 @@ test.describe('Tableau de Synthèse Territoriale', () => {
     expect(ctx?.trail?.length).toBeGreaterThanOrEqual(1);
   });
 
-  test('Salle de Pilotage DG — TST permanent', async ({ page }) => {
+  test('Salle de Pilotage — TST permanent', async ({ page }) => {
     await page.goto('/index.html#salle-pilotage');
     await expect(page.locator('#salle-pilotage-panel')).not.toHaveClass(/hidden/, { timeout: 30_000 });
     await expect(page.locator('#edvs-tst-host .tst-root, #edvs-tst-host .leaflet-container').first()).toBeVisible({ timeout: 60_000 });

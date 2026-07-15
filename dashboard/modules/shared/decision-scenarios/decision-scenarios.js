@@ -5,6 +5,7 @@
  */
 (function initDecisionScenarios(global) {
   const API_BASE = `${global.location.protocol}//${global.location.hostname}:8001`;
+  const L = (text) => (global.FdsuLabels?.harmonize ? global.FdsuLabels.harmonize(text) : text);
 
   const state = {
     version: '1.2.0',
@@ -71,7 +72,7 @@
       <button type="button" class="ds-scenario-card${state.activeId === scenario.id ? ' is-active' : ''}"
         data-scenario-run="${escapeHtml(scenario.id)}">
         <span class="ds-scenario-code">${escapeHtml(scenario.code || '')}</span>
-        <strong>${escapeHtml(scenario.title)}</strong>
+        <strong>${escapeHtml(L(scenario.title))}</strong>
         <span>${escapeHtml(scenario.question)}</span>
       </button>
     `).join('');
@@ -109,7 +110,7 @@
     result.innerHTML = `
       <header class="ds-result-header">
         <p class="panel-label">Scénario ${escapeHtml(payload.scenario?.code || '')}</p>
-        <h3>${escapeHtml(payload.title || payload.scenario?.title || '')}</h3>
+        <h3>${escapeHtml(L(payload.title || payload.scenario?.title || ''))}</h3>
         <p class="ds-question">${escapeHtml(payload.question || '')}</p>
       </header>
 
@@ -172,7 +173,7 @@
         <div class="ds-action-row">
           ${actions.map((action) => `
             <button type="button" class="primary-button" data-ds-action="${escapeHtml(action.id || '')}" data-ds-hash="${escapeHtml(action.hash || '')}">
-              ${escapeHtml(action.label || action.id || 'Action')}
+              ${escapeHtml(L(action.label || action.id || 'Action'))}
             </button>
           `).join('')}
         </div>

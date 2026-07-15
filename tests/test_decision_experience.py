@@ -74,18 +74,27 @@ def test_vocabulary_no_decision_detail_workspace():
 
 
 def test_spatial_impact_resilience_patterns():
-    """Explain KO ne doit plus bloquer toute la vue via Promise.all."""
+    """Explain KO ne doit plus bloquer toute la vue via Promise.all.
+
+    Contrat DXL mince (orchestrateur) : la résilience allSettled / tracedFetch
+    vit dans SpatialImpactController + DxlCore ; decision-experience.js délègue.
+    """
     dxl = (ROOT / "dashboard/modules/decision-experience/decision-experience.js").read_text(encoding="utf-8")
+    controller = (ROOT / "dashboard/modules/decision-experience/spatial-impact-controller.js").read_text(
+        encoding="utf-8"
+    )
+    core = (ROOT / "dashboard/modules/decision-experience/dxl-core.js").read_text(encoding="utf-8")
     html = (ROOT / "dashboard/index.html").read_text(encoding="utf-8")
-    assert "Promise.allSettled" in dxl
-    assert "tracedFetch" in dxl
-    assert "timeoutMs" in dxl
+    assert "Promise.allSettled" in controller
+    assert "tracedFetch" in core and "tracedFetch" in controller
+    assert "timeoutMs" in controller or "timeoutMs" in core
     assert "loadSpatialImpact" in dxl
     assert "dxl-section-services" in html
     assert "État des services" in html
-    assert "Analyse explicative indisponible" in dxl
-    assert "Les données d’impact restent consultables" in dxl or "Les données d'impact restent consultables" in dxl
+    assert "Analyse explicative indisponible" in controller
+    assert "Les données d’impact restent consultables" in controller or "Les données d'impact restent consultables" in controller
     assert "const [needs, impact, explain, mapPayload] = await Promise.all([" not in dxl
-    assert "softLoadingHtml" in dxl
-    assert "AbortController" in dxl
+    assert "const [needs, impact, explain, mapPayload] = await Promise.all([" not in controller
+    assert "softLoadingHtml" in core and "softLoadingHtml" in controller
+    assert "AbortController" in core
     assert "Promise.resolve(boot).catch" in dxl

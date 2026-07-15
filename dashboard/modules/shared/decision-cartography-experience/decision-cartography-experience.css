@@ -1,0 +1,715 @@
+/**
+ * Executive Presentation Mode — Phase 2.1
+ * Surface immersive DG / CA / bailleurs — carte dominante.
+ */
+
+/* ── Entry button (dossier map) ───────────────────────────────── */
+
+.epm-enter-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.92);
+  color: #e2e8f0;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.epm-enter-btn:hover,
+.epm-enter-btn:focus-visible {
+  border-color: #38bdf8;
+  outline: 2px solid rgba(56, 189, 248, 0.55);
+  outline-offset: 2px;
+}
+
+/* ── Immersive root chrome (overlays on SDG shell) ────────────── */
+
+.epm-root[hidden] {
+  display: none !important;
+}
+
+body.executive-presentation-mode {
+  overflow: hidden !important;
+  background: #020617 !important;
+}
+
+body.executive-presentation-mode #app-shell,
+body.executive-presentation-mode .app-sidebar,
+body.executive-presentation-mode .topbar,
+body.executive-presentation-mode aside.sidebar,
+body.executive-presentation-mode #sidebar,
+body.executive-presentation-mode nav.sidebar {
+  /* Keep layout but obscure non-map chrome if present */
+}
+
+body.executive-presentation-mode [data-epm-hidden],
+body.executive-presentation-mode [data-epm-hidden="true"],
+body.executive-presentation-mode .decision-experience-module > .dxl-topbar,
+body.executive-presentation-mode .decision-experience-module > .dxl-section:not(:has(#sdg-shell)):not(:has(#dxl-map)) {
+  display: none !important;
+}
+
+body.executive-presentation-mode #decision-experience-panel {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9000 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: none !important;
+  background: #020617;
+  overflow: hidden;
+}
+
+body.executive-presentation-mode #sdg-shell {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9001 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: #020617 !important;
+  border: none !important;
+}
+
+body.executive-presentation-mode .sdg-toolbar,
+body.executive-presentation-mode #sdg-summary,
+body.executive-presentation-mode #sdg-explainability,
+body.executive-presentation-mode #sdg-kpis,
+body.executive-presentation-mode #sdg-legend:not(.epm-legend-float) {
+  display: none !important;
+}
+
+body.executive-presentation-mode .sdg-main-grid {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: block !important;
+  position: relative !important;
+  grid-template-columns: none !important;
+  gap: 0 !important;
+  height: 100% !important;
+}
+
+body.executive-presentation-mode .sdg-map-column {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  display: block !important;
+  gap: 0 !important;
+}
+
+body.executive-presentation-mode .sdg-map-host {
+  position: absolute !important;
+  /* Map stage: leave room for topbar (~48px) + kpi (~44px) + narrative (~36px) + dock (~52px) ≈ 180px → map ~85-92% */
+  top: 128px !important;
+  right: 12px !important;
+  bottom: 58px !important;
+  left: 12px !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(56, 189, 248, 0.18) !important;
+  overflow: hidden !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  background: #0b1220 !important;
+}
+
+body.executive-presentation-mode .sdg-map-host #dxl-map,
+body.executive-presentation-mode .sdg-map-host .dxl-map {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+body.executive-presentation-mode .epm-enter-btn {
+  display: none !important;
+}
+
+/* ── Top bar ──────────────────────────────────────────────────── */
+
+.epm-root {
+  position: absolute;
+  inset: 0;
+  z-index: 9200;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.epm-topbar,
+.epm-kpi-strip,
+.epm-narrative-bar,
+.epm-command-dock,
+.epm-reco-card {
+  pointer-events: auto;
+}
+
+.epm-topbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  height: 48px;
+  padding: 0 0.75rem;
+  background: rgba(2, 6, 23, 0.92);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  backdrop-filter: blur(10px);
+}
+
+.epm-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.epm-brand-mark {
+  color: #38bdf8;
+  font-size: 0.85rem;
+}
+
+.epm-brand-text {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #e2e8f0;
+}
+
+.epm-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.55rem;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.epm-meta strong {
+  font-size: 0.92rem;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: min(360px, 40vw);
+}
+
+.epm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  font-size: 0.7rem;
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.03);
+  white-space: nowrap;
+}
+
+.epm-chip em {
+  font-style: normal;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-left: 0.15rem;
+}
+
+.epm-chip--prio {
+  border-color: rgba(245, 158, 11, 0.45);
+  color: #fbbf24;
+}
+
+.epm-chip--mute {
+  opacity: 0.85;
+  color: #94a3b8;
+}
+
+.epm-top-actions {
+  display: flex;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.epm-icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.8);
+  color: #e2e8f0;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.epm-icon-btn:hover,
+.epm-icon-btn:focus-visible {
+  border-color: #38bdf8;
+  outline: 2px solid rgba(56, 189, 248, 0.45);
+  outline-offset: 1px;
+}
+
+.epm-icon-btn--exit:hover {
+  border-color: #f87171;
+  color: #fecaca;
+}
+
+/* ── KPI strip ────────────────────────────────────────────────── */
+
+.epm-kpi-strip {
+  display: flex;
+  align-items: stretch;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  height: 44px;
+  padding: 0.3rem 0.75rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: rgba(15, 23, 42, 0.88);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  scrollbar-width: thin;
+}
+
+.epm-kpi {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+  min-width: 0;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: #e2e8f0;
+  cursor: pointer;
+  font: inherit;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.epm-kpi:hover,
+.epm-kpi:focus-visible,
+.epm-kpi.is-active {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.35);
+  outline: none;
+}
+
+.epm-kpi.is-empty {
+  opacity: 0.55;
+}
+
+.epm-kpi-icon {
+  font-size: 0.75rem;
+  color: #38bdf8;
+  opacity: 0.9;
+}
+
+.epm-kpi-meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  text-align: left;
+}
+
+.epm-kpi-label {
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.epm-kpi-value {
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #f8fafc;
+}
+
+.epm-kpi-pulse {
+  animation: epmKpiPulse 1.4s ease;
+}
+
+@keyframes epmKpiPulse {
+  0%, 100% { box-shadow: none; }
+  40% { box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.35); }
+}
+
+/* ── Narrative ────────────────────────────────────────────────── */
+
+.epm-narrative-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 0.25rem 0.9rem;
+  background: rgba(2, 6, 23, 0.75);
+}
+
+#epm-narrative {
+  margin: 0;
+  flex: 1;
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  line-height: 1.35;
+}
+
+.epm-tour-counter {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+/* ── Recommendation card ──────────────────────────────────────── */
+
+.epm-reco-card {
+  position: absolute;
+  left: 50%;
+  bottom: 72px;
+  transform: translateX(-50%);
+  z-index: 9300;
+  width: min(560px, calc(100vw - 48px));
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: rgba(15, 23, 42, 0.94);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  animation: epmPanelIn 0.35s ease;
+}
+
+.epm-reco-card[hidden] {
+  display: none !important;
+}
+
+.epm-reco-kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #38bdf8;
+}
+
+.epm-reco-text {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #e2e8f0;
+  line-height: 1.45;
+}
+
+.epm-reco-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.85rem;
+  margin-top: 0.55rem;
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+/* ── Command dock (icon palette) ──────────────────────────────── */
+
+.epm-command-dock {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  z-index: 9350;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.3rem 0.4rem;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.92);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+  max-width: calc(100vw - 24px);
+  overflow-x: auto;
+}
+
+.epm-dock-btn {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #e2e8f0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.epm-dock-btn:hover,
+.epm-dock-btn:focus-visible {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.35);
+  outline: none;
+}
+
+.epm-dock-btn.is-active {
+  background: rgba(56, 189, 248, 0.18);
+  border-color: rgba(56, 189, 248, 0.5);
+  color: #7dd3fc;
+}
+
+.epm-dock-btn:disabled,
+.epm-dock-btn.is-coming {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.epm-dock-btn[title]:hover::after,
+.epm-dock-btn[title]:focus-visible::after {
+  content: attr(title);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  background: #0f172a;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  color: #e2e8f0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.epm-dock-sep {
+  width: 1px;
+  height: 22px;
+  background: rgba(148, 163, 184, 0.25);
+  margin: 0 0.15rem;
+  flex-shrink: 0;
+}
+
+.epm-guided-nav {
+  display: none;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.epm-guided-nav.is-visible {
+  display: inline-flex;
+}
+
+/* ── Contextual panels (hidden by default in EPM) ─────────────── */
+
+body.executive-presentation-mode .sdg-filters-panel,
+body.executive-presentation-mode .sdg-detail-panel {
+  position: fixed !important;
+  z-index: 9400 !important;
+  width: min(300px, calc(100vw - 28px)) !important;
+  max-height: min(52vh, 480px) !important;
+  overflow: auto !important;
+  margin: 0 !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(148, 163, 184, 0.28) !important;
+  background: rgba(15, 23, 42, 0.9) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+body.executive-presentation-mode .sdg-filters-panel {
+  top: 140px !important;
+  left: 20px !important;
+  right: auto !important;
+}
+
+body.executive-presentation-mode .sdg-detail-panel {
+  top: 140px !important;
+  right: 20px !important;
+  left: auto !important;
+}
+
+body.executive-presentation-mode .epm-panel-hidden {
+  display: none !important;
+}
+
+body.executive-presentation-mode .epm-panel-open {
+  display: block !important;
+  animation: epmPanelIn 0.28s ease;
+}
+
+body.executive-presentation-mode .sdg-filters-panel > .epm-panel-close[data-epm-close-panel="relations"] {
+  position: sticky;
+  top: 0;
+  float: right;
+  z-index: 5;
+  width: 30px;
+  height: 30px;
+  margin: 0 0 0.35rem 0.35rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.9);
+  color: #e2e8f0;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body.executive-presentation-mode .sdg-detail-panel .sdg-detail-close {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.epm-panel-close:hover,
+.epm-panel-close:focus-visible,
+.sdg-detail-close:hover,
+.sdg-detail-close:focus-visible {
+  border-color: #38bdf8;
+  outline: 2px solid rgba(56, 189, 248, 0.45);
+  outline-offset: 1px;
+}
+
+body.executive-presentation-mode .epm-legend-float {
+  display: block !important;
+  position: fixed !important;
+  z-index: 9400 !important;
+  left: 20px !important;
+  bottom: 72px !important;
+  width: min(280px, calc(100vw - 40px)) !important;
+  max-height: 28vh !important;
+  overflow: auto !important;
+  border-radius: 10px !important;
+  background: rgba(15, 23, 42, 0.92) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes epmPanelIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Map marker animations ────────────────────────────────────── */
+
+.sdg-marker.epm-spotlight,
+.sdg-marker.epm-selected {
+  animation: epmSpotlight 1.5s ease;
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.75));
+}
+
+.sdg-marker.epm-dimmed {
+  opacity: 0.35;
+  transition: opacity 0.35s ease;
+}
+
+.sdg-edge.epm-edge-reveal {
+  animation: epmEdgeIn 0.7s ease;
+}
+
+@keyframes epmSpotlight {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes epmEdgeIn {
+  from { opacity: 0.2; }
+  to { opacity: 0.92; }
+}
+
+.leaflet-popup.sdg-popup-wrap.epm-popup-visible .leaflet-popup-content-wrapper {
+  animation: epmPopupIn 0.22s ease;
+}
+
+.leaflet-popup.sdg-popup-wrap .leaflet-popup-content {
+  max-height: min(42vh, 320px);
+  overflow-y: auto;
+}
+
+@keyframes epmPopupIn {
+  from { opacity: 0.55; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Print / reduced motion / responsive ──────────────────────── */
+
+@media print {
+  body.epm-print .epm-command-dock,
+  body.epm-print .epm-enter-btn {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sdg-marker.epm-spotlight,
+  .sdg-marker.epm-selected,
+  .sdg-edge.epm-edge-reveal,
+  .epm-kpi-pulse,
+  .epm-reco-card,
+  .epm-panel-open,
+  .leaflet-popup.sdg-popup-wrap.epm-popup-visible .leaflet-popup-content-wrapper {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 1366px) {
+  body.executive-presentation-mode .sdg-map-host {
+    top: 120px !important;
+    bottom: 54px !important;
+    left: 8px !important;
+    right: 8px !important;
+  }
+
+  .epm-meta strong {
+    max-width: min(240px, 32vw);
+  }
+}
+
+@media (max-width: 900px) {
+  .epm-chip--mute {
+    display: none;
+  }
+
+  body.executive-presentation-mode .sdg-filters-panel,
+  body.executive-presentation-mode .sdg-detail-panel {
+    top: auto !important;
+    bottom: 66px !important;
+    max-height: 36vh !important;
+  }
+
+  body.executive-presentation-mode .sdg-filters-panel {
+    left: 10px !important;
+    right: 10px !important;
+    width: auto !important;
+  }
+
+  body.executive-presentation-mode .sdg-detail-panel {
+    left: 10px !important;
+    right: 10px !important;
+    width: auto !important;
+  }
+}
+
+/* Legacy class alias — Phase 2 remnants cleaned when EPM active */
+body.executive-presentation-mode.decision-demo-mode .decision-demo-presentation-bar,
+body.executive-presentation-mode .decision-demo-presentation-bar,
+body.executive-presentation-mode .decision-demo-map-header {
+  display: none !important;
+}

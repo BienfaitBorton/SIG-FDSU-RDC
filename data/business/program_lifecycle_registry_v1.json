@@ -1,0 +1,93 @@
+{
+  "_meta": {
+    "schema_version": "1.0.0",
+    "engine": "ple-1.0.0",
+    "title": "Registre institutionnel — cycle de vie programmes FDSU",
+    "doctrine": "Data First / No Black Box — aucun statut opérationnel inventé",
+    "updated_at": "2026-07-15",
+    "notes": [
+      "Ces valeurs décrivent l’état métier institutionnel connu.",
+      "Elles ne remplacent pas une preuve de mise en service individuelle.",
+      "data_status ≠ program_status ≠ asset_status."
+    ]
+  },
+  "programs": {
+    "sites_40": {
+      "program_code": "sites_40",
+      "program_name": "Sites 40",
+      "phase_label": "Phase 0 — Sites pilotes",
+      "program_status": "deployment_in_progress",
+      "data_status": "integrated",
+      "default_asset_status": null,
+      "default_asset_status_note": "Statut individuel en cours de consolidation — sources sites = « à qualifier ».",
+      "default_impact_status": "estimated",
+      "default_service_status": "not_available",
+      "default_worksite_status": null,
+      "total_target": 40,
+      "source": "cadre institutionnel FDSU + data/business/fdsu_programs.json (EN_EXECUTION)",
+      "confidence": "high",
+      "notes": [
+        "Programme en cours d’exécution / déploiement.",
+        "Ne pas présenter l’ensemble des 40 sites comme opérationnels."
+      ]
+    },
+    "sites_300": {
+      "program_code": "sites_300",
+      "program_name": "Sites 300",
+      "phase_label": "Phase 1 — Première vague",
+      "program_status": "planned",
+      "data_status": "integrated",
+      "default_asset_status": "selected",
+      "default_asset_status_note": "Sites listés comme planifiés — aucun opérationnel sans preuve.",
+      "default_impact_status": "projected",
+      "default_service_status": "not_available",
+      "default_worksite_status": "not_started",
+      "total_target": 300,
+      "source": "fdsu_programs.json (PLANIFIE) + sites_300.json",
+      "confidence": "high",
+      "notes": [
+        "Programme planifié ; préparation du déploiement progressif.",
+        "deployment_status source: NON_DEMARRE."
+      ]
+    },
+    "sites_20476": {
+      "program_code": "sites_20476",
+      "program_name": "Sites 20 476",
+      "phase_label": "Programme national",
+      "program_status": "strategic_planning",
+      "data_status": "partial",
+      "default_asset_status": "candidate",
+      "default_asset_status_note": "Cible nationale / programmation — sites effectivement engagés non consolidés.",
+      "default_impact_status": "projected",
+      "default_service_status": "not_available",
+      "default_worksite_status": "not_started",
+      "total_target": 20476,
+      "source": "fdsu_programs.json + inventory national",
+      "confidence": "medium",
+      "notes": [
+        "Planification stratégique / programmation nationale.",
+        "Distinguer cible nationale et sites effectivement engagés."
+      ]
+    },
+    "ccn": {
+      "program_code": "ccn",
+      "program_name": "Programme National des CCN",
+      "phase_label": "Programme CCN",
+      "program_status": "preparation",
+      "data_status": "partial",
+      "default_asset_status": null,
+      "default_asset_status_note": "Inventaire DEMO — aucun CCN production opérationnel sans donnée officielle.",
+      "default_impact_status": "projected",
+      "default_service_status": "not_available",
+      "default_worksite_status": null,
+      "total_target": null,
+      "data_class": "demonstration",
+      "source": "stratégie FDSU–CCN + demo_ccn.json",
+      "confidence": "low",
+      "notes": [
+        "Planification / préparation ; déploiement progressif à venir.",
+        "Statuts « operational » du fichier DEMO ≠ production."
+      ]
+    }
+  }
+}

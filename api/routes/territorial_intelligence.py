@@ -1,4 +1,4 @@
-"""API Territorial Intelligence Explorer v1."""
+"""API Territorial Intelligence Explorer v1 (+ multi-échelle)."""
 
 from __future__ import annotations
 
@@ -9,6 +9,52 @@ from fastapi import APIRouter, HTTPException, Query
 from api.services import territorial_intelligence_service as tis
 
 router = APIRouter()
+
+
+@router.get("/symbology", summary="Registre unique de symbologie cartographique")
+def get_symbology_registry() -> dict[str, Any]:
+    from api.services import cartography_symbology_registry as symbology
+
+    return symbology.registry_payload()
+
+
+@router.get("/entities/{entity_id}", summary="Intelligence territoriale multi-échelle")
+def get_entity_intelligence(entity_id: str) -> dict[str, Any]:
+    from api.services import territorial_multiscale_service as tms
+
+    result = tms.build_entity_intelligence(entity_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Entité territoriale introuvable.")
+    return result
+
+
+@router.get("/entities/{entity_id}/map", summary="Carte multi-échelle de l’entité")
+def get_entity_map(entity_id: str) -> dict[str, Any]:
+    from api.services import territorial_multiscale_service as tms
+
+    entity = tms.resolve_entity(entity_id)
+    if not entity:
+        raise HTTPException(status_code=404, detail="Entité territoriale introuvable.")
+    result = tms.build_map_for_entity(entity)
+    if not result:
+        raise HTTPException(status_code=404, detail="Carte introuvable.")
+    return result
+
+
+@router.get("/entities/{entity_id}/children", summary="Enfants administratifs directs")
+def get_entity_children(entity_id: str, limit: int = Query(200, gt=0, le=1000)) -> dict[str, Any]:
+    from api.services import territorial_multiscale_service as tms
+
+    entity = tms.resolve_entity(entity_id)
+    if not entity:
+        raise HTTPException(status_code=404, detail="Entité territoriale introuvable.")
+    children = tms.list_children(entity, limit=limit)
+    return {
+        "entity": {"type": entity.get("type"), "id": entity.get("id"), "name": entity.get("name")},
+        "children_level": children[0]["type"] if children else None,
+        "count": len(children),
+        "children": children,
+    }
 
 
 @router.get("/territories", summary="Lister les territoires (intelligence territoriale)")
@@ -32,14 +78,52 @@ def list_territories(
 
 @router.get("/territories/{territory_id}", summary="Profil Territorial FDSU")
 def get_territory_profile(territory_id: str) -> dict[str, Any]:
+    # Multi-échelle : si l’id n’est pas un territoire, renvoyer le contrat partagé
+    upper = str(territory_id or "").upper()
+    if not upper.startswith("TERRITOIRE") and any(
+        upper.startswith(p + "-")
+        for p in ("PROVINCE", "COLLECTIVITE", "GROUPEMENT", "LOCALITE", "SECTEUR", "CHEFFERIE", "CITE")
+    ):
+        from api.services import territorial_multiscale_service as tms
+
+        result = tms.build_entity_intelligence(territory_id)
+        if not result:
+            raise HTTPException(status_code=404, detail="Entité territoriale introuvable.")
+        return result
     result = tis.build_territorial_profile(territory_id)
     if not result:
         raise HTTPException(status_code=404, detail="Territoire introuvable.")
+    # Enrichissement non destructif : fil d’Ariane + enfants
+    try:
+        from api.services import territorial_multiscale_service as tms
+
+        multi = tms.build_entity_intelligence(territory_id)
+        if multi:
+            result["breadcrumb"] = multi.get("breadcrumb")
+            result["children"] = multi.get("children")
+            result["coverage"] = multi.get("coverage")
+            result["entity"] = multi.get("entity")
+    except Exception:
+        pass
     return result
 
 
 @router.get("/territories/{territory_id}/map", summary="Carte GeoJSON du territoire")
 def get_territory_map(territory_id: str) -> dict[str, Any]:
+    upper = str(territory_id or "").upper()
+    if not upper.startswith("TERRITOIRE") and any(
+        upper.startswith(p + "-")
+        for p in ("PROVINCE", "COLLECTIVITE", "GROUPEMENT", "LOCALITE", "SECTEUR", "CHEFFERIE", "CITE")
+    ):
+        from api.services import territorial_multiscale_service as tms
+
+        entity = tms.resolve_entity(territory_id)
+        if not entity:
+            raise HTTPException(status_code=404, detail="Entité territoriale introuvable.")
+        result = tms.build_map_for_entity(entity)
+        if not result:
+            raise HTTPException(status_code=404, detail="Carte introuvable.")
+        return result
     result = tis.build_map_payload(territory_id)
     if not result:
         raise HTTPException(status_code=404, detail="Carte territoriale introuvable.")

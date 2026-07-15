@@ -1,0 +1,129 @@
+[
+  {
+    "step": "map_initial",
+    "initialized": true,
+    "freeMode": false,
+    "tileCount": 18,
+    "tilesLoaded": 0,
+    "stageBg": "rgb(238, 242, 247)",
+    "overlayPresent": false,
+    "activeLayers": [
+      "rdcBoundary"
+    ],
+    "zoom": 5,
+    "center": [
+      -4.083452772038619,
+      21.7529296875
+    ]
+  },
+  {
+    "step": "layers_open",
+    "initialized": true,
+    "freeMode": false,
+    "tileCount": 18,
+    "tilesLoaded": 0,
+    "stageBg": "rgb(238, 242, 247)",
+    "overlayPresent": false,
+    "activeLayers": [
+      "rdcBoundary"
+    ],
+    "zoom": 5,
+    "center": [
+      -4.083452772038619,
+      21.7529296875
+    ]
+  },
+  {
+    "step": "toggle_fdsu",
+    "toggled": "checkbox"
+  },
+  {
+    "step": "zones_on",
+    "initialized": true,
+    "freeMode": false,
+    "tileCount": 18,
+    "tilesLoaded": 0,
+    "stageBg": "rgb(238, 242, 247)",
+    "overlayPresent": false,
+    "activeLayers": [
+      "rdcBoundary",
+      "zones"
+    ],
+    "zoom": 5,
+    "center": [
+      -4.083452772038619,
+      21.7529296875
+    ]
+  },
+  {
+    "step": "layers_closed",
+    "initialized": true,
+    "freeMode": false,
+    "tileCount": 18,
+    "tilesLoaded": 0,
+    "stageBg": "rgb(238, 242, 247)",
+    "overlayPresent": false,
+    "activeLayers": [
+      "rdcBoundary",
+      "zones"
+    ],
+    "zoom": 5,
+    "center": [
+      -4.083452772038619,
+      21.7529296875
+    ]
+  },
+  {
+    "step": "vue_nationale",
+    "initialized": true,
+    "freeMode": false,
+    "tileCount": 18,
+    "tilesLoaded": 0,
+    "stageBg": "rgb(238, 242, 247)",
+    "overlayPresent": false,
+    "activeLayers": [
+      "rdcBoundary",
+      "zones"
+    ],
+    "zoom": 5,
+    "center": [
+      -4.083452772038619,
+      21.7529296875
+    ]
+  },
+  {
+    "step": "cartographie_libre",
+    "initialized": true,
+    "freeMode": false,
+    "tileCount": 18,
+    "tilesLoaded": 0,
+    "stageBg": "rgb(238, 242, 247)",
+    "overlayPresent": false,
+    "activeLayers": [
+      "rdcBoundary",
+      "zones"
+    ],
+    "zoom": 5,
+    "center": [
+      -4.083452772038619,
+      21.7529296875
+    ]
+  },
+  {
+    "step": "tile_probe",
+    "tileProbe": [
+      {
+        "url": "https://a.tile.openstreetmap.org/5/15/15.png",
+        "ok": false,
+        "error": "TypeError: Failed to fetch",
+        "ms": 84163
+      },
+      {
+        "url": "https://a.basemaps.cartocdn.com/rastertiles/voyager/5/15/15.png",
+        "ok": true,
+        "type": "opaque",
+        "ms": 609
+      }
+    ]
+  }
+]

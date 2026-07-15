@@ -1,0 +1,18 @@
+{
+  "diagnose": {
+    "provider": "carto",
+    "label": "CARTO Voyager",
+    "preference": "auto",
+    "tileCount": 18,
+    "tilesLoaded": 18,
+    "tileSrcSample": "https://b.basemaps.cartocdn.com/rastertiles/voyager/5/17/16.png",
+    "stageBg": "rgb(244, 241, 232)",
+    "status": "Actif : CARTO Voyager (Automatique)"
+  },
+  "logs": [
+    "Basemap : mode Automatique — test dans l'ordre : OpenStreetMap → CARTO Voyager → Esri Street → Esri Satellite",
+    "Basemap : OpenStreetMap — tentative 1/2 échouée, nouvel essai…",
+    "Basemap : OpenStreetMap indisponible\n→ bascule CARTO Voyager",
+    "Basemap : fournisseur actif : CARTO Voyager"
+  ]
+}

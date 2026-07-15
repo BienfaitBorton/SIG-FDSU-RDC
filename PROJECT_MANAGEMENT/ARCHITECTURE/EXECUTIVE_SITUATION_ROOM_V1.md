@@ -1,14 +1,14 @@
-# Executive Situation Room (ESR) v1.0
+# Centre National de Pilotage (Salle de Pilotage) v1.0
 
 ## Vision
 
-Transformer la **Salle de Pilotage DG** en véritable **salle de commandement** :
+Transformer la **Salle de Pilotage National** en véritable **centre de commandement institutionnel** :
 
-> En moins de cinq minutes, un Directeur Général comprend la situation nationale, identifie les priorités, explore les territoires, comprend les raisons, lance des simulations et prépare les décisions — sans quitter la salle.
+> En moins de cinq minutes, un décideur institutionnel comprend la situation nationale, identifie les priorités, explore les territoires, comprend les raisons, lance des simulations et prépare les décisions — sans quitter la salle.
 
 Ce n’est plus un tableau de bord : c’est un **parcours décisionnel narratif**.
 
-## Parcours DG
+## Parcours de pilotage
 
 ```
 Situation nationale
@@ -52,14 +52,14 @@ Moteurs existants
 
 | Bloc | Rôle |
 |---|---|
-| Executive Briefing | Résumé généré dynamiquement (données sourcées uniquement) |
+| Synthèse Exécutive | Résumé généré dynamiquement (données sourcées uniquement) |
 | Situation nationale | KPI cliquables → Workspace / analyses |
 | Carte nationale (TST) | Province → … → Site, contexte partagé |
 | Alertes nationales | Critique / Attention / Information |
 | Posez votre question | Questions prédéfinies (prêt conversationnel) |
 | Simulations stratégiques | Decision Scenarios branchés |
 | Actions exécutives | Réelles + Capability Registry |
-| Présenter au DG | Déroulé guidé des sections |
+| Présentation guidée | Déroulé guidé des sections |
 
 ## API
 
@@ -81,11 +81,11 @@ Les routes EDVS historiques (`/cockpit`, `/chart-catalog`) restent disponibles.
 - Tiroir latéral `#esr-explain-drawer` (titre, justification, source)
 - Aucune donnée inventée ; si non chiffré → libellé honnête
 
-## Présentation DG
+## Mode Présentation
 
 Ordre :
 
-1. Executive Briefing  
+1. Synthèse Exécutive  
 2. Situation nationale  
 3. Carte  
 4. Alertes  
@@ -108,13 +108,13 @@ Ordre :
 
 | Action | Comportement |
 |---|---|
-| Préparer un dossier DG | → `decision-scenario/dg_dossier` |
+| Préparer un dossier de décision | → `decision-scenario/dg_dossier` |
 | Préparer une mission | masquée (`mission_planning`) |
-| Exporter les analyses | → Workspace (Excel réel) |
-| Decision Workspace | réel |
-| Territorial Digital Twin | réel (contexte TST privilégié) |
+| Exporter les analyses | → Espace de Décision (Excel réel) |
+| Espace de Décision | réel |
+| Jumeau Numérique Territorial | réel (contexte TST privilégié) |
 | Analyse d’Impact Territorial | réel (SDG) |
-| Présenter au DG | réel |
+| Présentation guidée | réel |
 
 ## Fichiers
 

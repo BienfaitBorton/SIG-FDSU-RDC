@@ -1150,6 +1150,36 @@ def match_asset_to_needs(
             all_sites = list_fdsu_sites(limit=5000)
             sites = [s for s in all_sites if str(s.get("site_code")) == str(asset_id)]
         if not sites:
+            # Fallback Data First : résoudre depuis fichiers programmes (ex. Sites 20 476)
+            # — données réelles uniquement, aucune géométrie inventée.
+            try:
+                from api.services.site_entity_resolver import resolve_site
+
+                resolved = resolve_site(asset_id) or {}
+                if resolved.get("resolved") and resolved.get("latitude") is not None and resolved.get("longitude") is not None:
+                    asset = {
+                        "id": resolved.get("site_id") or site_id or asset_id,
+                        "site_id": resolved.get("site_id") or site_id or asset_id,
+                        "site_code": resolved.get("site_code"),
+                        "site_name": resolved.get("site_name"),
+                        "latitude": resolved.get("latitude"),
+                        "longitude": resolved.get("longitude"),
+                        "province": resolved.get("province"),
+                        "territoire": resolved.get("territoire"),
+                        "zone": resolved.get("zone"),
+                        "program_code": resolved.get("program_code"),
+                        "status": resolved.get("status"),
+                        "source": "program_file_resolver",
+                    }
+                    fallback_note = (
+                        "Site hors programs.fdsu_sites — résolution fichier programme "
+                        f"({resolved.get('program_code')}). Données spatiales réelles uniquement."
+                    )
+                    mode = "fichier"
+                    sites = [asset]
+            except Exception:
+                sites = []
+        if not sites:
             return {
                 "_meta": {"engine": ENGINE_VERSION, "status": "not_found"},
                 "asset_type": asset_type,

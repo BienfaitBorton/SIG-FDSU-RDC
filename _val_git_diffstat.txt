@@ -1,0 +1,88 @@
+﻿git : warning: in the working copy of 'PROJECT_MANAGEMENT/ARCHITECTURE/EXECUTIVE_SITUATION_ROOM_V1.md', LF will be 
+replaced by CRLF the next time Git touches it
+Au caractère C:\Users\FemminTech\AppData\Local\Temp\ps-script-3f82d968-ad75-4e18-9693-ff16488541e4.ps1:105 : 84
++ ... th .\_val_git_status.txt -Encoding utf8; git diff --stat 2>&1 | Out-F ...
++                                              ~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning: in the... Git touches it:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+warning: in the working copy of 'api/main.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'api/routes/spatial_decision_graph.py', LF will be replaced by CRLF the next time Git 
+touches it
+warning: in the working copy of 'api/routes/territorial_intelligence.py', LF will be replaced by CRLF the next time 
+Git touches it
+warning: in the working copy of 'api/services/executive_cockpit_service.py', LF will be replaced by CRLF the next time 
+Git touches it
+warning: in the working copy of 'api/services/program_service.py', LF will be replaced by CRLF the next time Git 
+touches it
+warning: in the working copy of 'api/services/territorial_intelligence_service.py', LF will be replaced by CRLF the 
+next time Git touches it
+warning: in the working copy of 'dashboard/index.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'dashboard/modules/decision-experience/decision-case-controller.js', LF will be 
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'dashboard/modules/decision-experience/decision-experience.js', LF will be replaced by 
+CRLF the next time Git touches it
+warning: in the working copy of 'dashboard/modules/decision-experience/dxl-core.js', LF will be replaced by CRLF the 
+next time Git touches it
+warning: in the working copy of 'dashboard/modules/decision-experience/spatial-impact-controller.js', LF will be 
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'dashboard/modules/shared/decision-scenarios/decision-scenarios.js', LF will be 
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'dashboard/modules/shared/decision-workspace/decision-workspace.js', LF will be 
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'dashboard/modules/shared/executive-dashboard/executive-dashboard.js', LF will be 
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'dashboard/modules/shared/executive-dashboard/executive-layout.js', LF will be 
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'dashboard/modules/shared/executive-situation-room/executive-situation-room.js', LF 
+will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'dashboard/modules/shared/map-tooltips.js', LF will be replaced by CRLF the next time 
+Git touches it
+warning: in the working copy of 'dashboard/modules/shared/spatial-decision-graph/spatial-decision-graph.css', LF will 
+be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'dashboard/modules/shared/territorial-digital-twin/territorial-digital-twin.js', LF 
+will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'dashboard/modules/shared/ux-premium/ux-premium.css', LF will be replaced by CRLF the 
+next time Git touches it
+warning: in the working copy of 'dashboard/modules/shared/ux-premium/ux-premium.js', LF will be replaced by CRLF the 
+next time Git touches it
+warning: in the working copy of 'dashboard/modules/territorial-intelligence/territorial-intelligence.css', LF will be 
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/e2e/executive-situation-room.spec.js', LF will be replaced by CRLF the next 
+time Git touches it
+warning: in the working copy of 'tests/e2e/territorial-summary.spec.js', LF will be replaced by CRLF the next time Git 
+touches it
+ .../ARCHITECTURE/EXECUTIVE_SITUATION_ROOM_V1.md    |   26 +-
+ api/main.py                                        |   24 +
+ api/routes/spatial_decision_graph.py               |    1 +
+ api/routes/territorial_intelligence.py             |   86 +-
+ api/services/executive_cockpit_service.py          |   25 +-
+ api/services/program_service.py                    |   70 +-
+ api/services/spatial_decision_graph_service.py     |  223 +-
+ api/services/spatial_matching_service.py           |   30 +
+ api/services/territorial_intelligence_service.py   |   17 +-
+ dashboard/app.js                                   |   49 +-
+ dashboard/index.html                               |  226 +-
+ .../decision-case-controller.js                    |    3 +
+ .../decision-experience/decision-experience.js     |    2 +
+ dashboard/modules/decision-experience/dxl-core.js  |    1 +
+ .../spatial-impact-controller.js                   |   64 +-
+ .../decision-scenarios/decision-scenarios.js       |    7 +-
+ .../decision-workspace/decision-workspace.js       |    2 +-
+ .../executive-dashboard/executive-dashboard.js     |   14 +-
+ .../shared/executive-dashboard/executive-layout.js |    2 +-
+ .../executive-situation-room.js                    |   40 +-
+ dashboard/modules/shared/map-tooltips.js           |   81 +-
+ .../spatial-decision-graph.css                     |  121 +
+ .../spatial-decision-graph.js                      |  209 +-
+ .../territorial-digital-twin.js                    |    2 +-
+ dashboard/modules/shared/ux-premium/ux-premium.css |   51 +
+ dashboard/modules/shared/ux-premium/ux-premium.js  |   39 +-
+ .../territorial-intelligence.css                   |   79 +
+ .../territorial-intelligence.js                    |  448 ++-
+ data/decision/case_history.json                    | 4244 ++++++++++----------
+ tests/e2e/executive-situation-room.spec.js         |    2 +-
+ tests/e2e/spatial-decision-graph.spec.js           |    4 +
+ tests/e2e/territorial-summary.spec.js              |    2 +-
+ tests/test_spatial_decision_graph.py               |   16 +-
+ 33 files changed, 3783 insertions(+), 2427 deletions(-)

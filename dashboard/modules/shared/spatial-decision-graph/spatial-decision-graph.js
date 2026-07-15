@@ -93,16 +93,113 @@
     return `${Math.round(n)} m`;
   }
 
-  function contributionDisplay(contrib) {
-    if (!contrib) return null;
-    if (contrib.display) return contrib.display;
-    if (contrib.status === 'unavailable' || contrib.status == null) return 'Contribution non calculée';
-    return null;
+  function normalizeContribution(raw, category) {
+    const contrib = raw && typeof raw === 'object' ? { ...raw } : {};
+    const cat = category || '';
+    let type = contrib.contribution_type;
+    if (!type) {
+      if (contrib.status === 'mapped' && contrib.criterion) {
+        const disp = String(contrib.display || '');
+        type = (/\d/.test(disp) || disp.includes('/')) ? 'direct' : 'indirect';
+      } else if (contrib.status === 'proxy' || ['population', 'localities', 'needs'].includes(cat)) {
+        type = 'indirect';
+      } else if (cat === 'ccn') {
+        type = 'pending_rule';
+      } else if (['fdsu_sites', 'admin'].includes(cat)) {
+        type = 'contextual_evidence';
+      } else {
+        type = 'contextual_evidence';
+      }
+    }
+    const roleLabels = {
+      direct: 'Contribution directe',
+      indirect: 'Contribution indirecte',
+      contextual_evidence: 'Preuve contextuelle',
+      not_applicable: 'Non applicable',
+      pending_rule: 'En attente de règle officielle',
+    };
+    const explanations = {
+      direct: contrib.criterion
+        ? `Cette relation attribue des points au critère « ${contrib.criterion} » selon la règle officielle appliquée.`
+        : 'Points attribués selon une règle officielle sourcée.',
+      indirect: ['population', 'localities', 'needs'].includes(cat)
+        ? 'Cette localité ou population alimente indirectement les critères démographie et couverture.'
+        : 'Cette relation alimente des critères agrégés du score, sans points isolés propres.',
+      contextual_evidence: cat === 'health'
+        ? 'Cet établissement confirme la présence d’un service public essentiel (preuve contextuelle).'
+        : cat === 'fdsu_sites'
+          ? 'Site FDSU voisin — preuve de coordination / contexte programme, sans points attribués.'
+          : 'Cette relation aide à comprendre la décision sans être pondérée directement dans le score.',
+      not_applicable: 'Cette relation n’entre pas dans le scoring ; elle est affichée à titre de contexte territorial.',
+      pending_rule: 'Moteur CCN / DEMO — aucune pondération inventée ; en attente de règle officielle sourcée.',
+    };
+    return {
+      ...contrib,
+      contribution_type: type,
+      role_label: contrib.role_label || roleLabels[type] || 'Preuve contextuelle',
+      explanation: contrib.explanation || explanations[type] || explanations.contextual_evidence,
+    };
+  }
+
+  function renderContributionBlock(raw, category) {
+    const contrib = normalizeContribution(raw, category);
+    const type = contrib.contribution_type;
+    const fed = Array.isArray(contrib.fed_criteria) ? contrib.fed_criteria.filter(Boolean) : [];
+    const hasCalc = type === 'direct' && (
+      contrib.points != null
+      || contrib.maximum != null
+      || contrib.criterion
+      || (contrib.display && /\d/.test(String(contrib.display)))
+    );
+    const calcRows = [];
+    if (contrib.criterion) calcRows.push(`<p class="sdg-field"><span>Critère</span> ${escapeHtml(contrib.criterion)}</p>`);
+    if (contrib.points != null || contrib.maximum != null) {
+      calcRows.push(`<p class="sdg-field"><span>Points</span> ${escapeHtml(contrib.points ?? '—')} / ${escapeHtml(contrib.maximum ?? '—')}</p>`);
+    } else if (contrib.display && type === 'direct') {
+      calcRows.push(`<p class="sdg-field"><span>Valeur</span> ${escapeHtml(contrib.display)}</p>`);
+    }
+    if (contrib.weight != null && contrib.weight !== '') {
+      calcRows.push(`<p class="sdg-field"><span>Pondération</span> ${escapeHtml(contrib.weight)}</p>`);
+    }
+    if (contrib.rule) calcRows.push(`<p class="sdg-field"><span>Règle</span> ${escapeHtml(contrib.rule)}</p>`);
+    if (contrib.matrix_version) {
+      calcRows.push(`<p class="sdg-field"><span>Version matrice</span> ${escapeHtml(contrib.matrix_version)}</p>`);
+    }
+    if (contrib.source_document) {
+      calcRows.push(`<p class="sdg-field"><span>Document source</span> ${escapeHtml(contrib.source_document)}</p>`);
+    }
+    if (contrib.note) calcRows.push(`<p class="sdg-field"><span>Note</span> ${escapeHtml(contrib.note)}</p>`);
+
+    return `
+      <div class="sdg-contrib" data-contrib-type="${escapeHtml(type)}">
+        <p class="sdg-field sdg-contrib-role"><span>Rôle dans la décision</span>
+          <strong>${escapeHtml(contrib.role_label)}</strong>
+        </p>
+        <p class="sdg-contrib-explain">${escapeHtml(contrib.explanation)}</p>
+        ${fed.length ? `<p class="sdg-field"><span>Critères alimentés</span> ${escapeHtml(fed.join(', '))}</p>` : ''}
+        ${hasCalc || calcRows.length ? `
+          <details class="sdg-contrib-calc">
+            <summary>Voir le détail du calcul</summary>
+            ${calcRows.join('') || '<p class="sdg-muted">Aucun détail chiffré supplémentaire disponible (aucune valeur inventée).</p>'}
+          </details>
+        ` : ''}
+      </div>
+    `;
   }
 
   function fieldRow(label, value) {
     if (value == null || value === '' || value === '—') return '';
     return `<p class="sdg-field"><span>${escapeHtml(label)}</span> ${escapeHtml(value)}</p>`;
+  }
+
+  function detailCloseButton() {
+    return `
+      <button type="button"
+        class="epm-panel-close sdg-detail-close"
+        data-epm-close-panel="detail"
+        aria-label="Fermer le panneau de détail"
+        title="Fermer le panneau de détail">✕</button>
+    `;
   }
 
   /* ── Shell layout (wrap / move #dxl-map safely) ───────────────── */
@@ -119,6 +216,16 @@
       if (host && mapEl.parentElement !== host) {
         host.appendChild(mapEl);
         queueInvalidate();
+      }
+      if (!shell.querySelector('#sdg-explainability')) {
+        const summary = shell.querySelector('#sdg-summary');
+        const slot = document.createElement('div');
+        slot.id = 'sdg-explainability';
+        slot.className = 'sdg-explainability';
+        slot.setAttribute('role', 'region');
+        slot.setAttribute('aria-label', 'Explicabilité de l’analyse spatiale');
+        if (summary) summary.after(slot);
+        else shell.prepend(slot);
       }
       return shell;
     }
@@ -145,6 +252,7 @@
         </div>
       </div>
       <div id="sdg-summary" class="sdg-summary" role="region" aria-label="Synthèse décisionnelle"></div>
+      <div id="sdg-explainability" class="sdg-explainability" role="region" aria-label="Explicabilité de l’analyse spatiale"></div>
       <div class="sdg-main-grid">
         <aside id="sdg-filters-panel" class="sdg-panel sdg-filters-panel" aria-label="Filtres de relations">
           <header class="sdg-panel-header">
@@ -273,7 +381,7 @@
   function edgeTooltip(edge) {
     const contrib = edge.contribution || edge.score_contribution || {};
     const dist = formatDistance(edge.distance_m);
-    const contribLabel = contributionDisplay(contrib);
+    const role = normalizeContribution(contrib, edge.category).role_label;
     const origin = edge.origin_label || edge.source_entity?.name || state.graph?.center?.name;
     const dest = edge.target_label || edge.target_entity?.name;
     return `
@@ -284,7 +392,7 @@
         ${dest ? fieldRow('Destination', dest) : ''}
         ${fieldRow('Type', edge.label || edge.relation_type)}
         ${dist ? fieldRow('Distance', dist) : ''}
-        ${contribLabel && contrib.status !== 'unavailable' ? fieldRow('Contribution', contribLabel) : ''}
+        ${fieldRow('Rôle dans la décision', role)}
         ${fieldRow('Confiance', edge.confidence)}
         ${(edge.why || edge.explanation) ? `<p class="sdg-why"><em>Pourquoi cette relation compte</em><br>${escapeHtml(edge.why || edge.explanation)}</p>` : ''}
       </div>
@@ -293,7 +401,7 @@
 
   function nodePopup(node) {
     const actions = node.actions || state.graph?.actions || {};
-    const contrib = node.contribution?.display;
+    const role = normalizeContribution(node.contribution || node.score_contribution, node.category).role_label;
     const dist = formatDistance(node.distance_m);
     return `
       <div class="sdg-popup">
@@ -303,7 +411,7 @@
         ${fieldRow('Rôle', node.role)}
         ${dist ? fieldRow('Distance', dist) : ''}
         ${fieldRow('État', node.state)}
-        ${contrib ? fieldRow('Contribution', contrib) : ''}
+        ${fieldRow('Rôle dans la décision', role)}
         <div class="sdg-popup-actions">
           ${actions.open_twin ? `<button type="button" class="secondary-button" data-sdg-nav="${escapeHtml(actions.open_twin)}">Profil territorial</button>` : ''}
           ${actions.open_dossier ? `<button type="button" class="secondary-button" data-sdg-nav="${escapeHtml(actions.open_dossier)}">Ouvrir le dossier</button>` : ''}
@@ -418,7 +526,13 @@
         keyboard: true,
         title: node.name || '',
       });
-      marker.bindPopup(nodePopup(node), { className: 'sdg-popup-wrap', maxWidth: 300 });
+      marker.bindPopup(nodePopup(node), {
+        className: 'sdg-popup-wrap',
+        maxWidth: 300,
+        autoPan: true,
+        keepInView: true,
+        autoPanPadding: [80, 80],
+      });
       marker.bindTooltip(
         `${node.name || ''}${node.role ? ` · ${node.role}` : ''}`,
         { direction: 'top', opacity: 0.95, className: 'sdg-tooltip', offset: [0, -8] },
@@ -524,13 +638,13 @@
           : '');
       const maturity = f.maturity || (status === 'future' ? 'integrating' : status === 'empty' ? 'empty' : 'operational');
       const maturityLabel = {
-        operational: 'Opérationnel',
+        operational: 'Référentiel intégré',
         empty: 'Aucun objet trouvé',
-        partial: 'Partiel',
+        partial: 'Données partielles',
         integrating: 'En cours d’intégration',
         error: 'Erreur d’intégration',
         demonstration: 'Démonstration / partiel',
-        anomaly: 'Erreur d’intégration',
+        anomaly: 'Anomalie d’intégration',
       }[maturity] || maturity;
       const nearest = f.nearest_context;
       const nearestLine = nearest
@@ -640,6 +754,44 @@
 
   /* ── Summary / KPIs / Why / Detail ────────────────────────────── */
 
+  function renderExplainability() {
+    const host = document.querySelector('#sdg-explainability');
+    if (!host || !state.graph) return;
+    const card = state.graph.explainability;
+    const cls = card?.classification || state.graph._meta?.classification || state.graph._meta?.status;
+    if (!card) {
+      host.innerHTML = '';
+      host.hidden = true;
+      return;
+    }
+    host.hidden = false;
+    host.dataset.classification = cls || '';
+    const avail = (card.available || []).map((i) => `<li class="is-ok">✓ ${escapeHtml(i)}</li>`).join('');
+    const miss = (card.missing || []).map((i) => `<li class="is-miss">⚠ ${escapeHtml(i)}</li>`).join('');
+    host.innerHTML = `
+      <div class="sdg-explain-card" data-classification="${escapeHtml(cls || '')}">
+        <div class="sdg-explain-head">
+          <p class="sdg-kicker">Couverture analytique</p>
+          <span class="sdg-explain-badge">${escapeHtml(card.badge || card.title || '')}</span>
+        </div>
+        <h3>${escapeHtml(card.title || 'Analyse spatiale')}</h3>
+        <p>${escapeHtml(card.message || '')}</p>
+        <div class="sdg-explain-cols">
+          <div>
+            <p class="sdg-explain-col-title">Données disponibles</p>
+            <ul>${avail || '<li>—</li>'}</ul>
+          </div>
+          <div>
+            <p class="sdg-explain-col-title">Données manquantes</p>
+            <ul>${miss || '<li>Aucune bloquante identifiée</li>'}</ul>
+          </div>
+        </div>
+        ${(card.causes || []).length ? `<p class="sdg-muted">Causes : ${(card.causes || []).map((c) => escapeHtml(c)).join(' · ')}</p>` : ''}
+        <p class="sdg-muted">${escapeHtml(card.hint || '')}</p>
+      </div>
+    `;
+  }
+
   function renderSummary() {
     const host = document.querySelector('#sdg-summary');
     if (!host || !state.graph) return;
@@ -656,7 +808,7 @@
     if (s.confidence != null && s.confidence !== '') meta.push(`<span class="sdg-chip">Confiance : ${escapeHtml(s.confidence)}</span>`);
     host.innerHTML = `
       <p class="sdg-kicker">Synthèse décisionnelle</p>
-      <p class="sdg-summary-text">${escapeHtml(s.text || '')}</p>
+      <p class="sdg-summary-text">${escapeHtml(s.text || s.message || '')}</p>
       ${meta.length ? `<div class="sdg-summary-meta">${meta.join('')}</div>` : ''}
       ${(s.factors || []).length ? `
         <ul class="sdg-summary-factors">
@@ -743,7 +895,10 @@
     if (!state.selected) {
       host.innerHTML = `
         <div class="sdg-detail-empty">
-          <p class="sdg-kicker">Détail</p>
+          <header class="sdg-panel-header sdg-panel-header--with-close">
+            ${detailCloseButton()}
+            <p class="sdg-kicker">Détail</p>
+          </header>
           <p>Sélectionnez un nœud ou une relation sur la carte pour afficher les informations disponibles.</p>
         </div>
       `;
@@ -757,12 +912,12 @@
       const cat = categoryMeta(node.category);
       const actions = node.actions || state.graph?.actions || {};
       const dist = formatDistance(node.distance_m);
-      const contrib = node.contribution?.display || contributionDisplay(node.contribution);
       const coords = (node.latitude != null && node.longitude != null)
         ? `${Number(node.latitude).toFixed(5)}, ${Number(node.longitude).toFixed(5)}`
         : null;
       host.innerHTML = `
-        <header class="sdg-panel-header">
+        <header class="sdg-panel-header sdg-panel-header--with-close">
+          ${detailCloseButton()}
           <p class="sdg-kicker">${escapeHtml(cat.label || node.category || 'Nœud')}</p>
           <h3>${escapeHtml(node.name || 'Sans nom')}</h3>
         </header>
@@ -771,11 +926,11 @@
         ${coords ? fieldRow('Coordonnées', coords) : ''}
         ${dist ? fieldRow('Distance', dist) : ''}
         ${node.population != null ? fieldRow('Population', node.population) : ''}
-        ${fieldRow('Contribution au score', contrib || 'Contribution non calculée')}
+        ${renderContributionBlock(node.contribution || node.score_contribution, node.category)}
         ${(node.why || node.description) ? `<p class="sdg-why"><em>Pourquoi cette relation existe</em><br>${escapeHtml(node.why || node.description)}</p>` : ''}
         ${fieldRow('Confiance', node.confidence || node.state)}
         ${fieldRow('Source des données', node.source_label)}
-        ${fieldRow('Maturité', node.maturity === 'operational' ? 'Opérationnel' : (node.maturity || cat.maturity || '—'))}
+        ${fieldRow('Maturité d’analyse', node.maturity === 'operational' ? 'Référentiel intégré' : (node.maturity || cat.maturity || '—'))}
         ${fieldRow('État', node.state)}
         ${actionButtons(actions)}
       `;
@@ -790,9 +945,9 @@
       const actions = state.graph?.actions || {};
       const origin = edge.origin_label || edge.source_entity?.name || state.graph?.center?.name;
       const dest = edge.target_label || edge.target_entity?.name || edge.target;
-      const contribLabel = contributionDisplay(contrib);
       host.innerHTML = `
-        <header class="sdg-panel-header">
+        <header class="sdg-panel-header sdg-panel-header--with-close">
+          ${detailCloseButton()}
           <p class="sdg-kicker">${escapeHtml(categoryMeta(edge.category).label || edge.category || 'Relation')}</p>
           <h3>${escapeHtml(edge.label || edge.relation_type || 'Relation')}</h3>
         </header>
@@ -803,13 +958,12 @@
         ${fieldRow('Référentiel source', edge.source_label || detail.source)}
         ${dist ? fieldRow('Distance', dist) : ''}
         ${detail.population != null ? fieldRow('Population', detail.population) : ''}
-        ${contribLabel ? fieldRow('Contribution au score', contribLabel) : fieldRow('Contribution au score', 'Contribution non calculée')}
+        ${renderContributionBlock(contrib, edge.category)}
         ${(edge.why || edge.explanation || detail.why) ? `<p class="sdg-why"><em>Pourquoi cette relation compte</em><br>${escapeHtml(edge.why || edge.explanation || detail.why)}</p>` : ''}
         ${fieldRow('Confiance', edge.confidence || detail.confidence)}
         ${fieldRow('Source des données', edge.source_label || detail.source)}
         ${detail.method ? fieldRow('Méthode', detail.method) : ''}
-        ${fieldRow('Maturité', 'Opérationnel')}
-        ${contrib.note ? fieldRow('Note contribution', contrib.note) : ''}
+        ${fieldRow('Maturité d’analyse', 'Référentiel intégré')}
         ${actionButtons(actions)}
       `;
     }
@@ -989,6 +1143,10 @@
       });
   }
 
+  function repaint(revealPayload) {
+    paintGraph(revealPayload || null);
+  }
+
   /* ── Public API ───────────────────────────────────────────────── */
 
   function mount(map, graphPayload, presentationPayload) {
@@ -1007,6 +1165,7 @@
     bindNavDelegation();
 
     renderSummary();
+    renderExplainability();
     renderKpis();
     renderWhy();
     renderFilters();
@@ -1019,6 +1178,7 @@
     state.graph = graphPayload;
     initFiltersFromGraph();
     renderSummary();
+    renderExplainability();
     renderKpis();
     renderWhy();
     renderFilters();
@@ -1041,6 +1201,13 @@
   function loadAndMount(map, assetType, assetId, programCode) {
     const qs = programCode ? `?program_code=${encodeURIComponent(programCode)}` : '';
     const type = assetType === 'fdsu_site' ? 'site' : assetType;
+    // Shell visible immédiatement (évite timeout E2E pendant le fetch graphe).
+    setMap(map);
+    ensureShell();
+    const summary = document.querySelector('#sdg-summary');
+    if (summary && !state.graph) {
+      summary.innerHTML = '<p class="sdg-kicker">Analyse d’Impact Territorial</p><p>Chargement des relations spatiales…</p>';
+    }
     return Promise.all([
       fetchJson(`/api/spatial-decision-graph/${encodeURIComponent(type)}/${encodeURIComponent(assetId)}${qs}`),
       fetchJson(`/api/spatial-decision-graph/${encodeURIComponent(type)}/${encodeURIComponent(assetId)}/presentation${qs}`).catch(() => null),
@@ -1067,6 +1234,7 @@
     startPresentation,
     stopPresentation,
     refreshSpatialRelations,
+    repaint,
     state,
   };
 })(typeof window !== 'undefined' ? window : globalThis);

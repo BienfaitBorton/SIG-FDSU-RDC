@@ -43,4 +43,5 @@ def get_graph(
     graph = sdg.build_graph(asset_type, asset_id, program_code=program_code)
     if not graph:
         raise HTTPException(status_code=404, detail="Graphe d’impact territorial introuvable pour cet actif.")
+    # Les graphes « impossible » (classification C) restent 200 avec fiche explicative — Data First.
     return graph

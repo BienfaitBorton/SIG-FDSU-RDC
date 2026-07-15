@@ -28,7 +28,8 @@
 
   /**
    * Injecte une légende compacte dans un conteneur carte (position relative).
-   * items: [{ className: 'is-site', label: 'Site FDSU' }, ...]
+   * items: [{ className, label, color?, count?, kind?, visible? }, ...]
+   * Si color est fourni, le swatch utilise exactement cette couleur (registre symbologie).
    */
   function mountMapLegend(hostSelector, options = {}) {
     const host = typeof hostSelector === 'string'
@@ -66,15 +67,26 @@
       { className: 'is-poly', label: 'Province / territoire' },
       { className: 'is-site', label: 'Site FDSU' },
     ];
+    const interactive = Boolean(options.interactive);
 
     legend.innerHTML = `
       <button type="button" class="ux-map-legend-toggle" aria-expanded="true">${escapeHtml(options.title || 'Légende')}</button>
       <div class="ux-map-legend-body">
         ${options.sectionTitle ? `<p class="ux-map-legend-title">${escapeHtml(options.sectionTitle)}</p>` : ''}
         <ul class="ux-map-legend-list">
-          ${items.map((item) => `
-            <li><span class="ux-swatch ${escapeHtml(item.className || '')}"></span>${escapeHtml(item.label || '')}</li>
-          `).join('')}
+          ${items.map((item) => {
+            const color = item.color || item.fill_color || '';
+            const swatchStyle = color
+              ? `background:${escapeHtml(color)};border-color:${escapeHtml(color)};`
+              : '';
+            const count = item.count != null ? ` <em class="ux-legend-count">${escapeHtml(String(item.count))}</em>` : '';
+            const kind = item.kind || item.domain || '';
+            const checked = item.visible === false ? '' : ' checked';
+            const toggle = interactive && kind
+              ? `<label class="ux-legend-layer-toggle"><input type="checkbox" data-legend-kind="${escapeHtml(kind)}"${checked}/><span class="ux-sr-only">Afficher</span></label>`
+              : '';
+            return `<li class="ux-legend-item" data-kind="${escapeHtml(kind)}">${toggle}<span class="ux-swatch ${escapeHtml(item.className || item.legend_class || '')}" style="${swatchStyle}"></span><span class="ux-legend-label">${escapeHtml(item.label || '')}${count}</span></li>`;
+          }).join('')}
         </ul>
       </div>
     `;
@@ -85,6 +97,13 @@
       toggle.addEventListener('click', () => {
         const collapsed = legend.classList.toggle('is-collapsed');
         toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      });
+    }
+    if (interactive && typeof options.onToggle === 'function') {
+      legend.querySelectorAll('input[data-legend-kind]').forEach((input) => {
+        input.addEventListener('change', () => {
+          options.onToggle(input.getAttribute('data-legend-kind'), input.checked);
+        });
       });
     }
     return legend;
@@ -178,17 +197,7 @@
         { className: 'is-site', label: 'Site FDSU' },
       ],
     });
-    mountMapLegend('#ti-map', {
-      id: 'ux-legend-ti',
-      title: 'Légende',
-      items: [
-        { className: 'is-poly', label: 'Territoire' },
-        { className: 'is-site', label: 'Site FDSU' },
-        { className: 'is-ccn', label: 'CCN' },
-        { className: 'is-health', label: 'Santé' },
-        { className: 'is-uncovered', label: 'Localité non couverte' },
-      ],
-    });
+    // TI : légende dynamique depuis le payload /map (couleurs du registre) — pas de regroupement Télécom/Fibre/Routes.
     mountMapLegend('#ccn-map', {
       id: 'ux-legend-ccn',
       title: 'Légende',

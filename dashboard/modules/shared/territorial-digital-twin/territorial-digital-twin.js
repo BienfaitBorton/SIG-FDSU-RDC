@@ -148,7 +148,7 @@
     root.innerHTML = `
       <header class="tdt-header" aria-label="En-tête territorial">
         <div class="tdt-header-copy">
-          <p class="tdt-kicker">Territorial Digital Twin</p>
+          <p class="tdt-kicker">Jumeau Numérique Territorial</p>
           <h2 id="tdt-title">Profil territorial</h2>
           <p id="tdt-subtitle" class="tdt-subtitle">Chargement de l’identité…</p>
         </div>

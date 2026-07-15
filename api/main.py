@@ -50,6 +50,10 @@ from api.routes import (
     territorial_digital_twin,
     exports,
     spatial_decision_graph,
+    territorial_impact,
+    program_lifecycle,
+    sdg_coverage,
+    data_maturity,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -603,8 +607,8 @@ def read_zones_json() -> list[dict[str, Any]]:
     return load_nomenclature().get("zones", [])
 
 
-@app.get("/provinces", tags=["v0.7.0"])
 def read_provinces_json(skip: int = Query(0, ge=0), limit: int = Query(500, gt=0)) -> list[dict[str, Any]]:
+    """Liste enrichie PostGIS / rapports (≠ schéma CRUD SQLAlchemy)."""
     if use_database():
         return db_entity_rows("provinces", skip, limit)
     return paginate(report_items("province_official/province_referential_official.json", "province_referential"), skip, limit)
@@ -617,19 +621,16 @@ def read_territories_json(skip: int = Query(0, ge=0), limit: int = Query(500, gt
     return paginate(territory_items(), skip, limit)
 
 
-@app.get("/territoires", tags=["v0.7.0"])
 def read_territoires_json(skip: int = Query(0, ge=0), limit: int = Query(500, gt=0)) -> list[dict[str, Any]]:
     return read_territories_json(skip=skip, limit=limit)
 
 
-@app.get("/collectivites", tags=["v0.7.0"])
 def read_collectivites_json(skip: int = Query(0, ge=0), limit: int = Query(1000, gt=0)) -> list[dict[str, Any]]:
     if use_database():
         return db_entity_rows("collectivites", skip, limit)
     return paginate(report_items("collectivity_official/collectivity_referential_official.json", "collectivity_referential"), skip, limit)
 
 
-@app.get("/groupements", tags=["v0.7.0"])
 def read_groupements_json(skip: int = Query(0, ge=0), limit: int = Query(2000, gt=0)) -> list[dict[str, Any]]:
     if use_database():
         return db_entity_rows("groupements", skip, limit)
@@ -643,23 +644,58 @@ def read_localites_json(skip: int = Query(0, ge=0), limit: int = Query(1500, gt=
     return paginate(report_items("locality_official/locality_referential_official.json", "locality_referential"), skip, limit)
 
 
-@app.get("/villages", tags=["v0.7.0"])
 def read_villages_json(skip: int = Query(0, ge=0), limit: int = Query(1500, gt=0)) -> list[dict[str, Any]]:
     return read_localites_json(skip=skip, limit=limit)
 
 
-@app.get("/sites", tags=["v0.7.0"])
 def read_sites_json(skip: int = Query(0, ge=0), limit: int = Query(500, gt=0)) -> list[dict[str, Any]]:
     if use_database():
         return db_entity_rows("sites", skip, limit)
     return []
 
 
-@app.get("/missions", tags=["v0.7.0"])
 def read_missions_json(skip: int = Query(0, ge=0), limit: int = Query(500, gt=0)) -> list[dict[str, Any]]:
     if use_database():
         return db_entity_rows("missions", skip, limit)
     return []
+
+
+# Alias /geo/* : référentiel enrichi opérationnel (PostGIS).
+# Ne doit PAS être monté sur /provinces, /sites, … — ces préfixes appartiennent
+# aux routeurs CRUD ; un @app.get seul provoque 405 Method Not Allowed sur POST/PUT/DELETE.
+@app.get("/geo/provinces", tags=["v0.7.0", "geo-referential"])
+def geo_provinces(skip: int = Query(0, ge=0), limit: int = Query(500, gt=0)) -> list[dict[str, Any]]:
+    return read_provinces_json(skip=skip, limit=limit)
+
+
+@app.get("/geo/territoires", tags=["v0.7.0", "geo-referential"])
+def geo_territoires(skip: int = Query(0, ge=0), limit: int = Query(500, gt=0)) -> list[dict[str, Any]]:
+    return read_territoires_json(skip=skip, limit=limit)
+
+
+@app.get("/geo/collectivites", tags=["v0.7.0", "geo-referential"])
+def geo_collectivites(skip: int = Query(0, ge=0), limit: int = Query(1000, gt=0)) -> list[dict[str, Any]]:
+    return read_collectivites_json(skip=skip, limit=limit)
+
+
+@app.get("/geo/groupements", tags=["v0.7.0", "geo-referential"])
+def geo_groupements(skip: int = Query(0, ge=0), limit: int = Query(2000, gt=0)) -> list[dict[str, Any]]:
+    return read_groupements_json(skip=skip, limit=limit)
+
+
+@app.get("/geo/villages", tags=["v0.7.0", "geo-referential"])
+def geo_villages(skip: int = Query(0, ge=0), limit: int = Query(1500, gt=0)) -> list[dict[str, Any]]:
+    return read_villages_json(skip=skip, limit=limit)
+
+
+@app.get("/geo/sites", tags=["v0.7.0", "geo-referential"])
+def geo_sites(skip: int = Query(0, ge=0), limit: int = Query(500, gt=0)) -> list[dict[str, Any]]:
+    return read_sites_json(skip=skip, limit=limit)
+
+
+@app.get("/geo/missions", tags=["v0.7.0", "geo-referential"])
+def geo_missions(skip: int = Query(0, ge=0), limit: int = Query(500, gt=0)) -> list[dict[str, Any]]:
+    return read_missions_json(skip=skip, limit=limit)
 
 
 @app.get("/map/layers/{layer_name}", tags=["v0.8.0"])
@@ -845,24 +881,31 @@ def read_entity(layer: str, entity_id: int | str) -> dict[str, Any]:
     return {}
 
 
-@app.get("/provinces/{entity_id}", tags=["v0.8.0"])
-def read_province_detail(entity_id: int | str) -> dict[str, Any]:
+# Détail enrichi PostGIS : /entities/{layer}/{id} ou /geo/{layer}/{id}.
+# Ne pas monter /provinces/{id} ici — masque le CRUD (404 métier ProvinceRead).
+@app.get("/geo/provinces/{entity_id}", tags=["v0.8.0", "geo-referential"])
+def geo_province_detail(entity_id: int | str) -> dict[str, Any]:
     return read_entity("provinces", entity_id)
 
 
-@app.get("/territoires/{entity_id}", tags=["v0.8.0"])
-def read_territoire_detail(entity_id: int | str) -> dict[str, Any]:
+@app.get("/geo/territoires/{entity_id}", tags=["v0.8.0", "geo-referential"])
+def geo_territoire_detail(entity_id: int | str) -> dict[str, Any]:
     return read_entity("territoires", entity_id)
 
 
-@app.get("/collectivites/{entity_id}", tags=["v0.8.0"])
-def read_collectivite_detail(entity_id: int | str) -> dict[str, Any]:
+@app.get("/geo/collectivites/{entity_id}", tags=["v0.8.0", "geo-referential"])
+def geo_collectivite_detail(entity_id: int | str) -> dict[str, Any]:
     return read_entity("collectivites", entity_id)
 
 
-@app.get("/groupements/{entity_id}", tags=["v0.8.0"])
-def read_groupement_detail(entity_id: int | str) -> dict[str, Any]:
+@app.get("/geo/groupements/{entity_id}", tags=["v0.8.0", "geo-referential"])
+def geo_groupement_detail(entity_id: int | str) -> dict[str, Any]:
     return read_entity("groupements", entity_id)
+
+
+@app.get("/geo/localites/{entity_id}", tags=["v0.8.0", "geo-referential"])
+def geo_localite_detail(entity_id: int | str) -> dict[str, Any]:
+    return read_entity("localites", entity_id)
 
 
 @app.get("/localites/{entity_id}", tags=["v0.8.0"])
@@ -870,6 +913,7 @@ def read_localite_detail(entity_id: int | str) -> dict[str, Any]:
     return read_entity("localites", entity_id)
 
 
+# CRUD SQLAlchemy — propriétaire exclusif de ces préfixes (POST/PUT/DELETE + GET métier).
 app.include_router(provinces.router, prefix="/provinces", tags=["Provinces"])
 app.include_router(territoires.router, prefix="/territoires", tags=["Territoires"])
 app.include_router(collectivites.router, prefix="/collectivites", tags=["Collectivites"])
@@ -943,6 +987,26 @@ app.include_router(
     spatial_decision_graph.router,
     prefix="/api/spatial-decision-graph",
     tags=["Spatial Decision Graph"],
+)
+app.include_router(
+    territorial_impact.router,
+    prefix="/api/territorial-impact",
+    tags=["Impact Territorial & Couverture"],
+)
+app.include_router(
+    program_lifecycle.router,
+    prefix="/api/program-lifecycle",
+    tags=["Program Lifecycle Engine"],
+)
+app.include_router(
+    sdg_coverage.router,
+    prefix="/api/sdg",
+    tags=["SDG Coverage Audit"],
+)
+app.include_router(
+    data_maturity.router,
+    prefix="/api/data-maturity",
+    tags=["National Data Maturity"],
 )
 
 @app.get("/", tags=["Root"])

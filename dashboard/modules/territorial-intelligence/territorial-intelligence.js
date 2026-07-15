@@ -1,8 +1,10 @@
 (function initTerritorialIntelligenceModule(global) {
   const API_BASE = 'http://127.0.0.1:8001';
 
-  const LAYER_STYLES = {
+  /** Fallback aligné sur data/cartography/symbology_registry_v1.json — remplacé par /symbology si disponible. */
+  let LAYER_STYLES = {
     territory_boundary: { color: '#38bdf8', weight: 2, fillOpacity: 0.06 },
+    collectivite: { color: '#67e8f9', weight: 1.5, fillColor: 'rgba(103,232,249,0.12)', fillOpacity: 0.12 },
     site_fdsu: { radius: 5, color: '#fbbf24', fillColor: '#f59e0b', fillOpacity: 0.9 },
     ccn: { radius: 7, color: '#a78bfa', fillColor: '#8b5cf6', fillOpacity: 0.9 },
     health: { radius: 5, color: '#34d399', fillColor: '#10b981', fillOpacity: 0.9 },
@@ -12,6 +14,24 @@
     route: { color: '#94a3b8', weight: 3, opacity: 0.9 },
     groupement: { radius: 6, color: '#fcd34d', fillColor: '#eab308', fillOpacity: 0.85 },
     locality: { radius: 3, color: '#cbd5e1', fillColor: '#64748b', fillOpacity: 0.7 },
+    locality_covered: { radius: 4, color: '#86efac', fillColor: '#22c55e', fillOpacity: 0.85 },
+    locality_uncovered: { radius: 4, color: '#fca5a5', fillColor: '#ef4444', fillOpacity: 0.85 },
+  };
+
+  const KIND_LABELS = {
+    territory_boundary: 'Limite',
+    collectivite: 'Collectivité',
+    site_fdsu: 'Site FDSU',
+    ccn: 'CCN',
+    health: 'Santé',
+    telecom: 'Télécommunications',
+    fiber: 'Nœud fibre',
+    fiber_line: 'Tronçon fibre',
+    route: 'Route',
+    groupement: 'Groupement',
+    locality: 'Localité',
+    locality_covered: 'Localité couverte',
+    locality_uncovered: 'Localité non couverte',
   };
 
   const DOMAIN_LAYER_KINDS = {
@@ -25,20 +45,25 @@
     ccn: ['ccn'],
     groupements: ['groupement'],
     localites: ['locality'],
-    admin: ['groupement', 'locality'],
+    admin: ['groupement', 'locality', 'collectivite'],
   };
+
+  const DRILL_KINDS = new Set(['collectivite', 'groupement', 'locality', 'territory_boundary']);
 
   const tiState = {
     initialized: false,
     territories: [],
     selectedId: null,
+    entity: null,
     profile: null,
     explainability: null,
     mapGeojson: null,
+    mapLegend: [],
     map: null,
     layer: null,
     detailLayer: null,
     domainLayers: {},
+    layerVisibility: {},
     detail: {
       domain: null,
       page: 1,
@@ -49,6 +74,33 @@
       showTech: false,
     },
   };
+
+  function applySymbologyRegistry(payload) {
+    const domains = payload?.domains || [];
+    if (!domains.length) return;
+    const next = { ...LAYER_STYLES };
+    domains.forEach((d) => {
+      const key = d.domain;
+      if (!key) return;
+      next[key] = {
+        color: d.color,
+        fillColor: d.fillColor || d.fill_color || d.color,
+        fillOpacity: d.fillOpacity ?? d.fill_opacity ?? 0.8,
+        radius: d.radius ?? 5,
+        weight: d.weight ?? 2,
+        opacity: d.opacity ?? 0.9,
+      };
+    });
+    LAYER_STYLES = next;
+  }
+
+  function setHashEntity(entityId) {
+    if (!entityId) return;
+    const next = `territorial-intelligence/${encodeURIComponent(entityId)}`;
+    if ((global.location.hash || '').replace(/^#/, '') !== next) {
+      global.location.hash = next;
+    }
+  }
 
   function confidenceLabel(value) {
     const map = { high: 'Élevée', medium: 'Moyenne', low: 'Faible' };
@@ -61,7 +113,7 @@
       high: 'Élevée', medium: 'Moyenne', low: 'Faible',
       true: 'Oui / Présence détectée', false: 'Non',
       unmatched_needs: 'Besoins sans actif correspondant',
-      partial: 'Partiel', operational: 'Opérationnel',
+      partial: 'Données partielles', operational: 'Données intégrées',
       confirmed: 'Confirmé', demonstration: 'Démonstration',
       integration_pending: 'En cours d’intégration',
       integration_anomaly: 'Anomalie d’intégration',
@@ -112,7 +164,7 @@
 
   function statusLabel(status) {
     const map = {
-      operational: 'opérationnel', confirmed: 'confirmé', estimated: 'estimé', partial: 'partiel',
+      operational: 'données intégrées', confirmed: 'confirmé', estimated: 'estimé', partial: 'données partielles',
       integration_pending: 'en cours d’intégration', integration_anomaly: 'anomalie d’intégration',
       not_applicable: 'non applicable', error: 'erreur', unavailable: 'indisponible',
       not_sourced: 'non sourcé', demonstration: 'démonstration',
@@ -164,15 +216,71 @@
     global.setTimeout(() => tiState.map.invalidateSize(), 80);
   }
 
+  function popupLabel(kind, name) {
+    return `<strong>${escapeHtml(KIND_LABELS[kind] || kind)}</strong><br>${escapeHtml(name || '')}`;
+  }
+
+  function bindDrill(layer, feature) {
+    const props = feature.properties || {};
+    const kind = props.kind;
+    const drillId = props.drill_id || props.id;
+    if (!drillId || !DRILL_KINDS.has(kind)) return;
+    if (kind === 'territory_boundary' && !String(drillId).toUpperCase().startsWith('TERRITOIRE')) return;
+    const navigateId = (() => {
+      const raw = String(drillId);
+      if (/^(PROVINCE|TERRITOIRE|COLLECTIVITE|GROUPEMENT|LOCALITE)-/i.test(raw)) return raw;
+      if (kind === 'collectivite') return `COLLECTIVITE-${raw}`;
+      if (kind === 'groupement') return `GROUPEMENT-${raw}`;
+      if (kind === 'locality') return `LOCALITE-${raw}`;
+      return raw;
+    })();
+    layer.on('click', () => {
+      loadEntity(navigateId, { pushHash: true });
+    });
+  }
+
+  function tipKindForFeature(kind) {
+    if (kind === 'locality_uncovered' || kind === 'uncovered_locality') return 'uncovered_locality';
+    if (kind === 'locality_covered' || kind === 'locality') return 'uncovered_locality';
+    if (kind === 'territory_boundary' || kind === 'territoire') return 'territoire';
+    if (kind === 'province') return 'province';
+    if (kind === 'ccn') return 'ccn';
+    if (kind === 'route' || kind === 'fiber_line') return 'route';
+    if (String(kind || '').startsWith('site')) return 'site_fdsu';
+    if (kind === 'health') return 'health';
+    if (kind === 'telecom') return 'telecom';
+    return kind || 'territoire';
+  }
+
+  function bindSharedTooltip(layer, featureOrProps, kind) {
+    if (!layer || !global.SigMapTooltips?.bind) return;
+    const props = featureOrProps?.properties || featureOrProps || {};
+    global.SigMapTooltips.bind(layer, props, tipKindForFeature(kind || props.kind), {
+      sticky: true,
+      hint: false,
+    });
+  }
+
   function addFeatureToMap(feature, targetGroup) {
     const kind = feature.properties?.kind;
     const geomType = feature.geometry?.type;
     const style = LAYER_STYLES[kind] || LAYER_STYLES.locality;
     const name = feature.properties?.name || feature.properties?.code || kind;
+    const polyStyle = kind === 'collectivite' ? (LAYER_STYLES.collectivite || LAYER_STYLES.territory_boundary) : LAYER_STYLES.territory_boundary;
 
-    if (kind === 'territory_boundary' || geomType === 'Polygon' || geomType === 'MultiPolygon') {
+    if (kind === 'territory_boundary' || kind === 'collectivite' || geomType === 'Polygon' || geomType === 'MultiPolygon') {
       const layer = global.L.geoJSON(feature, {
-        style: LAYER_STYLES.territory_boundary,
+        style: {
+          color: polyStyle.color,
+          weight: polyStyle.weight || 2,
+          fillColor: polyStyle.fillColor || polyStyle.color,
+          fillOpacity: polyStyle.fillOpacity ?? 0.06,
+        },
+        onEachFeature: (feat, lyr) => {
+          lyr.bindPopup(popupLabel(kind || 'territory_boundary', name));
+          bindSharedTooltip(lyr, feat, kind || 'territoire');
+          bindDrill(lyr, feature);
+        },
       });
       layer.addTo(targetGroup);
       return layer;
@@ -186,7 +294,8 @@
           opacity: style.opacity || 0.9,
         },
         onEachFeature: (feat, lyr) => {
-          lyr.bindPopup(`${escapeHtml(kind === 'fiber_line' ? 'Fibre' : 'Route')}<br>${escapeHtml(name)}`);
+          lyr.bindPopup(popupLabel(kind, name));
+          bindSharedTooltip(lyr, feat, kind);
         },
       });
       layer.addTo(targetGroup);
@@ -202,12 +311,45 @@
       fillColor: style.fillColor || '#94a3b8',
       fillOpacity: style.fillOpacity || 0.8,
       weight: 2,
-    }).bindPopup(`<strong>${escapeHtml(kind)}</strong><br>${escapeHtml(name)}`);
+    }).bindPopup(popupLabel(kind, name));
+    bindSharedTooltip(marker, feature, kind);
+    bindDrill(marker, feature);
     marker.addTo(targetGroup);
     return marker;
   }
 
-  function renderMap(geojson) {
+  function setLayerVisibility(kind, visible) {
+    tiState.layerVisibility[kind] = visible;
+    const group = tiState.domainLayers[kind];
+    if (!group || !tiState.map) return;
+    if (visible) {
+      if (!tiState.layer.hasLayer(group)) tiState.layer.addLayer(group);
+    } else if (tiState.layer.hasLayer(group)) {
+      tiState.layer.removeLayer(group);
+    }
+  }
+
+  function mountTiLegend(legendItems) {
+    const items = (legendItems || []).filter((i) => i.visible !== false && (i.count == null || i.count > 0));
+    tiState.mapLegend = items;
+    if (!global.UxPremium?.mountMapLegend) return;
+    global.UxPremium.mountMapLegend('#ti-map', {
+      id: 'ux-legend-ti',
+      title: 'Légende',
+      interactive: true,
+      items: items.map((item) => ({
+        kind: item.kind || item.domain,
+        label: item.label,
+        count: item.count,
+        color: item.color || item.fill_color,
+        className: item.legend_class || item.className || '',
+        visible: tiState.layerVisibility[item.kind || item.domain] !== false,
+      })),
+      onToggle: (kind, visible) => setLayerVisibility(kind, visible),
+    });
+  }
+
+  function renderMap(geojson, legendItems) {
     ensureMap();
     if (!tiState.map || !tiState.layer) return;
     tiState.mapGeojson = geojson;
@@ -219,11 +361,64 @@
     features.forEach((feature) => {
       const kind = feature.properties?.kind || 'other';
       if (!tiState.domainLayers[kind]) {
-        tiState.domainLayers[kind] = global.L.layerGroup().addTo(tiState.layer);
+        tiState.domainLayers[kind] = global.L.layerGroup();
+        if (tiState.layerVisibility[kind] !== false) {
+          tiState.domainLayers[kind].addTo(tiState.layer);
+        }
       }
       addFeatureToMap(feature, tiState.domainLayers[kind]);
     });
+    mountTiLegend(legendItems || tiState.mapLegend);
     fitAllLayers();
+  }
+
+  function renderBreadcrumb(crumbs) {
+    const nav = document.querySelector('#ti-breadcrumb');
+    const list = nav?.querySelector('.ti-breadcrumb-list') || nav;
+    if (!list) return;
+    const items = crumbs && crumbs.length ? crumbs : [{ type: 'rdc', id: 'RDC', name: 'RDC' }];
+    list.innerHTML = items.map((c, idx) => {
+      const isLast = idx === items.length - 1;
+      const label = escapeHtml(c.label || c.name || c.id);
+      if (isLast || c.type === 'rdc') {
+        return `<li class="${isLast ? 'is-current' : ''}">${c.type === 'rdc' && !isLast ? `<a href="#decision-view">${label}</a>` : label}</li>`;
+      }
+      return `<li><a href="#territorial-intelligence/${encodeURIComponent(c.id)}" data-ti-entity="${escapeHtml(c.id)}">${label}</a></li>`;
+    }).join('');
+    list.querySelectorAll('[data-ti-entity]').forEach((a) => {
+      a.addEventListener('click', (event) => {
+        event.preventDefault();
+        loadEntity(a.getAttribute('data-ti-entity'), { pushHash: true });
+      });
+    });
+  }
+
+  function renderChildren(children, childrenLevel) {
+    const host = document.querySelector('#ti-children');
+    const list = document.querySelector('#ti-children-list');
+    const title = document.querySelector('.ti-children-title');
+    if (!host || !list) return;
+    if (!children || !children.length) {
+      host.hidden = true;
+      list.innerHTML = '';
+      return;
+    }
+    host.hidden = false;
+    if (title) {
+      const labels = {
+        collectivite: 'Collectivités / secteurs / chefferies',
+        groupement: 'Groupements',
+        localite: 'Localités',
+        territoire: 'Territoires',
+      };
+      title.textContent = labels[childrenLevel] || 'Niveau inférieur';
+    }
+    list.innerHTML = children.map((c) => `
+      <li><button type="button" data-ti-entity="${escapeHtml(c.id)}">${escapeHtml(c.name || c.id)}${c.admin_type ? ` <small>(${escapeHtml(c.admin_type)})</small>` : ''}</button></li>
+    `).join('');
+    list.querySelectorAll('[data-ti-entity]').forEach((btn) => {
+      btn.addEventListener('click', () => loadEntity(btn.getAttribute('data-ti-entity'), { pushHash: true }));
+    });
   }
 
   function focusDomainOnMap(domain) {
@@ -284,6 +479,12 @@
         weight: 2,
       });
       marker.bindPopup(`<strong>${escapeHtml(item.name || item.id)}</strong><br/>${escapeHtml(item.type || '')}`);
+      if (global.SigMapTooltips?.bind) {
+        global.SigMapTooltips.bind(marker, item, tipKindForFeature(item.type || item.kind || 'uncovered_locality'), {
+          sticky: true,
+          hint: false,
+        });
+      }
       marker.addTo(tiState.detailLayer);
       latLngs.push([lat, lon]);
     });
@@ -471,12 +672,14 @@
     `;
   }
 
-  function renderSections(profilePayload, recommendations, explain) {
+  function renderSections(profilePayload, recommendations, explain, coverageOverride) {
     const box = document.querySelector('#ti-sections');
     if (!box) return;
     const s = profilePayload?.sections || {};
     const p = profilePayload?.profile || {};
     const ex = profilePayload?.explainability || tiState.explainability || {};
+    const cov = coverageOverride || profilePayload?.coverage || s.coverage || {};
+    const entityType = profilePayload?.entity?.type || p.entity_type || 'territoire';
 
     const line = (label, fieldObj, domain) => {
       const f = formatField(fieldObj);
@@ -500,6 +703,19 @@
       </article>
     `).join('') || '<p>Aucune recommandation.</p>';
 
+    const coverageHtml = `
+      <section class="ti-section">
+        <h3>Couverture numérique (NCI)</h3>
+        ${line('Population estimée', profilePayload?.population || s.synthesis?.population || cov.population)}
+        ${line('Population couverte', cov.population_covered)}
+        ${line('Population non couverte', cov.population_uncovered)}
+        ${line('Localités couvertes', cov.localities_covered)}
+        ${line('Localités non couvertes', cov.localities_uncovered)}
+        ${line('Taux estimé de couverture', cov.coverage_rate_pct)}
+        ${cov.note || cov.double_counting_guard ? `<p class="ti-field-note">${escapeHtml(cov.note || '')}${cov.double_counting_guard ? ` · Garde : ${escapeHtml(cov.double_counting_guard)}` : ''}</p>` : ''}
+      </section>`;
+
+    const hideLocalityCount = entityType === 'localite';
     box.innerHTML = `
       <section class="ti-section">
         <h3>Lecture décideur — domaines explicables</h3>
@@ -515,23 +731,30 @@
           ${explainCard('ccn', ex.ccn)}
         </div>
       </section>
+      ${coverageHtml}
       <section class="ti-section">
-        <h3>A. Synthèse territoriale</h3>
-        ${line('Province', s.synthesis?.province)}
-        ${line('Zone FDSU', s.synthesis?.fdsu_zone)}
-        ${line('Population', s.synthesis?.population)}
+        <h3>A. Synthèse ${escapeHtml(entityType === 'territoire' ? 'territoriale' : 'administrative')}</h3>
+        ${line('Type', { value: profilePayload?.entity?.admin_type || entityType, status: 'confirmed' })}
+        ${line('Province', s.synthesis?.province || { value: profilePayload?.entity?.hierarchy?.province, status: profilePayload?.entity?.hierarchy?.province ? 'confirmed' : 'unavailable' })}
+        ${line('Zone FDSU', s.synthesis?.fdsu_zone || { value: profilePayload?.entity?.fdsu_zone, status: profilePayload?.entity?.fdsu_zone ? 'confirmed' : 'partial' })}
+        ${line('Population', s.synthesis?.population || profilePayload?.population)}
         ${line('Superficie', s.synthesis?.area_km2)}
         ${line('Densité', s.synthesis?.density)}
-        ${line('Collectivités', s.synthesis?.collectivites, 'collectivites')}
-        ${line('Groupements', s.synthesis?.groupements, 'groupements')}
-        ${line('Localités', s.synthesis?.localities, 'localites')}
+        ${entityType === 'territoire' || entityType === 'province' ? line('Collectivités', s.synthesis?.collectivites, 'collectivites') : ''}
+        ${entityType !== 'localite' && entityType !== 'groupement' ? line('Groupements', s.synthesis?.groupements, 'groupements') : ''}
+        ${hideLocalityCount ? '' : line('Localités', s.synthesis?.localities, 'localites')}
+        ${entityType === 'localite' ? line('Rattachement parent', { value: profilePayload?.entity?.parent?.name, status: profilePayload?.entity?.parent ? 'confirmed' : 'partial' }) : ''}
       </section>
       <section class="ti-section">
         <h3>B. Situation numérique</h3>
         ${line('Sites 20 476', s.digital?.sites_fdsu_presents?.sites_20476 || s.programs?.sites_20476, 'sites_20476')}
+        <p class="ti-note">Programme : Planification stratégique · Statuts individuels : en cours de consolidation · Données partielles</p>
         ${line('Sites 300', s.digital?.sites_fdsu_presents?.sites_300 || s.programs?.sites_300, 'sites_300')}
+        <p class="ti-note">Programme : Planifié · Statuts individuels : en cours de consolidation · Données intégrées</p>
         ${line('Sites 40', s.digital?.sites_fdsu_presents?.sites_40 || s.programs?.sites_40, 'sites_40')}
+        <p class="ti-note">Programme : En cours de déploiement · Statuts individuels : en cours de consolidation · Données intégrées</p>
         ${line('CCN', s.digital?.ccn_presents_ou_proposes || s.programs?.ccn, 'ccn')}
+        <p class="ti-note">Programme : En préparation · Inventaire DEMO · ≠ opérationnel production</p>
         ${line('Télécom', s.digital?.infrastructures_telecom, 'telecom')}
         ${line('Opérateurs', s.digital?.operateurs_presents, 'telecom')}
         ${line('Fibre (nœuds FTTX)', s.digital?.fibre, 'fiber')}
@@ -551,7 +774,7 @@
         ${line('Énergie', s.energy?.disponibilite)}
       </section>
       <section class="ti-section">
-        <h3>I. Recommandations DG</h3>
+        <h3>I. Recommandations de pilotage</h3>
         <div class="ti-recs">${recHtml}</div>
       </section>
       <section class="ti-section">
@@ -590,78 +813,127 @@
     if (current) select.value = current;
   }
 
-  function loadTerritory(territoryId) {
-    if (!territoryId) return Promise.resolve();
-    tiState.selectedId = territoryId;
-    const banner = document.querySelector('#ti-banner');
-    if (banner) banner.textContent = 'Chargement du profil territorial…';
-    return Promise.all([
-      fetchJson(`/api/territorial-intelligence/territories/${encodeURIComponent(territoryId)}`),
-      fetchJson(`/api/territorial-intelligence/territories/${encodeURIComponent(territoryId)}/map`),
-      fetchJson(`/api/territorial-intelligence/territories/${encodeURIComponent(territoryId)}/recommendations`),
-      fetchJson(`/api/territorial-intelligence/territories/${encodeURIComponent(territoryId)}/explain`),
-    ]).then(([profile, map, recs, explain]) => {
-      tiState.profile = profile;
-      tiState.explainability = profile.explainability || null;
-      const p = profile.profile || {};
-      const confFr = confidenceLabel(p.confidence_level);
-      const title = document.querySelector('#ti-territory-title');
-      if (title) title.textContent = `${p.territory_name || ''} — ${p.province || ''} · Zone ${p.fdsu_zone || ''}`;
-      if (banner) {
-        const layers = map?._meta?.layer_counts || {};
-        const layerSummary = Object.entries(layers)
-          .filter(([k]) => !k.startsWith('_'))
-          .map(([k, v]) => `${k}:${v}`)
-          .join(' · ');
-        banner.textContent = p.is_demo_focus
-          ? `Cas de démonstration : ${p.territory_name}. Confiance ${confFr}. Carte : ${map?._meta?.feature_count || 0} objets (${layerSummary}).`
-          : `Profil consolidé. Confiance ${confFr}. Carte : ${map?._meta?.feature_count || 0} objets.`;
-      }
-      setKpi('#ti-kpi-pop', p.population);
-      setKpi('#ti-kpi-sites', profile.sections?.programs?.sites_20476);
-      setKpi('#ti-kpi-sites300', profile.sections?.programs?.sites_300);
-      setKpi('#ti-kpi-ccn', profile.sections?.programs?.ccn);
-      setKpi('#ti-kpi-health', profile.sections?.public_services?.etablissements_sante);
-      setKpi('#ti-kpi-score', profile.sections?.priority?.score);
-      setKpi('#ti-kpi-conf', { value: confFr, status: p.confidence_level === 'high' ? 'confirmed' : 'partial' });
+  function fieldVal(f) {
+    return f && typeof f === 'object' ? f.value : f;
+  }
 
-      if (global.Edvs?.mountKpiStrip) {
-        const host = document.querySelector('#ti-edvs-kpi-host');
-        const legacy = document.querySelector('#ti-kpi-legacy');
-        if (host) {
-          host.hidden = false;
-          if (legacy) legacy.hidden = true;
-          const fieldVal = (f) => (f && typeof f === 'object' ? f.value : f);
-          const fieldStatus = (f) => (f && typeof f === 'object' ? f.status : 'confirmed');
-          const colorFor = (status) => (global.EdvsColors?.forStatus(status)?.token || 'blue');
-          global.Edvs.mountKpiStrip('#ti-edvs-kpi-host', [
-            { label: 'Population', value: fieldVal(p.population), icon: 'people', color: colorFor(fieldStatus(p.population)), confidence: confFr },
-            { label: 'Sites 20 476', value: fieldVal(profile.sections?.programs?.sites_20476), icon: 'sites', color: 'blue', confidence: 'Élevée' },
-            { label: 'Sites 300', value: fieldVal(profile.sections?.programs?.sites_300), icon: 'program', color: 'orange', confidence: 'Élevée' },
-            { label: 'CCN', value: fieldVal(profile.sections?.programs?.ccn), icon: 'ccn', color: colorFor(fieldStatus(profile.sections?.programs?.ccn)), confidence: 'Moyenne' },
-            { label: 'Santé', value: fieldVal(profile.sections?.public_services?.etablissements_sante), icon: 'data', color: 'green', confidence: 'Élevée' },
-            { label: 'Score', value: fieldVal(profile.sections?.priority?.score), icon: 'decision', color: 'orange', confidence: confFr },
-            { label: 'Confiance', valueDisplay: confFr, value: confFr, icon: 'gauge', color: 'blue', confidence: confFr },
-          ]);
-          if (global.UxPremium?.mountMapLegend) {
-            global.UxPremium.mountMapLegend('#ti-map', {
-              id: 'ux-legend-ti',
-              title: 'Légende',
-              items: [
-                { className: 'is-poly', label: 'Territoire' },
-                { className: 'is-site', label: 'Site FDSU' },
-                { className: 'is-health', label: 'Santé' },
-                { className: 'is-ccn', label: 'Télécom / Fibre / Routes' },
-              ],
-            });
+  function fieldStatus(f) {
+    return f && typeof f === 'object' ? f.status : 'confirmed';
+  }
+
+  function loadEntity(entityId, opts = {}) {
+    if (!entityId) return Promise.resolve();
+    const pushHash = opts.pushHash !== false;
+    tiState.selectedId = entityId;
+    if (pushHash) setHashEntity(entityId);
+    const banner = document.querySelector('#ti-banner');
+    if (banner) banner.textContent = 'Chargement de la synthèse multi-échelle…';
+
+    const isTerritory = String(entityId).toUpperCase().startsWith('TERRITOIRE');
+    const entityPromise = fetchJson(`/api/territorial-intelligence/entities/${encodeURIComponent(entityId)}`)
+      .catch(() => fetchJson(`/api/territorial-intelligence/territories/${encodeURIComponent(entityId)}`));
+
+    return entityPromise.then((bundle) => {
+      const mapPromise = bundle.map_payload
+        ? Promise.resolve(bundle.map_payload)
+        : fetchJson(`/api/territorial-intelligence/entities/${encodeURIComponent(entityId)}/map`)
+          .catch(() => fetchJson(`/api/territorial-intelligence/territories/${encodeURIComponent(entityId)}/map`));
+
+      const extras = isTerritory
+        ? Promise.all([
+          fetchJson(`/api/territorial-intelligence/territories/${encodeURIComponent(entityId)}/recommendations`).catch(() => null),
+          fetchJson(`/api/territorial-intelligence/territories/${encodeURIComponent(entityId)}/explain`).catch(() => null),
+        ])
+        : Promise.resolve([null, null]);
+
+      return Promise.all([Promise.resolve(bundle), mapPromise, extras]).then(([profile, mapPayload, pair]) => {
+        const recs = pair && pair[0];
+        const explain = pair && pair[1];
+        if (mapPayload && mapPayload.symbology) applySymbologyRegistry(mapPayload.symbology);
+        tiState.profile = profile;
+        tiState.entity = profile.entity || null;
+        tiState.explainability = profile.explainability || null;
+        const p = profile.profile || {};
+        const entity = profile.entity || {};
+        const confFr = confidenceLabel(p.confidence_level || profile.confidence);
+        const title = document.querySelector('#ti-territory-title');
+        const adminLabel = entity.admin_type || entity.type || 'Territoire';
+        const displayName = entity.name || p.territory_name || entityId;
+        const province = (entity.hierarchy && entity.hierarchy.province) || p.province || '';
+        const zone = entity.fdsu_zone || p.fdsu_zone || '';
+        if (title) {
+          title.textContent = zone
+            ? (displayName + ' — ' + adminLabel + (province ? ' · ' + province : '') + ' · Zone ' + zone)
+            : (displayName + ' — ' + adminLabel + (province ? ' · ' + province : ''));
+        }
+        renderBreadcrumb(profile.breadcrumb);
+        renderChildren(
+          profile.children || (profile.administrative && profile.administrative.children) || [],
+          profile.administrative && profile.administrative.children_level
+        );
+
+        if (banner) {
+          const layers = (mapPayload && mapPayload._meta && mapPayload._meta.layer_counts)
+            || (profile.map && profile.map.layer_counts)
+            || {};
+          const layerSummary = Object.entries(layers)
+            .filter(([k]) => !String(k).startsWith('_'))
+            .map(([k, v]) => (KIND_LABELS[k] || k) + ':' + v)
+            .join(' · ');
+          const featCount = (mapPayload && mapPayload._meta && mapPayload._meta.feature_count)
+            || (profile.map && profile.map.feature_count)
+            || 0;
+          banner.textContent = adminLabel + ' ' + displayName + '. Confiance ' + confFr + '. Carte : ' + featCount + ' objets (' + layerSummary + ').';
+        }
+
+        const popField = profile.population || p.population;
+        const healthField = profile.health || (profile.sections && profile.sections.public_services && profile.sections.public_services.etablissements_sante);
+        const sitesField = profile.sections && profile.sections.programs && profile.sections.programs.sites_20476;
+        const sites300Field = profile.sections && profile.sections.programs && profile.sections.programs.sites_300;
+        const ccnField = profile.ccn || (profile.sections && profile.sections.programs && profile.sections.programs.ccn);
+        const scoreField = profile.score || (profile.sections && profile.sections.priority && profile.sections.priority.score);
+
+        setKpi('#ti-kpi-pop', popField);
+        setKpi('#ti-kpi-sites', sitesField);
+        setKpi('#ti-kpi-sites300', sites300Field);
+        setKpi('#ti-kpi-ccn', ccnField);
+        setKpi('#ti-kpi-health', healthField);
+        setKpi('#ti-kpi-score', scoreField);
+        setKpi('#ti-kpi-conf', { value: confFr, status: (p.confidence_level || profile.confidence) === 'high' ? 'confirmed' : 'partial' });
+
+        if (global.Edvs && global.Edvs.mountKpiStrip) {
+          const host = document.querySelector('#ti-edvs-kpi-host');
+          const legacy = document.querySelector('#ti-kpi-legacy');
+          if (host) {
+            host.hidden = false;
+            if (legacy) legacy.hidden = true;
+            const colorFor = (status) => (global.EdvsColors && global.EdvsColors.forStatus(status) && global.EdvsColors.forStatus(status).token) || 'blue';
+            const cov = profile.coverage || {};
+            const rateVal = fieldVal(cov.coverage_rate_pct);
+            global.Edvs.mountKpiStrip('#ti-edvs-kpi-host', [
+              { label: 'Population', value: fieldVal(popField), icon: 'people', color: colorFor(fieldStatus(popField)), confidence: confFr },
+              { label: 'Pop. couverte', value: fieldVal(cov.population_covered), icon: 'people', color: 'green', confidence: confidenceLabel(cov.population_covered && cov.population_covered.confidence) },
+              { label: 'Pop. non couverte', value: fieldVal(cov.population_uncovered), icon: 'people', color: 'orange', confidence: confidenceLabel(cov.population_uncovered && cov.population_uncovered.confidence) },
+              { label: 'Taux couverture', value: rateVal != null ? (String(rateVal) + ' %') : '—', icon: 'gauge', color: 'blue', confidence: confidenceLabel(cov.coverage_rate_pct && cov.coverage_rate_pct.confidence) },
+              { label: 'Santé', value: fieldVal(healthField), icon: 'data', color: 'green', confidence: 'Élevée' },
+              { label: 'Sites 20 476', value: fieldVal(sitesField), icon: 'sites', color: 'blue', confidence: 'Élevée' },
+              { label: 'Confiance', valueDisplay: confFr, value: confFr, icon: 'gauge', color: 'blue', confidence: confFr },
+            ]);
           }
         }
-      }
-      renderMap(map.geojson);
-      renderSections(profile, recs, explain);
+
+        const legend = (mapPayload && mapPayload.legend) || (profile.map && profile.map.legend) || [];
+        mountTiLegend(legend);
+        renderMap((mapPayload && mapPayload.geojson) || { type: 'FeatureCollection', features: [] }, legend);
+        renderSections(profile, recs, explain, profile.coverage);
+      });
     }).catch(() => {
-      if (banner) banner.textContent = 'Profil territorial indisponible — vérifier l’API.';
+      if (banner) banner.textContent = 'Synthèse territoriale indisponible — vérifier l’API.';
     });
+  }
+
+  function loadTerritory(territoryId) {
+    return loadEntity(territoryId, { pushHash: true });
   }
 
   function loadTerritoryList() {
@@ -783,21 +1055,34 @@
       global.Edvs.mountPresentationButton('#ti-edvs-presentation-slot');
     }
     const hash = (global.location.hash || '').replace(/^#/, '');
-    const hashTerritory = hash.startsWith('territorial-intelligence/')
+    const hashEntity = hash.startsWith('territorial-intelligence/')
       ? decodeURIComponent(hash.split('/')[1] || '')
       : '';
-    return loadTerritoryList().then(() => {
-      tiState.initialized = true;
-      if (hashTerritory) {
-        const select = document.querySelector('#ti-territory-select');
-        if (select) select.value = hashTerritory;
-        return loadTerritory(hashTerritory);
-      }
-      global.setTimeout(() => tiState.map?.invalidateSize(), 120);
-      return null;
-    });
+    return fetchJson('/api/territorial-intelligence/symbology')
+      .then(applySymbologyRegistry)
+      .catch(() => null)
+      .then(() => {
+        if (hashEntity && !String(hashEntity).toUpperCase().startsWith('TERRITOIRE')) {
+          tiState.selectedId = hashEntity;
+          return loadTerritoryList().then(() => {
+            tiState.initialized = true;
+            return loadEntity(hashEntity, { pushHash: false });
+          });
+        }
+        return loadTerritoryList().then(() => {
+          tiState.initialized = true;
+          if (hashEntity) {
+            const select = document.querySelector('#ti-territory-select');
+            if (select) select.value = hashEntity;
+            return loadEntity(hashEntity, { pushHash: false });
+          }
+          global.setTimeout(() => tiState.map?.invalidateSize(), 120);
+          return null;
+        });
+      });
   }
 
   global.tiState = tiState;
+  global.loadEntity = loadEntity;
   global.initializeTerritorialIntelligenceModule = initializeTerritorialIntelligenceModule;
 })(window);

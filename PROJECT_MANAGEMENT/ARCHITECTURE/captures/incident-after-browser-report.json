@@ -1,0 +1,107 @@
+{
+  "consoleErrors": [
+    "[DXL fetch] ✗ {service: coverage, label: Coverage, url: http://127.0.0.1:8001/api/territorial-intelligence/territories/Djugu, status: null, ms: 20013}",
+    "[DXL fetch] ✗ {service: impact, label: Analyse d’Impact Territorial, url: http://127.0.0.1:8001/api/spatial-matching/assets/26/impact, status: null, ms: 20001}",
+    "[DXL fetch] ✗ {service: coverage, label: Coverage, url: http://127.0.0.1:8001/api/territorial-intelligence/territories/Ilebo, status: null, ms: 20002}",
+    "[DXL fetch] ✗ {service: impact, label: Analyse d’Impact Territorial, url: http://127.0.0.1:8001/api/spatial-matching/assets/29/impact, status: null, ms: 20011}",
+    "[DXL fetch] ✗ {service: map, label: Carte NSME, url: http://127.0.0.1:8001/api/spatial-matching/map?asset_id=29, status: null, ms: 20011}"
+  ],
+  "routes": [
+    {
+      "route": "#map",
+      "hash": "#map",
+      "provider": null,
+      "label": null,
+      "tiles": 0,
+      "loaded": 0,
+      "attribution": " Leaflet",
+      "appHasAttach": false
+    },
+    {
+      "route": "#decision-case/site/14",
+      "hash": "#decision-case/site/14?program_code=sites_40",
+      "hasAnomalie": false,
+      "hasRayon": false,
+      "hasAucunObjet": false,
+      "hasCCNDemo": true,
+      "tiles": 1,
+      "loaded": 1,
+      "attribution": " Leaflet | Tiles © Esri",
+      "leafletCount": 1
+    },
+    {
+      "route": "#decision-case/site/16",
+      "hash": "#decision-case/site/16?program_code=sites_40",
+      "hasAnomalie": false,
+      "hasRayon": false,
+      "hasAucunObjet": false,
+      "hasCCNDemo": true,
+      "tiles": 1,
+      "loaded": 1,
+      "attribution": " Leaflet | Tiles © Esri",
+      "leafletCount": 1
+    },
+    {
+      "route": "#decision-case/site/26",
+      "hash": "#decision-case/site/26?program_code=sites_40",
+      "hasAnomalie": false,
+      "hasRayon": false,
+      "hasAucunObjet": false,
+      "hasCCNDemo": true,
+      "tiles": 1,
+      "loaded": 1,
+      "attribution": " Leaflet | Tiles © Esri",
+      "leafletCount": 1
+    },
+    {
+      "route": "#decision-case/site/29",
+      "hash": "#decision-case/site/29?program_code=sites_40",
+      "hasAnomalie": false,
+      "hasRayon": false,
+      "hasAucunObjet": false,
+      "hasCCNDemo": true,
+      "tiles": 1,
+      "loaded": 1,
+      "attribution": " Leaflet | Tiles © Esri",
+      "leafletCount": 2
+    },
+    {
+      "route": "#decision-case/site/34",
+      "hash": "#decision-case/site/34?program_code=sites_40",
+      "hasAnomalie": false,
+      "hasRayon": false,
+      "hasAucunObjet": false,
+      "hasCCNDemo": true,
+      "tiles": 1,
+      "loaded": 1,
+      "attribution": " Leaflet | Tiles © Esri",
+      "leafletCount": 2
+    }
+  ],
+  "served": {
+    "/app.js": {
+      "status": 200,
+      "len": 420887,
+      "hasSigBasemap": true,
+      "hasDomainStatuses": false,
+      "hasAttach": true,
+      "hasNearestContext": false
+    },
+    "/modules/shared/basemap-manager/basemap-manager.js": {
+      "status": 200,
+      "len": 9363,
+      "hasSigBasemap": true,
+      "hasDomainStatuses": false,
+      "hasAttach": false,
+      "hasNearestContext": false
+    },
+    "/modules/shared/spatial-decision-graph/spatial-decision-graph.js": {
+      "status": 200,
+      "len": 42563,
+      "hasSigBasemap": false,
+      "hasDomainStatuses": false,
+      "hasAttach": false,
+      "hasNearestContext": true
+    }
+  }
+}

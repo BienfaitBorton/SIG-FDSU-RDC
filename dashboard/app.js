@@ -372,7 +372,7 @@ const moduleNames = {
   geocodage: 'Géocodage FDSU',
   ccn: 'Centres Communautaires',
   territorial_intelligence: 'Intelligence territoriale',
-  salle_pilotage: 'Salle de Pilotage DG',
+  salle_pilotage: 'Salle de Pilotage',
   decision_detail: 'Analyse détaillée',
   decision_experience: 'Dossier de décision',
   import: 'Import',
@@ -2170,6 +2170,10 @@ function initializeCartographyModule() {
   setupCartographyExplorerDrawer();
   setupCartographyBasemapSettings();
 
+  if (typeof window.SigCartographyExperience?.setup === 'function') {
+    window.SigCartographyExperience.setup();
+  }
+
   const mapElement = document.querySelector('#map');
   const layerList = document.querySelector('#layer-list');
   const zoomAutoButton = document.querySelector('#zoom-auto');
@@ -2650,11 +2654,13 @@ function setCartographyFocusMode(enabled) {
   }
 
   if (focusBtn) {
-    focusBtn.textContent = entering ? 'Mode Focus actif' : 'Mode Focus';
+    focusBtn.classList.toggle('is-active', entering);
+    const focusLabel = focusBtn.querySelector('.cartography-premium-btn__label');
+    if (focusLabel) focusLabel.textContent = entering ? 'Plein écran actif' : 'Plein écran';
     focusBtn.setAttribute('aria-pressed', entering ? 'true' : 'false');
     focusBtn.title = entering
-      ? 'Mode Focus actif — utilisez Quitter ou ESC'
-      : 'Mode Focus — agrandir la carte dans l\'application';
+      ? 'Plein écran actif — Quitter ou Échap'
+      : 'Plein écran applicatif — agrandir la carte';
   }
 
   if (entering) {
@@ -3417,7 +3423,7 @@ const WEB_SIG_LAYER_DEFINITIONS = {
     label: 'Provinces',
     reportPath: 'province_official/province_referential_official.json',
     listKey: 'province_referential',
-    endpoint: '/provinces?limit=500',
+    endpoint: '/geo/provinces?limit=500',
     visibleByDefault: false,
   },
   territoires: {
@@ -3432,14 +3438,14 @@ const WEB_SIG_LAYER_DEFINITIONS = {
     label: 'Collectivités',
     reportPath: 'collectivity_official/collectivity_referential_official.json',
     listKey: 'collectivity_referential',
-    endpoint: '/collectivites?limit=1000',
+    endpoint: '/geo/collectivites?limit=1000',
     visibleByDefault: false,
   },
   groupements: {
     label: 'Groupements',
     reportPath: 'groupement_official/groupement_referential_official.json',
     listKey: 'groupement_referential',
-    endpoint: '/groupements?limit=2000',
+    endpoint: '/geo/groupements?limit=2000',
     visibleByDefault: false,
   },
   villages: {
@@ -3451,13 +3457,13 @@ const WEB_SIG_LAYER_DEFINITIONS = {
   },
   sites: {
     label: 'Sites FDSU',
-    endpoint: '/sites',
+    endpoint: '/geo/sites',
     visibleByDefault: false,
     fallbackItems: [],
   },
   missions: {
     label: 'Missions',
-    endpoint: '/missions?limit=500',
+    endpoint: '/geo/missions?limit=500',
     visibleByDefault: false,
     fallbackItems: [],
   },
@@ -4990,7 +4996,8 @@ function buildFdsuProgramPopupHtml(properties, layerKey) {
     ['text', properties.territoire],
     ['text', properties.zone],
     ['label', 'Programme', programmeLabel],
-    ['label', 'Statut opérationnel', properties.status || properties.operational_status || 'À renseigner'],
+            ['label', 'Statut source (brut)', properties.status || properties.operational_status || 'À renseigner'],
+            ['label', 'Statut de donnée', properties.data_status || properties.data_quality || properties.quality_label || 'À renseigner'],
     ['label', 'Score de priorité', properties.priority_score ?? properties.fdsu_score ?? properties.priority_status ?? 'À calculer'],
     ['label', 'Niveau de priorité', properties.priority_level_label || properties.priority_level || properties.priority_status],
     ['label', 'Critères principaux', Array.isArray(properties.top_criteria) ? properties.top_criteria.join(', ') : properties.top_criteria],
@@ -5077,17 +5084,21 @@ function onGeoEachFeature(feature, layer, layerKey) {
   cartographyState.featureLayers[layerKey][featureId] = layer;
 
   if (layer.bindPopup) {
-    layer.bindPopup(`
-      <div class="decision-map-popup">
-        <strong>${escapeHtml(getFeatureProperty(properties, ['nom', 'name', 'libelle']))}</strong><br>
-        Niveau : ${escapeHtml(getFeatureProperty(properties, ['type', 'niveau']) || getCartographyLayerLabel(layerKey))}<br>
-        Parent : ${escapeHtml(getFeatureProperty(properties, ['parent_name', 'province', 'territoire', 'parent']) || '—')}<br>
-        Sites FDSU : ${escapeHtml(properties.fdsu_sites_count ?? properties.sites_count ?? '—')}<br>
-        Établissements santé : ${escapeHtml(properties.health_facilities_count ?? '—')}<br>
-        Indicateurs : ${escapeHtml(properties.available_indicators || 'Référentiel administratif')}<br>
-        <span class="map-popup-action">Voir fiche territoriale</span>
-      </div>
-    `, { maxWidth: 280, className: 'decision-map-popup-wrapper' });
+    if (typeof window !== 'undefined' && window.SigMapTooltips?.bindRichPopup) {
+      window.SigMapTooltips.bindRichPopup(layer, feature, layerKey, { onNavigate: true });
+    } else {
+      layer.bindPopup(`
+        <div class="decision-map-popup">
+          <strong>${escapeHtml(getFeatureProperty(properties, ['nom', 'name', 'libelle']))}</strong><br>
+          Niveau : ${escapeHtml(getFeatureProperty(properties, ['type', 'niveau']) || getCartographyLayerLabel(layerKey))}<br>
+          Parent : ${escapeHtml(getFeatureProperty(properties, ['parent_name', 'province', 'territoire', 'parent']) || '—')}<br>
+          Sites FDSU : ${escapeHtml(properties.fdsu_sites_count ?? properties.sites_count ?? '—')}<br>
+          Établissements santé : ${escapeHtml(properties.health_facilities_count ?? '—')}<br>
+          Indicateurs : ${escapeHtml(properties.available_indicators || 'Référentiel administratif')}<br>
+          <span class="map-popup-action">Voir fiche territoriale</span>
+        </div>
+      `, { maxWidth: 280, className: 'decision-map-popup-wrapper sig-map-popup', autoPan: true, keepInView: true });
+    }
   }
 
   renderSmartTooltip(feature, layer, layerKey);
@@ -5106,7 +5117,9 @@ function onGeoEachFeature(feature, layer, layerKey) {
     }
     selectMapFeature(layerKey, feature, layer, { zoom: true });
     renderFeatureDetails(feature, layerKey);
-    if (cartographyState.map?.closePopup) cartographyState.map.closePopup();
+    if (layer.openPopup && event?.latlng) {
+      layer.openPopup(event.latlng);
+    }
     openEntityProfile(layerKey, properties, feature);
     enrichFeatureDetailsFromApi(feature, layerKey);
   });
@@ -9582,11 +9595,11 @@ function getDashboardStats() {
     return;
   }
 
-  getCount('/provinces?limit=500').then(updateSummaryCard('stat-provinces'));
-  getCount('/territoires?limit=500').then(updateSummaryCard('stat-territoires'));
-  getCount('/collectivites?limit=500').then(updateSummaryCard('stat-collectivites'));
-  getCount('/groupements?limit=500').then(updateSummaryCard('stat-groupements'));
-  getCount('/villages?limit=500').then(updateSummaryCard('stat-villages'));
+  getCount('/geo/provinces?limit=500').then(updateSummaryCard('stat-provinces'));
+  getCount('/geo/territoires?limit=500').then(updateSummaryCard('stat-territoires'));
+  getCount('/geo/collectivites?limit=500').then(updateSummaryCard('stat-collectivites'));
+  getCount('/geo/groupements?limit=500').then(updateSummaryCard('stat-groupements'));
+  getCount('/geo/villages?limit=500').then(updateSummaryCard('stat-villages'));
   updateSummaryCard('stat-sites')(0);
   updateSummaryCard('stat-missions')(0);
   updateSummaryCard('stat-utilisateurs')(0);
@@ -9636,7 +9649,7 @@ function getLastImports() {
 function getZones() {
   const source = LOCAL_JSON_MODE
     ? loadLocalDashboardData().then((data) => data.provinces)
-    : fetchJson('/provinces?limit=500').then((provinces) => asArray(provinces));
+    : fetchJson('/geo/provinces?limit=500').then((provinces) => asArray(provinces));
 
   source.then((provinces) => {
     if (!asArray(cartographyState.data.provinces).length) {
@@ -9650,7 +9663,7 @@ function getProvinces() {
   if (LOCAL_JSON_MODE) {
     return loadLocalDashboardData().then((data) => data.provinces);
   }
-  return fetchJson('/provinces?limit=500');
+  return fetchJson('/geo/provinces?limit=500');
 }
 
 function getTerritoires() {
@@ -9664,14 +9677,14 @@ function getCollectivites() {
   if (LOCAL_JSON_MODE) {
     return loadLocalDashboardData().then((data) => makePlaceholderRows(data.counts.collectivites, 'collectivite'));
   }
-  return fetchJson('/collectivites?limit=500');
+  return fetchJson('/geo/collectivites?limit=500');
 }
 
 function getGroupements() {
   if (LOCAL_JSON_MODE) {
     return loadLocalDashboardData().then((data) => makePlaceholderRows(data.counts.groupements, 'groupement'));
   }
-  return fetchJson('/groupements?limit=500');
+  return fetchJson('/geo/groupements?limit=500');
 }
 
 function getVillages() {
@@ -9921,6 +9934,8 @@ window.addEventListener('hashchange', renderRouteFromHash);
 
 // Exposition minimale pour les tests E2E Playwright (lecture seule).
 window.cartographyState = cartographyState;
+window.setCartographyFocusMode = setCartographyFocusMode;
+window.openCartographyDrawerPanel = openCartographyDrawerPanel;
 window.nationalMapState = nationalMapState;
 window.dashboardViewState = dashboardViewState;
 window.openDashboardDetailPage = openDashboardDetailPage;

@@ -62,14 +62,37 @@
           programCode || caseFile?.asset?.program_code || nsmeImpact?.asset?.program_code,
         ).then(() => {
           document.querySelector('#ux-legend-dxl')?.remove();
+          global.SigDecisionCartographyExperience?.attach?.();
         }).catch((err) => {
           console.warn('[DXL] SDG dossier', err);
           const mapHost = document.querySelector('#dxl-map');
           if (mapHost) {
-            const note = document.createElement('p');
-            note.className = 'dxl-panel-soft-error';
-            note.innerHTML = '<strong>Analyse d’Impact Territorial indisponible</strong> — aucun rendu générique de substitution.';
+            const note = document.createElement('div');
+            note.className = 'dxl-panel-soft-error sdg-explain-fallback';
+            note.id = 'sdg-load-explain';
+            const sid = assetId;
+            const pc = programCode || caseFile?.asset?.program_code || nsmeImpact?.asset?.program_code || '';
+            note.innerHTML = '<strong>Analyse spatiale en diagnostic…</strong>';
             mapHost.before(note);
+            const qs = pc ? `?program_code=${encodeURIComponent(pc)}` : '';
+            fetch(`${location.protocol}//${location.hostname}:8001/api/sdg/assets/${encodeURIComponent(sid)}/explainability${qs}`)
+              .then((r) => (r.ok ? r.json() : null))
+              .then((payload) => {
+                const card = payload?.explainability;
+                if (!card) {
+                  note.innerHTML = `<strong>Analyse spatiale indisponible</strong> — échec de chargement du graphe.`;
+                  return;
+                }
+                note.innerHTML = `
+                  <strong>${card.title || 'Analyse spatiale indisponible'}</strong>
+                  <p>${card.message || ''}</p>
+                  <p><em>Données disponibles :</em> ${(card.available || []).join(', ') || '—'}</p>
+                  <p><em>Données manquantes :</em> ${(card.missing || []).join(', ') || '—'}</p>
+                  <p class="dxl-note">${card.hint || ''}</p>`;
+              })
+              .catch(() => {
+                note.innerHTML = '<strong>Analyse spatiale indisponible</strong> — diagnostic détaillé non joignable.';
+              });
           }
         });
       }
@@ -268,9 +291,9 @@
         impactHost.innerHTML = softLoadingHtml('Chargement de l’analyse d’impact territorial…');
       } else {
         impactHost.innerHTML = softErrorHtml(
-          'Analyse d’Impact Territorial indisponible',
+          'Analyse d’impact (NSME) indisponible',
           services.impact.error || 'Le service d’impact n’a pas répondu.',
-          'Les autres volets (besoins, carte, explication) restent affichés s’ils sont disponibles.',
+          'Le Spatial Decision Graph et l’explicabilité restent consultables s’ils sont disponibles.',
         );
       }
     }
@@ -292,6 +315,7 @@
           needs?.asset?.program_code || decisionCase?.asset?.program_code || state.programCode,
         ).then(() => {
           document.querySelector('#ux-legend-dxl')?.remove();
+          global.SigDecisionCartographyExperience?.attach?.();
           if (global.sessionStorage?.getItem('fdsu.sdg.autoPresent') === '1') {
             global.sessionStorage.removeItem('fdsu.sdg.autoPresent');
             global.setTimeout(() => global.SpatialDecisionGraph?.startPresentation?.(), 400);
@@ -299,10 +323,30 @@
         }).catch((err) => {
           console.warn('[DXL] Spatial Decision Graph', err);
           if (mapSection) {
-            const note = document.createElement('p');
-            note.className = 'dxl-panel-soft-error';
-            note.innerHTML = '<strong>Analyse d’Impact Territorial indisponible</strong> — le graphe décisionnel n’a pas pu être chargé. Aucun rendu générique de substitution.';
+            const note = document.createElement('div');
+            note.className = 'dxl-panel-soft-error sdg-explain-fallback';
+            note.innerHTML = '<strong>Analyse spatiale en diagnostic…</strong>';
             document.querySelector('#dxl-map')?.before(note);
+            const pc = needs?.asset?.program_code || decisionCase?.asset?.program_code || state.programCode || '';
+            const qs = pc ? `?program_code=${encodeURIComponent(pc)}` : '';
+            fetch(`${location.protocol}//${location.hostname}:8001/api/sdg/assets/${encodeURIComponent(assetId)}/explainability${qs}`)
+              .then((r) => (r.ok ? r.json() : null))
+              .then((payload) => {
+                const card = payload?.explainability;
+                if (!card) {
+                  note.innerHTML = '<strong>Analyse spatiale indisponible</strong> — le graphe n’a pas pu être chargé.';
+                  return;
+                }
+                note.innerHTML = `
+                  <strong>${card.title || 'Analyse spatiale indisponible'}</strong>
+                  <p>${card.message || ''}</p>
+                  <p><em>Disponibles :</em> ${(card.available || []).join(', ') || '—'}</p>
+                  <p><em>Manquantes :</em> ${(card.missing || []).join(', ') || '—'}</p>
+                  <p class="dxl-note">${card.hint || ''}</p>`;
+              })
+              .catch(() => {
+                note.innerHTML = '<strong>Analyse spatiale indisponible</strong> — diagnostic non joignable.';
+              });
           }
         });
       } else if (mapSection) {
@@ -431,9 +475,9 @@
       const summary = document.querySelector('#dxl-section-summary');
       if (summary) {
         summary.innerHTML = softErrorHtml(
-          'Analyse d’Impact Territorial indisponible',
+          'Analyse spatiale — erreur inattendue',
           humanize(err),
-          'Réessayez après vérification de l’API NSME.',
+          'Consultez la fiche d’explicabilité si le diagnostic SDG est disponible.',
         );
       }
       renderActions();

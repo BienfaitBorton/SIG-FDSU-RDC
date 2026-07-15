@@ -349,3 +349,82 @@
   font-size: 0.72rem;
   color: #94a3b8;
 }
+
+.ti-breadcrumb {
+  margin: 0 0 4px;
+}
+
+.ti-breadcrumb-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.86rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.ti-breadcrumb-list li:not(:last-child)::after {
+  content: '›';
+  margin-left: 0.5rem;
+  opacity: 0.7;
+}
+
+.ti-breadcrumb-list a {
+  color: #7dd3fc;
+  text-decoration: none;
+}
+
+.ti-breadcrumb-list a:hover {
+  text-decoration: underline;
+}
+
+.ti-breadcrumb-list .is-current {
+  color: inherit;
+  font-weight: 600;
+}
+
+.ti-children {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.ti-children-title {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+}
+
+.ti-children-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+  max-height: 220px;
+  overflow: auto;
+}
+
+.ti-children-list button {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.ti-children-list button:hover {
+  background: rgba(56, 189, 248, 0.12);
+}
+
+.ti-coverage-block {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}

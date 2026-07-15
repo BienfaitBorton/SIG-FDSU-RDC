@@ -370,17 +370,92 @@
   /**
    * API cible : SigMapTooltips.bind(layer, featureOrData, entityType, options)
    */
+  function buildRichPopupHtml(kind, props, options = {}) {
+    const resolved = resolveKind(kind, props);
+    const meta = KIND_META[resolved] || { label: 'Entité', icon: '📍' };
+    const title = buildTitle(kind, props);
+    const lines = buildLines(kind, props);
+    const route = resolveClickRoute(kind, props, options);
+    const actions = [];
+
+    if (route) {
+      actions.push(`<a class="sig-map-popup-action" href="#${escapeHtml(route)}" data-sig-nav="${escapeHtml(route)}">Analyser</a>`);
+    }
+    if (['territory', 'territoire', 'territoires', 'provinces', 'province'].includes(resolved)) {
+      const tid = pick(props, ['territory_id', 'id', 'code', 'nom', 'name']);
+      if (tid) {
+        actions.push(`<a class="sig-map-popup-action sig-map-popup-action--ghost" href="#territorial-intelligence/${encodeURIComponent(tid)}">Intelligence territoriale</a>`);
+      }
+    }
+    if (['site', 'site_fdsu', 'sites', 'sites_40', 'sites_300', 'sites_all'].includes(resolved)) {
+      const id = pick(props, ['site_id', 'id', 'code']);
+      const program = pick(props, ['program_code', 'programme']) || '';
+      if (id) {
+        const qs = program ? `?program_code=${encodeURIComponent(program)}` : '';
+        actions.push(`<a class="sig-map-popup-action sig-map-popup-action--ghost" href="#decision-case/site/${encodeURIComponent(id)}${qs}">Dossier de décision</a>`);
+      }
+    }
+
+    return `
+      <div class="sig-map-popup-card">
+        <div class="sig-map-popup-header">
+          <span class="sig-map-popup-icon">${meta.icon}</span>
+          <div>
+            <h4 class="sig-map-popup-title">${escapeHtml(title)}</h4>
+            <span class="sig-map-popup-type">${escapeHtml(meta.label)}</span>
+          </div>
+        </div>
+        <div class="sig-map-popup-lines">
+          ${lines.map((line) => `<div>${escapeHtml(line)}</div>`).join('')}
+        </div>
+        ${actions.length ? `<div class="sig-map-popup-actions">${actions.join('')}</div>` : ''}
+      </div>
+    `;
+  }
+
+  function bindRichPopup(layer, featureOrData, entityType, options = {}) {
+    if (!layer || typeof layer.bindPopup !== 'function') return false;
+    const props = normalizeProps(featureOrData);
+    const kind = resolveKind(entityType, props);
+    const html = buildRichPopupHtml(kind, props, options);
+    layer.bindPopup(html, {
+      maxWidth: 320,
+      minWidth: 220,
+      className: 'sig-map-popup',
+      autoPan: true,
+      autoPanPadding: [80, 80],
+      keepInView: true,
+      closeButton: true,
+    });
+    if (typeof layer.on === 'function') {
+      layer.off('popupopen.sigMapTooltips');
+      layer.on('popupopen.sigMapTooltips', () => {
+        const popupEl = layer.getPopup?.()?.getElement?.();
+        popupEl?.querySelectorAll('[data-sig-nav]').forEach((link) => {
+          link.addEventListener('click', (event) => {
+            event.preventDefault();
+            const target = link.getAttribute('data-sig-nav');
+            if (target && !String(target).includes('/api/')) {
+              global.location.hash = target.replace(/^#/, '');
+            }
+          });
+        });
+      });
+    }
+    return true;
+  }
+
   function bind(layer, featureOrData, entityType, options = {}) {
     if (!layer || typeof layer.bindTooltip !== 'function') return false;
     const props = normalizeProps(featureOrData);
     const kind = resolveKind(entityType, props);
-    const html = buildHtml(kind, props, options);
+    const html = buildHtml(kind, props, { ...options, hint: options.hint ?? 'Cliquer pour la fiche enrichie' });
 
     layer.bindTooltip(html, {
       sticky: false,
       direction: options.direction || 'auto',
       opacity: 1,
-      className: 'sig-map-tooltip',
+      className: 'sig-map-tooltip sig-map-tooltip--compact',
       permanent: false,
       pane: options.pane || 'tooltipPane',
     });
@@ -446,8 +521,10 @@
     resolveKind,
     buildLines,
     buildHtml,
+    buildRichPopupHtml,
     buildTitle,
     bind,
+    bindRichPopup,
     bindHoverTooltip,
     rebindLayerGroup,
     resolveClickRoute,

@@ -12,13 +12,14 @@ from typing import Any
 ENGINE_VERSION = "sdg-2.2.0"
 
 # Statuts officiels utilisateur (Data First + No Black Box)
+# « operational » = maturité d’intégration référentiel — PAS site/service physiquement opérationnel.
 OFFICIAL_STATUS = {
-    "operational": {"label": "Opérationnel", "code": "operational"},
-    "empty": {"label": "Aucun objet trouvé", "code": "empty"},
-    "integrating": {"label": "En cours d’intégration", "code": "integration_pending"},
-    "error": {"label": "Erreur d’intégration", "code": "error"},
-    "partial": {"label": "Partiel", "code": "partial"},
-    "demonstration": {"label": "Démonstration / partiel", "code": "demonstration"},
+    "operational": {"label": "Référentiel intégré", "code": "operational", "dimension": "data_status"},
+    "empty": {"label": "Aucun objet trouvé", "code": "empty", "dimension": "data_status"},
+    "integrating": {"label": "En cours d’intégration", "code": "integration_pending", "dimension": "data_status"},
+    "error": {"label": "Erreur d’intégration", "code": "error", "dimension": "data_status"},
+    "partial": {"label": "Données partielles", "code": "partial", "dimension": "data_status"},
+    "demonstration": {"label": "Démonstration / partiel", "code": "demonstration", "dimension": "data_status"},
 }
 
 # Catégories UI — certaines futures restent disponibles=False
@@ -854,61 +855,185 @@ def _human_source(raw: Any) -> str:
     return text or "NSME"
 
 
+def _classify_contribution_type(
+    *,
+    status: str,
+    category: str,
+    criterion: str | None,
+    display: str | None,
+    relation_type: str | None = None,
+) -> str:
+    """Classification explicable — aucun point inventé.
+
+    Types : direct | indirect | contextual_evidence | not_applicable | pending_rule
+    """
+    cat = (category or "").lower()
+    rel = (relation_type or "").lower()
+    disp = str(display or "")
+    # Points numériques réellement lus depuis un critère sourcé
+    if status == "mapped" and criterion:
+        if any(ch.isdigit() for ch in disp) or "/" in disp:
+            return "direct"
+        return "indirect"
+    if status == "proxy" or cat in {"population", "localities", "needs"}:
+        return "indirect"
+    if cat == "ccn" or "ccn" in rel:
+        return "pending_rule"
+    if cat in {"fdsu_sites", "admin"}:
+        return "contextual_evidence"
+    if cat in {"health", "education", "telecom", "roads"}:
+        return "contextual_evidence"
+    if status == "unavailable":
+        return "contextual_evidence"
+    return "not_applicable"
+
+
+def _contribution_explanation(contrib_type: str, category: str, criterion: str | None = None) -> str:
+    cat = (category or "").lower()
+    if contrib_type == "direct" and criterion:
+        return f"Cette relation attribue des points au critère « {criterion} » selon la règle officielle appliquée."
+    if contrib_type == "indirect":
+        if cat in {"population", "localities", "needs"}:
+            return "Cette localité ou population alimente indirectement les critères démographie et couverture."
+        if criterion:
+            return f"Cette relation alimente le critère agrégé « {criterion} », sans points isolés propres."
+        return "Cette relation alimente des critères agrégés du score, sans attribution de points isolés."
+    if contrib_type == "pending_rule":
+        return "Moteur CCN / DEMO — aucune pondération inventée ; en attente de règle officielle sourcée."
+    if contrib_type == "not_applicable":
+        return "Cette relation n’entre pas dans le scoring ; elle est affichée à titre de contexte territorial."
+    if cat == "health":
+        return "Cet établissement confirme la présence d’un service public essentiel (preuve contextuelle)."
+    if cat in {"telecom", "roads"}:
+        return "Cette infrastructure éclaire la faisabilité territoriale (preuve contextuelle), sans points inventés."
+    if cat == "fdsu_sites":
+        return "Site FDSU voisin — preuve de coordination / contexte programme, sans points attribués."
+    return "Cette relation aide à comprendre la décision sans être pondérée directement dans le score."
+
+
 def _contribution_from_decision(relation_type: str, match: dict[str, Any], case: dict[str, Any] | None) -> dict[str, Any]:
     """Relie une relation NSME à un critère du Decision Engine si disponible — jamais inventé."""
     proxy_pop = match.get("population_impacted")
     style = RELATION_STYLES.get(relation_type) or {}
+    cat = style.get("category") or _category_for_relation(relation_type)
     base = {
         "status": "unavailable",
-        "display": "Preuve contextuelle — contribution directe non calculée",
+        "display": "Preuve contextuelle",
         "proxy_population": proxy_pop,
-        "note": "La contribution au score n’est affichée que lorsqu’un critère décisionnel sourcé existe.",
+        "note": "Aucun point isolé n’est affiché sans critère décisionnel sourcé.",
+        "contribution_type": "contextual_evidence",
+        "role_label": "Preuve contextuelle",
+        "explanation": _contribution_explanation("contextual_evidence", cat),
+        "fed_criteria": [],
     }
     if not case:
         if proxy_pop is not None:
-            return {
+            ctype = "indirect"
+            out = {
                 **base,
                 "status": "proxy",
                 "display": f"Population concernée : {proxy_pop}",
                 "note": "Indicateur populationnel NSME — pas un point de score inventé.",
+                "contribution_type": ctype,
+                "role_label": "Contribution indirecte",
+                "explanation": _contribution_explanation(ctype, cat),
+                "fed_criteria": ["population", "couverture"],
             }
+            return out
         return base
 
     justification = case.get("justification") or case.get("criteria") or []
     if isinstance(justification, dict):
         justification = list(justification.values())
-    cat = style.get("category") or _category_for_relation(relation_type)
     keywords = {
         "population": ("population", "couverture", "déficit"),
         "localities": ("localit", "couverture", "déficit"),
-        "health": ("santé", "sante", "health"),
-        "telecom": ("télécom", "telecom", "fibre", "connect"),
-        "roads": ("route", "accessib", "transport"),
+        "health": ("santé", "sante", "health", "social"),
+        "telecom": ("télécom", "telecom", "fibre", "connect", "couverture", "déficit"),
+        "roads": ("route", "accessib", "transport", "faisabil"),
         "ccn": ("ccn", "communaut"),
         "admin": ("admin", "contexte"),
         "needs": ("mission", "besoin", "priorit"),
+        "fdsu_sites": ("site", "chevauche", "coord"),
     }.get(cat, ())
     for item in justification:
         if not isinstance(item, dict):
             continue
         label = str(item.get("label") or item.get("criterion_id") or "").lower()
         if any(k in label for k in keywords):
+            criterion = item.get("label") or item.get("criterion_id")
+            display = item.get("contribution_display") or item.get("score_display") or str(item.get("contribution") or "—")
+            ctype = _classify_contribution_type(
+                status="mapped",
+                category=cat,
+                criterion=str(criterion) if criterion else None,
+                display=str(display),
+                relation_type=relation_type,
+            )
+            points = item.get("points") or item.get("score") or item.get("contribution")
+            maximum = item.get("max_points") or item.get("maximum") or item.get("max")
+            source_doc = item.get("source") or item.get("source_document") or item.get("matrix_version")
             return {
                 "status": "mapped",
-                "display": item.get("contribution_display") or item.get("score_display") or str(item.get("contribution") or "—"),
-                "criterion": item.get("label") or item.get("criterion_id"),
+                "display": display,
+                "criterion": criterion,
                 "why": item.get("why") or item.get("description"),
                 "proxy_population": proxy_pop,
                 "note": "Contribution lue depuis le moteur de décision (critère sourcé).",
+                "contribution_type": ctype,
+                "role_label": {
+                    "direct": "Contribution directe",
+                    "indirect": "Contribution indirecte",
+                    "contextual_evidence": "Preuve contextuelle",
+                    "not_applicable": "Non applicable",
+                    "pending_rule": "En attente de règle officielle",
+                }.get(ctype, "Preuve contextuelle"),
+                "explanation": _contribution_explanation(ctype, cat, str(criterion) if criterion else None),
+                "points": points if ctype == "direct" else None,
+                "maximum": maximum if ctype == "direct" else None,
+                "weight": item.get("weight") or item.get("ponderation"),
+                "source_document": source_doc,
+                "matrix_version": item.get("matrix_version") or item.get("matrix"),
+                "rule": item.get("rule") or item.get("rule_id"),
+                "fed_criteria": [criterion] if criterion else [],
             }
     if proxy_pop is not None:
+        ctype = "indirect"
         return {
             **base,
             "status": "proxy",
             "display": f"Population concernée : {proxy_pop}",
             "note": "Indicateur populationnel NSME — pas un point de score inventé.",
+            "contribution_type": ctype,
+            "role_label": "Contribution indirecte",
+            "explanation": _contribution_explanation(ctype, cat),
+            "fed_criteria": ["population", "couverture"],
         }
-    return base
+    # Domaines sans critère mappé : preuve contextuelle (jamais « non calculée »)
+    ctype = _classify_contribution_type(
+        status="unavailable",
+        category=cat,
+        criterion=None,
+        display=None,
+        relation_type=relation_type,
+    )
+    return {
+        **base,
+        "contribution_type": ctype,
+        "role_label": {
+            "direct": "Contribution directe",
+            "indirect": "Contribution indirecte",
+            "contextual_evidence": "Preuve contextuelle",
+            "not_applicable": "Non applicable",
+            "pending_rule": "En attente de règle officielle",
+        }.get(ctype, "Preuve contextuelle"),
+        "explanation": _contribution_explanation(ctype, cat),
+        "display": {
+            "indirect": "Contribution indirecte",
+            "pending_rule": "En attente de règle officielle",
+            "not_applicable": "Non applicable",
+        }.get(ctype, "Preuve contextuelle"),
+    }
 
 
 def _road_endpoint(match: dict[str, Any], asset_lon: float | None, asset_lat: float | None) -> tuple[float, float] | None:
@@ -953,8 +1078,39 @@ def build_graph(asset_type: str, asset_id: str, *, program_code: str | None = No
             and str(m.get("calculation_method") or "") == "derived_from_nci_infra"
         )
     ]
-    if not matches and needs.get("_meta", {}).get("status") == "not_found":
-        return None
+
+    from api.services import sdg_coverage_service as coverage
+
+    # Si NSME not_found strict (aucun site résolu) → fiche explicative, pas un graphe fictif
+    if not matches and needs.get("_meta", {}).get("status") == "not_found" and not needs.get("asset"):
+        assessed = coverage.assess_asset(asset_id, program_code=program_code, run_matching=False)
+        return {
+            "_meta": {
+                "engine": "spatial-decision-graph-v2.1",
+                "generated_at": _now(),
+                "status": "impossible",
+                "classification": "C",
+                "asset_id": asset_id,
+                "asset_type": asset_type,
+                "program_code": program_code,
+                "data_first": True,
+            },
+            "nodes": [],
+            "edges": [],
+            "categories": [],
+            "filters": [],
+            "kpis": [],
+            "decision_summary": {
+                "title": "Analyse spatiale indisponible",
+                "message": (assessed.get("explainability") or {}).get("message"),
+            },
+            "explainability": assessed.get("explainability"),
+            "coverage_diagnosis": assessed.get("diagnosis"),
+            "ui": {
+                "badge": "Analyse impossible",
+                "show_partial_graph": False,
+            },
+        }
 
     impact = _safe(lambda: nsme.get_asset_impact(asset_id), {}) or {}
     case = _safe(lambda: eds.get_decision_case(asset_id, asset_type=asset_type, program_code=program_code), {}) or {}
@@ -1268,6 +1424,16 @@ def build_graph(asset_type: str, asset_id: str, *, program_code: str | None = No
             "display": contrib.get("display"),
             "criterion": contrib.get("criterion"),
             "note": contrib.get("note"),
+            "contribution_type": contrib.get("contribution_type") or "contextual_evidence",
+            "role_label": contrib.get("role_label") or "Preuve contextuelle",
+            "explanation": contrib.get("explanation"),
+            "points": contrib.get("points"),
+            "maximum": contrib.get("maximum"),
+            "weight": contrib.get("weight"),
+            "source_document": contrib.get("source_document"),
+            "matrix_version": contrib.get("matrix_version"),
+            "rule": contrib.get("rule"),
+            "fed_criteria": contrib.get("fed_criteria") or [],
         }
         edge["availability_status"] = "success" if edge.get("geometry") else "partial"
         edge["source_date"] = None
@@ -1287,6 +1453,20 @@ def build_graph(asset_type: str, asset_id: str, *, program_code: str | None = No
                 "score_contribution": edge["score_contribution"],
             }
 
+    diagnosis = coverage.diagnose_site(
+        asset,
+        matches=matches,
+        radius_m=_safe(
+            lambda: __import__("api.services.spatial_matching_service", fromlist=["_radius_for_asset"])._radius_for_asset(
+                "fdsu_site"
+            ),
+            15000,
+        ),
+        nsme_found=needs.get("_meta", {}).get("status") != "not_found" or bool(matches),
+        source=(needs.get("_meta") or {}).get("mode"),
+    )
+    explain_card = coverage.build_explainability_card(site=asset, diagnosis=diagnosis, case=case)
+
     return {
         "_meta": {
             "version": ENGINE_VERSION,
@@ -1297,6 +1477,7 @@ def build_graph(asset_type: str, asset_id: str, *, program_code: str | None = No
             "asset_id": asset_id,
             "asset_type": asset_type,
             "status": "success" if edges else "partial",
+            "classification": diagnosis.get("classification"),
             "renderer": "spatial-decision-graph-v2.1",
         },
         "center": nodes[center_id],
@@ -1310,6 +1491,12 @@ def build_graph(asset_type: str, asset_id: str, *, program_code: str | None = No
         "missing_data": missing,
         "impact": impact.get("impact") or needs.get("impact"),
         "coverage_gain": impact.get("coverage_gain"),
+        "explainability": explain_card,
+        "coverage_diagnosis": diagnosis,
+        "ui": {
+            "badge": diagnosis.get("classification_label"),
+            "show_partial_graph": diagnosis.get("classification") in {"A", "B"},
+        },
         "filters": [
             {
                 "id": c["id"],

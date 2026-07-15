@@ -147,6 +147,9 @@
           );
         }
       }
+      if (global.TerritorialImpactUI?.mountSiteImpact) {
+        global.TerritorialImpactUI.mountSiteImpact(assetId, programCode);
+      }
       renderRisks(caseFile || {});
       renderTraceability(caseFile || {});
       renderRecommendation(caseFile || {});

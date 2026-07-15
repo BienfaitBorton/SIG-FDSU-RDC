@@ -85,7 +85,7 @@ test.describe('Executive Situation Room v1.0', () => {
     }
   });
 
-  test('mode Présenter au DG + interruption', async ({ page }) => {
+  test('mode Présentation guidée + interruption', async ({ page }) => {
     const diag = attachDiag(page);
     await page.goto(ESR_URL);
     await expect(page.locator('[data-esr-action="start_presentation"]')).toBeVisible({ timeout: 60_000 });

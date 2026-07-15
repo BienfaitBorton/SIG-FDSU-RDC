@@ -14,11 +14,15 @@
   <link rel="stylesheet" href="modules/territorial-intelligence/territorial-intelligence.css" />
   <link rel="stylesheet" href="modules/shared/executive-dashboard/executive-dashboard.css" />
   <link rel="stylesheet" href="modules/shared/executive-situation-room/executive-situation-room.css" />
+  <link rel="stylesheet" href="modules/shared/territorial-impact/territorial-impact.css" />
+  <link rel="stylesheet" href="modules/shared/data-maturity/data-maturity.css" />
   <link rel="stylesheet" href="modules/shared/ux-premium/ux-premium.css" />
   <link rel="stylesheet" href="modules/shared/decision-workspace/decision-workspace.css" />
   <link rel="stylesheet" href="modules/shared/decision-scenarios/decision-scenarios.css" />
   <link rel="stylesheet" href="modules/shared/territorial-summary/territorial-summary.css" />
   <link rel="stylesheet" href="modules/shared/territorial-digital-twin/territorial-digital-twin.css" />
+  <link rel="stylesheet" href="modules/shared/cartography-experience/cartography-experience.css" />
+  <link rel="stylesheet" href="modules/shared/decision-cartography-experience/decision-cartography-experience.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 </head>
 <body>
@@ -46,8 +50,8 @@
           <span>Centre de Décision</span>
         </button>
         <button class="nav-item" data-module="salle_pilotage" data-route="salle-pilotage">
-          <span class="nav-icon">DG</span>
-          <span>Salle de Pilotage DG</span>
+          <span class="nav-icon">🏛️</span>
+          <span>Salle de Pilotage</span>
         </button>
         <button class="nav-item" data-module="territorial_intelligence" data-route="territorial-intelligence">
           <span class="nav-icon">TI</span>
@@ -319,20 +323,80 @@
               <button type="button" class="primary-button cartography-focus-exit" id="carto-focus-exit">Quitter le Mode Focus</button>
             </div>
 
-            <div class="cartography-toolbar-row" role="toolbar" aria-label="Outils cartographiques">
-              <button id="zoom-auto" type="button" class="primary-button cartography-chip-button">Vue nationale</button>
-              <button id="carto-free-mode" type="button" class="cartography-tool-btn" aria-pressed="false" title="Navigation libre sans contrainte hiérarchique">Cartographie libre</button>
-              <label class="cartography-search-field">
-                <span class="visually-hidden">Recherche cartographique</span>
-                <input id="carto-map-search" type="search" placeholder="Recherche..." aria-label="Recherche cartographique" autocomplete="off" />
-              </label>
-              <div class="cartography-toolbar-actions">
-                <button type="button" class="cartography-tool-btn" data-carto-drawer="layers" aria-expanded="false" title="Couches cartographiques">Couches</button>
-                <button type="button" class="cartography-tool-btn" data-carto-drawer="legend" aria-expanded="false" title="Légende Zones FDSU">Légende</button>
-                <button type="button" class="cartography-tool-btn" data-carto-drawer="entities" aria-expanded="false" title="Entités visibles">Entités</button>
-                <button type="button" class="cartography-tool-btn" data-carto-drawer="settings" aria-expanded="false" title="Paramètres cartographie">Paramètres</button>
-                <button type="button" class="cartography-tool-btn" id="carto-print-btn" title="Imprimer la carte">Impression</button>
-                <button type="button" class="cartography-tool-btn" id="carto-focus-btn" title="Mode Focus — agrandir la carte dans l'application" aria-pressed="false">Mode Focus</button>
+            <div class="cartography-toolbar-premium" role="toolbar" aria-label="Outils cartographiques premium">
+              <div class="cartography-toolbar-group">
+                <button id="zoom-auto" type="button" class="cartography-premium-btn cartography-premium-btn--primary" title="Vue nationale — recentrer sur la RDC">
+                  <span class="cartography-premium-btn__icon" aria-hidden="true">🇨🇩</span>
+                  <span class="cartography-premium-btn__label">Vue nationale</span>
+                </button>
+                <button id="carto-free-mode" type="button" class="cartography-premium-btn" aria-pressed="false" title="Cartographie libre — navigation sans contrainte hiérarchique">
+                  <span class="cartography-premium-btn__icon" aria-hidden="true">🧭</span>
+                  <span class="cartography-premium-btn__label">Cartographie libre</span>
+                </button>
+              </div>
+              <div class="cartography-toolbar-divider" aria-hidden="true"></div>
+              <div class="cartography-toolbar-group cartography-toolbar-group--grow">
+                <label class="cartography-search-field cartography-search-field--premium">
+                  <span class="visually-hidden">Recherche cartographique</span>
+                  <input id="carto-map-search" type="search" placeholder="Rechercher code, nom, territoire…" aria-label="Recherche cartographique" autocomplete="off" />
+                </label>
+              </div>
+              <div class="cartography-toolbar-divider" aria-hidden="true"></div>
+              <div class="cartography-toolbar-group cartography-toolbar-group--secondary">
+                <button type="button" class="cartography-premium-btn" data-carto-drawer="layers" aria-expanded="false" title="Couches cartographiques">
+                  <span class="cartography-premium-btn__icon" aria-hidden="true">🗂️</span>
+                  <span class="cartography-premium-btn__label">Couches</span>
+                </button>
+                <button type="button" class="cartography-premium-btn" data-carto-drawer="legend" aria-expanded="false" title="Légende thématique">
+                  <span class="cartography-premium-btn__icon" aria-hidden="true">🎨</span>
+                  <span class="cartography-premium-btn__label">Légende</span>
+                </button>
+                <button type="button" class="cartography-premium-btn" id="carto-analysis-btn" title="Analyse et classification métier">
+                  <span class="cartography-premium-btn__icon" aria-hidden="true">📊</span>
+                  <span class="cartography-premium-btn__label">Analyse</span>
+                </button>
+                <button type="button" class="cartography-premium-btn" id="carto-print-btn" title="Imprimer la carte">
+                  <span class="cartography-premium-btn__icon" aria-hidden="true">🖨️</span>
+                  <span class="cartography-premium-btn__label">Impression</span>
+                </button>
+                <button type="button" class="cartography-premium-btn" id="carto-basemap-btn" title="Fond de carte — basemap résilient">
+                  <span class="cartography-premium-btn__icon" aria-hidden="true">🗺️</span>
+                  <span class="cartography-premium-btn__label">Basemap</span>
+                </button>
+                <button type="button" class="cartography-premium-btn" id="carto-measure-btn" aria-pressed="false" title="Mesurer une distance sur la carte">
+                  <span class="cartography-premium-btn__icon" aria-hidden="true">📏</span>
+                  <span class="cartography-premium-btn__label">Mesure</span>
+                </button>
+                <button type="button" class="cartography-premium-btn cartography-premium-btn--accent" id="carto-demo-btn" aria-pressed="false" title="Mode Démonstration — présentation institutionnelle / bailleurs">
+                  <span class="cartography-premium-btn__icon" aria-hidden="true">🎬</span>
+                  <span class="cartography-premium-btn__label">Démonstration</span>
+                </button>
+                <button type="button" class="cartography-premium-btn cartography-premium-btn--accent" id="carto-demo-guided-btn" title="Parcours guidé — présentation pas à pas">
+                  <span class="cartography-premium-btn__icon" aria-hidden="true">▶️</span>
+                  <span class="cartography-premium-btn__label">Guidé</span>
+                </button>
+                <button type="button" class="cartography-premium-btn" data-carto-drawer="entities" aria-expanded="false" title="Entités visibles sur la carte">
+                  <span class="cartography-premium-btn__icon" aria-hidden="true">📍</span>
+                  <span class="cartography-premium-btn__label">Entités</span>
+                </button>
+                <button type="button" class="cartography-premium-btn" id="carto-focus-btn" title="Plein écran applicatif — agrandir la carte" aria-pressed="false">
+                  <span class="cartography-premium-btn__icon" aria-hidden="true">⛶</span>
+                  <span class="cartography-premium-btn__label">Plein écran</span>
+                </button>
+              </div>
+            </div>
+
+            <div id="cartography-demo-bar" hidden aria-live="polite">
+              <div class="cartography-demo-meta">
+                <h4 id="carto-demo-step-title">Mode Démonstration</h4>
+                <p id="carto-demo-step-narrative">Interface épurée pour réunion de haut niveau.</p>
+                <span id="carto-demo-progress" class="cartography-note">—</span>
+              </div>
+              <div class="cartography-demo-controls">
+                <button type="button" class="cartography-premium-btn" id="carto-demo-prev" title="Étape précédente">← Précédent</button>
+                <button type="button" class="cartography-premium-btn" id="carto-demo-pause" title="Pause / reprise du parcours">Pause</button>
+                <button type="button" class="cartography-premium-btn" id="carto-demo-next" title="Étape suivante">Suivant →</button>
+                <button type="button" class="cartography-premium-btn cartography-premium-btn--primary" id="carto-demo-exit" title="Quitter le mode Démonstration">Quitter</button>
               </div>
             </div>
 
@@ -413,32 +477,89 @@
                       </div>
                       <button type="button" class="cartography-drawer-close" data-carto-drawer-close aria-label="Fermer">×</button>
                     </div>
-                    <div class="legend-card cartography-drawer-legend">
-                      <p class="legend-title">Zones FDSU</p>
-                      <ul class="legend-list">
-                        <li data-zone="ND" tabindex="0"><span class="legend-swatch legend-nd"></span>ND - Nord</li>
-                        <li data-zone="OT" tabindex="0"><span class="legend-swatch legend-ot"></span>OT - Ouest</li>
-                        <li data-zone="CE" tabindex="0"><span class="legend-swatch legend-ce"></span>CE - Centre</li>
-                        <li data-zone="SD" tabindex="0"><span class="legend-swatch legend-sd"></span>SD - Sud</li>
-                        <li data-zone="ET" tabindex="0"><span class="legend-swatch legend-et"></span>ET - Est</li>
-                      </ul>
-                      <p class="legend-title legend-title-secondary">Hiérarchie administrative</p>
-                      <ul class="legend-list">
-                        <li><span class="legend-swatch legend-boundary"></span>Contour RDC</li>
-                        <li><span class="legend-swatch legend-zone-fill"></span>Zones FDSU</li>
-                        <li><span class="legend-swatch legend-province-line"></span>Provinces</li>
-                        <li><span class="legend-swatch legend-territory-line"></span>Territoires</li>
-                        <li><span class="legend-swatch legend-collectivity-line"></span>Collectivités</li>
-                        <li><span class="legend-swatch legend-groupement-point"></span>Groupements</li>
-                        <li><span class="legend-swatch legend-locality-point"></span>Localités</li>
-                        <li><span class="legend-swatch legend-site-point"></span>Tous les sites FDSU</li>
-                        <li><span class="legend-swatch legend-site-40-point"></span>Programme Sites 40</li>
-                        <li><span class="legend-swatch legend-site-300-point"></span>Programme Sites 300</li>
-                        <li><span class="legend-swatch legend-telecom-vodacom"></span>Sites Vodacom</li>
-                        <li><span class="legend-swatch legend-telecom-orange"></span>Infrastructures Orange</li>
-                        <li><span class="legend-swatch legend-telecom-fiber"></span>Fibre / MW</li>
-                        <li><span class="legend-swatch legend-mission-point"></span>Missions</li>
-                      </ul>
+                    <div class="legend-card cartography-drawer-legend cartography-legend-premium">
+                      <section class="cartography-legend-category" aria-label="Administratif">
+                        <span class="cartography-legend-category-title">Administratif</span>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="zones" aria-pressed="true"><span class="legend-swatch legend-zone-fill"></span> Zones FDSU</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.45" data-legend-opacity="zones" aria-label="Transparence Zones FDSU" />
+                        </div>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="provinces" aria-pressed="false"><span class="legend-swatch legend-province-line"></span> Provinces</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.55" data-legend-opacity="provinces" aria-label="Transparence Provinces" />
+                        </div>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="territoires" aria-pressed="false"><span class="legend-swatch legend-territory-line"></span> Territoires</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.5" data-legend-opacity="territoires" aria-label="Transparence Territoires" />
+                        </div>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="collectivites" aria-pressed="false"><span class="legend-swatch legend-collectivity-line"></span> Collectivités</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.45" data-legend-opacity="collectivites" aria-label="Transparence Collectivités" />
+                        </div>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="groupements" aria-pressed="false"><span class="legend-swatch legend-groupement-point"></span> Groupements</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.85" data-legend-opacity="groupements" aria-label="Transparence Groupements" />
+                        </div>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="villages" aria-pressed="false"><span class="legend-swatch legend-locality-point"></span> Localités</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.85" data-legend-opacity="villages" aria-label="Transparence Localités" />
+                        </div>
+                      </section>
+                      <section class="cartography-legend-category" aria-label="Programmes">
+                        <span class="cartography-legend-category-title">Programmes</span>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="sites_40" aria-pressed="false"><span class="legend-swatch legend-site-40-point"></span> Programme Sites 40</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.9" data-legend-opacity="sites_40" aria-label="Transparence Sites 40" />
+                        </div>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="sites_300" aria-pressed="false"><span class="legend-swatch legend-site-300-point"></span> Programme Sites 300</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.9" data-legend-opacity="sites_300" aria-label="Transparence Sites 300" />
+                        </div>
+                      </section>
+                      <section class="cartography-legend-category" aria-label="Télécommunications">
+                        <span class="cartography-legend-category-title">Télécommunications</span>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="telecom_vodacom" aria-pressed="false"><span class="legend-swatch legend-telecom-vodacom"></span> Vodacom</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.9" data-legend-opacity="telecom_vodacom" aria-label="Transparence Vodacom" />
+                        </div>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="telecom_orange" aria-pressed="false"><span class="legend-swatch legend-telecom-orange"></span> Orange</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.9" data-legend-opacity="telecom_orange" aria-label="Transparence Orange" />
+                        </div>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="telecom_fiber_mw" aria-pressed="false"><span class="legend-swatch legend-telecom-fiber"></span> Fibre / MW</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.85" data-legend-opacity="telecom_fiber_mw" aria-label="Transparence Fibre MW" />
+                        </div>
+                      </section>
+                      <section class="cartography-legend-category" aria-label="Routes">
+                        <span class="cartography-legend-category-title">Routes</span>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="routes_principales" aria-pressed="false"><span class="legend-swatch legend-boundary"></span> Routes principales</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.85" data-legend-opacity="routes_principales" aria-label="Transparence Routes" />
+                        </div>
+                      </section>
+                      <section class="cartography-legend-category" aria-label="Autres">
+                        <span class="cartography-legend-category-title">Autres</span>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="missions" aria-pressed="false"><span class="legend-swatch legend-mission-point"></span> Missions</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.9" data-legend-opacity="missions" aria-label="Transparence Missions" />
+                        </div>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="spatial_relations" aria-pressed="false"><span class="legend-swatch legend-site-point"></span> Relations spatiales</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.85" data-legend-opacity="spatial_relations" aria-label="Transparence Relations" />
+                        </div>
+                      </section>
+                      <p class="cartography-note">Afficher / masquer une couche · ajuster la transparence sans quitter la carte.</p>
+                      <section class="cartography-legend-category" aria-label="Zones FDSU détail">
+                        <span class="cartography-legend-category-title">Zones FDSU — détail</span>
+                        <ul class="legend-list">
+                          <li data-zone="ND" tabindex="0"><span class="legend-swatch legend-nd"></span>ND — Nord</li>
+                          <li data-zone="OT" tabindex="0"><span class="legend-swatch legend-ot"></span>OT — Ouest</li>
+                          <li data-zone="CE" tabindex="0"><span class="legend-swatch legend-ce"></span>CE — Centre</li>
+                          <li data-zone="SD" tabindex="0"><span class="legend-swatch legend-sd"></span>SD — Sud</li>
+                          <li data-zone="ET" tabindex="0"><span class="legend-swatch legend-et"></span>ET — Est</li>
+                        </ul>
+                      </section>
                     </div>
                   </aside>
 
@@ -593,7 +714,7 @@
             </div>
             <div class="decision-center-header-actions" aria-label="Actions du centre de décision">
               <button type="button" class="secondary-button" id="decision-open-ti-btn" data-route="territorial-intelligence">Intelligence territoriale</button>
-              <button type="button" class="secondary-button" id="decision-open-edvs-btn" data-route="salle-pilotage">Salle de Pilotage DG</button>
+              <button type="button" class="secondary-button" id="decision-open-edvs-btn" data-route="salle-pilotage">Salle de Pilotage</button>
               <button type="button" class="secondary-button" id="decision-open-nsme-map-btn">Carte correspondances</button>
               <span id="decision-edvs-presentation-slot"></span>
               <button type="button" class="primary-button" id="decision-center-demo-mode-btn">Mode démonstration</button>
@@ -1232,7 +1353,7 @@
                 <div>
                   <p class="panel-label">Aide à la décision</p>
                   <h3>Scénarios décisionnels</h3>
-                  <p>Cas d’usage complets pour le DG, les partenaires et les équipes opérationnelles.</p>
+                  <p>Cas d’usage complets pour la gouvernance du Service Universel, les partenaires et les équipes opérationnelles.</p>
                 </div>
                 <span id="decision-scenarios-status" aria-live="polite">Chargement…</span>
               </div>
@@ -1550,6 +1671,7 @@
           <section class="dxl-section" id="dxl-section-why" aria-label="Pourquoi"></section>
           <section class="dxl-section" id="dxl-section-context" aria-label="Contexte territorial"></section>
           <section class="dxl-section" id="dxl-section-impact" aria-label="Impacts attendus"></section>
+          <section class="dxl-section" id="dxl-section-territorial-impact" aria-label="Impact territorial et populationnel"></section>
           <section class="dxl-section" id="dxl-section-risks" aria-label="Risques"></section>
           <section class="dxl-section" id="dxl-section-trace" aria-label="Traçabilité"></section>
           <section class="dxl-section" id="dxl-section-reco" aria-label="Recommandation"></section>
@@ -1864,7 +1986,7 @@
         </div>
 
         <div class="module-panel hidden edvs-module" id="salle-pilotage-panel" data-module="salle_pilotage">
-          <p class="ti-banner" id="edvs-cockpit-banner">Salle de Pilotage DG — Executive Situation Room</p>
+          <p class="ti-banner" id="edvs-cockpit-banner">Salle de Pilotage National · Centre National de Pilotage</p>
           <div id="edvs-cockpit-root" class="edvs-shell esr-host" aria-live="polite"></div>
         </div>
 
@@ -1883,6 +2005,9 @@
           </div>
 
           <p class="ti-banner" id="ti-banner">Sélectionnez un territoire. Cas de démonstration prioritaire : Dungu (logique générique).</p>
+          <nav class="ti-breadcrumb" id="ti-breadcrumb" aria-label="Fil d’Ariane territorial">
+            <ol class="ti-breadcrumb-list"><li>RDC</li></ol>
+          </nav>
 
           <div class="ti-toolbar">
             <label>Recherche <input type="search" id="ti-search" placeholder="Dungu, Haut-Uele…" /></label>
@@ -1917,7 +2042,11 @@
           <div class="ti-main">
             <section>
               <div id="ti-map" class="ti-map" aria-label="Carte territoriale"></div>
-              <p class="ti-map-legend">Limite · Sites FDSU · CCN · Santé · Télécom · Fibre · Routes · Groupements · Localités</p>
+              <p class="ti-map-legend" id="ti-map-legend-fallback" hidden>Légende chargée depuis le registre cartographique.</p>
+              <aside class="ti-children" id="ti-children" aria-label="Entités administratives enfants">
+                <h3 class="ti-children-title">Niveau inférieur</h3>
+                <ul class="ti-children-list" id="ti-children-list"></ul>
+              </aside>
             </section>
             <section id="ti-sections" class="ti-sections">
               <p>Chargement des sections territoriales…</p>
@@ -2237,6 +2366,9 @@
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <script src="modules/shared/map-tooltips.js"></script>
   <script src="modules/shared/basemap-manager/basemap-manager.js"></script>
+  <script src="modules/shared/cartography-experience/cartography-experience.js"></script>
+  <script src="modules/shared/decision-cartography-experience/decision-cartography-experience.js"></script>
+  <script src="modules/shared/institutional-labels.js"></script>
   <script src="modules/shared/ux-premium/ux-premium.js"></script>
   <script src="modules/shared/decision-workspace/decision-workspace.js"></script>
   <script src="modules/shared/decision-scenarios/decision-scenarios.js"></script>
@@ -2245,6 +2377,8 @@
   <script src="modules/shared/territorial-digital-twin/territorial-digital-twin.js"></script>
   <script src="modules/shared/capability-registry/capability-registry.js"></script>
   <script src="modules/shared/spatial-decision-graph/spatial-decision-graph.js"></script>
+  <script src="modules/shared/territorial-impact/territorial-impact.js"></script>
+  <script src="modules/shared/data-maturity/data-maturity.js"></script>
   <script src="modules/decision-experience/dxl-core.js"></script>
   <script src="modules/decision-experience/decision-error-handler.js"></script>
   <script src="modules/decision-experience/decision-case-controller.js"></script>

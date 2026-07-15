@@ -1,10 +1,10 @@
 /**
- * Executive Situation Room v1.0 — Salle de Pilotage DG
+ * Centre National de Pilotage (Salle de Pilotage) v1.0
  * Parcours : Situation → Pourquoi → Où → Que faire → Impact → Décider
- * Réutilise EDVS widgets + TST — une carte Leaflet (TST), chargement progressif.
  */
 (function initExecutiveSituationRoom(global) {
   const API_BASE = `${global.location.protocol}//${global.location.hostname}:8001`;
+  const L = (text) => (global.FdsuLabels?.harmonize ? global.FdsuLabels.harmonize(text) : text);
 
   const state = {
     payload: null,
@@ -86,11 +86,11 @@
       <section class="esr-card esr-briefing" id="esr-briefing" data-esr-step="briefing">
         <header class="esr-card-header">
           <div>
-            <p class="esr-kicker">Executive Briefing</p>
-            <h2>${escapeHtml(briefing.title || 'Executive Briefing')}</h2>
+            <p class="esr-kicker">Synthèse Exécutive</p>
+            <h2>${escapeHtml(L(briefing.title || 'Synthèse Exécutive'))}</h2>
           </div>
           <button type="button" class="secondary-button esr-why-btn" data-esr-why
-            data-why-title="Executive Briefing"
+            data-why-title="Synthèse Exécutive"
             data-why-body="${escapeHtml(briefing.narrative || '')}"
             data-why-source="Cockpit EDVS · NCI · NSME · Decision Engine">Pourquoi ?</button>
         </header>
@@ -185,7 +185,7 @@
       <article class="esr-scenario-card">
         <header>
           <span class="esr-code">${escapeHtml(s.code || '')}</span>
-          <h4>${escapeHtml(s.title)}</h4>
+          <h4>${escapeHtml(L(s.title))}</h4>
         </header>
         <p>${escapeHtml(s.question || '')}</p>
         <dl class="esr-scenario-meta">
@@ -196,7 +196,7 @@
         ${s.recommendation ? `<p class="esr-rec"><strong>Recommandation</strong> ${escapeHtml(s.recommendation)}</p>` : ''}
         <div class="esr-scenario-actions">
           <button type="button" class="esr-why-btn secondary-button" data-esr-why
-            data-why-title="${escapeHtml(s.title)}"
+            data-why-title="${escapeHtml(L(s.title))}"
             data-why-body="${escapeHtml(s.recommendation || s.question || '')}"
             data-why-source="Decision Scenarios">Pourquoi ?</button>
           <button type="button" class="primary-button" data-esr-nav="${escapeHtml(s.hash || '')}">Lancer</button>
@@ -224,7 +224,7 @@
         a.hide_when_unavailable ? `data-hide-unavailable="1"` : '',
         `title="${escapeHtml(a.why || '')}"`,
       ].filter(Boolean).join(' ');
-      return `<button ${attrs}>${escapeHtml(a.label)}</button>`;
+      return `<button ${attrs}>${escapeHtml(L(a.label))}</button>`;
     }).join('');
     return `
       <section class="esr-actions-bar" id="esr-actions" aria-label="Actions exécutives">
@@ -275,12 +275,12 @@
       <div class="esr-root" data-esr="situation-room">
         <header class="esr-top">
           <div>
-            <p class="esr-kicker">Executive Situation Room</p>
-            <h1>Salle de Pilotage DG</h1>
+            <p class="esr-kicker">Centre National de Pilotage</p>
+            <h1>Salle de Pilotage National</h1>
             <p class="esr-muted">État numérique du territoire — de la situation nationale à la décision</p>
           </div>
           <div class="esr-top-actions">
-            <button type="button" class="primary-button" data-esr-action="start_presentation">Présenter au DG</button>
+            <button type="button" class="primary-button" data-esr-action="start_presentation">Présentation guidée</button>
             <button type="button" class="secondary-button" data-esr-action="stop_presentation" hidden id="esr-stop-present">Interrompre</button>
             <button type="button" class="edvs-presentation-btn" data-edvs-presentation-toggle>Mode Présentation</button>
           </div>
@@ -299,7 +299,7 @@
                   data-why-body="Le TST permet de descendre Province → Territoire → … → Site. La sélection met à jour le contexte territorial sans recharger la page."
                   data-why-source="Territorial Summary · Territorial Context">Pourquoi ?</button>
               </header>
-              <div id="edvs-tst-host" class="edvs-tst-host esr-tst-host" aria-label="Synthèse territoriale DG"></div>
+              <div id="edvs-tst-host" class="edvs-tst-host esr-tst-host" aria-label="Synthèse territoriale nationale"></div>
               <p class="esr-map-hint" id="esr-context-hint">Sélectionnez une province pour commencer le parcours territorial.</p>
             </section>
             <div id="esr-priorities-host">${partial.prioritiesHtml || softLoading('Priorités…', 'esr-priorities')}</div>
@@ -430,7 +430,7 @@
   function startPresentation() {
     const steps = state.payload?.presentation?.steps
       || [
-        { id: 'briefing', label: 'Executive Briefing', selector: '#esr-briefing', duration_ms: 3200 },
+        { id: 'briefing', label: 'Synthèse Exécutive', selector: '#esr-briefing', duration_ms: 3200 },
         { id: 'situation', label: 'Situation nationale', selector: '#esr-national', duration_ms: 3000 },
         { id: 'map', label: 'Carte', selector: '#esr-map', duration_ms: 3200 },
         { id: 'alerts', label: 'Alertes', selector: '#esr-alerts', duration_ms: 2800 },
@@ -506,6 +506,20 @@
     tasks[6].then((r) => paintPartial('#esr-scenarios-host', r.ok ? renderScenarios(r.data) : softError('Scénarios', 'Indisponible', 'esr-scenarios')));
 
     mountTst();
+    if (global.TerritorialImpactUI?.mountPilotageCoverage) {
+      global.setTimeout(() => global.TerritorialImpactUI.mountPilotageCoverage({ limit: 12 }), 400);
+    }
+    if (global.TerritorialImpactUI?.mountProgramLifecycleBoard) {
+      global.setTimeout(() => global.TerritorialImpactUI.mountProgramLifecycleBoard(), 200);
+    }
+    if (global.TerritorialImpactUI?.mountSdgMaturityCard) {
+      global.setTimeout(() => global.TerritorialImpactUI.mountSdgMaturityCard(), 300);
+    }
+    if (global.DataMaturityDashboard?.mountDataMaturityDashboard || global.TerritorialImpactUI?.mountDataMaturityDashboard) {
+      const mount = global.DataMaturityDashboard?.mountDataMaturityDashboard
+        || global.TerritorialImpactUI.mountDataMaturityDashboard;
+      global.setTimeout(() => mount(), 500);
+    }
 
     return Promise.all(tasks).then((results) => {
       const byKey = Object.fromEntries(results.map((r) => [r.key, r]));

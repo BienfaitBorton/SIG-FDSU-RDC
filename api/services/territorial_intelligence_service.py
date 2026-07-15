@@ -934,6 +934,9 @@ def build_map_payload(territory_id: str) -> dict[str, Any] | None:
     except Exception:
         pass
 
+    from api.services import cartography_symbology_registry as symbology
+
+    legend = symbology.build_legend_items(layer_counts, only_visible=True)
     return {
         "_meta": {
             "title": f"Carte territoriale — {name}",
@@ -944,18 +947,8 @@ def build_map_payload(territory_id: str) -> dict[str, Any] | None:
             "note": "Couches branchées sur PostGIS lorsque disponibles — pas de second calcul inventé.",
         },
         "territory_id": territory_code,
-        "legend": [
-            {"kind": "territory_boundary", "label": "Limite territoriale"},
-            {"kind": "site_fdsu", "label": "Sites FDSU"},
-            {"kind": "ccn", "label": "CCN"},
-            {"kind": "health", "label": "Santé"},
-            {"kind": "telecom", "label": "Télécom"},
-            {"kind": "fiber", "label": "Fibre (nœuds)"},
-            {"kind": "fiber_line", "label": "Fibre (tronçons)"},
-            {"kind": "route", "label": "Routes"},
-            {"kind": "groupement", "label": "Groupements"},
-            {"kind": "locality", "label": "Localités"},
-        ],
+        "legend": legend,
+        "symbology": symbology.registry_payload(),
         "geojson": {"type": "FeatureCollection", "features": features},
     }
 

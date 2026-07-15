@@ -1,0 +1,1698 @@
+﻿[
+  {
+    "site": 7,
+    "engine": "sdg-2.2.0",
+    "status": "success",
+    "name": "Bulungu-Ext_BDD",
+    "has_domain_statuses": true,
+    "domain_count": 12,
+    "domains": {
+      "population": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI localities_uncovered"
+        },
+        "nearest": false
+      },
+      "localities": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI localities_uncovered"
+        },
+        "nearest": false
+      },
+      "fdsu_sites": {
+        "status": "empty",
+        "label": null,
+        "message": "Aucun autre site FDSU trouvÚ dans le rayon analysÚ (25.0 km).",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 25000,
+          "value_km": 25.0,
+          "fiber_m": null,
+          "rule": "programs.fdsu_sites"
+        },
+        "nearest": false
+      },
+      "health": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 5000,
+          "value_km": 5.0,
+          "fiber_m": null,
+          "rule": "health.health_facilities"
+        },
+        "nearest": true
+      },
+      "telecom": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 25000,
+          "value_km": 25.0,
+          "fiber_m": 5000,
+          "rule": "telecom.infrastructure + telecom.network_lines"
+        },
+        "nearest": true
+      },
+      "roads": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 50000,
+          "value_km": 50.0,
+          "fiber_m": null,
+          "rule": "transport.routes PostGIS"
+        },
+        "nearest": true
+      },
+      "ccn": {
+        "status": "demonstration",
+        "label": null,
+        "message": "Aucun CCN du jeu DEMO trouvÚ dans ce territoire.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 10000,
+          "value_km": 10.0,
+          "fiber_m": null,
+          "rule": "demo_ccn.json (dÚmonstration)"
+        },
+        "nearest": false
+      },
+      "admin": {
+        "status": "empty",
+        "label": null,
+        "message": "Aucun objet ½ Services administratifs ╗ trouvÚ aprÞs recherche spatiale ; rÚfÚrentiel disponible.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI / admin derived"
+        },
+        "nearest": false
+      },
+      "education": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "╔ducation ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "energy": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "╔nergie ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "markets": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "MarchÚs / Úconomie ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "needs": {
+        "status": "empty",
+        "label": null,
+        "message": "Aucun objet ½ Besoins prioritaires ╗ trouvÚ aprÞs recherche spatiale ; rÚfÚrentiel disponible.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "CANDIDATE_FOR_MISSION"
+        },
+        "nearest": false
+      }
+    },
+    "kpi_keys": "list",
+    "category_keys": [],
+    "missing_data_sample": [
+      {
+        "category": "fdsu_sites",
+        "label": "Sites FDSU",
+        "reason": "Aucun autre site FDSU trouvÚ dans le rayon analysÚ (25.0 km).",
+        "status": "empty"
+      },
+      {
+        "category": "ccn",
+        "label": "CCN",
+        "reason": "Aucun CCN du jeu DEMO trouvÚ dans ce territoire.",
+        "status": "empty"
+      },
+      {
+        "category": "admin",
+        "label": "Services administratifs",
+        "reason": "Aucun objet ½ Services administratifs ╗ trouvÚ aprÞs recherche spatiale ; rÚfÚrentiel disponible.",
+        "status": "empty"
+      }
+    ]
+  },
+  {
+    "site": 14,
+    "engine": "sdg-2.2.0",
+    "status": "success",
+    "name": "Buba (Panduru_Ngote)",
+    "has_domain_statuses": true,
+    "domain_count": 12,
+    "domains": {
+      "population": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI localities_uncovered"
+        },
+        "nearest": false
+      },
+      "localities": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI localities_uncovered"
+        },
+        "nearest": false
+      },
+      "fdsu_sites": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 25000,
+          "value_km": 25.0,
+          "fiber_m": null,
+          "rule": "programs.fdsu_sites"
+        },
+        "nearest": true
+      },
+      "health": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 5000,
+          "value_km": 5.0,
+          "fiber_m": null,
+          "rule": "health.health_facilities"
+        },
+        "nearest": true
+      },
+      "telecom": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 25000,
+          "value_km": 25.0,
+          "fiber_m": 5000,
+          "rule": "telecom.infrastructure + telecom.network_lines"
+        },
+        "nearest": true
+      },
+      "roads": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 50000,
+          "value_km": 50.0,
+          "fiber_m": null,
+          "rule": "transport.routes PostGIS"
+        },
+        "nearest": true
+      },
+      "ccn": {
+        "status": "demonstration",
+        "label": null,
+        "message": "Aucun CCN du jeu DEMO trouvÚ dans ce territoire.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 10000,
+          "value_km": 10.0,
+          "fiber_m": null,
+          "rule": "demo_ccn.json (dÚmonstration)"
+        },
+        "nearest": false
+      },
+      "admin": {
+        "status": "empty",
+        "label": null,
+        "message": "Aucun objet ½ Services administratifs ╗ trouvÚ aprÞs recherche spatiale ; rÚfÚrentiel disponible.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI / admin derived"
+        },
+        "nearest": false
+      },
+      "education": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "╔ducation ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "energy": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "╔nergie ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "markets": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "MarchÚs / Úconomie ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "needs": {
+        "status": "empty",
+        "label": null,
+        "message": "Aucun objet ½ Besoins prioritaires ╗ trouvÚ aprÞs recherche spatiale ; rÚfÚrentiel disponible.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "CANDIDATE_FOR_MISSION"
+        },
+        "nearest": false
+      }
+    },
+    "kpi_keys": "list",
+    "category_keys": [],
+    "missing_data_sample": [
+      {
+        "category": "ccn",
+        "label": "CCN",
+        "reason": "Aucun CCN du jeu DEMO trouvÚ dans ce territoire.",
+        "status": "empty"
+      },
+      {
+        "category": "admin",
+        "label": "Services administratifs",
+        "reason": "Aucun objet ½ Services administratifs ╗ trouvÚ aprÞs recherche spatiale ; rÚfÚrentiel disponible.",
+        "status": "empty"
+      },
+      {
+        "category": "education",
+        "label": "╔ducation",
+        "reason": "╔ducation ù rÚfÚrentiel non encore importÚ.",
+        "status": "future"
+      }
+    ]
+  },
+  {
+    "site": 16,
+    "engine": "sdg-2.2.0",
+    "status": "success",
+    "name": "Bena-Mulumba",
+    "has_domain_statuses": true,
+    "domain_count": 12,
+    "domains": {
+      "population": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI localities_uncovered"
+        },
+        "nearest": false
+      },
+      "localities": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI localities_uncovered"
+        },
+        "nearest": false
+      },
+      "fdsu_sites": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 25000,
+          "value_km": 25.0,
+          "fiber_m": null,
+          "rule": "programs.fdsu_sites"
+        },
+        "nearest": true
+      },
+      "health": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 5000,
+          "value_km": 5.0,
+          "fiber_m": null,
+          "rule": "health.health_facilities"
+        },
+        "nearest": true
+      },
+      "telecom": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 25000,
+          "value_km": 25.0,
+          "fiber_m": 5000,
+          "rule": "telecom.infrastructure + telecom.network_lines"
+        },
+        "nearest": true
+      },
+      "roads": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 50000,
+          "value_km": 50.0,
+          "fiber_m": null,
+          "rule": "transport.routes PostGIS"
+        },
+        "nearest": true
+      },
+      "ccn": {
+        "status": "demonstration",
+        "label": null,
+        "message": "Aucun CCN du jeu DEMO trouvÚ dans ce territoire.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 10000,
+          "value_km": 10.0,
+          "fiber_m": null,
+          "rule": "demo_ccn.json (dÚmonstration)"
+        },
+        "nearest": false
+      },
+      "admin": {
+        "status": "empty",
+        "label": null,
+        "message": "Aucun objet ½ Services administratifs ╗ trouvÚ aprÞs recherche spatiale ; rÚfÚrentiel disponible.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI / admin derived"
+        },
+        "nearest": false
+      },
+      "education": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "╔ducation ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "energy": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "╔nergie ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "markets": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "MarchÚs / Úconomie ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "needs": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "CANDIDATE_FOR_MISSION"
+        },
+        "nearest": false
+      }
+    },
+    "kpi_keys": "list",
+    "category_keys": [],
+    "missing_data_sample": [
+      {
+        "category": "ccn",
+        "label": "CCN",
+        "reason": "Aucun CCN du jeu DEMO trouvÚ dans ce territoire.",
+        "status": "empty"
+      },
+      {
+        "category": "admin",
+        "label": "Services administratifs",
+        "reason": "Aucun objet ½ Services administratifs ╗ trouvÚ aprÞs recherche spatiale ; rÚfÚrentiel disponible.",
+        "status": "empty"
+      },
+      {
+        "category": "education",
+        "label": "╔ducation",
+        "reason": "╔ducation ù rÚfÚrentiel non encore importÚ.",
+        "status": "future"
+      }
+    ]
+  },
+  {
+    "site": 26,
+    "engine": "sdg-2.2.0",
+    "status": "success",
+    "name": "Bowanga",
+    "has_domain_statuses": true,
+    "domain_count": 12,
+    "domains": {
+      "population": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI localities_uncovered"
+        },
+        "nearest": false
+      },
+      "localities": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI localities_uncovered"
+        },
+        "nearest": false
+      },
+      "fdsu_sites": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 25000,
+          "value_km": 25.0,
+          "fiber_m": null,
+          "rule": "programs.fdsu_sites"
+        },
+        "nearest": true
+      },
+      "health": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 5000,
+          "value_km": 5.0,
+          "fiber_m": null,
+          "rule": "health.health_facilities"
+        },
+        "nearest": true
+      },
+      "telecom": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 25000,
+          "value_km": 25.0,
+          "fiber_m": 5000,
+          "rule": "telecom.infrastructure + telecom.network_lines"
+        },
+        "nearest": true
+      },
+      "roads": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 50000,
+          "value_km": 50.0,
+          "fiber_m": null,
+          "rule": "transport.routes PostGIS"
+        },
+        "nearest": true
+      },
+      "ccn": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 10000,
+          "value_km": 10.0,
+          "fiber_m": null,
+          "rule": "demo_ccn.json (dÚmonstration)"
+        },
+        "nearest": true
+      },
+      "admin": {
+        "status": "empty",
+        "label": null,
+        "message": "Aucun objet ½ Services administratifs ╗ trouvÚ aprÞs recherche spatiale ; rÚfÚrentiel disponible.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI / admin derived"
+        },
+        "nearest": false
+      },
+      "education": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "╔ducation ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "energy": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "╔nergie ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "markets": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "MarchÚs / Úconomie ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "needs": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "CANDIDATE_FOR_MISSION"
+        },
+        "nearest": false
+      }
+    },
+    "kpi_keys": "list",
+    "category_keys": [],
+    "missing_data_sample": [
+      {
+        "category": "admin",
+        "label": "Services administratifs",
+        "reason": "Aucun objet ½ Services administratifs ╗ trouvÚ aprÞs recherche spatiale ; rÚfÚrentiel disponible.",
+        "status": "empty"
+      },
+      {
+        "category": "education",
+        "label": "╔ducation",
+        "reason": "╔ducation ù rÚfÚrentiel non encore importÚ.",
+        "status": "future"
+      },
+      {
+        "category": "energy",
+        "label": "╔nergie",
+        "reason": "╔nergie ù rÚfÚrentiel non encore importÚ.",
+        "status": "future"
+      }
+    ]
+  },
+  {
+    "site": 29,
+    "engine": "sdg-2.2.0",
+    "status": "success",
+    "name": "Village Nsona",
+    "has_domain_statuses": true,
+    "domain_count": 12,
+    "domains": {
+      "population": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI localities_uncovered"
+        },
+        "nearest": false
+      },
+      "localities": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI localities_uncovered"
+        },
+        "nearest": false
+      },
+      "fdsu_sites": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 25000,
+          "value_km": 25.0,
+          "fiber_m": null,
+          "rule": "programs.fdsu_sites"
+        },
+        "nearest": true
+      },
+      "health": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 5000,
+          "value_km": 5.0,
+          "fiber_m": null,
+          "rule": "health.health_facilities"
+        },
+        "nearest": true
+      },
+      "telecom": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 25000,
+          "value_km": 25.0,
+          "fiber_m": 5000,
+          "rule": "telecom.infrastructure + telecom.network_lines"
+        },
+        "nearest": true
+      },
+      "roads": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 50000,
+          "value_km": 50.0,
+          "fiber_m": null,
+          "rule": "transport.routes PostGIS"
+        },
+        "nearest": true
+      },
+      "ccn": {
+        "status": "demonstration",
+        "label": null,
+        "message": "Aucun CCN du jeu DEMO trouvÚ dans ce territoire.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 10000,
+          "value_km": 10.0,
+          "fiber_m": null,
+          "rule": "demo_ccn.json (dÚmonstration)"
+        },
+        "nearest": false
+      },
+      "admin": {
+        "status": "empty",
+        "label": null,
+        "message": "Aucun objet ½ Services administratifs ╗ trouvÚ aprÞs recherche spatiale ; rÚfÚrentiel disponible.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI / admin derived"
+        },
+        "nearest": false
+      },
+      "education": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "╔ducation ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "energy": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "╔nergie ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "markets": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "MarchÚs / Úconomie ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "needs": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "CANDIDATE_FOR_MISSION"
+        },
+        "nearest": false
+      }
+    },
+    "kpi_keys": "list",
+    "category_keys": [],
+    "missing_data_sample": [
+      {
+        "category": "ccn",
+        "label": "CCN",
+        "reason": "Aucun CCN du jeu DEMO trouvÚ dans ce territoire.",
+        "status": "empty"
+      },
+      {
+        "category": "admin",
+        "label": "Services administratifs",
+        "reason": "Aucun objet ½ Services administratifs ╗ trouvÚ aprÞs recherche spatiale ; rÚfÚrentiel disponible.",
+        "status": "empty"
+      },
+      {
+        "category": "education",
+        "label": "╔ducation",
+        "reason": "╔ducation ù rÚfÚrentiel non encore importÚ.",
+        "status": "future"
+      }
+    ]
+  },
+  {
+    "site": 30,
+    "engine": "sdg-2.2.0",
+    "status": "success",
+    "name": "BAKI",
+    "has_domain_statuses": true,
+    "domain_count": 12,
+    "domains": {
+      "population": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI localities_uncovered"
+        },
+        "nearest": false
+      },
+      "localities": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI localities_uncovered"
+        },
+        "nearest": false
+      },
+      "fdsu_sites": {
+        "status": "empty",
+        "label": null,
+        "message": "Aucun autre site FDSU trouvÚ dans le rayon analysÚ (25.0 km).",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 25000,
+          "value_km": 25.0,
+          "fiber_m": null,
+          "rule": "programs.fdsu_sites"
+        },
+        "nearest": false
+      },
+      "health": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 5000,
+          "value_km": 5.0,
+          "fiber_m": null,
+          "rule": "health.health_facilities"
+        },
+        "nearest": true
+      },
+      "telecom": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 25000,
+          "value_km": 25.0,
+          "fiber_m": 5000,
+          "rule": "telecom.infrastructure + telecom.network_lines"
+        },
+        "nearest": true
+      },
+      "roads": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 50000,
+          "value_km": 50.0,
+          "fiber_m": null,
+          "rule": "transport.routes PostGIS"
+        },
+        "nearest": true
+      },
+      "ccn": {
+        "status": "demonstration",
+        "label": null,
+        "message": "Aucun CCN du jeu DEMO trouvÚ dans ce territoire.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 10000,
+          "value_km": 10.0,
+          "fiber_m": null,
+          "rule": "demo_ccn.json (dÚmonstration)"
+        },
+        "nearest": false
+      },
+      "admin": {
+        "status": "empty",
+        "label": null,
+        "message": "Aucun objet ½ Services administratifs ╗ trouvÚ aprÞs recherche spatiale ; rÚfÚrentiel disponible.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI / admin derived"
+        },
+        "nearest": false
+      },
+      "education": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "╔ducation ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "energy": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "╔nergie ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "markets": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "MarchÚs / Úconomie ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "needs": {
+        "status": "empty",
+        "label": null,
+        "message": "Aucun objet ½ Besoins prioritaires ╗ trouvÚ aprÞs recherche spatiale ; rÚfÚrentiel disponible.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "CANDIDATE_FOR_MISSION"
+        },
+        "nearest": false
+      }
+    },
+    "kpi_keys": "list",
+    "category_keys": [],
+    "missing_data_sample": [
+      {
+        "category": "fdsu_sites",
+        "label": "Sites FDSU",
+        "reason": "Aucun autre site FDSU trouvÚ dans le rayon analysÚ (25.0 km).",
+        "status": "empty"
+      },
+      {
+        "category": "ccn",
+        "label": "CCN",
+        "reason": "Aucun CCN du jeu DEMO trouvÚ dans ce territoire.",
+        "status": "empty"
+      },
+      {
+        "category": "admin",
+        "label": "Services administratifs",
+        "reason": "Aucun objet ½ Services administratifs ╗ trouvÚ aprÞs recherche spatiale ; rÚfÚrentiel disponible.",
+        "status": "empty"
+      }
+    ]
+  },
+  {
+    "site": 34,
+    "engine": "sdg-2.2.0",
+    "status": "success",
+    "name": "Dumba",
+    "has_domain_statuses": true,
+    "domain_count": 12,
+    "domains": {
+      "population": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI localities_uncovered"
+        },
+        "nearest": false
+      },
+      "localities": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI localities_uncovered"
+        },
+        "nearest": false
+      },
+      "fdsu_sites": {
+        "status": "empty",
+        "label": null,
+        "message": "Aucun autre site FDSU trouvÚ dans le rayon analysÚ (25.0 km).",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 25000,
+          "value_km": 25.0,
+          "fiber_m": null,
+          "rule": "programs.fdsu_sites"
+        },
+        "nearest": false
+      },
+      "health": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 5000,
+          "value_km": 5.0,
+          "fiber_m": null,
+          "rule": "health.health_facilities"
+        },
+        "nearest": true
+      },
+      "telecom": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 25000,
+          "value_km": 25.0,
+          "fiber_m": 5000,
+          "rule": "telecom.infrastructure + telecom.network_lines"
+        },
+        "nearest": true
+      },
+      "roads": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 50000,
+          "value_km": 50.0,
+          "fiber_m": null,
+          "rule": "transport.routes PostGIS"
+        },
+        "nearest": true
+      },
+      "ccn": {
+        "status": "demonstration",
+        "label": null,
+        "message": "Aucun CCN du jeu DEMO trouvÚ dans ce territoire.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 10000,
+          "value_km": 10.0,
+          "fiber_m": null,
+          "rule": "demo_ccn.json (dÚmonstration)"
+        },
+        "nearest": false
+      },
+      "admin": {
+        "status": "empty",
+        "label": null,
+        "message": "Aucun objet ½ Services administratifs ╗ trouvÚ aprÞs recherche spatiale ; rÚfÚrentiel disponible.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI / admin derived"
+        },
+        "nearest": false
+      },
+      "education": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "╔ducation ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "energy": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "╔nergie ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "markets": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "MarchÚs / Úconomie ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "needs": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "CANDIDATE_FOR_MISSION"
+        },
+        "nearest": false
+      }
+    },
+    "kpi_keys": "list",
+    "category_keys": [],
+    "missing_data_sample": [
+      {
+        "category": "fdsu_sites",
+        "label": "Sites FDSU",
+        "reason": "Aucun autre site FDSU trouvÚ dans le rayon analysÚ (25.0 km).",
+        "status": "empty"
+      },
+      {
+        "category": "ccn",
+        "label": "CCN",
+        "reason": "Aucun CCN du jeu DEMO trouvÚ dans ce territoire.",
+        "status": "empty"
+      },
+      {
+        "category": "admin",
+        "label": "Services administratifs",
+        "reason": "Aucun objet ½ Services administratifs ╗ trouvÚ aprÞs recherche spatiale ; rÚfÚrentiel disponible.",
+        "status": "empty"
+      }
+    ]
+  },
+  {
+    "site": 42,
+    "engine": "sdg-2.2.0",
+    "status": "success",
+    "name": "Madjoko",
+    "has_domain_statuses": true,
+    "domain_count": 12,
+    "domains": {
+      "population": {
+        "status": "error",
+        "label": null,
+        "message": "Erreur dÆintÚgration ù le rÚfÚrentiel ½ Population / localitÚs ╗ existe, mais la recherche spatiale nÆa pas pu Ûtre exÚcutÚe pour ce site.",
+        "search_executed": false,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI localities_uncovered"
+        },
+        "nearest": false
+      },
+      "localities": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI localities_uncovered"
+        },
+        "nearest": false
+      },
+      "fdsu_sites": {
+        "status": "empty",
+        "label": null,
+        "message": "Aucun autre site FDSU trouvÚ dans le rayon analysÚ (25.0 km).",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 25000,
+          "value_km": 25.0,
+          "fiber_m": null,
+          "rule": "programs.fdsu_sites"
+        },
+        "nearest": false
+      },
+      "health": {
+        "status": "empty",
+        "label": null,
+        "message": "Aucune relation pour ½ SantÚ ╗.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 5000,
+          "value_km": 5.0,
+          "fiber_m": null,
+          "rule": "health.health_facilities"
+        },
+        "nearest": true
+      },
+      "telecom": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 25000,
+          "value_km": 25.0,
+          "fiber_m": 5000,
+          "rule": "telecom.infrastructure + telecom.network_lines"
+        },
+        "nearest": true
+      },
+      "roads": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 50000,
+          "value_km": 50.0,
+          "fiber_m": null,
+          "rule": "transport.routes PostGIS"
+        },
+        "nearest": true
+      },
+      "ccn": {
+        "status": "demonstration",
+        "label": null,
+        "message": "Aucun CCN du jeu DEMO trouvÚ dans ce territoire.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": 10000,
+          "value_km": 10.0,
+          "fiber_m": null,
+          "rule": "demo_ccn.json (dÚmonstration)"
+        },
+        "nearest": false
+      },
+      "admin": {
+        "status": "empty",
+        "label": null,
+        "message": "Aucun objet ½ Services administratifs ╗ trouvÚ aprÞs recherche spatiale ; rÚfÚrentiel disponible.",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "NCI / admin derived"
+        },
+        "nearest": false
+      },
+      "education": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "╔ducation ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "energy": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "╔nergie ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "markets": {
+        "status": "integration_pending",
+        "label": null,
+        "message": "MarchÚs / Úconomie ù rÚfÚrentiel non encore importÚ.",
+        "search_executed": false,
+        "reference_available": false,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": null
+        },
+        "nearest": false
+      },
+      "needs": {
+        "status": "operational",
+        "label": null,
+        "message": "",
+        "search_executed": true,
+        "reference_available": true,
+        "count": null,
+        "radius_m": {
+          "value_m": null,
+          "value_km": null,
+          "fiber_m": null,
+          "rule": "CANDIDATE_FOR_MISSION"
+        },
+        "nearest": false
+      }
+    },
+    "kpi_keys": "list",
+    "category_keys": [],
+    "missing_data_sample": [
+      {
+        "category": "population",
+        "label": "Population / localitÚs",
+        "reason": "Erreur dÆintÚgration ù le rÚfÚrentiel ½ Population / localitÚs ╗ existe, mais la recherche spatiale nÆa pas pu Ûtre exÚcutÚe pour ce site.",
+        "status": "empty"
+      },
+      {
+        "category": "fdsu_sites",
+        "label": "Sites FDSU",
+        "reason": "Aucun autre site FDSU trouvÚ dans le rayon analysÚ (25.0 km).",
+        "status": "empty"
+      },
+      {
+        "category": "health",
+        "label": "SantÚ",
+        "reason": "Aucune relation pour ½ SantÚ ╗.",
+        "status": "empty"
+      }
+    ]
+  }
+]

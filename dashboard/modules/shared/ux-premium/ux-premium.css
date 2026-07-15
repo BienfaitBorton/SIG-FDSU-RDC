@@ -189,7 +189,58 @@ td.ux-state,
 .ux-swatch.is-site { background: #fbbf24; }
 .ux-swatch.is-ccn { background: #a78bfa; }
 .ux-swatch.is-health { background: #34d399; }
+.ux-swatch.is-telecom { background: #0ea5e9; }
+.ux-swatch.is-fiber { background: #db2777; }
+.ux-swatch.is-fiber-line {
+  border-radius: 2px;
+  height: 3px;
+  background: #db2777;
+}
+.ux-swatch.is-route {
+  border-radius: 2px;
+  height: 3px;
+  background: #94a3b8;
+}
+.ux-swatch.is-groupement { background: #eab308; }
+.ux-swatch.is-locality { background: #64748b; }
+.ux-swatch.is-collectivite {
+  border-radius: 2px;
+  background: rgba(103, 232, 249, 0.35);
+  border-color: #67e8f9;
+}
+.ux-swatch.is-covered { background: #22c55e; }
 .ux-swatch.is-uncovered { background: #f87171; }
+
+.ux-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.ux-legend-count {
+  font-style: normal;
+  opacity: 0.85;
+  margin-left: 0.2rem;
+}
+
+.ux-legend-count::before { content: '— '; }
+
+.ux-legend-layer-toggle {
+  display: inline-flex;
+  margin: 0;
+  cursor: pointer;
+}
+
+.ux-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
 .ux-swatch.is-ok { background: var(--edvs-green); }
 .ux-swatch.is-warn { background: var(--edvs-yellow); }
 .ux-swatch.is-fail { background: var(--edvs-red); }

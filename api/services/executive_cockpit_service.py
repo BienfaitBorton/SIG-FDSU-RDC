@@ -102,19 +102,32 @@ def build_cockpit_payload() -> dict[str, Any]:
     try:
         from pathlib import Path
         import json
+        from api.services import program_lifecycle_engine as ple
 
         root = Path(__file__).resolve().parents[2]
         for code, label, color in (
-            ("sites_40", "Sites 40", "green"),
+            ("sites_40", "Sites 40", "amber"),
             ("sites_300", "Sites 300", "orange"),
             ("sites_20476", "Sites 20 476", "blue"),
         ):
             path = root / "data" / "programs" / code / f"{code}.json"
+            life = ple.resolve_program_lifecycle(code)
             if path.exists():
                 payload = json.loads(path.read_text(encoding="utf-8"))
                 sites = payload.get("sites") if isinstance(payload, dict) else payload
                 count = len(sites) if isinstance(sites, list) else None
-                programs.append({"label": label, "value": count, "status": "confirmed", "color": color})
+                programs.append(
+                    {
+                        "label": label,
+                        "value": count,
+                        "status": "data_integrated",
+                        "program_status": (life.get("program_status") or {}).get("code"),
+                        "program_status_label": (life.get("program_status") or {}).get("label"),
+                        "data_status_label": (life.get("data_status") or {}).get("label"),
+                        "color": color,
+                        "note": "Effectif dans le référentiel — ≠ sites opérationnels.",
+                    }
+                )
             else:
                 programs.append({"label": label, "value": None, "status": "unavailable", "color": "gray"})
     except Exception:  # noqa: BLE001
@@ -273,13 +286,15 @@ def build_cockpit_payload() -> dict[str, Any]:
             },
             {
                 "id": "ccn_ops",
-                "label": "CCN opérationnels",
+                "label": "CCN DEMO (statut inventaire)",
                 "value": ccn_kpis.get("operationnels"),
                 "icon": "gauge",
-                "color": "green",
-                "confidence": "medium",
+                "color": "amber",
+                "confidence": "low",
                 "trend": "flat",
                 "sparkline": [ccn_kpis.get("operationnels") or 0],
+                "note": "Comptes DEMO — ≠ CCN opérationnels production.",
+                "data_class": "demonstration",
             },
             {
                 "id": "kh_domains",

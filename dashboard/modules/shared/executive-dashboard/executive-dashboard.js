@@ -30,9 +30,9 @@
     if (!root || !global.EdvsLayout) return;
     state.payload = payload;
     root.innerHTML = global.EdvsLayout.shell({
-      eyebrow: 'Salle de Pilotage DG',
-      title: 'Salle de Pilotage DG',
-      subtitle: 'Executive Situation Room indisponible — mode cockpit réduit',
+      eyebrow: 'Salle de Pilotage',
+      title: 'Salle de Pilotage National',
+      subtitle: 'Centre National de Pilotage indisponible — mode cockpit réduit',
       actionsHtml: '<button type="button" class="secondary-button" data-route-jump="decision-view">Centre de Décision</button>',
       mapHtml: `<section class="edvs-card"><div id="edvs-tst-host" class="edvs-tst-host"></div></section>`,
       chartsHtml: '',
@@ -46,7 +46,7 @@
 
   function initializeExecutiveCockpitModule() {
     const banner = document.querySelector('#edvs-cockpit-banner');
-    if (banner) banner.textContent = 'Chargement de la Situation Room…';
+    if (banner) banner.textContent = 'Chargement de la Salle de Pilotage…';
     const root = document.querySelector('#edvs-cockpit-root');
     if (!root) return Promise.resolve();
 
@@ -63,12 +63,12 @@
           state.initialized = true;
           if (banner) {
             const ver = payload?._meta?.version || 'esr-1.0.0';
-            banner.textContent = `Executive Situation Room · ${ver} · parcours Situation → Décision`;
+            banner.textContent = `Centre National de Pilotage · ${ver} · parcours Situation → Décision`;
           }
           global.EdvsLayout?.bindPresentationControls?.(document);
         })
         .catch(() => {
-          if (banner) banner.textContent = 'Situation Room indisponible — vérifier /api/executive/situation-room';
+          if (banner) banner.textContent = 'Centre National de Pilotage indisponible — vérifier /api/executive/situation-room';
         });
     }
 
@@ -81,7 +81,7 @@
       })
       .then((payload) => {
         renderCockpit(payload);
-        if (banner) banner.textContent = 'Salle de Pilotage DG (cockpit)';
+        if (banner) banner.textContent = 'Salle de Pilotage (cockpit)';
         state.initialized = true;
       })
       .catch(() => {

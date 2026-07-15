@@ -87,6 +87,8 @@
 
     global.document.addEventListener('keydown', (event) => {
       if (event.key !== 'Escape') return;
+      // Ne pas quitter le dossier pendant le Mode Présentation DG
+      if (document.body.classList.contains('executive-presentation-mode')) return;
       const panel = document.querySelector('#decision-experience-panel');
       if (panel && !panel.classList.contains('hidden')) goBack();
     });

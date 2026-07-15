@@ -51,9 +51,23 @@ def test_build_graph_real_sites_typed_relations(site_id):
         assert edge.get("target_label") or edge.get("target_entity")
         contrib = edge.get("score_contribution") or edge.get("contribution") or {}
         assert contrib.get("status") in {"mapped", "proxy", "unavailable"}
-        # Pas de contribution inventée affichée
+        # Classification explicable obligatoire — jamais de points inventés
+        assert contrib.get("contribution_type") in {
+            "direct",
+            "indirect",
+            "contextual_evidence",
+            "not_applicable",
+            "pending_rule",
+        }
+        assert contrib.get("role_label")
+        assert "non calculée" not in str(contrib.get("display") or "").lower()
+        assert "non calculée" not in str(contrib.get("role_label") or "").lower()
         if contrib.get("status") == "unavailable":
             assert not (contrib.get("display") or "").startswith("+")
+        if contrib.get("contribution_type") == "direct":
+            assert contrib.get("criterion")
+            # Direct = critère sourcé ; pas de chiffre inventé côté service
+            assert contrib.get("source_document") or contrib.get("note") or contrib.get("display")
 
 
 @pytest.mark.parametrize("site_id", SITE_IDS)
@@ -66,10 +80,18 @@ def test_no_invented_future_category_nodes(site_id):
 
 def test_build_graph_missing_site():
     graph = sdg.build_graph("site", "99999999", program_code="sites_40")
-    # service peut renvoyer None ou graphe partial selon résolution
+    # service peut renvoyer None ou graphe selon résolution
     if graph is None:
         return
-    assert graph.get("_meta", {}).get("status") in {"partial", "error", "unavailable", "success"}
+    # Contrat SDG Coverage Audit v1 : classification C → _meta.status = "impossible"
+    # (PROJECT_MANAGEMENT/ARCHITECTURE/SDG_COVERAGE_AUDIT_V1.md)
+    assert graph.get("_meta", {}).get("status") in {
+        "partial",
+        "error",
+        "unavailable",
+        "success",
+        "impossible",
+    }
 
 
 def test_build_presentation_steps():

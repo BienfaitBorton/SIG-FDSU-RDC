@@ -50,7 +50,7 @@
         bar.className = 'edvs-presentation-bar';
         bar.innerHTML = `
           <button type="button" class="edvs-presentation-back" data-edvs-presentation-exit>← Retour</button>
-          <p>SIG-FDSU RDC — Mode Présentation DG</p>
+          <p>SIG-FDSU RDC — Mode Présentation</p>
           <button type="button" class="primary-button" data-edvs-presentation-exit>Quitter le Mode Présentation</button>
         `;
         document.body.appendChild(bar);

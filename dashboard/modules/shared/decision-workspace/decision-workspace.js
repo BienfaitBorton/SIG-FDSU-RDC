@@ -108,7 +108,7 @@
       chrome.setAttribute('data-decision-workspace', '1.1');
       chrome.innerHTML = `
         <nav class="dw-trail" id="decision-workspace-trail" aria-label="Fil d’analyse"></nav>
-        <p class="dw-sync" id="decision-workspace-sync" aria-live="polite">Espace d’analyse — sélection synchronisée</p>
+        <p class="dw-sync" id="decision-workspace-sync" aria-live="polite">Espace de Décision — sélection synchronisée</p>
         <div class="dw-sections" id="decision-workspace-sections">
           <section class="dw-section" id="decision-workspace-summary" data-dw-section="summary" hidden>
             <h3>Résumé exécutif</h3>

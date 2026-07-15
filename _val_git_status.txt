@@ -1,0 +1,109 @@
+﻿git : warning: could not open directory '.pytest_tmp_cache/': Permission denied
+Au caractère C:\Users\FemminTech\AppData\Local\Temp\ps-script-3f82d968-ad75-4e18-9693-ff16488541e4.ps1:105 : 1
++ git status --short 2>&1 | Out-File -FilePath .\_val_git_status.txt -E ...
++ ~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning: could ...rmission denied:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ M PROJECT_MANAGEMENT/ARCHITECTURE/EXECUTIVE_SITUATION_ROOM_V1.md
+ M api/main.py
+ M api/routes/spatial_decision_graph.py
+ M api/routes/territorial_intelligence.py
+ M api/services/executive_cockpit_service.py
+ M api/services/program_service.py
+ M api/services/spatial_decision_graph_service.py
+ M api/services/spatial_matching_service.py
+ M api/services/territorial_intelligence_service.py
+ M dashboard/app.js
+ M dashboard/index.html
+ M dashboard/modules/decision-experience/decision-case-controller.js
+ M dashboard/modules/decision-experience/decision-experience.js
+ M dashboard/modules/decision-experience/dxl-core.js
+ M dashboard/modules/decision-experience/spatial-impact-controller.js
+ M dashboard/modules/shared/decision-scenarios/decision-scenarios.js
+ M dashboard/modules/shared/decision-workspace/decision-workspace.js
+ M dashboard/modules/shared/executive-dashboard/executive-dashboard.js
+ M dashboard/modules/shared/executive-dashboard/executive-layout.js
+ M dashboard/modules/shared/executive-situation-room/executive-situation-room.js
+ M dashboard/modules/shared/map-tooltips.js
+ M dashboard/modules/shared/spatial-decision-graph/spatial-decision-graph.css
+ M dashboard/modules/shared/spatial-decision-graph/spatial-decision-graph.js
+ M dashboard/modules/shared/territorial-digital-twin/territorial-digital-twin.js
+ M dashboard/modules/shared/ux-premium/ux-premium.css
+ M dashboard/modules/shared/ux-premium/ux-premium.js
+ M dashboard/modules/territorial-intelligence/territorial-intelligence.css
+ M dashboard/modules/territorial-intelligence/territorial-intelligence.js
+ M data/decision/case_history.json
+ M tests/e2e/executive-situation-room.spec.js
+ M tests/e2e/spatial-decision-graph.spec.js
+ M tests/e2e/territorial-summary.spec.js
+ M tests/test_spatial_decision_graph.py
+?? PROJECT_MANAGEMENT/ARCHITECTURE/BUSINESS_ARCHITECTURE_AND_FUNCTIONAL_BLUEPRINT_V1.md
+?? PROJECT_MANAGEMENT/ARCHITECTURE/CARTOGRAPHY_EXPERIENCE_PREMIUM_V0.9.1.md
+?? PROJECT_MANAGEMENT/ARCHITECTURE/EXECUTIVE_PRESENTATION_MODE_V2.1.md
+?? PROJECT_MANAGEMENT/ARCHITECTURE/HARMONISATION_TERMINOLOGIQUE_INSTITUTIONNELLE_V1.md
+?? PROJECT_MANAGEMENT/ARCHITECTURE/NATIONAL_DATA_MATURITY_DASHBOARD_V1.md
+?? PROJECT_MANAGEMENT/ARCHITECTURE/PROGRAM_LIFECYCLE_AND_DEPLOYMENT_STATUS_ENGINE_V1.md
+?? PROJECT_MANAGEMENT/ARCHITECTURE/SDG_COVERAGE_AUDIT_V1.md
+?? PROJECT_MANAGEMENT/ARCHITECTURE/TERRITORIAL_IMPACT_AND_COVERAGE_PROGRESSION_ENGINE_V1.md
+?? PROJECT_MANAGEMENT/ARCHITECTURE/TERRITORIAL_INTELLIGENCE_MULTI_SCALE_V1.md
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/basemap-resilience-v1-map.png
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/basemap-resilience-v1-report.json
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/basemap-resilience-v1-settings.png
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/cartography-hotfix-after-basemap.png
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/cartography-hotfix-after-zones.png
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/cartography-hotfix-after.png
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/cartography-hotfix-before.png
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/cartography-rollback-01-map-initial.png
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/cartography-rollback-02-layers-open.png
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/cartography-rollback-03-zones-on.png
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/cartography-rollback-04-layers-closed.png
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/cartography-rollback-05-vue-nationale.png
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/cartography-rollback-06-libre.png
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/cartography-rollback-report.json
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/data-maturity/
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/executive-presentation-mode/
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/incident-after-browser-report.json
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/incident-after-decision-case-14.png
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/incident-after-decision-case-16.png
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/incident-after-decision-case-26.png
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/incident-after-decision-case-29.png
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/incident-after-decision-case-34.png
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/incident-after-map.png
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/incident-sdg-batch-after.json
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/incident-sdg-batch-before.json
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/program-lifecycle/
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/sdg-coverage/
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/territorial-impact/
+?? PROJECT_MANAGEMENT/ARCHITECTURE/captures/territorial-intelligence-multiscale/
+?? _val_git_status.txt
+?? api/routes/data_maturity.py
+?? api/routes/program_lifecycle.py
+?? api/routes/sdg_coverage.py
+?? api/routes/territorial_impact.py
+?? api/services/cartography_symbology_registry.py
+?? api/services/data_maturity_engine.py
+?? api/services/program_lifecycle_engine.py
+?? api/services/sdg_coverage_service.py
+?? api/services/territorial_impact_engine.py
+?? api/services/territorial_multiscale_service.py
+?? dashboard/modules/shared/cartography-experience/
+?? dashboard/modules/shared/data-maturity/
+?? dashboard/modules/shared/decision-cartography-experience/
+?? dashboard/modules/shared/institutional-labels.js
+?? dashboard/modules/shared/territorial-impact/
+?? data/business/program_lifecycle_registry_v1.json
+?? data/cartography/
+?? tests/e2e/cartography-experience-premium.spec.js
+?? tests/e2e/data-maturity.spec.js
+?? tests/e2e/decision-cartography-experience-hotfix.spec.js
+?? tests/e2e/decision-cartography-experience.spec.js
+?? tests/e2e/program-lifecycle.spec.js
+?? tests/e2e/sdg-coverage-audit.spec.js
+?? tests/e2e/territorial-impact.spec.js
+?? tests/e2e/territorial-intelligence-multiscale.spec.js
+?? tests/test_data_maturity_engine.py
+?? tests/test_program_lifecycle_engine.py
+?? tests/test_sdg_coverage_audit.py
+?? tests/test_territorial_impact_engine.py
+?? tests/test_territorial_multiscale.py

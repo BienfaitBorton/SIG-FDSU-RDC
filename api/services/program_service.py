@@ -149,23 +149,32 @@ def sites_to_geojson(sites: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def sites_to_panel_payload(program_code: str, sites: list[dict[str, Any]]) -> dict[str, Any]:
+    from api.services import program_lifecycle_engine as ple
+
     program = get_program(program_code) or {}
-    deployment_status = "NON_DEMARRE"
-    scoring_status = "A_CALCULER"
-    program_status = program.get("status")
-    if program_code == "PROG_SITES_40":
-        deployment_status = "EN_COURS"
-        scoring_status = "INTEGRE"
-    if program_code == "PROG_SITES_300":
-        deployment_status = "NON_DEMARRE"
-        scoring_status = "A_CALCULER"
+    life = ple.resolve_program_lifecycle(program_code)
+    program_status_code = (life.get("program_status") or {}).get("code")
+    # Compatibilité : conserver deployment_status textuel dérivé du PLE (pas inventé)
+    deployment_map = {
+        "deployment_in_progress": "EN_COURS",
+        "planned": "NON_DEMARRE",
+        "strategic_planning": "NON_DEMARRE",
+        "preparation": "PREPARATION",
+    }
+    deployment_status = deployment_map.get(program_status_code or "", "A_CONSOLIDER")
+    scoring_status = "INTEGRE" if "40" in str(program_code) else "A_CALCULER"
     return {
         "_meta": {
             "program": program.get("program_name"),
-            "program_status": program_status,
+            "program_status": program_status_code or program.get("status"),
+            "program_status_label": (life.get("program_status") or {}).get("label"),
+            "data_status": (life.get("data_status") or {}).get("code"),
+            "data_status_label": (life.get("data_status") or {}).get("label"),
             "count": len(sites),
             "deployment_status": deployment_status,
             "scoring_status": scoring_status,
+            "lifecycle": life,
+            "note": "program_status ≠ operationalité physique ; data_status = intégration SIG.",
         },
         "sites": [
             {
@@ -177,6 +186,11 @@ def sites_to_panel_payload(program_code: str, sites: list[dict[str, Any]]) -> di
                 "longitude": site.get("longitude"),
                 "programme": site.get("program_name"),
                 "status": site.get("status"),
+                "lifecycle": ple.resolve_asset_lifecycle(
+                    program_code=program_code,
+                    asset_id=site.get("id") or site.get("site_code"),
+                    raw_status=site.get("status"),
+                ),
                 "priority_status": site.get("priority_status"),
                 "fdsu_score": site.get("fdsu_score"),
                 "source": site.get("source"),
@@ -355,6 +369,8 @@ def get_status_summary() -> dict[str, Any]:
 
 
 def get_sites_followup() -> dict[str, Any]:
+    from api.services import program_lifecycle_engine as ple
+
     sites_40 = _program_site_status_breakdown("PROG_SITES_40")
     sites_300 = _program_site_status_breakdown("PROG_SITES_300")
 
@@ -420,16 +436,38 @@ def get_sites_followup() -> dict[str, Any]:
             "title": "Suivi opérationnel des programmes FDSU",
             "architecture": "extensible",
             "last_updated": datetime.now(timezone.utc).isoformat(),
+            "lifecycle_engine": "ple-1.0.0",
         },
-        "sites_40": sites_40_followup,
-        "sites_300": sites_300_followup,
-        "ccn": ccn_followup,
+        "sites_40": {
+            **sites_40_followup,
+            "lifecycle": ple.resolve_program_lifecycle("sites_40"),
+        },
+        "sites_300": {
+            **sites_300_followup,
+            "lifecycle": ple.resolve_program_lifecycle("sites_300"),
+        },
+        "sites_20476": {
+            "program_code": "PROG_SITES_20476",
+            "lifecycle": ple.resolve_program_lifecycle("sites_20476"),
+            "metrics": {
+                "total_sites": None,
+                "engages": None,
+                "operationnels": None,
+            },
+            "metrics_status": "Cible nationale ≠ sites engagés — À consolider",
+        },
+        "ccn": {
+            **ccn_followup,
+            "lifecycle": ple.resolve_program_lifecycle("ccn"),
+            "metrics_status": "Inventaire DEMO — ≠ opérationnel production",
+        },
+        "programs_board": ple.build_programs_board(),
         "global_limitations": (
-            "Les statuts opérationnels détaillés (installé, bloqué, opérationnel, etc.) "
-            "ne sont pas encore renseignés de façon homogène dans programs.fdsu_sites.status. "
+            "Les compteurs installé / mis en service / opérationnel restent null tant que "
+            "les preuves individuelles ne sont pas disponibles. "
             f"{STATUS_TO_FILL}."
         ),
-        "recommended_action": "Activer le suivi en direct après renseignement des statuts.",
+        "recommended_action": "Consolider les statuts individuels avec preuves avant tout badge « opérationnel ».",
         "extensible_fields": [
             "operational_status",
             "installation_started_at",

@@ -1,0 +1,134 @@
+/* National Data Maturity Dashboard */
+
+.ndm-card .esr-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ndm-header-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.ndm-national {
+  margin-bottom: 0.85rem;
+}
+
+.ndm-national-label {
+  display: block;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.ndm-national-score {
+  font-size: 1.75rem;
+  margin-right: 0.5rem;
+}
+
+.ndm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.ndm-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: left;
+  padding: 0.65rem 0.7rem;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.35);
+  color: inherit;
+  cursor: pointer;
+}
+
+.ndm-tile strong {
+  font-size: 1.1rem;
+}
+
+.ndm-band--excellent { border-color: rgba(34, 197, 94, 0.55); }
+.ndm-band--very_good { border-color: rgba(45, 212, 191, 0.55); }
+.ndm-band--good { border-color: rgba(56, 189, 248, 0.55); }
+.ndm-band--reinforce { border-color: rgba(245, 158, 11, 0.55); }
+.ndm-band--priority { border-color: rgba(239, 68, 68, 0.55); }
+.ndm-band--unknown { border-color: rgba(148, 163, 184, 0.4); }
+
+span.ndm-band {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+
+.ndm-priorities {
+  margin: 0.4rem 0 1rem;
+  padding-left: 1.1rem;
+}
+
+.ndm-stars {
+  color: #fbbf24;
+  margin-right: 0.35rem;
+}
+
+.ndm-roadmap {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.ndm-roadmap h5 {
+  margin: 0 0 0.35rem;
+}
+
+.ndm-roadmap ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+}
+
+.ndm-detail {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 10px;
+}
+
+.ndm-detail header {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ndm-meta {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.ndm-dims {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.5rem 0;
+}
+
+.ndm-dims span {
+  font-size: 0.72rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 6px;
+  background: rgba(148, 163, 184, 0.15);
+}
+
+@media (max-width: 900px) {
+  .ndm-roadmap {
+    grid-template-columns: 1fr;
+  }
+}
