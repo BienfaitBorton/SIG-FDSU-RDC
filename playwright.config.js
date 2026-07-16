@@ -32,8 +32,8 @@ module.exports = defineConfig({
       timeout: 120_000,
     },
     {
-      command: '.\\.venv\\Scripts\\python.exe -u -m uvicorn api.main:app --host 127.0.0.1 --port 8001',
-      url: 'http://127.0.0.1:8001/health',
+      command: '.\\.venv\\Scripts\\python.exe -u tests\\e2e\\serve_api_isolated.py --host 127.0.0.1 --port 8011',
+      url: 'http://127.0.0.1:8011/health',
       reuseExistingServer: true,
       timeout: 120_000,
     },

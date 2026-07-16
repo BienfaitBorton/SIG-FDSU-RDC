@@ -4,7 +4,7 @@
  * Données exclusivement depuis l’API — aucune invention.
  */
 (function initSpatialDecisionGraph(global) {
-  const API_BASE = `${global.location.protocol}//${global.location.hostname}:8001`;
+  const API_BASE = global.__SDG_API_BASE__ || `${global.location.protocol}//${global.location.hostname}:8001`;
   const VERSION = '2.1.0';
 
   const SYMBOL_GLYPH = {
@@ -42,6 +42,8 @@
     chromeBound: false,
     navBound: false,
     mapOriginalParent: null,
+    visibleObjectsRegistry: {},
+    consistencyIssues: [],
   };
 
   function escapeHtml(value) {
@@ -266,6 +268,7 @@
           </div>
           <div id="sdg-filters" class="sdg-filters-list" role="list"></div>
           <p class="sdg-relations-counter" id="sdg-relations-counter" aria-live="polite">Relations affichées —</p>
+          <div id="sdg-layer-statistics" class="sdg-layer-statistics" aria-live="polite"></div>
           <div id="sdg-why-body" class="sdg-why-body" aria-label="Pourquoi ce site ?"></div>
         </aside>
         <div class="sdg-map-column">
@@ -361,16 +364,19 @@
     });
     state.edgeLayers = {};
     state.nodeLayers = {};
+    state.visibleObjectsRegistry = {};
+    state.consistencyIssues = [];
     try { state.layer?.clearLayers(); } catch (_e) { /* */ }
   }
 
   function markerIconHtml(node, cat) {
     const symbol = resolveSymbol(cat);
     const isSite = node.kind === 'site' || node.category === 'site';
-    const color = cat.color || (isSite ? '#f59e0b' : '#94a3b8');
+    const isPriorityNeed = node.category === 'needs';
+    const color = isPriorityNeed ? '#dc2626' : (cat.color || (isSite ? '#f59e0b' : '#94a3b8'));
     const sizeClass = isSite ? 'sdg-marker--site' : 'sdg-marker--node';
     return `
-      <span class="sdg-marker ${sizeClass} sdg-symbol-${escapeHtml(symbol)}"
+      <span class="sdg-marker ${sizeClass}${isPriorityNeed ? ' sdg-marker--priority-need' : ''} sdg-symbol-${escapeHtml(symbol)}"
             style="--sdg-color:${escapeHtml(color)}"
             role="img" aria-label="${escapeHtml(node.name || cat.label || symbol)}">
         <span class="sdg-marker-glyph" aria-hidden="true">${symbolGlyph(symbol)}</span>
@@ -435,6 +441,52 @@
     return true;
   }
 
+  function rebuildVisibleObjectsRegistry() {
+    const registry = {};
+    (state.graph?.categories || []).forEach((category) => {
+      if (category.id === 'site') return;
+      const nodes = (state.graph?.nodes || []).filter((node) => node.category === category.id);
+      const edges = (state.graph?.edges || []).filter((edge) => edge.category === category.id);
+      const drawableNodes = nodes.filter((node) => Boolean(state.nodeLayers[node.id]));
+      const drawableEdges = edges.filter((edge) => Boolean(state.edgeLayers[edge.id]));
+      const visibleNodes = drawableNodes.filter((node) => nodeVisible(node)
+        && Boolean(state.layer?.hasLayer(state.nodeLayers[node.id])));
+      const visibleEdges = drawableEdges.filter((edge) => edgeVisible(edge)
+        && Boolean(state.layer?.hasLayer(state.edgeLayers[edge.id])));
+      const available = drawableNodes.length + drawableEdges.length;
+      const visible = visibleNodes.length + visibleEdges.length;
+      const declared = Number(category.count || 0);
+      registry[category.id] = {
+        id: category.id,
+        label: category.label || category.id,
+        declared,
+        available,
+        visible,
+        hidden: Math.max(0, available - visible),
+        outside: Math.max(0, declared - available),
+        state: available === 0 ? 'unavailable' : (visible > 0 ? 'visible' : 'hidden'),
+        nodeIds: drawableNodes.map((node) => node.id),
+        edgeIds: drawableEdges.map((edge) => edge.id),
+      };
+    });
+    state.visibleObjectsRegistry = registry;
+    return registry;
+  }
+
+  function validateSpatialLayers() {
+    const registry = rebuildVisibleObjectsRegistry();
+    const issues = Object.values(registry).filter((entry) => {
+      const announced = entry.state === 'visible' ? entry.visible : 0;
+      const drawn = entry.nodeIds.filter((id) => state.layer?.hasLayer(state.nodeLayers[id])).length
+        + entry.edgeIds.filter((id) => state.layer?.hasLayer(state.edgeLayers[id])).length;
+      return announced !== drawn;
+    });
+    state.consistencyIssues = issues;
+    if (issues.length) console.warn('[SpatialDecisionGraph] Incohérence détectée', issues);
+    renderLayerStatistics();
+    return { valid: issues.length === 0, issues, registry };
+  }
+
   function applyVisibility() {
     let visibleEdges = 0;
     const totalEdges = (state.graph?.edges || []).length;
@@ -460,7 +512,11 @@
       }
     });
 
+    rebuildVisibleObjectsRegistry();
     updateRelationsCounter(visibleEdges, totalEdges);
+    renderLegend();
+    renderFilters();
+    validateSpatialLayers();
   }
 
   function updateRelationsCounter(visible, total) {
@@ -522,7 +578,7 @@
       });
       const marker = global.L.marker([node.latitude, node.longitude], {
         icon,
-        zIndexOffset: isSite ? 800 : 400,
+        zIndexOffset: isSite ? 800 : (node.category === 'needs' ? 700 : 400),
         keyboard: true,
         title: node.name || '',
       });
@@ -626,7 +682,9 @@
 
     const filters = state.graph.filters || (state.graph.categories || []).filter((c) => c.id !== 'site');
 
+    const registry = state.visibleObjectsRegistry;
     host.innerHTML = filters.map((f) => {
+      const stats = registry[f.id] || { available: 0, visible: 0, hidden: 0, outside: Number(f.count || 0), state: 'unavailable' };
       const status = f.status || (f.available === false ? 'future' : ((f.count || 0) > 0 ? 'active' : 'empty'));
       const disabled = status === 'future' || status === 'empty';
       const checked = !disabled && state.filters[f.id] !== false;
@@ -666,7 +724,7 @@
                   aria-hidden="true">${symbolGlyph(symbol)}</span>
             <span class="sdg-filter-label">${escapeHtml(f.label)}</span>
             <span class="sdg-filter-color" style="background:${escapeHtml(f.color || '#94a3b8')}" title="${escapeHtml(f.color || '')}" aria-hidden="true"></span>
-            <span class="sdg-filter-count" title="${escapeHtml(fullNote || '')}">${Number(f.count || 0)}</span>
+            <span class="sdg-filter-count" title="${escapeHtml(fullNote || '')}">${stats.visible}</span>
           </label>
           ${!disabled ? `<button type="button" class="secondary-button sdg-btn-sm sdg-isolate-btn" data-sdg-isolate="${escapeHtml(f.id)}" aria-label="Isoler ${escapeHtml(f.label)}">Isoler</button>` : ''}
           <p class="sdg-filter-note"><span class="sdg-maturity sdg-maturity--${escapeHtml(maturity)}">${escapeHtml(maturityLabel)}</span>${fullNote ? ` — ${escapeHtml(fullNote)}` : ''}</p>
@@ -696,8 +754,9 @@
   function renderLegend() {
     const host = document.querySelector('#sdg-legend');
     if (!host || !state.graph) return;
-    const cats = (state.graph.categories || []).filter((c) => c.id !== 'site');
-    const visible = cats.filter((c) => categoryEnabled(c.id) && (c.count || 0) > 0).length;
+    const registry = state.visibleObjectsRegistry;
+    const cats = (state.graph.categories || []).filter((c) => c.id !== 'site' && (registry[c.id]?.available || 0) > 0);
+    const visible = cats.filter((c) => registry[c.id]?.visible > 0).length;
 
     host.innerHTML = `
       <p class="sdg-kicker">Légende</p>
@@ -705,7 +764,8 @@
       <ul class="sdg-legend-list">
         ${cats.map((c) => {
           const symbol = resolveSymbol(c);
-          const off = state.filters[c.id] === false;
+          const stats = registry[c.id];
+          const off = stats.state !== 'visible';
           const future = c.status === 'future' || (c.available === false && !c.count);
           const empty = c.status === 'empty' && !future;
           const disabled = future || (empty && !c.count);
@@ -721,7 +781,7 @@
                       style="--sdg-color:${escapeHtml(c.color)}"
                       aria-hidden="true">${symbolGlyph(symbol)}</span>
                 <span class="sdg-legend-label">${escapeHtml(c.label)}</span>
-                <em>${future && !c.count ? 'bientôt' : Number(c.count || 0)}</em>
+                <em>${stats.visible}</em>
               </button>
             </li>
           `;
@@ -749,6 +809,45 @@
           toggleCategory(btn.getAttribute('data-sdg-cat'), event.shiftKey ? 'isolate' : 'toggle');
         }
       });
+    });
+  }
+
+  function routeAvailabilityDiagnostic() {
+    const domain = (state.graph?.domain_statuses || []).find((item) => item.domain === 'roads');
+    const stats = state.visibleObjectsRegistry.roads || { available: 0 };
+    if (domain?.reference_available === false) {
+      return '⚠ référentiel absent — Routes non disponibles dans le référentiel';
+    }
+    if (stats.available === 0) {
+      return '✓ aucune route dans le rayon — Aucune route détectée dans le périmètre analysé';
+    }
+    return `✓ ${stats.available} route(s) analysée(s)`;
+  }
+
+  function renderLayerStatistics() {
+    const host = document.querySelector('#sdg-layer-statistics');
+    if (!host) return;
+    const rows = Object.values(state.visibleObjectsRegistry);
+    const issues = state.consistencyIssues || [];
+    host.innerHTML = `
+      <p class="sdg-kicker">Statistiques des couches</p>
+      ${issues.length ? `<div class="sdg-consistency-alert" role="alert">⚠ Incohérence détectée
+        <button type="button" class="secondary-button sdg-btn-sm" id="sdg-recalculate-layer">Recalculer la couche</button></div>` : ''}
+      <div class="sdg-layer-stats-list">
+        ${rows.map((row) => `<article class="sdg-layer-stat" data-sdg-layer-stat="${escapeHtml(row.id)}" data-state="${row.state}">
+          <strong>${escapeHtml(row.label)}</strong>
+          <span>${row.available} disponible(s)</span><span>${row.visible} visible(s)</span>
+          <span>${row.hidden} masqué(s)</span><span>${row.outside} hors périmètre</span>
+        </article>`).join('')}
+      </div>
+      <div class="sdg-availability-diagnostic">
+        <p class="sdg-kicker">Diagnostic de disponibilité</p>
+        ${rows.map((row) => `<p><strong>${escapeHtml(row.label)}</strong> ${row.id === 'roads'
+          ? escapeHtml(routeAvailabilityDiagnostic())
+          : (row.available ? `✓ ${row.available} objet(s) analysé(s)` : '⚠ aucun objet géolocalisé dans le périmètre')}</p>`).join('')}
+      </div>`;
+    host.querySelector('#sdg-recalculate-layer')?.addEventListener('click', (event) => {
+      refreshSpatialRelations(event.currentTarget);
     });
   }
 
@@ -1251,7 +1350,9 @@
     startPresentation,
     stopPresentation,
     refreshSpatialRelations,
+    validateSpatialLayers,
     repaint,
     state,
+    get visibleObjectsRegistry() { return state.visibleObjectsRegistry; },
   };
 })(typeof window !== 'undefined' ? window : globalThis);

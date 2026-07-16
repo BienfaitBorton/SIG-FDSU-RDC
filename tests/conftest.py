@@ -1,4 +1,6 @@
 import os
+import shutil
+import uuid
 from pathlib import Path
 
 import pytest
@@ -9,6 +11,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from app.models import Base
 from api.dependencies import get_db
 from api.main import app as fastapi_app
+from api.services import explainable_decision_service
 
 TEST_DB_NAME = os.environ.get("TEST_DB_NAME", "sig_fdsu_test")
 ADMIN_DB_URL = os.environ.get("ADMIN_DATABASE_URL", "postgresql://postgres:test123@localhost:5432/postgres")
@@ -16,6 +19,22 @@ TEST_DATABASE_URL = os.environ.get(
     "TEST_DATABASE_URL",
     f"postgresql://postgres:test123@localhost:5432/{TEST_DB_NAME}",
 )
+
+
+@pytest.fixture(autouse=True)
+def isolate_case_history(monkeypatch):
+    """Empêche les tests de journaliser dans le fichier runtime du dépôt."""
+    runtime_path = explainable_decision_service.HISTORY_PATH
+    test_runtime_dir = Path(__file__).resolve().parents[1] / "work" / "test-runtime"
+    test_runtime_dir.mkdir(parents=True, exist_ok=True)
+    isolated_path = test_runtime_dir / f"case_history-{uuid.uuid4().hex}.json"
+    if runtime_path.exists():
+        shutil.copy2(runtime_path, isolated_path)
+    monkeypatch.setattr(explainable_decision_service, "HISTORY_PATH", isolated_path)
+    try:
+        yield isolated_path
+    finally:
+        isolated_path.unlink(missing_ok=True)
 
 
 @pytest.fixture(scope="session")

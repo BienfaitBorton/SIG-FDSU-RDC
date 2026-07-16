@@ -671,6 +671,48 @@ body.executive-presentation-mode .epm-panel-close {
   transform: scale(1.05);
 }
 
+.sdg-marker--priority-need {
+  border-color: #ef4444;
+  background: #b91c1c;
+  color: #fff;
+  box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.28), 0 0 18px rgba(239, 68, 68, 0.75);
+  transform: scale(1.12);
+}
+
+.sdg-layer-statistics {
+  margin-top: 0.75rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--sdg-border);
+}
+
+.sdg-layer-stats-list { display: grid; gap: 0.4rem; }
+.sdg-layer-stat {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.15rem 0.45rem;
+  padding: 0.45rem;
+  border-radius: 8px;
+  background: rgba(148, 163, 184, 0.08);
+  font-size: 0.76rem;
+}
+.sdg-layer-stat strong { grid-column: 1 / -1; }
+.sdg-layer-stat[data-state="unavailable"] { opacity: 0.72; }
+.sdg-consistency-alert {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin-bottom: 0.55rem;
+  padding: 0.5rem;
+  border: 1px solid rgba(239, 68, 68, 0.55);
+  border-radius: 8px;
+  color: #fecaca;
+  background: rgba(127, 29, 29, 0.25);
+}
+.sdg-availability-diagnostic { margin-top: 0.75rem; }
+.sdg-availability-diagnostic p:not(.sdg-kicker) { margin: 0.28rem 0; font-size: 0.76rem; line-height: 1.35; }
+
 .sdg-marker-glyph {
   pointer-events: none;
   font-weight: 700;
