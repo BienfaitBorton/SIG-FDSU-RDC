@@ -2257,6 +2257,7 @@
 
     if (tabId === 'vue-nationale') {
       loadNationalPanel(false);
+      initializeDecisionCenterNationalMap();
       mountDecisionCenterTst();
       loadBusinessArchitecturePanel(false);
       loadSites40ProgramPanel(false);

@@ -80,9 +80,26 @@ Write-Host ""
 Write-Host "  Dashboard : http://127.0.0.1:8000"
 Write-Host "  API Docs  : http://127.0.0.1:8001/docs"
 Write-Host ""
-Write-Host "Ouverture du dashboard dans le navigateur dans 3 secondes..." -ForegroundColor Yellow
+Write-Host "Attente du health-check dashboard..." -ForegroundColor Yellow
+$dashboardHealthUrl = "http://127.0.0.1:8000/healthz"
+$dashboardReady = $false
+$deadline = [DateTime]::UtcNow.AddSeconds(30)
+while ([DateTime]::UtcNow -lt $deadline) {
+    try {
+        $response = Invoke-WebRequest -UseBasicParsing -Uri $dashboardHealthUrl -TimeoutSec 2
+        if ($response.StatusCode -eq 200) {
+            $dashboardReady = $true
+            break
+        }
+    } catch {
+        Start-Sleep -Milliseconds 250
+    }
+}
+if (-not $dashboardReady) {
+    Write-StartupError "Le dashboard ne répond pas sur $dashboardHealthUrl après 30 secondes."
+}
 
-Start-Sleep -Seconds 3
+Write-Host "Dashboard prêt. Ouverture dans le navigateur..." -ForegroundColor Green
 Start-Process "http://127.0.0.1:8000"
 
 Write-Host "Demarrage termine." -ForegroundColor Green

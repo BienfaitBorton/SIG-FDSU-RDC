@@ -84,6 +84,7 @@ test.describe('Spatial Decision Graph v2.1', () => {
 
     await expect(page.locator('#sdg-shell')).toBeVisible({ timeout: 60_000 });
     await expect(page.locator('#sdg-summary')).toBeVisible();
+    await expect(page.locator('.sdg-marker--site')).toHaveCount(1, { timeout: 60_000 });
     await expect(page.locator('#sdg-filters')).toBeVisible();
     await expect(page.locator('#sdg-legend')).toBeVisible();
     await expect(page.locator('#sdg-detail')).toBeVisible();
@@ -121,7 +122,7 @@ test.describe('Spatial Decision Graph v2.1', () => {
       await page.goto(sdgUrl(site.id));
       await expect(page.locator('#sdg-shell')).toBeVisible({ timeout: 60_000 });
       await expect(page.locator('#sdg-summary')).toBeVisible();
-      await expect(page.locator('.sdg-marker--site')).toHaveCount(1);
+      await expect(page.locator('.sdg-marker--site')).toHaveCount(1, { timeout: 60_000 });
       await assertNoTechnicalLeak(page);
     }
   });
@@ -149,6 +150,7 @@ test.describe('Spatial Decision Graph v2.1', () => {
     const diag = attachDiag(page);
     await page.goto(sdgUrl('30'));
     await expect(page.locator('#sdg-present-btn')).toBeVisible({ timeout: 60_000 });
+    await expect(page.locator('.sdg-marker--site')).toHaveCount(1, { timeout: 60_000 });
 
     await page.locator('#sdg-present-btn').click();
     await expect(page.locator('#sdg-stop-btn')).toBeVisible({ timeout: 5_000 });

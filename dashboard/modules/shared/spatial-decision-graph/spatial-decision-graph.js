@@ -1018,18 +1018,27 @@
     if (!state.presentation?.steps?.length) {
       const assetId = state.graph?._meta?.asset_id;
       if (!assetId) {
-        paintGraph();
+        state.presenting = true;
+        const stopBtn = document.querySelector('#sdg-stop-btn');
+        if (stopBtn) stopBtn.hidden = false;
+        const label = document.querySelector('#sdg-step-label');
+        if (label) label.textContent = 'Préparation du raisonnement…';
         return;
       }
       const type = state.graph?._meta?.asset_type || 'site';
       const pc = state.graph?._meta?.program_code;
       const qs = pc ? `?program_code=${encodeURIComponent(pc)}` : '';
+      state.presenting = true;
+      const stopBtn = document.querySelector('#sdg-stop-btn');
+      if (stopBtn) stopBtn.hidden = false;
+      const label = document.querySelector('#sdg-step-label');
+      if (label) label.textContent = 'Préparation du raisonnement…';
       fetchJson(`/api/spatial-decision-graph/${encodeURIComponent(type)}/${encodeURIComponent(assetId)}/presentation${qs}`)
         .then((payload) => {
           state.presentation = payload;
-          runPresentation();
+          if (state.presenting) runPresentation();
         })
-        .catch(() => paintGraph());
+        .catch(() => stopPresentation(true));
       return;
     }
     runPresentation();
@@ -1204,20 +1213,28 @@
     // Shell visible immédiatement (évite timeout E2E pendant le fetch graphe).
     setMap(map);
     ensureShell();
+    bindChrome();
+    bindNavDelegation();
     const summary = document.querySelector('#sdg-summary');
     if (summary && !state.graph) {
       summary.innerHTML = '<p class="sdg-kicker">Analyse d’Impact Territorial</p><p>Chargement des relations spatiales…</p>';
     }
-    return Promise.all([
-      fetchJson(`/api/spatial-decision-graph/${encodeURIComponent(type)}/${encodeURIComponent(assetId)}${qs}`),
-      fetchJson(`/api/spatial-decision-graph/${encodeURIComponent(type)}/${encodeURIComponent(assetId)}/presentation${qs}`).catch(() => null),
-    ]).then(([graph, presentation]) => {
+    return fetchJson(`/api/spatial-decision-graph/${encodeURIComponent(type)}/${encodeURIComponent(assetId)}${qs}`).then((graph) => {
       if (programCode && graph?._meta) graph._meta.program_code = programCode;
       if (graph?._meta) {
         graph._meta.asset_id = graph._meta.asset_id || assetId;
         graph._meta.asset_type = graph._meta.asset_type || type;
       }
-      mount(map, graph, presentation);
+      mount(map, graph, null);
+      fetchJson(
+        `/api/spatial-decision-graph/${encodeURIComponent(type)}/${encodeURIComponent(assetId)}/presentation${qs}`,
+      ).then((presentation) => {
+        if (state.graph !== graph || !presentation) return;
+        state.presentation = presentation;
+        if (state.presenting) runPresentation();
+      }).catch(() => {
+        if (state.graph === graph && state.presenting) stopPresentation(true);
+      });
       return graph;
     });
   }

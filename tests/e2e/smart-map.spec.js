@@ -481,7 +481,7 @@ test.describe('SIG-FDSU RDC – Module Cartographie libre', () => {
     await expect(page.locator('#layer-list input[data-layer="telecom_fiberco"]')).toBeVisible();
     await expect(page.locator('#layer-list input[data-layer="telecom_fttx"]')).toBeVisible();
 
-    await page.locator('#layer-list input[data-layer="telecom_vodacom"]').check();
+    await page.locator('#layer-list input[data-layer="telecom_vodacom"]').click();
     await page.waitForFunction(() => {
       const msg = document.querySelector('#zones-message')?.textContent || '';
       const count = window.cartographyState?.layers?.telecom_vodacom?.getLayers?.().length || 0;
@@ -498,7 +498,7 @@ test.describe('SIG-FDSU RDC – Module Cartographie libre', () => {
     await expect(spatialGroup).toBeVisible();
     await expect(page.locator('#layer-list input[data-layer="spatial_relations"]')).toBeVisible();
 
-    await page.locator('#layer-list input[data-layer="spatial_relations"]').check();
+    await page.locator('#layer-list input[data-layer="spatial_relations"]').click();
     await page.waitForFunction(() => {
       const msg = document.querySelector('#zones-message')?.textContent || '';
       const count = window.cartographyState?.layers?.spatial_relations?.getLayers?.().length || 0;

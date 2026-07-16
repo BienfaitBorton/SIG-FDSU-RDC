@@ -26,13 +26,13 @@ module.exports = defineConfig({
   ],
   webServer: [
     {
-      command: 'python dashboard/serve_utf8.py',
-      url: 'http://127.0.0.1:8000/index.html',
+      command: '.\\.venv\\Scripts\\python.exe -u dashboard\\serve_utf8.py --host 127.0.0.1 --port 8000',
+      url: 'http://127.0.0.1:8000/healthz',
       reuseExistingServer: true,
       timeout: 120_000,
     },
     {
-      command: 'python -m uvicorn api.main:app --host 127.0.0.1 --port 8001',
+      command: '.\\.venv\\Scripts\\python.exe -u -m uvicorn api.main:app --host 127.0.0.1 --port 8001',
       url: 'http://127.0.0.1:8001/health',
       reuseExistingServer: true,
       timeout: 120_000,

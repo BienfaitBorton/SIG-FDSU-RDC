@@ -23,7 +23,7 @@
   <link rel="stylesheet" href="modules/shared/territorial-digital-twin/territorial-digital-twin.css" />
   <link rel="stylesheet" href="modules/shared/cartography-experience/cartography-experience.css" />
   <link rel="stylesheet" href="modules/shared/decision-cartography-experience/decision-cartography-experience.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
 </head>
 <body>
   <div class="app-shell">
@@ -323,7 +323,7 @@
               <button type="button" class="primary-button cartography-focus-exit" id="carto-focus-exit">Quitter le Mode Focus</button>
             </div>
 
-            <div class="cartography-toolbar-premium" role="toolbar" aria-label="Outils cartographiques premium">
+            <div class="cartography-toolbar-premium cartography-toolbar-row" role="toolbar" aria-label="Outils cartographiques premium">
               <div class="cartography-toolbar-group">
                 <button id="zoom-auto" type="button" class="cartography-premium-btn cartography-premium-btn--primary" title="Vue nationale — recentrer sur la RDC">
                   <span class="cartography-premium-btn__icon" aria-hidden="true">🇨🇩</span>
@@ -343,11 +343,11 @@
               </div>
               <div class="cartography-toolbar-divider" aria-hidden="true"></div>
               <div class="cartography-toolbar-group cartography-toolbar-group--secondary">
-                <button type="button" class="cartography-premium-btn" data-carto-drawer="layers" aria-expanded="false" title="Couches cartographiques">
+                <button type="button" class="cartography-premium-btn cartography-tool-btn" data-carto-drawer="layers" aria-expanded="false" title="Couches cartographiques">
                   <span class="cartography-premium-btn__icon" aria-hidden="true">🗂️</span>
                   <span class="cartography-premium-btn__label">Couches</span>
                 </button>
-                <button type="button" class="cartography-premium-btn" data-carto-drawer="legend" aria-expanded="false" title="Légende thématique">
+                <button type="button" class="cartography-premium-btn cartography-tool-btn" data-carto-drawer="legend" aria-expanded="false" title="Légende thématique">
                   <span class="cartography-premium-btn__icon" aria-hidden="true">🎨</span>
                   <span class="cartography-premium-btn__label">Légende</span>
                 </button>
@@ -375,7 +375,7 @@
                   <span class="cartography-premium-btn__icon" aria-hidden="true">▶️</span>
                   <span class="cartography-premium-btn__label">Guidé</span>
                 </button>
-                <button type="button" class="cartography-premium-btn" data-carto-drawer="entities" aria-expanded="false" title="Entités visibles sur la carte">
+                <button type="button" class="cartography-premium-btn cartography-tool-btn" data-carto-drawer="entities" aria-expanded="false" title="Entités visibles sur la carte">
                   <span class="cartography-premium-btn__icon" aria-hidden="true">📍</span>
                   <span class="cartography-premium-btn__label">Entités</span>
                 </button>
@@ -921,6 +921,9 @@
             </aside>
 
             <div class="decision-center-map-row">
+              <div class="decision-center-map-shell">
+                <div id="decision-center-national-map" class="decision-center-national-map" role="region" aria-label="Carte nationale du Centre de Décision"></div>
+              </div>
               <div class="decision-center-tst-host" id="decision-center-tst-host" aria-label="Tableau de Synthèse Territoriale"></div>
             </div>
 
@@ -2362,8 +2365,8 @@
     </main>
   </div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="vendor/sheetjs/xlsx.full.min.js"></script>
   <script src="modules/shared/map-tooltips.js"></script>
   <script src="modules/shared/basemap-manager/basemap-manager.js"></script>
   <script src="modules/shared/cartography-experience/cartography-experience.js"></script>

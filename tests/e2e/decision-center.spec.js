@@ -25,7 +25,7 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
   test('onglets et vue nationale KPI réels', async ({ page }) => {
     await openDecisionCenter(page);
 
-    await expect(page.locator('#decision-center-tabs .decision-center-tab')).toHaveCount(7);
+    await expect(page.locator('#decision-center-tabs .decision-center-tab')).toHaveCount(8);
     await expect(page.locator('[data-decision-tab-panel="vue-nationale"]')).toBeVisible();
     await expect(page.locator('#decision-center-kpi-grid .decision-center-kpi-card')).toHaveCount(6);
 
@@ -72,7 +72,7 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
     await expect(page.locator('#decision-kpi-planned-ccn')).toHaveText(pendingMessage);
     await expect(page.locator('#decision-kpi-investment')).toHaveText(pendingMessage);
 
-    await expect(page.locator('#decision-center-decision-sheet')).toContainText('Sélectionnez un site sur la carte');
+    await expect(page.locator('#decision-center-decision-sheet')).toContainText('Sélectionnez un site prioritaire');
   });
 
   test('questions métier et KPI explicables', async ({ page }) => {
@@ -84,7 +84,7 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
       null,
       { timeout: 30_000 },
     );
-    await expect(page.locator('#decision-intent-grid .decision-intent-card')).toHaveCount(8);
+    await expect(page.locator('#decision-intent-grid .decision-intent-card')).toHaveCount(10);
     await expect(page.locator('#decision-intent-grid')).toContainText('Prioriser les sites à financer');
     await expect(page.locator('#decision-intent-grid')).toContainText('Analyser la qualité des données');
 
@@ -229,7 +229,7 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
 
     await page.locator('[data-decision-tab="priorisation"]').click();
     await expect(page.locator('[data-decision-tab-panel="priorisation"]')).toBeVisible();
-    await expect(page.locator('[data-decision-tab-panel="priorisation"]')).toContainText('Moteur de décision FDSU');
+    await expect(page.locator('[data-decision-tab-panel="priorisation"]')).toContainText('Priorisation nationale');
     await expect(page.locator('#decision-engine-kpi-grid')).toBeVisible();
 
     await page.locator('[data-decision-tab="referentiels-sectoriels"]').click();
@@ -258,7 +258,7 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
 
     await page.locator('[data-decision-tab="priorisation"]').click();
     await expect(page.locator('[data-decision-tab-panel="priorisation"]')).toBeVisible();
-    await expect(page.locator('[data-decision-tab-panel="priorisation"]')).toContainText('Moteur de décision FDSU');
+    await expect(page.locator('[data-decision-tab-panel="priorisation"]')).toContainText('Priorisation nationale');
 
     await page.locator('[data-decision-tab="rapports"]').click();
     await expect(page.locator('[data-decision-tab-panel="rapports"]')).toBeVisible();
@@ -278,7 +278,7 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
       { timeout: 15_000 },
     );
 
-    await expect(page.locator('#decision-center-program-grid .decision-center-program-card')).toHaveCount(10);
+    await expect(page.locator('#decision-center-program-grid .decision-center-program-card')).toHaveCount(11);
     await expect(page.locator('[data-program-id="sites_300"] .decision-center-program-card-title')).toHaveText('Sites 300');
     await expect(page.locator('[data-program-id="sites_300"] .decision-center-program-card-status')).toHaveText('Planifié');
     await expect(page.locator('[data-program-id="sites_40"] .decision-center-program-card-status')).toHaveText('En exécution');
@@ -399,7 +399,7 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
 
     const panel = page.locator('#decision-engine-panel');
     await expect(panel).toBeVisible();
-    await expect(panel.locator('h3')).toHaveText('Moteur de décision FDSU');
+    await expect(panel.locator('h3')).toHaveText('Priorisation nationale des sites FDSU');
     await expect(page.locator('#decision-engine-recompute-btn')).toHaveText('Recalculer les scores');
 
     await page.waitForFunction(
@@ -417,7 +417,7 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
     await expect(panel.locator('#decision-engine-kpi-high')).toBeVisible();
     await expect(panel.locator('#decision-engine-kpi-medium')).toBeVisible();
     await expect(panel.locator('#decision-engine-kpi-low')).toBeVisible();
-    await expect(panel.locator('#decision-engine-sectorial-note')).toContainText('Score partiel');
+    await expect(panel.locator('#decision-engine-sectorial-note')).toContainText('Programme national extensible');
     await expect(panel.locator('#decision-engine-table')).toBeVisible();
     await expect(panel).toContainText(/Moteur de décision disponible en mode DB|Code|Score|Niveau/);
 

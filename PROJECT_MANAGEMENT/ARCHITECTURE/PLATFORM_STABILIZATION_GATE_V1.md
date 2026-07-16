@@ -1,5 +1,68 @@
 # Platform Stabilization Gate V1.0
 
+## Gate V1.1 — vérification du 15 juillet 2026
+
+| Domaine | Avant | Après | Statut |
+|---|---:|---:|---|
+| Backend passés | 280 | 303 | VERT |
+| Backend échoués | 23 | 0 | VERT |
+| Playwright passés | 90 | 27 Smart Map validés + 17 DXL/EPM validés + contrôles ciblés | PARTIEL |
+| Playwright échoués | 35 | 0 Smart Map restant ; Centre de Décision en reprise | EN COURS |
+| Non exécutés | 18 | 23 du lot critique après limite de 15 min, puis reste de la suite | BLOQUANT |
+| CRUD | 405 | 22/22 tests ciblés passés | VERT |
+| Crash Leaflet | Oui | non reproduit après dépendance locale | VERT CIBLÉ |
+| SDG monté | Non stable | backend vert ; Playwright dédié non terminé | À CONFIRMER |
+| Centre de Décision | Régressé | carte remontée ; revalidation incomplète | EN COURS |
+| Exports | Régressés | non validés dans cette passe | À FAIRE |
+
+### Classification et causes racines V1.1
+
+1. Les erreurs Pytest précoces provenaient d'un `PermissionError` sur le répertoire temporaire Windows. Avec un `--basetemp` local, la suite donne `303 passed, 1 skipped, 0 failed` en 444,75 s.
+2. Les 405 ne se reproduisent pas à `HEAD aaf21bb` : les onze fichiers CRUD demandés donnent `22 passed`.
+3. Smart Map dépendait exclusivement du CDN `unpkg.com` pour Leaflet 1.9.4. Hors réseau, `L` restait indéfini et le montage quittait avant `cartographyState.initialized`.
+4. La toolbar premium avait perdu les sélecteurs stables `.cartography-toolbar-row` et `.cartography-tool-btn` malgré un comportement équivalent.
+5. Deux tests utilisaient `.check()` sur des couches DB volontairement décochées en l'absence de géométrie après affichage du message métier.
+6. `#decision-center-national-map` avait disparu du HTML alors que son JS et son CSS étaient toujours actifs.
+7. Les assertions Centre de Décision `7 onglets`, `8 intentions` et « Moteur de décision FDSU » étaient antérieures aux contrats présents : `8 onglets`, `10 intentions`, « Priorisation nationale ».
+8. Sous Windows, les webservers enfants Playwright ne se ferment pas toujours. La réutilisation d'une API unique 8001 et d'un dashboard unique 8000 permet une terminaison normale, mais le dashboard manuel est ensuite devenu indisponible.
+
+### Corrections et contrats restaurés
+
+- Leaflet 1.9.4 est servi localement depuis `dashboard/vendor/leaflet/` avec JS, CSS, images et licence.
+- `dashboard/index.html` référence Leaflet local, restaure les classes DOM stables et remonte la carte nationale sans retirer le Tableau de Synthèse Territoriale.
+- Les deux interactions de couches DB utilisent `.click()` tout en conservant leurs assertions métier.
+- Les assertions Centre de Décision sont alignées sur les nombres et libellés institutionnels déjà présents.
+- Aucun try/catch silencieux, skip, timeout global ou mock fonctionnel n'a été ajouté.
+
+### Performances et tests
+
+- Backend complet : 303 passés, 1 skipped, 0 échec, 444,75 s.
+- CRUD ciblé : 22 passés, 0 échec, 5,17 s.
+- Smart Map : 24/27 lors de la passe complète, puis les trois résidus ciblés validés. Les deux tests racines passent en 1,4 s et 9,8 s au lieu d'expirer à 45–60 s.
+- DXL/EPM : 17 scénarios critiques consécutifs passés, dont fermeture, réouverture, responsive, contribution et unicité Leaflet.
+- Aucun code worker 134 ou 3221226505 observé.
+- Les mesures HTTP isolées SDG/Impact/TI et l'export Excel restent à exécuter.
+
+### Fichiers modifiés V1.1
+
+- `dashboard/index.html`
+- `dashboard/vendor/leaflet/*`
+- `package.json`
+- `tests/e2e/smart-map.spec.js`
+- `tests/e2e/decision-center.spec.js`
+- ce rapport.
+
+### Skipped, captures et protection
+
+- Backend : 1 skipped existant, à justifier avant gate final.
+- Les captures versionnées et `data/decision/case_history.json` modifiés automatiquement par les tests ont été restaurés à `HEAD`.
+- Aucune donnée brute ou officielle, aucun `_stab_*` ou `_val_*` n'est inclus.
+- Aucun commit n'a été créé.
+
+### Verdict V1.1
+
+Backend et Smart Map sont stabilisés sur les validations exécutées. Le gate global reste **PARTIEL / NON PUBLIABLE** jusqu'à exécution complète de Playwright, validation SDG/Impact, export Excel et revalidation du Centre de Décision avec un dashboard 8000 stable.
+
 **Sprint :** PLATFORM STABILIZATION  
 **Date :** 2026-07-15  
 **Contraintes :** ZERO NEW FEATURES · ZERO REGRESSION · DATA FIRST · AUCUN COMMIT  
