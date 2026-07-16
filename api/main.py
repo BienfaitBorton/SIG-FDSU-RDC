@@ -47,6 +47,7 @@ from api.routes import (
     territorial_summary,
     national_data_fabric,
     national_asset_registry,
+    national_territorial_intelligence,
     transport,
     territorial_digital_twin,
     exports,
@@ -973,6 +974,11 @@ app.include_router(
     national_asset_registry.router,
     prefix="/registry",
     tags=["National FDSU Asset Registry"],
+)
+app.include_router(
+    national_territorial_intelligence.router,
+    prefix="/territorial-profile",
+    tags=["National Territorial Intelligence Engine"],
 )
 app.include_router(
     transport.router,

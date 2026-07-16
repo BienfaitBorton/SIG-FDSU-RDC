@@ -175,6 +175,11 @@ def _all_assets() -> list[dict[str, Any]]:
     return assets
 
 
+def asset_snapshot() -> tuple[dict[str, Any], ...]:
+    """Expose un instantane en lecture seule aux moteurs analytiques federes."""
+    return tuple(_all_assets())
+
+
 def list_assets(*, program: str | None = None, asset_type: str | None = None, province: str | None = None, q: str | None = None, limit: int = 100, offset: int = 0) -> dict[str, Any]:
     items = _all_assets()
     if program: items = [a for a in items if a["program"] == program]

@@ -145,6 +145,8 @@ const ROUTE_TO_MODULE = {
   registry: 'gestion_referentiels',
   'national-asset-registry': 'national_asset_registry',
   national_asset_registry: 'national_asset_registry',
+  'national-territorial-intelligence': 'national_territorial_intelligence',
+  national_territorial_intelligence: 'national_territorial_intelligence',
   gestion_referentiels: 'gestion_referentiels',
   sources: 'explorateur_sources',
   explorateur_sources: 'explorateur_sources',
@@ -188,6 +190,7 @@ const MODULE_TO_ROUTE = {
   referentiel: 'referentiel',
   gestion_referentiels: 'registry',
   national_asset_registry: 'national-asset-registry',
+  national_territorial_intelligence: 'national-territorial-intelligence',
   explorateur_sources: 'sources',
   sites: 'sites',
   decision: 'decision',
@@ -367,6 +370,7 @@ const moduleNames = {
   referentiel: 'Référentiel administratif',
   gestion_referentiels: 'Gestion des Référentiels',
   national_asset_registry: 'National FDSU Asset Registry',
+  national_territorial_intelligence: 'National Territorial Intelligence',
   explorateur_sources: 'Explorateur de Sources',
   sites: 'Sites FDSU',
   decision: 'Aide à la décision',
@@ -735,6 +739,10 @@ function setActiveModule(moduleKey) {
 
   if (normalizedModule === 'national_asset_registry') {
     initializeNationalAssetRegistry();
+  }
+
+  if (normalizedModule === 'national_territorial_intelligence') {
+    initializeNationalTerritorialIntelligence();
   }
 
   if (normalizedModule === 'sites') {
@@ -9941,6 +9949,65 @@ function initializeNationalAssetRegistry() {
   });
 }
 
+const nationalTerritorialIntelligenceState = { initialized: false, profile: null };
+
+function ntieValue(profile, id) {
+  return profile?.indicator_index?.[id]?.value;
+}
+
+function renderNationalTerritorialIntelligence(profile) {
+  const entity = profile.entity || {};
+  const kpiIds = ['population', 'mobile_coverage', 'population_uncovered', 'localities', 'fdsu_sites', 'ccn'];
+  const kpis = document.querySelector('#ntie-kpis');
+  if (kpis) kpis.innerHTML = kpiIds.map((id) => {
+    const indicator = profile.indicator_index?.[id] || {};
+    const value = indicator.value == null ? 'Non disponible' : `${Number(indicator.value).toLocaleString('fr-FR')} ${indicator.unit || ''}`;
+    return `<article class="ntie-kpi"><span>${escapeHtml(indicator.label || id)}</span><strong>${escapeHtml(value)}</strong><small>${escapeHtml(indicator.source || 'Source non disponible')}</small></article>`;
+  }).join('');
+  const score = document.querySelector('#ntie-score');
+  if (score) score.innerHTML = `<p><strong>${escapeHtml(profile.score?.label || 'Score')}</strong> : ${profile.score?.value == null ? 'Non calcule' : escapeHtml(profile.score.value)}</p><p>${escapeHtml(profile.score?.explanation || '')}</p>`;
+  const quality = document.querySelector('#ntie-quality');
+  if (quality) quality.innerHTML = `<p><strong>${profile.data_quality?.available || 0}</strong> indicateurs disponibles sur ${profile.data_quality?.total || 0}</p><p>${escapeHtml(profile.data_quality?.rule || '')}</p>`;
+  const evolution = document.querySelector('#ntie-evolution');
+  if (evolution) evolution.innerHTML = `<div class="table-wrapper"><table class="data-table"><thead><tr><th>Scenario</th><th>Actifs documentes</th><th>Couverture</th><th>Methode</th></tr></thead><tbody>${(profile.evolution || []).map((row) => `<tr><td>${escapeHtml(row.label)}</td><td>${row.documented_assets ?? '—'}</td><td>${row.coverage_rate_pct == null ? 'Non projetee' : `${row.coverage_rate_pct} %`}</td><td>${escapeHtml(row.method)}</td></tr>`).join('')}</tbody></table></div>`;
+  const map = document.querySelector('#ntie-map');
+  if (map) map.innerHTML = `<p><strong>${escapeHtml(entity.admin_type || entity.type || '')} — ${escapeHtml(entity.name || '')}</strong></p><p>${entity.has_geometry ? 'Geometrie territoriale disponible.' : 'Geometrie non disponible.'}</p><p>La carte detaillee reutilise le rendu multi-echelle existant.</p>`;
+  const explainability = document.querySelector('#ntie-explainability');
+  if (explainability) explainability.innerHTML = `<p>Moteurs federes : ${escapeHtml((profile.explainability?.dependencies || []).join(', '))}</p><p>${escapeHtml(profile.explainability?.limits || 'Valeurs absentes conservees a null.')}</p>`;
+  const version = document.querySelector('#ntie-version');
+  if (version) version.textContent = profile._meta?.engine || 'ntie-1.0.0';
+}
+
+function loadNationalTerritorialIntelligence() {
+  const input = document.querySelector('#ntie-profile-id');
+  const status = document.querySelector('#ntie-status');
+  const entityId = String(input?.value || 'TERRITOIRE-05-002').trim();
+  if (status) status.textContent = 'Chargement du profil territorial…';
+  return fetch(`${API_BASE_URL}/territorial-profile/${encodeURIComponent(entityId)}`, { headers: { Accept: 'application/json' } })
+    .then((response) => {
+      if (!response.ok) throw new Error(`NTIE API ${response.status}`);
+      return response.json();
+    })
+    .then((profile) => {
+      nationalTerritorialIntelligenceState.profile = profile;
+      renderNationalTerritorialIntelligence(profile);
+      if (status) status.textContent = `${profile.entity?.admin_type || profile.entity?.type} — ${profile.entity?.name}`;
+      return profile;
+    })
+    .catch((error) => {
+      if (status) status.textContent = `Profil indisponible : ${error.message}`;
+      throw error;
+    });
+}
+
+function initializeNationalTerritorialIntelligence() {
+  if (!nationalTerritorialIntelligenceState.initialized) {
+    nationalTerritorialIntelligenceState.initialized = true;
+    document.querySelector('#ntie-load')?.addEventListener('click', () => loadNationalTerritorialIntelligence().catch(() => {}));
+  }
+  return loadNationalTerritorialIntelligence().catch(() => null);
+}
+
 function getModuleFromRoute(route) {
   const raw = String(route || '').trim();
   if (raw.startsWith('decision-detail') || raw.startsWith('decision-workspace') || raw.startsWith('territorial-twin')) {
@@ -9951,6 +10018,7 @@ function getModuleFromRoute(route) {
     return 'decision_experience';
   }
   if (raw.startsWith('territorial-intelligence/')) return 'territorial_intelligence';
+  if (raw.startsWith('national-territorial-intelligence')) return 'national_territorial_intelligence';
   const base = raw.split('?')[0].split('/')[0];
   return ROUTE_TO_MODULE[raw] || ROUTE_TO_MODULE[base] || 'dashboard';
 }

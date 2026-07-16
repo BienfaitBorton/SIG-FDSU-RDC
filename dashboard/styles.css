@@ -1882,6 +1882,17 @@ body.cartography-focus-mode #carto-focus-btn {
   }
 }
 
+.ntie-toolbar { display: flex; gap: 10px; align-items: end; margin: 16px 0; flex-wrap: wrap; }
+.ntie-toolbar label { font-weight: 700; }
+.ntie-toolbar input { min-width: 260px; padding: 9px 11px; border: 1px solid #cbd5e1; border-radius: 8px; }
+.ntie-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 12px; margin: 14px 0; }
+.ntie-kpi, .ntie-card { border: 1px solid #dce5e1; border-radius: 12px; padding: 14px; background: #fff; }
+.ntie-kpi span, .ntie-kpi small { display: block; color: #52635c; }
+.ntie-kpi strong { display: block; margin: 8px 0; font-size: 1.2rem; }
+.ntie-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.ntie-wide { grid-column: 1 / -1; }
+@media (max-width: 800px) { .ntie-grid { grid-template-columns: 1fr; } .ntie-wide { grid-column: auto; } }
+
 .national-asset-registry { display: grid; gap: 18px; }
 .nfar-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; }
 .nfar-kpi, .nfar-card { border: 1px solid var(--border-color, #dbe3ec); border-radius: 12px; background: var(--panel-bg, #fff); padding: 14px; }
