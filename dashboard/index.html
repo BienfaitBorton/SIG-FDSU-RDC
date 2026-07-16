@@ -69,6 +69,10 @@
           <span class="nav-icon">🗂️</span>
           <span>Gestion des Référentiels</span>
         </button>
+        <button class="nav-item" data-module="national_asset_registry" data-route="national-asset-registry">
+          <span class="nav-icon">NAR</span>
+          <span>National Asset Registry</span>
+        </button>
         <button class="nav-item" data-module="explorateur_sources" data-route="sources">
           <span class="nav-icon">🧪</span>
           <span>Explorateur de Sources</span>
@@ -1679,6 +1683,47 @@
           <section class="dxl-section" id="dxl-section-trace" aria-label="Traçabilité"></section>
           <section class="dxl-section" id="dxl-section-reco" aria-label="Recommandation"></section>
           <section class="dxl-actions" id="dxl-actions" aria-label="Actions métier"></section>
+        </div>
+
+        <div class="module-panel hidden national-asset-registry" id="national-asset-registry-panel" data-module="national_asset_registry">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Référentiel métier national</p>
+              <h2>National FDSU Asset Registry</h2>
+              <p>Identités, provenance, territoire, cycle de vie et explicabilité des actifs réellement documentés.</p>
+            </div>
+            <span class="panel-badge" id="nfar-version">nfar-1.0.0</span>
+          </div>
+          <div class="nfar-kpis" id="nfar-kpis" aria-label="Indicateurs du registre"></div>
+          <div class="nfar-grid">
+            <section class="nfar-card">
+              <h3>Répartition par programme</h3>
+              <div id="nfar-programs"></div>
+            </section>
+            <section class="nfar-card">
+              <h3>Maturité des types d’actifs</h3>
+              <div id="nfar-types"></div>
+            </section>
+          </div>
+          <section class="nfar-card">
+            <div class="nfar-toolbar">
+              <h3>Actifs documentés</h3>
+              <select id="nfar-program-filter" aria-label="Filtrer par programme">
+                <option value="">Tous les programmes</option>
+                <option value="sites_40">Sites 40</option>
+                <option value="sites_300">Sites 300</option>
+                <option value="sites_20476">Sites 20 476</option>
+                <option value="ccn">CCN</option>
+              </select>
+            </div>
+            <div class="table-wrapper">
+              <table class="data-table">
+                <thead><tr><th>Code métier</th><th>Actif</th><th>Programme</th><th>Territoire</th><th>État</th><th>Source</th></tr></thead>
+                <tbody id="nfar-assets-body"></tbody>
+              </table>
+            </div>
+            <p class="panel-message" id="nfar-status" aria-live="polite"></p>
+          </section>
         </div>
 
         <div class="module-panel hidden" id="sites-panel" data-module="sites">

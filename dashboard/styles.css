@@ -1882,6 +1882,19 @@ body.cartography-focus-mode #carto-focus-btn {
   }
 }
 
+.national-asset-registry { display: grid; gap: 18px; }
+.nfar-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; }
+.nfar-kpi, .nfar-card { border: 1px solid var(--border-color, #dbe3ec); border-radius: 12px; background: var(--panel-bg, #fff); padding: 14px; }
+.nfar-kpi { display: grid; gap: 6px; }
+.nfar-kpi span { color: var(--text-muted, #64748b); font-size: 0.78rem; }
+.nfar-kpi strong { font-size: 1.35rem; }
+.nfar-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.nfar-card h3 { margin-top: 0; }
+.nfar-card p { display: flex; justify-content: space-between; gap: 12px; margin: 0; padding: 7px 0; border-bottom: 1px solid var(--border-color, #e2e8f0); }
+.nfar-card p[data-status="unavailable"] { color: var(--text-muted, #64748b); }
+.nfar-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+@media (max-width: 800px) { .nfar-grid { grid-template-columns: 1fr; } }
+
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

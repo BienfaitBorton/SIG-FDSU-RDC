@@ -46,6 +46,7 @@ from api.routes import (
     spatial_matching,
     territorial_summary,
     national_data_fabric,
+    national_asset_registry,
     transport,
     territorial_digital_twin,
     exports,
@@ -967,6 +968,11 @@ app.include_router(
     national_data_fabric.router,
     prefix="/api/national-data-fabric",
     tags=["National Data Fabric"],
+)
+app.include_router(
+    national_asset_registry.router,
+    prefix="/registry",
+    tags=["National FDSU Asset Registry"],
 )
 app.include_router(
     transport.router,

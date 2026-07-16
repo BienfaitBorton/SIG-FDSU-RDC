@@ -1,5 +1,5 @@
 const DATA_MODE = 'auto'; // 'auto' detecte FastAPI/PostgreSQL, 'api' force l'API, 'json' force le fallback local.
-const API_BASE_URL = 'http://127.0.0.1:8001';
+const API_BASE_URL = window.__API_BASE_URL__ || 'http://127.0.0.1:8001';
 const DEMO_ENRICHMENT_MODE = true;
 const REPORTS_BASE = '../data/reports';
 let LOCAL_JSON_MODE = DATA_MODE === 'json';
@@ -143,6 +143,8 @@ const ROUTE_TO_MODULE = {
   cartographie: 'cartographie',
   referentiel: 'referentiel',
   registry: 'gestion_referentiels',
+  'national-asset-registry': 'national_asset_registry',
+  national_asset_registry: 'national_asset_registry',
   gestion_referentiels: 'gestion_referentiels',
   sources: 'explorateur_sources',
   explorateur_sources: 'explorateur_sources',
@@ -185,6 +187,7 @@ const MODULE_TO_ROUTE = {
   cartographie: 'map',
   referentiel: 'referentiel',
   gestion_referentiels: 'registry',
+  national_asset_registry: 'national-asset-registry',
   explorateur_sources: 'sources',
   sites: 'sites',
   decision: 'decision',
@@ -363,6 +366,7 @@ const moduleNames = {
   cartographie: 'Cartographie',
   referentiel: 'Référentiel administratif',
   gestion_referentiels: 'Gestion des Référentiels',
+  national_asset_registry: 'National FDSU Asset Registry',
   explorateur_sources: 'Explorateur de Sources',
   sites: 'Sites FDSU',
   decision: 'Aide à la décision',
@@ -727,6 +731,10 @@ function setActiveModule(moduleKey) {
 
   if (normalizedModule === 'gestion_referentiels') {
     initializeGovernanceModule();
+  }
+
+  if (normalizedModule === 'national_asset_registry') {
+    initializeNationalAssetRegistry();
   }
 
   if (normalizedModule === 'sites') {
@@ -9866,6 +9874,71 @@ function updateSortIndicators() {
 
 function getRouteFromHash() {
   return window.location.hash.replace('#', '').trim() || 'dashboard';
+}
+
+const nationalAssetRegistryState = { initialized: false, statistics: null };
+
+function renderNationalAssetRegistryStatistics(stats) {
+  const kpis = document.querySelector('#nfar-kpis');
+  if (kpis) {
+    const cards = [
+      ['Actifs réels', stats.total_assets],
+      ['Géolocalisés', stats.data_quality?.geolocated],
+      ['Qualité géométrique', stats.data_quality?.geolocation_rate == null ? 'Non disponible' : `${stats.data_quality.geolocation_rate}%`],
+      ['Population documentée', stats.population?.assets_documented],
+      ['Population restante', stats.population?.assets_remaining],
+      ['Couverture nationale', stats.population?.coverage_national ?? 'Non calculée'],
+    ];
+    kpis.innerHTML = cards.map(([label, value]) => `<article class="nfar-kpi"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value ?? 'Non disponible')}</strong></article>`).join('');
+  }
+  const programs = document.querySelector('#nfar-programs');
+  if (programs) programs.innerHTML = Object.entries(stats.by_program || {}).map(([key, value]) => `<p><span>${escapeHtml(key)}</span><strong>${escapeHtml(value)}</strong></p>`).join('');
+  const types = document.querySelector('#nfar-types');
+  if (types) types.innerHTML = (stats.asset_types || []).map((row) => `<p data-status="${escapeHtml(row.status)}"><span>${escapeHtml(row.label)}</span><strong>${row.count == null ? escapeHtml(row.status) : escapeHtml(row.count)}</strong></p>`).join('');
+}
+
+function loadNationalAssetRegistryAssets() {
+  const program = document.querySelector('#nfar-program-filter')?.value || '';
+  const params = new URLSearchParams({ limit: '50' });
+  if (program) params.set('program', program);
+  const status = document.querySelector('#nfar-status');
+  if (status) status.textContent = 'Chargement des actifs documentés…';
+  return fetch(`${API_BASE_URL}/registry/assets?${params.toString()}`, { headers: { Accept: 'application/json' } })
+    .then((response) => {
+      if (!response.ok) throw new Error(`Registry API ${response.status}`);
+      return response.json();
+    })
+    .then((payload) => {
+      const body = document.querySelector('#nfar-assets-body');
+      if (body) body.innerHTML = (payload.assets || []).map((asset) => `<tr data-asset-uuid="${escapeHtml(asset.uuid)}">
+        <td><code>${escapeHtml(asset.business_code)}</code></td><td>${escapeHtml(asset.name)}</td>
+        <td>${escapeHtml(asset.program)}</td><td>${escapeHtml(asset.territory?.territoire || asset.territory?.province || 'Non renseigné')}</td>
+        <td>${escapeHtml(asset.data_status)}</td><td>${escapeHtml(asset.source?.path || 'Source référencée')}</td></tr>`).join('');
+      if (status) status.textContent = `${payload._meta?.total ?? 0} actif(s) — 50 maximum affichés.`;
+    })
+    .catch((error) => { if (status) status.textContent = `Registry indisponible : ${error.message}`; });
+}
+
+function initializeNationalAssetRegistry() {
+  if (!nationalAssetRegistryState.initialized) {
+    nationalAssetRegistryState.initialized = true;
+    document.querySelector('#nfar-program-filter')?.addEventListener('change', loadNationalAssetRegistryAssets);
+  }
+  Promise.all([
+    fetch(`${API_BASE_URL}/registry/statistics`, { headers: { Accept: 'application/json' } }).then((r) => {
+      if (!r.ok) throw new Error(`Registry API ${r.status}`);
+      return r.json();
+    }),
+    loadNationalAssetRegistryAssets(),
+  ]).then(([stats]) => {
+    nationalAssetRegistryState.statistics = stats;
+    renderNationalAssetRegistryStatistics(stats);
+    const version = document.querySelector('#nfar-version');
+    if (version) version.textContent = stats._meta?.registry || 'nfar-1.0.0';
+  }).catch((error) => {
+    const status = document.querySelector('#nfar-status');
+    if (status) status.textContent = `Registry indisponible : ${error.message}`;
+  });
 }
 
 function getModuleFromRoute(route) {
