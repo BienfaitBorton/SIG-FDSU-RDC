@@ -14,7 +14,6 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from api.main import app
 from api.services import explainable_decision_service
 
 
@@ -32,6 +31,12 @@ def main() -> None:
         if runtime_path.exists():
             shutil.copy2(runtime_path, isolated_path)
         explainable_decision_service.HISTORY_PATH = isolated_path
+        # Importer l'application seulement apres la redirection. Certains
+        # modules initialises par api.main peuvent charger/calculer un dossier
+        # de decision pendant l'import ; ils ne doivent jamais voir le chemin
+        # runtime reel dans un processus de test.
+        from api.main import app
+
         uvicorn.run(app, host=args.host, port=args.port)
     finally:
         isolated_path.unlink(missing_ok=True)

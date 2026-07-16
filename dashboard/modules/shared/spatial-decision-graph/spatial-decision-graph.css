@@ -1,4 +1,4 @@
-/* Spatial Decision Graph v2.1 — Analyse d’Impact Territorial
+/* Spatial Decision Graph v3.1 — Analyse d’Impact Territorial
    Dark-theme compatible. Variables : --surface, --border, --text. */
 
 .sdg-shell {
@@ -47,6 +47,20 @@
   gap: 0.45rem;
   align-items: center;
 }
+
+.sdg-label-toggle[aria-pressed="true"] {
+  border-color: rgba(56, 189, 248, 0.72);
+  background: rgba(14, 165, 233, 0.15);
+}
+
+.sdg-label-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.36rem;
+  white-space: nowrap;
+}
+
+.sdg-label-toggle-icon { font-size: 1rem; line-height: 1; }
 
 .sdg-step-label {
   color: var(--sdg-muted);
@@ -459,6 +473,64 @@ body.executive-presentation-mode .epm-panel-close {
   gap: 0.45rem;
 }
 
+.sdg-relation-business-metrics {
+  display: grid;
+  gap: 0.42rem;
+  margin-bottom: 0.7rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--sdg-border);
+}
+
+.sdg-relation-business-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid rgba(37, 99, 235, 0.28);
+  border-radius: 8px;
+  background: rgba(37, 99, 235, 0.06);
+}
+
+.sdg-relation-business-row > span:nth-child(2) { display: grid; gap: 0.12rem; }
+.sdg-relation-business-row strong { font-size: 0.8rem; }
+.sdg-relation-business-row small { color: var(--sdg-muted); font-size: 0.68rem; line-height: 1.25; }
+.sdg-relation-business-row em { color: var(--sdg-text); font-size: 0.86rem; font-style: normal; font-weight: 800; white-space: nowrap; }
+.sdg-relation-business-metrics[data-status="partial"] .sdg-relation-business-row:first-child { border-color: rgba(245, 158, 11, 0.58); }
+.sdg-relation-business-metrics[data-status="unavailable"] .sdg-relation-business-row:first-child { border-color: var(--sdg-border); }
+
+.sdg-population-impact {
+  margin: 0.7rem 0;
+  padding: 0.7rem;
+  border: 1px solid rgba(37, 99, 235, 0.42);
+  border-radius: 10px;
+  background: linear-gradient(145deg, rgba(37, 99, 235, 0.13), rgba(15, 23, 42, 0.08));
+}
+
+.sdg-population-impact[data-sdg-population-status="unavailable"] {
+  border-color: var(--sdg-border);
+  background: rgba(148, 163, 184, 0.05);
+}
+
+.sdg-population-summary {
+  display: grid;
+  gap: 0.42rem;
+  margin-top: 0.75rem;
+  padding: 0.72rem;
+  border: 1px solid rgba(37, 99, 235, 0.42);
+  border-radius: 10px;
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.sdg-population-summary.is-compact {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.sdg-population-summary[data-status="partial"] { border-color: rgba(245, 158, 11, 0.58); }
+.sdg-population-summary[data-status="unavailable"] { border-color: var(--sdg-border); }
+.sdg-population-summary .sdg-field { margin: 0; }
+.sdg-population-summary-note { margin: 0; color: var(--sdg-muted); font-size: 0.78rem; }
+
 .sdg-kpi {
   padding: 0.5rem 0.55rem;
   border: 1px solid var(--sdg-border);
@@ -658,6 +730,34 @@ body.executive-presentation-mode .epm-panel-close {
   font-size: 0.72rem;
   line-height: 1;
 }
+
+.sdg-symbol-people .sdg-marker-glyph {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.leaflet-tooltip.sdg-map-label {
+  max-width: min(220px, 36vw);
+  margin: 0 !important;
+  padding: 0.34rem 0.48rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.82) !important;
+  border-radius: 7px !important;
+  background: rgba(15, 23, 42, 0.9) !important;
+  color: #f8fafc !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(15, 23, 42, 0.5) !important;
+  font-size: clamp(0.68rem, 0.72vw, 0.8rem) !important;
+  line-height: 1.2 !important;
+  white-space: normal;
+  transition: opacity 100ms ease, transform 100ms ease;
+  pointer-events: none !important;
+}
+
+.leaflet-tooltip.sdg-map-label::before { display: none !important; }
+.sdg-map-label-content { display: grid; gap: 0.08rem; }
+.sdg-map-label-content strong { color: #fff; text-shadow: 0 1px 2px #020617, 0 0 2px #020617; }
+.sdg-map-label-content small { color: #dbeafe; font-size: 0.88em; text-shadow: 0 1px 2px #020617; }
+.leaflet-tooltip.sdg-map-label.is-collision-hidden { opacity: 0 !important; visibility: hidden !important; }
+.sdg-labels-off .leaflet-tooltip.sdg-map-label { transition: none; }
 
 .sdg-marker--site {
   border-width: 3px;

@@ -1,16 +1,23 @@
 /**
- * Spatial Decision Graph v2.1 — Analyse d’Impact Territorial
+ * Spatial Decision Graph v3.1 — Analyse d’Impact Territorial
  * Seul renderer officiel. Réutilise l’instance Leaflet passée (pas de 2e L.map).
  * Données exclusivement depuis l’API — aucune invention.
  */
 (function initSpatialDecisionGraph(global) {
   const API_BASE = global.__SDG_API_BASE__ || `${global.location.protocol}//${global.location.hostname}:8001`;
-  const VERSION = '2.1.0';
+  const VERSION = '3.1.0';
+  let INITIAL_LABELS_VISIBLE = typeof global.__SDG_LABELS_VISIBLE__ === 'boolean'
+    ? global.__SDG_LABELS_VISIBLE__
+    : true;
+  try {
+    const stored = global.sessionStorage?.getItem('sdg.labels.visible');
+    if (stored === 'true' || stored === 'false') INITIAL_LABELS_VISIBLE = stored === 'true';
+  } catch (_error) { /* sessionStorage peut être indisponible en contexte restreint */ }
 
   const SYMBOL_GLYPH = {
     star: '★',
     place: '◉',
-    people: '◎',
+    people: '👥',
     health: '✚',
     cross: '✚',
     school: '▦',
@@ -44,6 +51,10 @@
     mapOriginalParent: null,
     visibleObjectsRegistry: {},
     consistencyIssues: [],
+    labelsEnabled: INITIAL_LABELS_VISIBLE,
+    labelLayoutFrame: null,
+    labelMapBound: null,
+    labelMetrics: { eligible: 0, shown: 0, hidden: 0, duration_ms: 0 },
   };
 
   function escapeHtml(value) {
@@ -247,6 +258,9 @@
           <span class="sdg-tech-name" title="Nom technique">${escapeHtml('Spatial Decision Graph')}</span>
         </div>
         <div class="sdg-toolbar-actions">
+          <button type="button" class="secondary-button sdg-label-toggle" id="sdg-label-toggle"
+            aria-label="Masquer les labels permanents" title="Masquer les labels permanents (L)"
+            aria-pressed="${String(state.labelsEnabled)}"><span class="sdg-label-toggle-icon" aria-hidden="true">👁</span><span>Masquer les labels</span></button>
           <button type="button" class="secondary-button" id="sdg-refresh-btn">Recalculer les relations spatiales</button>
           <button type="button" class="primary-button" id="sdg-present-btn">Présenter le raisonnement</button>
           <button type="button" class="secondary-button" id="sdg-stop-btn" hidden>Interrompre</button>
@@ -318,6 +332,11 @@
         else if (action === 'reset') resetFilters();
         return;
       }
+      const labels = event.target?.closest?.('#sdg-label-toggle');
+      if (labels) {
+        setLabelsEnabled(!state.labelsEnabled);
+        return;
+      }
       const present = event.target?.closest?.('#sdg-present-btn');
       if (present) {
         startPresentation();
@@ -332,6 +351,13 @@
       if (stop) {
         stopPresentation(true);
       }
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key?.toLowerCase() !== 'l' || event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.target?.matches?.('input, textarea, select, [contenteditable="true"]')) return;
+      if (!document.querySelector('#sdg-shell')) return;
+      event.preventDefault();
+      toggleLabels();
     });
   }
 
@@ -352,6 +378,10 @@
     state.map = map;
     if (!state.layer && map && global.L) {
       state.layer = global.L.layerGroup().addTo(map);
+    }
+    if (map && state.labelMapBound !== map) {
+      state.labelMapBound = map;
+      map.on?.('zoomend moveend resize', scheduleLabelLayout);
     }
   }
 
@@ -382,6 +412,231 @@
         <span class="sdg-marker-glyph" aria-hidden="true">${symbolGlyph(symbol)}</span>
       </span>
     `;
+  }
+
+  function formatPopulation(value) {
+    if (value == null || value === '' || Number.isNaN(Number(value))) return null;
+    return `${Math.round(Number(value)).toLocaleString('fr-FR')} hab.`;
+  }
+
+  function localityStableId(node) {
+    return node?.need_id || node?.locality_id || node?.locality_code || node?.official_code || node?.id || null;
+  }
+
+  function localityHasSource(node) {
+    return Boolean(node?.source_label || node?.referential || node?.source || node?.source_document);
+  }
+
+  function localityHasValidPopulation(node) {
+    if (!localityHasSource(node) || node?.population == null || node.population === '') return false;
+    const population = Number(node.population);
+    return Number.isFinite(population) && population > 0;
+  }
+
+  function computePopulationSummary(graph, visibleNodes) {
+    const nodes = Array.isArray(visibleNodes)
+      ? visibleNodes
+      : (graph?.nodes || []).filter((node) => nodeVisible(node));
+    const localities = new Map();
+    nodes.filter((node) => node?.category === 'localities').forEach((node) => {
+      const stableId = localityStableId(node);
+      if (stableId == null || stableId === '') return;
+      const key = String(stableId);
+      const current = localities.get(key);
+      if (!current || (!localityHasValidPopulation(current) && localityHasValidPopulation(node))) {
+        localities.set(key, node);
+      }
+    });
+    const documented = Array.from(localities.values()).filter(localityHasValidPopulation);
+    const totalPopulation = documented.length
+      ? documented.reduce((total, node) => total + Number(node.population), 0)
+      : null;
+    const totalLocalities = localities.size;
+    const documentedLocalities = documented.length;
+    const missingPopulationCount = Math.max(0, totalLocalities - documentedLocalities);
+    const dataStatus = documentedLocalities === 0
+      ? 'unavailable'
+      : (missingPopulationCount > 0 ? 'partial' : 'documented');
+    return {
+      totalPopulation,
+      documentedLocalities,
+      totalLocalities,
+      visibleLocalities: totalLocalities,
+      analyzedLocalities: documentedLocalities,
+      missingPopulationCount,
+      dataStatus,
+      confidence: totalLocalities ? documentedLocalities / totalLocalities : 0,
+    };
+  }
+
+  function currentPopulationSummary() {
+    const visibleNodes = (state.graph?.nodes || []).filter((node) => node.kind !== 'site' && nodeVisible(node));
+    const summary = computePopulationSummary(state.graph, visibleNodes);
+    const visibleLocalities = state.visibleObjectsRegistry.localities?.visible ?? summary.visibleLocalities;
+    const missingPopulationCount = Math.max(0, visibleLocalities - summary.documentedLocalities);
+    return {
+      ...summary,
+      totalLocalities: visibleLocalities,
+      visibleLocalities,
+      analyzedLocalities: summary.documentedLocalities,
+      missingPopulationCount,
+      dataStatus: summary.documentedLocalities === 0
+        ? 'unavailable'
+        : (missingPopulationCount > 0 ? 'partial' : 'documented'),
+      confidence: visibleLocalities ? summary.documentedLocalities / visibleLocalities : 0,
+    };
+  }
+
+  function populationSummaryHtml(summary, compact = false) {
+    const populationLabel = summary.dataStatus === 'partial' ? 'Population documentée' : 'Population concernée';
+    const populationDisplay = formatPopulation(summary.totalPopulation) || 'Non disponible';
+    const coverage = `${summary.documentedLocalities} / ${summary.totalLocalities} localités renseignées`;
+    const note = summary.dataStatus === 'unavailable'
+      ? 'Référentiel démographique non disponible pour ce périmètre.'
+      : (summary.dataStatus === 'partial' ? 'Données partielles' : 'Données documentées');
+    return `<section class="sdg-population-summary${compact ? ' is-compact' : ''}" data-sdg-population-summary data-status="${summary.dataStatus}">
+      ${fieldRow(populationLabel, populationDisplay)}
+      ${fieldRow('Localités visibles', summary.visibleLocalities)}
+      ${fieldRow('Localités analysées', summary.analyzedLocalities)}
+      ${summary.dataStatus === 'partial' ? fieldRow('Couverture démographique', coverage) : ''}
+      <p class="sdg-population-summary-note">${escapeHtml(note)}</p>
+    </section>`;
+  }
+
+  function populationRelationsMetricsHtml(summary) {
+    const populationDisplay = formatPopulation(summary.totalPopulation) || 'Non disponible';
+    const partial = summary.dataStatus === 'partial'
+      ? `Données partielles — ${summary.documentedLocalities}/${summary.visibleLocalities} localités renseignées`
+      : (summary.dataStatus === 'unavailable' ? 'Référentiel démographique non disponible pour ce périmètre.' : 'Données documentées');
+    return `<section class="sdg-relation-business-metrics" data-sdg-relation-population data-status="${summary.dataStatus}" aria-label="Population et localités analysées">
+      <div class="sdg-relation-business-row" data-sdg-relation-metric="population">
+        <span class="sdg-swatch sdg-symbol-people" aria-hidden="true">${symbolGlyph('people')}</span>
+        <span><strong>Population concernée</strong><small>${escapeHtml(partial)}</small></span>
+        <em>${escapeHtml(populationDisplay)}</em>
+      </div>
+      <div class="sdg-relation-business-row" data-sdg-relation-metric="visible-localities">
+        <span class="sdg-swatch sdg-symbol-place" aria-hidden="true">${symbolGlyph('place')}</span>
+        <span><strong>Localités visibles</strong><small>Objets localité actuellement pris en compte sur la carte.</small></span>
+        <em>${summary.visibleLocalities}</em>
+      </div>
+      <div class="sdg-relation-business-row" data-sdg-relation-metric="analyzed-localities">
+        <span class="sdg-swatch sdg-symbol-place" aria-hidden="true">${symbolGlyph('place')}</span>
+        <span><strong>Localités analysées</strong><small>Localités disposant d’une population valide et sourcée.</small></span>
+        <em>${summary.analyzedLocalities}</em>
+      </div>
+    </section>`;
+  }
+
+  function labelPriority(node) {
+    if (node.kind === 'site' || node.category === 'site') return 100;
+    return ({ population: 95, localities: 90, needs: 88, health: 76, ccn: 74, telecom: 70, admin: 64, education: 62, markets: 60, roads: 58, fdsu_sites: 56 }[node.category] || 50);
+  }
+
+  function nodeLabelHtml(node) {
+    const dist = formatDistance(node.distance_m);
+    const localityPopulation = ['localities', 'population'].includes(node.category)
+      ? formatPopulation(node.population)
+      : null;
+    const served = node.population_served ?? node.population_concerned ?? node.population_potentially_covered;
+    const servedPopulation = !['localities', 'population'].includes(node.category) ? formatPopulation(served) : null;
+    return `<span class="sdg-map-label-content" data-sdg-label-id="${escapeHtml(node.id)}" data-sdg-label-priority="${labelPriority(node)}">
+      <strong>${escapeHtml(node.name || categoryMeta(node.category).label || 'Objet territorial')}</strong>
+      ${localityPopulation ? `<small>${escapeHtml(localityPopulation)}</small>` : ''}
+      ${servedPopulation ? `<small>Population desservie : ${escapeHtml(servedPopulation)}</small>` : ''}
+      ${!localityPopulation && dist ? `<small>${escapeHtml(dist)}</small>` : ''}
+    </span>`;
+  }
+
+  function scheduleLabelLayout() {
+    if (state.labelLayoutFrame) global.cancelAnimationFrame?.(state.labelLayoutFrame);
+    state.labelLayoutFrame = global.requestAnimationFrame?.(() => {
+      state.labelLayoutFrame = null;
+      layoutMapLabels();
+    }) || global.setTimeout(layoutMapLabels, 0);
+  }
+
+  function rectanglesOverlap(a, b, padding = 6) {
+    return !(a.right + padding < b.left || a.left > b.right + padding || a.bottom + padding < b.top || a.top > b.bottom + padding);
+  }
+
+  function layoutMapLabels() {
+    const started = global.performance?.now?.() || Date.now();
+    const zoom = state.map?.getZoom?.() ?? 12;
+    const maxLabels = zoom <= 7 ? 10 : zoom <= 9 ? 20 : zoom <= 11 ? 42 : 90;
+    const candidates = Object.entries(state.nodeLayers).map(([id, marker]) => {
+      const node = (state.graph?.nodes || []).find((item) => item.id === id);
+      const element = marker.getTooltip?.()?.getElement?.();
+      return node && element && nodeVisible(node) ? { node, marker, element, priority: labelPriority(node) } : null;
+    }).filter(Boolean).sort((a, b) => b.priority - a.priority || Number(a.node.distance_m || 0) - Number(b.node.distance_m || 0));
+
+    const accepted = [];
+    let shown = 0;
+    candidates.forEach((item) => {
+      item.element.classList.remove('is-collision-hidden');
+      item.element.removeAttribute('aria-hidden');
+      if (!state.labelsEnabled) return;
+      const isSite = item.node.kind === 'site' || item.node.category === 'site';
+      const progressiveVisible = isSite || shown < maxLabels;
+      const rect = item.element.getBoundingClientRect();
+      const collides = !isSite && accepted.some((other) => rectanglesOverlap(rect, other));
+      const visible = progressiveVisible && !collides;
+      item.element.classList.toggle('is-collision-hidden', !visible);
+      if (!visible) item.element.setAttribute('aria-hidden', 'true');
+      if (visible) {
+        accepted.push(rect);
+        shown += 1;
+      }
+    });
+    const ended = global.performance?.now?.() || Date.now();
+    state.labelMetrics = { eligible: candidates.length, shown, hidden: Math.max(0, candidates.length - shown), duration_ms: Math.round((ended - started) * 10) / 10 };
+    document.querySelector('#sdg-shell')?.setAttribute('data-label-layout-ms', String(state.labelMetrics.duration_ms));
+  }
+
+  function setLabelsEnabled(enabled) {
+    state.labelsEnabled = Boolean(enabled);
+    global.__SDG_LABELS_VISIBLE__ = state.labelsEnabled;
+    try { global.sessionStorage?.setItem('sdg.labels.visible', String(state.labelsEnabled)); } catch (_error) { /* */ }
+    Object.values(state.nodeLayers).forEach((marker) => {
+      const tooltip = marker.getTooltip?.();
+      if (!tooltip) return;
+      tooltip.options.permanent = state.labelsEnabled;
+      if (state.labelsEnabled && state.layer?.hasLayer(marker)) marker.openTooltip?.();
+      else marker.closeTooltip?.();
+    });
+    const button = document.querySelector('#sdg-label-toggle');
+    if (button) {
+      button.setAttribute('aria-pressed', String(state.labelsEnabled));
+      const action = state.labelsEnabled ? 'Masquer' : 'Afficher';
+      button.setAttribute('aria-label', `${action} les labels permanents`);
+      button.title = `${action} les labels permanents (L)`;
+      button.innerHTML = `<span class="sdg-label-toggle-icon" aria-hidden="true">${state.labelsEnabled ? '👁' : '⊘'}</span><span>${action} les labels</span>`;
+    }
+    const dockButton = document.querySelector('#epm-btn-labels');
+    if (dockButton) {
+      const action = state.labelsEnabled ? 'Masquer' : 'Afficher';
+      dockButton.setAttribute('aria-pressed', String(state.labelsEnabled));
+      dockButton.setAttribute('aria-label', `${action} les labels permanents`);
+      dockButton.title = `${action} les labels permanents`;
+      dockButton.classList.toggle('is-active', state.labelsEnabled);
+      const icon = dockButton.querySelector('[aria-hidden="true"]');
+      if (icon) icon.textContent = state.labelsEnabled ? '👁' : '⊘';
+    }
+    document.querySelector('#sdg-shell')?.classList.toggle('sdg-labels-off', !state.labelsEnabled);
+    scheduleLabelLayout();
+  }
+
+  function setLabelsVisible(visible) {
+    setLabelsEnabled(visible);
+  }
+
+  function toggleLabels() {
+    setLabelsEnabled(!state.labelsEnabled);
+    return state.labelsEnabled;
+  }
+
+  function refreshLabels() {
+    setLabelsEnabled(state.labelsEnabled);
+    return state.labelMetrics;
   }
 
   function edgeTooltip(edge) {
@@ -514,6 +769,9 @@
 
     rebuildVisibleObjectsRegistry();
     updateRelationsCounter(visibleEdges, totalEdges);
+    renderSummary();
+    renderKpis();
+    renderDetail();
     renderLegend();
     renderFilters();
     validateSpatialLayers();
@@ -589,10 +847,16 @@
         keepInView: true,
         autoPanPadding: [80, 80],
       });
-      marker.bindTooltip(
-        `${node.name || ''}${node.role ? ` · ${node.role}` : ''}`,
-        { direction: 'top', opacity: 0.95, className: 'sdg-tooltip', offset: [0, -8] },
-      );
+      marker.bindTooltip(nodeLabelHtml(node), {
+        permanent: state.labelsEnabled,
+        interactive: false,
+        direction: 'right',
+        opacity: 1,
+        className: `sdg-map-label sdg-map-label--${String(node.category || 'site').replace(/[^a-z0-9_-]/gi, '')}`,
+        offset: [Math.round(size / 2) + 6, 0],
+      });
+      marker.on('mouseover', () => { if (!state.labelsEnabled) marker.openTooltip?.(); });
+      marker.on('mouseout', () => { if (!state.labelsEnabled) marker.closeTooltip?.(); });
       marker.on('click', () => selectEntity('node', node));
       state.nodeLayers[node.id] = marker;
     });
@@ -613,6 +877,7 @@
     } catch (_e) { /* */ }
 
     queueInvalidate();
+    scheduleLabelLayout();
   }
 
   /* ── Filters / legend ─────────────────────────────────────────── */
@@ -680,10 +945,11 @@
     const host = document.querySelector('#sdg-filters');
     if (!host || !state.graph) return;
 
-    const filters = state.graph.filters || (state.graph.categories || []).filter((c) => c.id !== 'site');
+    const filters = (state.graph.filters || (state.graph.categories || []).filter((c) => c.id !== 'site'))
+      .filter((filter) => filter.id !== 'population');
 
     const registry = state.visibleObjectsRegistry;
-    host.innerHTML = filters.map((f) => {
+    host.innerHTML = populationRelationsMetricsHtml(currentPopulationSummary()) + filters.map((f) => {
       const stats = registry[f.id] || { available: 0, visible: 0, hidden: 0, outside: Number(f.count || 0), state: 'unavailable' };
       const status = f.status || (f.available === false ? 'future' : ((f.count || 0) > 0 ? 'active' : 'empty'));
       const disabled = status === 'future' || status === 'empty';
@@ -827,7 +1093,7 @@
   function renderLayerStatistics() {
     const host = document.querySelector('#sdg-layer-statistics');
     if (!host) return;
-    const rows = Object.values(state.visibleObjectsRegistry);
+    const rows = Object.values(state.visibleObjectsRegistry).filter((row) => row.id !== 'population');
     const issues = state.consistencyIssues || [];
     host.innerHTML = `
       <p class="sdg-kicker">Statistiques des couches</p>
@@ -895,6 +1161,7 @@
     const host = document.querySelector('#sdg-summary');
     if (!host || !state.graph) return;
     const s = state.graph.decision_summary;
+    const populationSummary = currentPopulationSummary();
     if (!s) {
       host.innerHTML = `<p class="sdg-summary-empty">Synthèse décisionnelle non disponible pour cet actif.</p>`;
       host.dataset.status = 'unavailable';
@@ -908,6 +1175,7 @@
     host.innerHTML = `
       <p class="sdg-kicker">Synthèse décisionnelle</p>
       <p class="sdg-summary-text">${escapeHtml(s.text || s.message || '')}</p>
+      ${populationSummaryHtml(populationSummary, true)}
       ${meta.length ? `<div class="sdg-summary-meta">${meta.join('')}</div>` : ''}
       ${(s.factors || []).length ? `
         <ul class="sdg-summary-factors">
@@ -920,13 +1188,34 @@
   function renderKpis() {
     const host = document.querySelector('#sdg-kpis');
     if (!host || !state.graph) return;
-    const kpis = state.graph.kpis;
-    if (!Array.isArray(kpis) || !kpis.length) {
+    const sourceKpis = Array.isArray(state.graph.kpis) ? state.graph.kpis : [];
+    if (!sourceKpis.length) {
       host.innerHTML = `<p class="sdg-kpi-empty">Indicateurs non disponibles.</p>`;
       return;
     }
+    const source = Object.fromEntries(sourceKpis.map((item) => [item.id, item]));
+    const visibleNodes = (state.graph.nodes || []).filter((node) => node.kind !== 'site' && nodeVisible(node));
+    const populationSummary = currentPopulationSummary();
+    const distances = visibleNodes.map((node) => Number(node.distance_m)).filter((value) => Number.isFinite(value));
+    const averageDistance = distances.length ? distances.reduce((sum, value) => sum + value, 0) / distances.length : null;
+    const operatorNames = new Set();
+    visibleNodes.filter((node) => node.category === 'telecom').forEach((node) => {
+      const text = `${node.operator || ''} ${node.state || ''}`;
+      const match = text.match(/\b(Airtel|Africell|Orange|Vodacom)\b/i);
+      if (match) operatorNames.add(match[1].toLowerCase());
+    });
+    const active = (id) => categoryEnabled(id);
+    const kpis = [
+      { ...source.population, id: 'population', label: populationSummary.dataStatus === 'partial' ? 'Population documentée' : 'Population concernée', value: populationSummary.totalPopulation, display: formatPopulation(populationSummary.totalPopulation) || 'Non disponible', status: populationSummary.dataStatus === 'unavailable' ? 'unavailable' : populationSummary.dataStatus, note: populationSummary.dataStatus === 'unavailable' ? 'Référentiel démographique non disponible pour ce périmètre.' : (populationSummary.dataStatus === 'partial' ? `${populationSummary.documentedLocalities} / ${populationSummary.totalLocalities} localités renseignées · Données partielles` : 'Population totale documentée des localités visibles.') },
+      { ...source.localities, id: 'localities', label: 'Localités visibles', value: populationSummary.visibleLocalities, display: String(populationSummary.visibleLocalities), status: 'success', note: `${populationSummary.analyzedLocalities} localité(s) analysée(s) dans le calcul de Population concernée.` },
+      { id: 'average_distance', label: 'Distance moyenne', value: averageDistance, display: averageDistance == null ? 'Non disponible' : formatDistance(averageDistance), status: averageDistance == null ? 'unavailable' : 'success', note: 'Moyenne des distances réellement calculées pour les objets visibles.' },
+      { ...source.health, id: 'health', label: 'Services de santé', value: active('health') ? source.health?.value : 0, display: active('health') ? source.health?.display : '0' },
+      { ...source.education, id: 'education', label: 'Écoles' },
+      { id: 'mobile_operators', label: 'Opérateurs mobiles', value: operatorNames.size || null, display: operatorNames.size ? String(operatorNames.size) : 'Non disponible', status: operatorNames.size ? 'success' : 'unavailable', note: operatorNames.size ? Array.from(operatorNames).map((name) => name[0].toUpperCase() + name.slice(1)).join(', ') : 'Aucun opérateur identifiable dans les objets télécom visibles.' },
+      { ...source.ccn, id: 'ccn', label: 'CCN', value: active('ccn') ? source.ccn?.value : 0, display: active('ccn') ? source.ccn?.display : '0' },
+    ];
     host.innerHTML = `
-      <p class="sdg-kicker">Indicateurs</p>
+      <p class="sdg-kicker">Résumé d’impact</p>
       <div class="sdg-kpi-grid">
         ${kpis.map((k) => {
           const unavailable = k.status === 'unavailable'
@@ -940,7 +1229,7 @@
             ? `Plus proche : ${nearest.name || ''}${nearest.distance_km != null ? ` — ${nearest.distance_km} km` : ''}`
             : '';
           return `
-            <article class="sdg-kpi" data-status="${escapeHtml(unavailable ? 'unavailable' : (k.status || 'success'))}">
+            <article class="sdg-kpi" data-sdg-kpi="${escapeHtml(k.id)}" data-status="${escapeHtml(unavailable ? 'unavailable' : (k.status || 'success'))}">
               <span class="sdg-kpi-label">${escapeHtml(k.label || k.id)}</span>
               <strong class="sdg-kpi-value">${escapeHtml(display)}</strong>
               ${note ? `<small>${escapeHtml(note)}</small>` : ''}
@@ -950,6 +1239,31 @@
         }).join('')}
       </div>
     `;
+  }
+
+  function populationImpactBlock(payload, kind) {
+    const detail = payload?.detail || {};
+    const contribution = normalizeContribution(payload?.contribution || payload?.score_contribution, payload?.category);
+    const population = payload?.population_served
+      ?? payload?.population_concerned
+      ?? payload?.population_potentially_covered
+      ?? payload?.population
+      ?? detail.population
+      ?? contribution.proxy_population;
+    const contributionValue = contribution.points != null
+      ? `${contribution.points}${contribution.maximum != null ? ` / ${contribution.maximum}` : ''}`
+      : contribution.display;
+    const weight = contribution.weight;
+    const socialImpact = contribution.explanation || payload?.why || payload?.description || detail.why;
+    const hasData = population != null || contributionValue || weight != null || socialImpact;
+    return `<section class="sdg-population-impact" data-sdg-population-status="${hasData ? 'documented' : 'unavailable'}">
+      <p class="sdg-kicker">Impact populationnel</p>
+      ${population != null ? fieldRow(kind === 'node' && payload.category === 'localities' ? 'Population concernée' : 'Population potentiellement couverte', formatPopulation(population)) : ''}
+      ${contributionValue ? fieldRow('Contribution dans le score', contributionValue) : ''}
+      ${weight != null ? fieldRow('Poids de la relation', weight) : ''}
+      ${socialImpact ? fieldRow('Impact social', socialImpact) : ''}
+      ${!hasData ? '<p class="sdg-muted">Aucune donnée populationnelle calculée pour cet objet.</p>' : ''}
+    </section>`;
   }
 
   function renderWhy() {
@@ -992,6 +1306,7 @@
     if (!host) return;
 
     if (!state.selected) {
+      const populationSummary = currentPopulationSummary();
       host.innerHTML = `
         <div class="sdg-detail-empty">
           <header class="sdg-panel-header sdg-panel-header--with-close">
@@ -1000,6 +1315,7 @@
           </header>
           <p>Sélectionnez un nœud ou une relation sur la carte pour afficher les informations disponibles.</p>
         </div>
+        ${populationSummaryHtml(populationSummary)}
       `;
       return;
     }
@@ -1025,6 +1341,7 @@
         ${coords ? fieldRow('Coordonnées', coords) : ''}
         ${dist ? fieldRow('Distance', dist) : ''}
         ${node.population != null ? fieldRow('Population', node.population) : ''}
+        ${populationImpactBlock(node, 'node')}
         ${renderContributionBlock(node.contribution || node.score_contribution, node.category)}
         ${(node.why || node.description) ? `<p class="sdg-why"><em>Pourquoi cette relation existe</em><br>${escapeHtml(node.why || node.description)}</p>` : ''}
         ${fieldRow('Confiance', node.confidence || node.state)}
@@ -1032,6 +1349,7 @@
         ${fieldRow('Maturité d’analyse', node.maturity === 'operational' ? 'Référentiel intégré' : (node.maturity || cat.maturity || '—'))}
         ${fieldRow('État', node.state)}
         ${actionButtons(actions)}
+        ${populationSummaryHtml(currentPopulationSummary(), true)}
       `;
       return;
     }
@@ -1057,6 +1375,7 @@
         ${fieldRow('Référentiel source', edge.source_label || detail.source)}
         ${dist ? fieldRow('Distance', dist) : ''}
         ${detail.population != null ? fieldRow('Population', detail.population) : ''}
+        ${populationImpactBlock(edge, 'edge')}
         ${renderContributionBlock(contrib, edge.category)}
         ${(edge.why || edge.explanation || detail.why) ? `<p class="sdg-why"><em>Pourquoi cette relation compte</em><br>${escapeHtml(edge.why || edge.explanation || detail.why)}</p>` : ''}
         ${fieldRow('Confiance', edge.confidence || detail.confidence)}
@@ -1064,6 +1383,7 @@
         ${detail.method ? fieldRow('Méthode', detail.method) : ''}
         ${fieldRow('Maturité d’analyse', 'Référentiel intégré')}
         ${actionButtons(actions)}
+        ${populationSummaryHtml(currentPopulationSummary(), true)}
       `;
     }
   }
@@ -1280,6 +1600,7 @@
     renderLegend();
     renderDetail();
     paintGraph();
+    setLabelsEnabled(state.labelsEnabled);
   }
 
   function update(graphPayload) {
@@ -1352,7 +1673,15 @@
     refreshSpatialRelations,
     validateSpatialLayers,
     repaint,
+    setLabelsEnabled,
+    setLabelsVisible,
+    toggleLabels,
+    refreshLabels,
+    layoutMapLabels,
+    computePopulationSummary,
+    getPopulationSummary: currentPopulationSummary,
     state,
     get visibleObjectsRegistry() { return state.visibleObjectsRegistry; },
+    get labelMetrics() { return state.labelMetrics; },
   };
 })(typeof window !== 'undefined' ? window : globalThis);

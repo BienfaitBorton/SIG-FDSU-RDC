@@ -24,7 +24,7 @@
   const GUIDED_STEPS = [
     { id: 'site', title: 'Le site sélectionné', narrative: 'Point d’ancrage du dossier de décision.', categories: ['site'], zoom: 'site', required: true },
     { id: 'localities', title: 'Les localités concernées', narrative: 'Localités et besoins territoriaux liés au site.', categories: ['localities', 'needs'] },
-    { id: 'population', title: 'La population bénéficiaire', narrative: 'Population desservie ou impactée par l’investissement.', categories: ['population'] },
+    { id: 'population', title: 'La population concernée', narrative: 'Somme documentée des populations des localités analysées.', categories: ['localities'] },
     { id: 'health', title: 'Les établissements de santé', narrative: 'Structures sanitaires dans la zone d’influence.', categories: ['health'] },
     { id: 'telecom', title: 'Les télécommunications', narrative: 'Infrastructures et couverture télécom.', categories: ['telecom'] },
     { id: 'fibre', title: 'La fibre', narrative: 'Proximité fibre / backbone (sous-ensemble télécom).', categories: ['telecom'], fibreFocus: true },
@@ -36,8 +36,9 @@
   ];
 
   const KPI_DEFS = [
-    { id: 'population', label: 'Population', cat: 'population', icon: '◎' },
-    { id: 'localities', label: 'Localités', cat: 'localities', icon: '◉' },
+    { id: 'population', label: 'Population concernée', cat: 'localities', metric: 'population', icon: '👥' },
+    { id: 'localities', label: 'Localités visibles', cat: 'localities', metric: 'visibleLocalities', icon: '◉' },
+    { id: 'analyzed_localities', label: 'Localités analysées', cat: 'localities', metric: 'analyzedLocalities', icon: '◉' },
     { id: 'health', label: 'Santé', cat: 'health', icon: '✚' },
     { id: 'telecom', label: 'Télécom', cat: 'telecom', icon: '▲' },
     { id: 'roads', label: 'Routes', cat: 'roads', icon: '≡' },
@@ -296,6 +297,16 @@
   function kpiValue(def) {
     const graph = sdg()?.state?.graph;
     if (!graph) return '—';
+    if (def.metric) {
+      const summary = sdg()?.getPopulationSummary?.();
+      if (!summary) return '—';
+      if (def.metric === 'population') {
+        return summary.totalPopulation == null
+          ? 'Non disponible'
+          : `${Math.round(Number(summary.totalPopulation)).toLocaleString('fr-FR')} hab.`;
+      }
+      return String(summary[def.metric] ?? 0);
+    }
     if (def.fromSummary) {
       const s = graph.decision_summary || {};
       const v = s[def.fromSummary];
@@ -533,7 +544,7 @@
     global.SpatialDecisionGraph?.stopPresentation?.(false);
 
     if (step.focus === 'indicators') {
-      syncFilters(['site', 'localities', 'population', 'health', 'telecom', 'roads', 'fdsu_sites', 'ccn'].filter(categoryHasData));
+      syncFilters(['site', 'localities', 'health', 'telecom', 'roads', 'fdsu_sites', 'ccn'].filter(categoryHasData));
       renderKpiStrip();
       document.querySelector('#epm-kpi-strip')?.classList.add('epm-kpi-pulse');
       global.setTimeout(() => document.querySelector('#epm-kpi-strip')?.classList.remove('epm-kpi-pulse'), 1800);
@@ -827,6 +838,7 @@
         <span class="epm-dock-sep" aria-hidden="true"></span>
         <button type="button" class="epm-dock-btn" id="epm-btn-reset" data-epm-cmd="reset" aria-label="Réinitialiser" title="Réinitialiser"><span aria-hidden="true">↺</span></button>
         <button type="button" class="epm-dock-btn" id="epm-btn-basemap" data-epm-cmd="basemap" aria-label="Basemap" title="Basemap"><span aria-hidden="true">▣</span></button>
+        <button type="button" class="epm-dock-btn" id="epm-btn-labels" data-epm-cmd="labels" aria-label="Masquer les labels permanents" title="Masquer les labels permanents" aria-pressed="true"><span aria-hidden="true">👁</span></button>
         <button type="button" class="epm-dock-btn" id="epm-btn-legend" data-epm-cmd="legend" aria-label="Légende" title="Légende" aria-pressed="false"><span aria-hidden="true">☰</span></button>
         <button type="button" class="epm-dock-btn" id="epm-btn-layers" data-epm-cmd="layers" aria-label="Couches" title="Couches / Relations" aria-pressed="false"><span aria-hidden="true">☷</span></button>
         <button type="button" class="epm-dock-btn" id="epm-btn-detail" data-epm-cmd="detail" aria-label="Détail" title="Panneau détail" aria-pressed="false"><span aria-hidden="true">ℹ</span></button>
@@ -853,6 +865,7 @@
       pause: tourTogglePause,
       reset: resetView,
       basemap: cycleBasemap,
+      labels: () => sdg()?.toggleLabels?.(),
       legend: () => {
         const legend = document.querySelector('#sdg-legend');
         if (!legend) return;
@@ -880,6 +893,7 @@
     });
     document.querySelector('#epm-btn-exit-top')?.addEventListener('click', exitPresentation);
     document.querySelector('#epm-btn-help')?.addEventListener('click', showHelp);
+    sdg()?.refreshLabels?.();
 
     // Fermeture panneaux — délégation (survit aux re-renders SDG)
     if (document.body.dataset.epmPanelCloseBound !== 'true') {

@@ -64,10 +64,22 @@ test.describe('Spatial Decision Graph v2.0 — cohérence carte et couches', () 
     for (const siteId of ['14', '16', '26', '29']) {
       await page.goto(`/index.html#spatial-impact/site/${siteId}?program_code=sites_40`);
       await expect(page.locator('#sdg-shell')).toBeVisible({ timeout: 60_000 });
+      await expect.poll(() => page.evaluate(() => String(window.SpatialDecisionGraph?.state?.graph?._meta?.asset_id || '')), {
+        timeout: 60_000,
+      }).toBe(siteId);
+      await expect(page.locator('.sdg-marker--site')).toHaveCount(1, { timeout: 60_000 });
+      await expect.poll(() => page.evaluate(() => window.SpatialDecisionGraph?.labelMetrics?.eligible || 0), {
+        timeout: 30_000,
+      }).toBeGreaterThan(0);
       await expect(page.locator('#sdg-legend')).toBeVisible();
       await expect(page.locator('#sdg-layer-statistics')).toBeVisible();
       expect((await page.evaluate(() => window.SpatialDecisionGraph.validateSpatialLayers())).valid).toBeTruthy();
-      await page.screenshot({ path: `test-results/sdg-coherence-site-${siteId}.png`, fullPage: true });
+      await page.screenshot({ path: `test-results/sdg-v31-site-${siteId}-labels-visible.png`, fullPage: true });
+      await page.locator('#sdg-label-toggle').click();
+      await expect(page.locator('.sdg-map-label')).toHaveCount(0);
+      await expect(page.locator('.sdg-marker--site')).toHaveCount(1);
+      await page.screenshot({ path: `test-results/sdg-v31-site-${siteId}-labels-hidden.png`, fullPage: true });
+      await page.locator('#sdg-label-toggle').click();
     }
   });
 });
