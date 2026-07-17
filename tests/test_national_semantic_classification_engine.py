@@ -10,7 +10,7 @@ def test_normalization_handles_accents_punctuation_spaces_and_apostrophes():
 
 
 def test_school_rules():
-    cases = [("EP. LOSONDJU", "SCHOOL", .92), ("INST. ELONGA", "SCHOOL", .86), ("COMPLEXE SCOLAIRE KIMBA", "SCHOOL", .99)]
+    cases = [("EP. LOSONDJU", "SCHOOL", .99), ("INST. ELONGA", "SCHOOL", .97), ("COMPLEXE SCOLAIRE KIMBA", "SCHOOL", .99)]
     for name, category, confidence in cases:
         result = engine().classify(name)
         assert result.normalized_category_code == category
@@ -36,6 +36,7 @@ def test_ambiguous_cs_and_unknown_remain_unclassified():
     assert engine().classify("LOCAL LOSONDJU").normalized_category_code == "UNCLASSIFIED"
     assert engine().classify("CS SCOLAIRE KIMBA").normalized_category_code == "SCHOOL"
     assert engine().classify("CS SANTÉ KIMBA").normalized_category_code == "HEALTH_FACILITY"
+    assert engine().classify("CS ECOLE HOPITAL KIMBA").normalized_category_code == "UNCLASSIFIED"
 
 
 def test_source_is_preserved_result_is_explainable_stable_and_idempotent():
@@ -46,9 +47,9 @@ def test_source_is_preserved_result_is_explainable_stable_and_idempotent():
     assert first == second
     assert first.source_name == source and first.raw_properties == raw
     assert first.normalized_name != source
-    assert first.matched_keyword == "EP"
-    assert first.confidence_label_fr == "Élevée"
-    assert first.engine_version == "fr-1.0.0"
+    assert first.matched_keyword == "ECOLE PRIMAIRE"
+    assert first.confidence_label_fr == "Très élevée"
+    assert first.engine_version == "fr-2.0.0-dnai"
     assert first.review_status == "Non revu"
 
 
