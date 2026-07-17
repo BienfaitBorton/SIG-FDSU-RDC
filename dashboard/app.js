@@ -147,6 +147,8 @@ const ROUTE_TO_MODULE = {
   national_asset_registry: 'national_asset_registry',
   'ceni-registry': 'ceni_registry',
   ceni_registry: 'ceni_registry',
+  dnai: 'dnai',
+  ntil: 'ntil',
   'national-territorial-intelligence': 'national_territorial_intelligence',
   national_territorial_intelligence: 'national_territorial_intelligence',
   gestion_referentiels: 'gestion_referentiels',
@@ -193,6 +195,8 @@ const MODULE_TO_ROUTE = {
   gestion_referentiels: 'registry',
   national_asset_registry: 'national-asset-registry',
   ceni_registry: 'ceni-registry',
+  dnai: 'dnai',
+  ntil: 'ntil',
   national_territorial_intelligence: 'national-territorial-intelligence',
   explorateur_sources: 'sources',
   sites: 'sites',
@@ -746,6 +750,14 @@ function setActiveModule(moduleKey) {
 
   if (normalizedModule === 'ceni_registry') {
     initializeCeniRegistry();
+  }
+
+  if (normalizedModule === 'dnai') {
+    initializeDnaiModule();
+  }
+
+  if (normalizedModule === 'ntil') {
+    initializeNtilModule();
   }
 
   if (normalizedModule === 'national_territorial_intelligence') {
@@ -10367,6 +10379,79 @@ function openDecisionSiteOnMap(focus = {}) {
     });
   };
   activate();
+}
+
+const ntilState = { initialized: false };
+
+async function loadNtilRegistry() {
+  const q = document.querySelector('#ntil-search')?.value?.trim() || '';
+  const status = document.querySelector('#ntil-status')?.value || '';
+  const message = document.querySelector('#ntil-status-message');
+  try {
+    const payload = await fetchApiJson(`/api/ntil/registry?q=${encodeURIComponent(q)}&status=${encodeURIComponent(status)}&limit=100`);
+    const body = document.querySelector('#ntil-registry-body');
+    if (body) body.innerHTML = (payload.terms || []).map((term) => `<tr data-ntil-term="${escapeDnai(term.id)}"><td><strong>${escapeDnai(term.term)}</strong></td><td>${escapeDnai(term.expansion || 'À valider')}</td><td>${escapeDnai(term.family || 'Non déterminée')}</td><td><span class="panel-badge">${escapeDnai(term.status)}</span></td><td>${Math.round(Number(term.confidence || 0) * 100)} %</td><td>${escapeDnai((term.referentials || []).join(', '))}</td></tr>`).join('');
+    if (message) message.textContent = `${payload.total || 0} terme(s) trouvé(s).`;
+  } catch (error) { if (message) message.textContent = `Registre NTIL indisponible : ${error.message}`; }
+}
+
+async function initializeNtilModule() {
+  if (!ntilState.initialized) {
+    ntilState.initialized = true;
+    document.querySelector('#ntil-search-button')?.addEventListener('click', loadNtilRegistry);
+    document.querySelector('#ntil-search')?.addEventListener('keydown', (event) => { if (event.key === 'Enter') loadNtilRegistry(); });
+    document.querySelector('#ntil-status')?.addEventListener('change', loadNtilRegistry);
+  }
+  try {
+    const payload = await fetchApiJson('/api/ntil/dashboard');
+    const stats = payload.statistics || {}; const quality = payload.quality || {};
+    const score = document.querySelector('#ntil-score'); if (score) score.textContent = `${Number(quality.terminology_quality_score || 0).toFixed(1)}/100`;
+    const kpis = [['Termes',stats.total_terms],['Validés',stats.validated_terms],['En attente',stats.pending_terms],['Inconnus',stats.unknown_terms],['Synonymes',stats.synonyms],['Familles',stats.families]];
+    const host = document.querySelector('#ntil-kpis'); if (host) host.innerHTML = kpis.map(([label,value]) => `<article class="ntil-kpi"><strong>${escapeDnai(value)}</strong><span>${escapeDnai(label)}</span></article>`).join('');
+    const bars = document.querySelector('#ntil-quality-bars'); if (bars) bars.innerHTML = (quality.quality_by_referential || []).map((row) => `<div class="ntil-bar-row"><span>${escapeDnai(row.referential)}</span><div class="ntil-bar"><i style="width:${Math.max(0,Math.min(100,Number(row.score || 0)))}%"></i></div><strong>${Number(row.score || 0).toFixed(1)}</strong></div>`).join('');
+    const families = document.querySelector('#ntil-family-chart'); if (families) families.innerHTML = ((payload.families || {}).families || []).map((row) => `<div class="ntil-family"><span>${escapeDnai(row.name)}</span><strong>${escapeDnai(row.terms)}</strong></div>`).join('');
+    const discoveries = document.querySelector('#ntil-discoveries'); if (discoveries) discoveries.innerHTML = ((payload.discoveries || {}).items || []).map((row) => `<div class="ntil-discovery"><strong>${escapeDnai(row.term)}</strong><br><small>${escapeDnai(row.status)} · ${escapeDnai(row.justification)}</small></div>`).join('');
+    const history = document.querySelector('#ntil-history'); if (history) history.innerHTML = ((payload.history || {}).items || []).map((row) => `<div class="ntil-history-item"><strong>v${escapeDnai(row.version)}</strong> · ${escapeDnai(row.date)}<br><small>${escapeDnai(row.change)}</small></div>`).join('');
+  } catch (error) { const message=document.querySelector('#ntil-status-message'); if(message) message.textContent=`Dashboard NTIL indisponible : ${error.message}`; }
+  await loadNtilRegistry();
+}
+
+const dnaiState = { initialized: false };
+
+function escapeDnai(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+}
+
+async function loadDnaiEntries() {
+  const query = document.querySelector('#dnai-search')?.value?.trim() || '';
+  const status = document.querySelector('#dnai-status');
+  if (status) status.textContent = 'Chargement du dictionnaire…';
+  try {
+    const payload = await fetchApiJson(`/api/dnai/search?q=${encodeURIComponent(query)}`);
+    const body = document.querySelector('#dnai-results');
+    if (body) body.innerHTML = (payload.entries || []).map((entry) => `<tr><td><strong>${escapeDnai(entry.abbreviation)}</strong></td><td>${escapeDnai(entry.official_expansion)}</td><td>${escapeDnai(entry.family)}</td><td>${escapeDnai([...(entry.variants || []), ...(entry.synonyms || [])].join(', ') || '—')}</td><td>${Math.round(Number(entry.confidence || 0) * 100)} %</td><td>${escapeDnai(entry.source)}</td></tr>`).join('');
+    if (status) status.textContent = `${payload.count || 0} entrée(s) affichée(s).`;
+  } catch (error) { if (status) status.textContent = `DNAI indisponible : ${error.message}`; }
+}
+
+async function initializeDnaiModule() {
+  if (!dnaiState.initialized) {
+    dnaiState.initialized = true;
+    document.querySelector('#dnai-search-button')?.addEventListener('click', loadDnaiEntries);
+    document.querySelector('#dnai-search')?.addEventListener('keydown', (event) => { if (event.key === 'Enter') loadDnaiEntries(); });
+  }
+  try {
+    const [stats, pending] = await Promise.all([fetchApiJson('/api/dnai/statistics'), fetchApiJson('/api/dnai/pending-validations')]);
+    const kpis = [
+      ['Abréviations publiées', stats.abbreviations], ['Variantes reconnues', stats.recognized_variants],
+      ['Familles', Object.keys(stats.families || {}).length], ['À valider', stats.ambiguities],
+    ];
+    const host = document.querySelector('#dnai-kpis');
+    if (host) host.innerHTML = kpis.map(([label, value]) => `<article class="dnai-kpi"><strong>${escapeDnai(value)}</strong><span>${escapeDnai(label)}</span></article>`).join('');
+    const pendingHost = document.querySelector('#dnai-pending-list');
+    if (pendingHost) pendingHost.innerHTML = (pending.items || []).map((item) => `<p class="dnai-pending-item"><strong>${escapeDnai(item.abbreviation)}</strong> — ${escapeDnai(item.reason)}</p>`).join('');
+  } catch (_error) { /* le message détaillé est rendu par loadDnaiEntries */ }
+  await loadDnaiEntries();
 }
 
 window.openDecisionSiteOnMap = openDecisionSiteOnMap;

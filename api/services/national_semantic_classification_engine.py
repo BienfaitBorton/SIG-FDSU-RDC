@@ -11,6 +11,8 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
+from api.services.dnai_service import default_dnai
+
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_RULES_PATH = ROOT / "data" / "business" / "semantic_classification_rules_fr_v1.json"
 
@@ -63,23 +65,15 @@ class NationalSemanticClassificationEngine:
         return re.search(rf"(?:^|\s){re.escape(keyword)}(?:\s|$)", text) is not None
 
     def classify(self, source_name: str, source_category: str | None = None, raw_properties: dict[str, Any] | None = None) -> ClassificationResult:
-        normalized = normalize_name(source_name)
+        referential = str((raw_properties or {}).get("referential") or ("CENI" if (raw_properties or {}).get("kml_name") is not None else "national"))
+        dnai = default_dnai().normalize(source_name, referential=referential)
+        normalized = normalize_name(dnai.normalized_text)
         categories = self.registry["categories_fr"]
         if source_category and source_category in categories and source_category != "UNCLASSIFIED":
             return self._result(source_name, normalized, source_category, source_category, "SOURCE_CATEGORY", source_category, 1.0, "La catégorie officielle fournie par la source est conservée.", raw_properties)
 
-        if normalized in {"EP", "INST", "CS"} or re.fullmatch(r"(?:CENI|ID|UID|CODE)(?:\s+[A-Z0-9]+)*\s+\d+", normalized):
+        if dnai.technical_identifier or normalized in {"EP", "INST", "CS"} or re.fullmatch(r"(?:CENI|ID|UID|CODE)(?:\s+[A-Z0-9]+)*\s+\d+", normalized):
             return self._result(source_name, normalized, source_category, "UNCLASSIFIED", None, None, 0.0, "Le nom est vide de contexte métier ou ressemble à un identifiant technique; aucune classification n’est proposée.", raw_properties)
-
-        # CS seul est volontairement non classé; un contexte explicite lève l'ambiguïté.
-        if self._contains(normalized, "CS"):
-            health = any(self._contains(normalized, key) for key in ("SANTE", "MEDICAL", "HOPITAL", "DISPENSAIRE"))
-            school = any(self._contains(normalized, key) for key in ("SCOLAIRE", "ECOLE", "INSTITUT", "COLLEGE", "LYCEE"))
-            if health != school:
-                category = "HEALTH_FACILITY" if health else "SCHOOL"
-                label = categories[category]
-                context = "santé" if health else "scolaire"
-                return self._result(source_name, normalized, source_category, category, f"CS_CONTEXT_{context.upper()}", "CS", .76, f"L’abréviation « CS » est désambiguïsée par un indice explicite de contexte {context}.", raw_properties)
 
         for rule in self.registry["rules"]:
             requires = rule.get("requires_any", [])
@@ -91,7 +85,8 @@ class NationalSemanticClassificationEngine:
             if matches:
                 keyword = matches[0]
                 category = rule["category"]
-                return self._result(source_name, normalized, source_category, category, rule["id"], keyword, float(rule["confidence"]), f"Le nom contient l’indice lexical français explicite « {keyword} », associé à la catégorie « {categories[category]} ».", raw_properties)
+                dnai_note = f" DNAI : {dnai.justification}" if dnai.rule_id else ""
+                return self._result(source_name, normalized, source_category, category, rule["id"], keyword, float(rule["confidence"]), f"Le nom normalisé contient l’indice lexical français explicite « {keyword} », associé à la catégorie « {categories[category]} ».{dnai_note}", raw_properties)
         return self._result(source_name, normalized, source_category, "UNCLASSIFIED", None, None, 0.0, "Aucune règle lexicale française suffisamment fiable ne s’applique au nom source.", raw_properties)
 
     def _result(self, source_name: str, normalized: str, source_category: str | None, category: str, rule_id: str | None, keyword: str | None, confidence: float, justification: str, raw_properties: dict[str, Any] | None) -> ClassificationResult:

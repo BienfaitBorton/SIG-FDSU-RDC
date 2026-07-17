@@ -77,6 +77,14 @@
           <span class="nav-icon">CENI</span>
           <span>Référentiel National CENI</span>
         </button>
+        <button class="nav-item" data-module="dnai" data-route="dnai">
+          <span class="nav-icon">DNAI</span>
+          <span>Dictionnaire institutionnel</span>
+        </button>
+        <button class="nav-item" data-module="ntil" data-route="ntil">
+          <span class="nav-icon">NTIL</span>
+          <span>Terminologie Nationale</span>
+        </button>
         <button class="nav-item" data-module="national_territorial_intelligence" data-route="national-territorial-intelligence">
           <span class="nav-icon">NTI</span>
           <span>National Territorial Intelligence</span>
@@ -1732,6 +1740,30 @@
             </div>
             <p class="panel-message" id="nfar-status" aria-live="polite"></p>
           </section>
+        </div>
+
+        <div class="module-panel hidden ntil-panel" id="ntil-panel" data-module="ntil">
+          <header class="ntil-hero"><div><p class="panel-label">Intelligence · Gouvernance nationale</p><h2>Terminologie Nationale</h2><p>National Terminology Intelligence Layer — registre, qualité, découvertes et validations.</p></div><div class="ntil-score"><strong id="ntil-score">—</strong><span>Terminology Quality Score</span></div></header>
+          <div class="ntil-kpis" id="ntil-kpis" aria-label="Indicateurs terminologiques"></div>
+          <section class="ntil-grid">
+            <article class="ntil-card"><h3>Qualité par référentiel</h3><div id="ntil-quality-bars"></div></article>
+            <article class="ntil-card"><h3>Familles nationales</h3><div id="ntil-family-chart"></div></article>
+            <article class="ntil-card ntil-card--wide"><h3>Recherche avancée du registre</h3><div class="ntil-search"><input id="ntil-search" type="search" placeholder="Terme, expansion, famille, contexte…"><select id="ntil-status"><option value="">Tous les statuts</option><option>PUBLIÉ</option><option>VALIDÉ</option><option>EN VALIDATION</option><option>EN ANALYSE</option></select><button id="ntil-search-button" class="primary-button" type="button">Rechercher</button></div><p id="ntil-status-message" class="panel-message"></p><div class="table-wrapper"><table class="data-table"><thead><tr><th>Terme</th><th>Expansion</th><th>Famille</th><th>Statut</th><th>Confiance</th><th>Référentiels</th></tr></thead><tbody id="ntil-registry-body"></tbody></table></div></article>
+            <article class="ntil-card"><h3>Découvertes et validations</h3><div id="ntil-discoveries"></div></article>
+            <article class="ntil-card"><h3>Historique</h3><div id="ntil-history"></div></article>
+          </section>
+        </div>
+
+        <div class="module-panel hidden dnai-panel" id="dnai-panel" data-module="dnai">
+          <header class="dnai-hero"><div><p class="panel-label">Référentiels · Normalisation nationale</p><h2>DNAI v2.0</h2><p>Dictionnaire national des abréviations institutionnelles.</p></div><span class="panel-badge">Source officielle</span></header>
+          <div class="dnai-kpis" id="dnai-kpis" aria-label="Statistiques DNAI"></div>
+          <section class="dnai-search-card">
+            <label><span>Rechercher une abréviation, une variante ou une famille</span><input id="dnai-search" type="search" placeholder="EP, ISP, santé…"></label>
+            <button class="primary-button" id="dnai-search-button" type="button">Rechercher</button>
+          </section>
+          <p class="panel-message" id="dnai-status" aria-live="polite"></p>
+          <div class="table-wrapper"><table class="data-table" id="dnai-table"><thead><tr><th>Abréviation</th><th>Expansion officielle</th><th>Famille</th><th>Variantes</th><th>Confiance</th><th>Source</th></tr></thead><tbody id="dnai-results"></tbody></table></div>
+          <section class="dnai-pending"><h3>Propositions à valider</h3><div id="dnai-pending-list"></div></section>
         </div>
 
         <div class="module-panel hidden ceni-registry" id="ceni-registry-panel" data-module="ceni_registry">

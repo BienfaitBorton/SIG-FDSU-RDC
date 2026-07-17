@@ -57,6 +57,8 @@ from api.routes import (
     sdg_coverage,
     data_maturity,
     ceni,
+    dnai,
+    ntil,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -980,6 +982,16 @@ app.include_router(
     ceni.router,
     prefix="/api/ceni",
     tags=["Référentiel National CENI"],
+)
+app.include_router(
+    dnai.router,
+    prefix="/api/dnai",
+    tags=["DNAI — Dictionnaire national des abréviations institutionnelles"],
+)
+app.include_router(
+    ntil.router,
+    prefix="/api/ntil",
+    tags=["NTIL — National Terminology Intelligence Layer"],
 )
 app.include_router(
     national_territorial_intelligence.router,
