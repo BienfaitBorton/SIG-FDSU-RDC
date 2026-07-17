@@ -95,6 +95,9 @@ class DNAIService:
 
         ordered = sorted(self.entries, key=lambda item: (item.get("referential_priority", {}).get(referential.upper(), 0), len(item["abbreviation"])), reverse=True)
         for entry in ordered:
+            allowed_referentials = {str(item).upper() for item in entry.get("referentials", [])}
+            if allowed_referentials and referential.upper() not in allowed_referentials and "NATIONAL" not in allowed_referentials:
+                continue
             aliases = [entry["abbreviation"], *entry.get("variants", []), *entry.get("synonyms", [])]
             for alias in sorted(aliases, key=len, reverse=True):
                 token = _clean(alias)

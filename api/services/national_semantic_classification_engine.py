@@ -66,14 +66,29 @@ class NationalSemanticClassificationEngine:
 
     def classify(self, source_name: str, source_category: str | None = None, raw_properties: dict[str, Any] | None = None) -> ClassificationResult:
         referential = str((raw_properties or {}).get("referential") or ("CENI" if (raw_properties or {}).get("kml_name") is not None else "national"))
-        dnai = default_dnai().normalize(source_name, referential=referential)
-        normalized = normalize_name(dnai.normalized_text)
+        source_normalized = normalize_name(source_name)
         categories = self.registry["categories_fr"]
         if source_category and source_category in categories and source_category != "UNCLASSIFIED":
-            return self._result(source_name, normalized, source_category, source_category, "SOURCE_CATEGORY", source_category, 1.0, "La catégorie officielle fournie par la source est conservée.", raw_properties)
+            return self._result(source_name, source_normalized, source_category, source_category, "SOURCE_CATEGORY", source_category, 1.0, "La catégorie officielle fournie par la source est conservée.", raw_properties)
 
-        if dnai.technical_identifier or normalized in {"EP", "INST", "CS"} or re.fullmatch(r"(?:CENI|ID|UID|CODE)(?:\s+[A-Z0-9]+)*\s+\d+", normalized):
+        if source_normalized in {"EP", "INST", "CS"}:
+            return self._result(source_name, source_normalized, source_category, "UNCLASSIFIED", None, None, 0.0, "Le sigle isolé ne fournit aucun contexte métier; aucune classification n’est proposée.", raw_properties)
+
+        dnai = default_dnai().normalize(source_name, referential=referential)
+        normalized = normalize_name(dnai.normalized_text)
+
+        if dnai.technical_identifier or re.fullmatch(r"(?:CENI|ID|UID|CODE)(?:\s+[A-Z0-9]+)*\s+\d+", source_normalized):
             return self._result(source_name, normalized, source_category, "UNCLASSIFIED", None, None, 0.0, "Le nom est vide de contexte métier ou ressemble à un identifiant technique; aucune classification n’est proposée.", raw_properties)
+
+        if dnai.rule_id is None and self._contains(source_normalized, "CS"):
+            health = any(self._contains(source_normalized, key) for key in ("SANTE", "MEDICAL", "HOPITAL", "DISPENSAIRE"))
+            school = any(self._contains(source_normalized, key) for key in ("SCOLAIRE", "ECOLE", "INSTITUT", "COLLEGE", "LYCEE"))
+            if health and school:
+                return self._result(source_name, normalized, source_category, "UNCLASSIFIED", None, None, 0.0, "Le sigle « CS » présente des indices scolaires et sanitaires contradictoires; aucune classification n’est proposée.", raw_properties)
+            if health != school:
+                category = "HEALTH_FACILITY" if health else "SCHOOL"
+                context = "santé" if health else "scolaire"
+                return self._result(source_name, normalized, source_category, category, f"CS_CONTEXT_{context.upper()}", "CS", .76, f"L’abréviation « CS » est désambiguïsée par un indice explicite de contexte {context}.", raw_properties)
 
         for rule in self.registry["rules"]:
             requires = rule.get("requires_any", [])
