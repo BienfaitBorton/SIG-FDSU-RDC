@@ -1,0 +1,44 @@
+{
+  "engine_version": "fr-1.0.0",
+  "classification_method": "Classification lexicale en français",
+  "integration_baselines": {
+    "CENI_V1": {"UNCLASSIFIED":29517,"HEALTH_FACILITY":1524,"SCHOOL":1148,"RELIGIOUS_BUILDING":17,"ADMINISTRATIVE_BUILDING":9,"PUBLIC_BUILDING":6}
+  },
+  "categories_fr": {
+    "SCHOOL": "École",
+    "HEALTH_FACILITY": "Établissement de santé",
+    "PUBLIC_BUILDING": "Bâtiment public",
+    "ADMINISTRATIVE_BUILDING": "Administration publique",
+    "RELIGIOUS_BUILDING": "Édifice religieux",
+    "MARKET": "Marché",
+    "ENERGY": "Infrastructure énergétique",
+    "TELECOM": "Infrastructure de télécommunications",
+    "ROAD": "Infrastructure routière ou de transport",
+    "CENI_SITE": "Site de la CENI",
+    "VOTING_CENTER": "Centre de vote",
+    "REGISTRATION_CENTER": "Centre d’enrôlement",
+    "OTHER": "Autre",
+    "UNCLASSIFIED": "Non classifié"
+  },
+  "rules": [
+    {"id":"HEALTH_EXPLICIT","category":"HEALTH_FACILITY","confidence":0.99,"keywords":["CENTRE DE SANTE","HOPITAL GENERAL","POSTE DE SANTE","CENTRE MEDICAL","POLYCLINIQUE","DISPENSAIRE","CLINIQUE","MATERNITE","INFIRMERIE"]},
+    {"id":"HEALTH_ABBREVIATION","category":"HEALTH_FACILITY","confidence":0.95,"prefixes":["HGR","CSR"]},
+    {"id":"SCHOOL_EXPLICIT","category":"SCHOOL","confidence":0.99,"keywords":["ECOLE PRIMAIRE","ECOLE SECONDAIRE","COMPLEXE SCOLAIRE","INSTITUT SUPERIEUR","JARDIN D ENFANTS","UNIVERSITE","COLLEGE","LYCEE","MATERNELLE","ATHENEE"]},
+    {"id":"SCHOOL_NAME","category":"SCHOOL","confidence":0.97,"keywords":["ECOLE","INSTITUT"]},
+    {"id":"SCHOOL_EP","category":"SCHOOL","confidence":0.92,"prefixes":["EP"]},
+    {"id":"SCHOOL_INST","category":"SCHOOL","confidence":0.86,"prefixes":["INST"]},
+    {"id":"ADMINISTRATION_EXPLICIT","category":"ADMINISTRATIVE_BUILDING","confidence":0.96,"keywords":["BUREAU DE COMMUNE","BUREAU DU TERRITOIRE","BUREAU ADMINISTRATIF","SERVICE PUBLIC","DIVISION PROVINCIALE","SOUS DIVISION","ETAT CIVIL","GOUVERNORAT","MAIRIE","ADMINISTRATION"]},
+    {"id":"ADMINISTRATION_CONTEXT","category":"ADMINISTRATIVE_BUILDING","confidence":0.86,"keywords":["CHEFFERIE","SECTEUR","GROUPEMENT"],"requires_any":["BUREAU","ADMINISTRATION","SERVICE","SIEGE"]},
+    {"id":"RELIGIOUS_EXPLICIT","category":"RELIGIOUS_BUILDING","confidence":0.97,"keywords":["EGLISE","PAROISSE","CHAPELLE","CATHEDRALE","MOSQUEE","TEMPLE","MISSION","COUVENT","MONASTERE","SANCTUAIRE","SALLE DU ROYAUME"]},
+    {"id":"MARKET_EXPLICIT","category":"MARKET","confidence":0.97,"keywords":["MARCHE CENTRAL","PLACE DU MARCHE","CENTRE COMMERCIAL","MARCHE","FOIRE","HALLE"]},
+    {"id":"TELECOM_EXPLICIT","category":"TELECOM","confidence":0.93,"keywords":["SITE GSM","TOUR TELECOM","STATION RADIO","ANTENNE","BTS","RELAIS"],"excludes_any":["BUREAU","BOUTIQUE","AGENCE"]},
+    {"id":"TELECOM_OPERATOR_INFRA","category":"TELECOM","confidence":0.82,"keywords":["VODACOM","AIRTEL","ORANGE","AFRICELL"],"requires_any":["SITE","ANTENNE","TOUR","BTS","RELAIS"]},
+    {"id":"ENERGY_EXPLICIT","category":"ENERGY","confidence":0.95,"keywords":["GROUPE ELECTROGENE","POSTE ELECTRIQUE","PANNEAU SOLAIRE","CENTRALE SOLAIRE","SOUS STATION","TRANSFORMATEUR","CENTRALE","BARRAGE","SNEL"]},
+    {"id":"TRANSPORT_EXPLICIT","category":"ROAD","confidence":0.92,"keywords":["AERODROME","AEROPORT","PONT","BAC","GARE","PORT","QUAI","TERMINAL"]},
+    {"id":"ROAD_CONTEXT","category":"ROAD","confidence":0.82,"keywords":["ROUTE"],"requires_any":["NATIONALE","PROVINCIALE","PONT","TRONCON","AXE","RN"]},
+    {"id":"PUBLIC_BUILDING_EXPLICIT","category":"PUBLIC_BUILDING","confidence":0.95,"keywords":["ABATTOIR PUBLIC","SALLE POLYVALENTE","CENTRE CULTUREL","MAISON DES JEUNES","BIBLIOTHEQUE PUBLIQUE","CENTRE COMMUNAUTAIRE","FOYER SOCIAL","STADE"]},
+    {"id":"CENI_EXPLICIT","category":"CENI_SITE","confidence":0.96,"keywords":["COMMISSION ELECTORALE","CENI"]},
+    {"id":"VOTING_EXPLICIT","category":"VOTING_CENTER","confidence":0.96,"keywords":["CENTRE DE VOTE","BUREAU DE VOTE"]},
+    {"id":"REGISTRATION_EXPLICIT","category":"REGISTRATION_CENTER","confidence":0.96,"keywords":["CENTRE D ENROLEMENT","INSCRIPTION ELECTORALE"]}
+  ]
+}

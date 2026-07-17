@@ -56,6 +56,7 @@ from api.routes import (
     program_lifecycle,
     sdg_coverage,
     data_maturity,
+    ceni,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -974,6 +975,11 @@ app.include_router(
     national_asset_registry.router,
     prefix="/registry",
     tags=["National FDSU Asset Registry"],
+)
+app.include_router(
+    ceni.router,
+    prefix="/api/ceni",
+    tags=["Référentiel National CENI"],
 )
 app.include_router(
     national_territorial_intelligence.router,

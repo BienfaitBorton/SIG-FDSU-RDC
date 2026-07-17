@@ -73,6 +73,10 @@
           <span class="nav-icon">NAR</span>
           <span>National Asset Registry</span>
         </button>
+        <button class="nav-item" data-module="ceni_registry" data-route="ceni-registry">
+          <span class="nav-icon">CENI</span>
+          <span>Référentiel National CENI</span>
+        </button>
         <button class="nav-item" data-module="national_territorial_intelligence" data-route="national-territorial-intelligence">
           <span class="nav-icon">NTI</span>
           <span>National Territorial Intelligence</span>
@@ -1728,6 +1732,66 @@
             </div>
             <p class="panel-message" id="nfar-status" aria-live="polite"></p>
           </section>
+        </div>
+
+        <div class="module-panel hidden ceni-registry" id="ceni-registry-panel" data-module="ceni_registry">
+          <header class="ceni-hero">
+            <div><p class="panel-label">Référentiel institutionnel national</p><h2>Référentiel National CENI</h2><p>Lecture nationale, qualité et rattachements des objets issus du KMZ officiel.</p></div>
+            <div class="ceni-hero-meta"><span class="panel-badge" id="ceni-version">v1.0.0</span><span class="ceni-live"><i></i>Données officielles chargées</span></div>
+          </header>
+
+          <div class="ceni-kpis" id="ceni-kpis" aria-label="Indicateurs CENI"></div>
+
+          <section class="ceni-filter-card" aria-label="Filtres du référentiel CENI">
+            <div class="ceni-toolbar">
+              <label class="ceni-field ceni-field--search"><span>Recherche</span><input id="ceni-search" type="search" placeholder="Nom ou identifiant…" aria-label="Rechercher dans le référentiel CENI"></label>
+              <label class="ceni-field"><span>Catégorie</span><select id="ceni-category" aria-label="Filtrer par catégorie"><option value="">Toutes</option></select></label>
+              <label class="ceni-field"><span>Province</span><select id="ceni-province" aria-label="Filtrer par province"><option value="">Toutes</option></select></label>
+              <label class="ceni-field"><span>Qualité</span><select id="ceni-quality" aria-label="Filtrer par qualité"><option value="">Toutes</option><option value="valid">Valide</option><option value="suspect">Suspecte</option><option value="invalid">Invalide</option><option value="outside_country">Hors pays</option><option value="missing">Manquante</option></select></label>
+              <button type="button" class="primary-button ceni-action" id="ceni-apply">Appliquer</button>
+              <button type="button" class="secondary-button ceni-action" id="ceni-reset">Réinitialiser</button>
+            </div>
+            <p class="ceni-provenance" id="ceni-provenance"></p>
+          </section>
+
+          <section class="ceni-workspace">
+            <div class="ceni-map-stage" id="ceni-map-stage">
+              <div id="ceni-map" class="ceni-map" aria-label="Carte nationale des sites CENI"></div>
+              <div class="ceni-map-tools" aria-label="Outils cartographiques">
+                <button type="button" data-ceni-map="fullscreen" title="Plein écran" aria-label="Afficher la carte en plein écran">⛶</button>
+                <button type="button" data-ceni-map="locate" title="Me localiser" aria-label="Me localiser">⌖</button>
+                <button type="button" data-ceni-map="reset" title="Réinitialiser la vue" aria-label="Réinitialiser la vue">↺</button>
+                <button type="button" data-ceni-map="basemap" title="Changer de fond" aria-label="Changer de fond">◐</button>
+                <button type="button" data-ceni-map="export" title="Exporter l’image" aria-label="Exporter la carte en image">⇩</button>
+              </div>
+              <div class="ceni-map-counter"><strong id="ceni-visible-count">0</strong><span>objets visibles</span></div>
+              <div class="ceni-map-legend" id="ceni-map-legend"><strong>Légende</strong></div>
+            </div>
+            <aside class="ceni-analytics" id="ceni-analytics" aria-label="Analyse nationale CENI">
+              <header><p class="panel-label">Analyse nationale</p><h3>Qualité et répartition</h3></header>
+              <div class="ceni-donut-wrap"><div class="ceni-donut" id="ceni-quality-donut"><span>—</span></div><div id="ceni-quality-legend"></div></div>
+              <div class="ceni-analytics-block"><h4>Rattachements</h4><div id="ceni-attachment-bars"></div></div>
+              <div class="ceni-analytics-block"><h4>Top catégories</h4><div id="ceni-category-bars"></div></div>
+              <div class="ceni-analytics-block"><h4>Avant / après classification</h4><div id="ceni-classification-progress"></div></div>
+              <div class="ceni-analytics-block"><h4>Confiance des déductions</h4><div id="ceni-confidence-bars"></div></div>
+              <div class="ceni-analytics-block"><h4>Règles les plus appliquées</h4><div id="ceni-rule-bars"></div></div>
+              <div class="ceni-analytics-block"><h4>Objets à vérifier</h4><div id="ceni-review-count"></div></div>
+              <div class="ceni-analytics-columns"><div><h4>Top provinces</h4><ol id="ceni-top-provinces"></ol></div><div><h4>Top territoires</h4><ol id="ceni-top-territories"></ol></div></div>
+            </aside>
+          </section>
+
+          <section class="ceni-table-card">
+            <header class="ceni-table-header"><div><p class="panel-label">Exploration détaillée</p><h3>Objets CENI</h3></div><div class="ceni-table-actions"><label><span class="sr-only">Recherche instantanée</span><input id="ceni-table-search" type="search" placeholder="Filtrer les lignes…"></label><details class="ceni-columns"><summary>Colonnes</summary><div id="ceni-column-picker"></div></details></div></header>
+            <div class="ceni-table-scroll">
+              <table class="ceni-table" id="ceni-table">
+                <thead><tr><th data-ceni-column="asset_uid" data-sort="asset_uid">Identifiant</th><th data-ceni-column="name" data-sort="name">Nom source</th><th data-ceni-column="normalized_category" data-sort="normalized_category">Catégorie</th><th data-ceni-column="province" data-sort="province">Province</th><th data-ceni-column="territory" data-sort="territory">Territoire</th><th data-ceni-column="geometry_status" data-sort="geometry_status">Qualité</th><th data-ceni-column="classification_confidence" data-sort="classification_confidence">Confiance</th></tr></thead>
+                <tbody id="ceni-sites-body"></tbody>
+              </table>
+            </div>
+            <footer class="ceni-pagination"><p id="ceni-status" aria-live="polite"></p><div><button type="button" id="ceni-prev" aria-label="Page précédente">←</button><span id="ceni-page-label">Page 1</span><button type="button" id="ceni-next" aria-label="Page suivante">→</button><select id="ceni-page-size" aria-label="Lignes par page"><option>25</option><option selected>50</option><option>100</option></select></div></footer>
+          </section>
+
+          <aside id="ceni-detail" class="ceni-detail-drawer" aria-label="Fiche détaillée CENI" aria-hidden="true"><button type="button" id="ceni-detail-close" aria-label="Fermer la fiche">✕</button><div id="ceni-detail-body"></div></aside>
         </div>
 
         <div class="module-panel hidden ntie-panel" id="national-territorial-intelligence-panel" data-module="national_territorial_intelligence">
