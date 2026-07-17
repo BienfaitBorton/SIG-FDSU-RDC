@@ -81,7 +81,7 @@ def test_api_routes_and_filters():
     assert client.get("/api/ceni/import-batches").status_code == 200
     assert client.get("/api/ceni/classification/statistics").status_code == 200
     rules = client.get("/api/ceni/classification/rules").json()
-    assert rules["engine_version"] == "fr-1.0.0"
+    assert rules["engine_version"] == "fr-2.0.0-dnai"
     assert client.get("/api/ceni/classification/review").status_code == 200
     classification = client.get(f"/api/ceni/sites/{uid}/classification")
     assert classification.status_code == 200
