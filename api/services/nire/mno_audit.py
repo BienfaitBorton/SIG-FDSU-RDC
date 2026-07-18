@@ -65,6 +65,9 @@ THRESHOLDS_M = {
     "nearby": 250.0,
 }
 
+# Classes historiquement listées pour la Review Queue (documentation / filtre UI).
+# L’éligibilité technique réelle est : requires_human_review=true
+# (voir is_review_queue_eligible) — y compris MATCH Planned et OPERATOR_PRESENCE+coloc.
 REVIEW_CLASSIFICATIONS = {
     "AMBIGUOUS",
     "CONFLICT",
@@ -73,7 +76,54 @@ REVIEW_CLASSIFICATIONS = {
     "NEW_INFRASTRUCTURE_CANDIDATE",
     "COLOCATED_MULTI_OPERATOR",
     "UNRESOLVED",
+    "OPERATOR_PRESENCE_ON_EXISTING_INFRASTRUCTURE",
+    "MATCH_EXISTING_INFRASTRUCTURE",
 }
+
+# Classification opérationnelle analytique (n’altère aucune décision métier).
+FAST_REVIEW_CLASSES = frozenset(
+    {
+        "NEW_INFRASTRUCTURE_CANDIDATE",
+        "MATCH_EXISTING_INFRASTRUCTURE",
+        "OPERATOR_PRESENCE_ON_EXISTING_INFRASTRUCTURE",
+        "POSSIBLE_DUPLICATE",
+        "INVALID_GEOMETRY",
+    }
+)
+COMPLEX_REVIEW_CLASSES = frozenset(
+    {
+        "CONFLICT",
+        "AMBIGUOUS",
+        "COLOCATED_MULTI_OPERATOR",
+        "UNRESOLVED",
+    }
+)
+
+
+def is_review_queue_eligible(row: dict[str, Any]) -> bool:
+    """Éligibilité Review Queue = requires_human_review, sauf exclusion métier explicite.
+
+    Aucune exclusion métier n’est actuellement configurée : toute ligne marquée
+    requires_human_review=true doit pouvoir être enfilée (sous plafond max_items).
+    """
+    if not row.get("requires_human_review"):
+        return False
+    # Hook documenté pour exclusions futures (ex. : statut institutionnel gelé).
+    if row.get("review_queue_excluded") is True:
+        return False
+    return True
+
+
+def operational_review_lane(row: dict[str, Any]) -> str | None:
+    """Bande analytique FAST_REVIEW_CANDIDATE | COMPLEX_REVIEW (non métier)."""
+    if not row.get("requires_human_review"):
+        return None
+    cls = row.get("classification")
+    if cls in FAST_REVIEW_CLASSES:
+        return "FAST_REVIEW_CANDIDATE"
+    if cls in COMPLEX_REVIEW_CLASSES:
+        return "COMPLEX_REVIEW"
+    return "COMPLEX_REVIEW"
 
 
 def _now() -> str:
@@ -824,9 +874,21 @@ def _build_coherence(
         },
         "human_review": {
             "unique_rows_requiring_review": len(review_rows),
+            "unique_rows_review_queue_eligible": count_review_eligible(rows),
+            "eligibility_equals_requires_human_review": count_review_eligible(rows) == len(review_rows),
             "by_primary_classification": dict(review_by_class),
+            "operational_lanes": {
+                "FAST_REVIEW_CANDIDATE": sum(
+                    1 for r in review_rows if operational_review_lane(r) == "FAST_REVIEW_CANDIDATE"
+                ),
+                "COMPLEX_REVIEW": sum(1 for r in review_rows if operational_review_lane(r) == "COMPLEX_REVIEW"),
+                "definition_fast": sorted(FAST_REVIEW_CLASSES),
+                "definition_complex": sorted(COMPLEX_REVIEW_CLASSES),
+                "analytical_only": True,
+            },
             "note": (
                 "Compte unique de lignes (requires_human_review=true). "
+                "Éligibilité Review Queue = même ensemble (is_review_queue_eligible). "
                 "Ne pas additionner ambiguïtés+conflits+doublons : chevauchement possible via flags."
             ),
         },
@@ -944,6 +1006,7 @@ def _aggregate(rows: list[dict[str, Any]], meta: MnoSourceMeta, national_count: 
         "planned_sites": planned,
         "planned_sites_is_transversal": True,
         "requires_human_review_unique": review_unique,
+        "review_queue_eligible_unique": count_review_eligible(rows),
         "colocations_multi_operator": multi_coloc,
         "colocations_total_groups": len(colocations),
         "colocations_are_groups_not_rows": True,
@@ -960,8 +1023,17 @@ def _aggregate(rows: list[dict[str, Any]], meta: MnoSourceMeta, national_count: 
     }
 
 
+def count_review_eligible(rows: list[dict[str, Any]]) -> int:
+    """Nombre unique de lignes techniquement éligibles à la Review Queue."""
+    return sum(1 for r in rows if is_review_queue_eligible(r))
+
+
 def enqueue_review_items(rows: list[dict[str, Any]], service=None, *, max_items: int = 500) -> int:
-    """Réutilise la Review Queue Phase 4 pour les cas à revue humaine."""
+    """Réutilise la Review Queue Phase 4 pour les cas à revue humaine.
+
+    Éligibilité = is_review_queue_eligible (requires_human_review=true).
+    Ne crée jamais plus de max_items dossiers (défaut 500) — pas d’enqueue massif implicite.
+    """
     if service is None:
         return 0
     from .operational import StoredCandidate, StoredDecision, StoredEvidence
@@ -977,12 +1049,8 @@ def enqueue_review_items(rows: list[dict[str, Any]], service=None, *, max_items:
     )
     count = 0
     for r in rows:
-        if not r.get("requires_human_review"):
+        if not is_review_queue_eligible(r):
             continue
-        if r["classification"] not in REVIEW_CLASSIFICATIONS and "PLANNED_SITE" not in (r.get("secondary_flags") or []):
-            # planned-on-existing already sets requires_human_review
-            if r["classification"] not in REVIEW_CLASSIFICATIONS:
-                continue
         if count >= max_items:
             break
         cid = sid("CAN", run.run_id, r["row_id"])
@@ -990,6 +1058,7 @@ def enqueue_review_items(rows: list[dict[str, Any]], service=None, *, max_items:
             "domain": "TELECOM_MNO",
             "ambiguity": "HIGH" if r["classification"] in {"AMBIGUOUS", "CONFLICT", "UNRESOLVED"} else "MEDIUM",
             "mno_classification": r["classification"],
+            "operational_review_lane": operational_review_lane(r),
             "secondary_flags": r.get("secondary_flags") or [],
             "source_entity": {
                 "entity_type": "MNO_SITE",

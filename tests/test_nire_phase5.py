@@ -210,6 +210,62 @@ def test_review_queue_reuse(sample_xlsx):
     assert len(queue) >= 1
 
 
+def test_requires_human_review_implies_queue_eligible(sample_xlsx):
+    state = mno_audit.run_mno_audit(sample_xlsx, telecom_points=TELECOM_FIXTURE, enqueue_reviews=False)
+    review = [r for r in state.rows if r.get("requires_human_review")]
+    assert review
+    assert all(mno_audit.is_review_queue_eligible(r) for r in review)
+    assert mno_audit.count_review_eligible(state.rows) == len(review)
+    assert state.coherence["human_review"]["eligibility_equals_requires_human_review"] is True
+    assert state.review_enqueued == 0  # pas d'enqueue sans flag explicite
+
+
+def test_operator_presence_review_is_enqueue_eligible(sample_xlsx):
+    """Les OPERATOR_PRESENCE requires_human_review restent éligibles (ex-gap 448)."""
+    # Force présence + coloc multi-op sans Planned
+    telecom = list(TELECOM_FIXTURE)
+    telecom[0] = {**telecom[0], "operator_code": "ORANGE", "operator_name": "Orange", "infra_name": "TourX"}
+    state = mno_audit.run_mno_audit(sample_xlsx, telecom_points=telecom, enqueue_reviews=False)
+    presence_review = [
+        r
+        for r in state.rows
+        if r.get("requires_human_review")
+        and r["classification"] == "OPERATOR_PRESENCE_ON_EXISTING_INFRASTRUCTURE"
+    ]
+    # Fixture has co-located Vodacom+Airtel at same coords near Orange infra → présence possible
+    for r in presence_review:
+        assert mno_audit.is_review_queue_eligible(r) is True
+        # Éligible même sans flag Planned (correction du gap historique des 448).
+        assert r.get("requires_human_review") is True
+
+
+def test_enqueue_respects_max_items_no_mass_create(sample_xlsx):
+    repo = InMemoryNireRepository()
+    service = NireOperationalService(repo)
+    state = mno_audit.run_mno_audit(
+        sample_xlsx,
+        telecom_points=TELECOM_FIXTURE,
+        enqueue_reviews=True,
+        review_service=service,
+        max_review_items=2,
+    )
+    assert state.review_enqueued == 2
+    queue = repo.list_reviews(status=None, source_name="MNO_OPERATORS_XLSX", offset=0, limit=100)
+    assert len(queue) == 2
+
+
+def test_operational_lanes_analytical_only(sample_xlsx):
+    state = mno_audit.run_mno_audit(sample_xlsx, telecom_points=TELECOM_FIXTURE)
+    for r in state.rows:
+        lane = mno_audit.operational_review_lane(r)
+        if r.get("requires_human_review"):
+            assert lane in {"FAST_REVIEW_CANDIDATE", "COMPLEX_REVIEW"}
+        else:
+            assert lane is None
+    # Les lanes n'écrasent pas la classification métier
+    assert all("classification" in r and r["classification"] for r in state.rows)
+
+
 def test_api_status_empty_then_run(sample_xlsx):
     repo = InMemoryNireRepository()
     service = NireOperationalService(repo)
@@ -323,6 +379,11 @@ def test_real_mno_full_reconcile_smoke():
     assert coh["exclusive_classification"]["checksum"] == 12615
     assert coh["exclusive_classification"]["checksum_ok"] is True
     assert coh["human_review"]["unique_rows_requiring_review"] == 3881
+    assert coh["human_review"]["unique_rows_review_queue_eligible"] == 3881
+    assert coh["human_review"]["eligibility_equals_requires_human_review"] is True
+    assert coh["human_review"]["operational_lanes"]["FAST_REVIEW_CANDIDATE"] == 1705
+    assert coh["human_review"]["operational_lanes"]["COMPLEX_REVIEW"] == 2176
+    assert state.review_enqueued == 0
     assert coh["colocation_metrics"]["phase5_groups_multi_operator"] == 736
     assert coh["colocation_metrics"]["exact_coordinate_groups_float_equality"]["multi_operator_groups"] == 705
     assert coh["new_infrastructure_candidates"]["count"] == 943
