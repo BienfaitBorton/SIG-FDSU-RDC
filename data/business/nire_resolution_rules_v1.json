@@ -1,0 +1,56 @@
+{
+  "version": "nire-rules-1.0.0",
+  "engine_version": "nire-core-1.0.0",
+  "status": "phase_1_extensible",
+  "automatic_merge_allowed": false,
+  "evidence_types": {
+    "EXACT_IDENTIFIER": {"weight": 90, "polarity": "positive"},
+    "SOURCE_IDENTIFIER": {"weight": 70, "polarity": "positive"},
+    "NORMALIZED_NAME": {"weight": 30, "polarity": "positive"},
+    "OFFICIAL_NAME": {"weight": 35, "polarity": "positive"},
+    "ALIAS": {"weight": 20, "polarity": "positive"},
+    "GEOGRAPHIC_DISTANCE": {"weight": 35, "polarity": "positive"},
+    "SAME_COORDINATES": {"weight": 45, "polarity": "positive"},
+    "ADMINISTRATIVE_CONTEXT": {"weight": 15, "polarity": "positive"},
+    "PROVINCE_MATCH": {"weight": 10, "polarity": "positive"},
+    "TERRITORY_MATCH": {"weight": 20, "polarity": "positive"},
+    "LOCALITY_MATCH": {"weight": 20, "polarity": "positive"},
+    "OPERATOR_MATCH": {"weight": 20, "polarity": "positive"},
+    "ENTITY_TYPE_MATCH": {"weight": 10, "polarity": "positive"},
+    "PHONE_MATCH": {"weight": 55, "polarity": "positive"},
+    "EMAIL_MATCH": {"weight": 55, "polarity": "positive"},
+    "EXTERNAL_REFERENCE": {"weight": 60, "polarity": "positive"},
+    "MANUAL_VALIDATION": {"weight": 100, "polarity": "positive"},
+    "IDENTIFIER_CONFLICT": {"weight": 100, "polarity": "negative"},
+    "ENTITY_TYPE_CONFLICT": {"weight": 90, "polarity": "negative"},
+    "OPERATOR_CONFLICT": {"weight": 90, "polarity": "negative"},
+    "ADMINISTRATIVE_CONFLICT": {"weight": 80, "polarity": "negative"},
+    "GEOGRAPHIC_CONFLICT": {"weight": 85, "polarity": "negative"}
+  },
+  "thresholds": {
+    "possible_match": 40,
+    "match_recommended": 65,
+    "strong_match": 85
+  },
+  "blocking_rules": [
+    {"id": "BLOCK_IDENTIFIER_CONFLICT", "evidence_types": ["IDENTIFIER_CONFLICT"], "description_fr": "Des identifiants institutionnels incompatibles interdisent une recommandation de correspondance."},
+    {"id": "BLOCK_ENTITY_TYPE_CONFLICT", "evidence_types": ["ENTITY_TYPE_CONFLICT"], "description_fr": "Des types métier incompatibles priment sur les similarités lexicales."},
+    {"id": "BLOCK_OPERATOR_CONFLICT", "evidence_types": ["OPERATOR_CONFLICT"], "description_fr": "Pour une infrastructure télécom, des opérateurs incompatibles constituent un conflit bloquant."},
+    {"id": "BLOCK_ADMINISTRATIVE_CONFLICT", "evidence_types": ["ADMINISTRATIVE_CONFLICT"], "description_fr": "Des provinces contradictoires empêchent une correspondance automatique."},
+    {"id": "BLOCK_GEOGRAPHIC_CONFLICT", "evidence_types": ["GEOGRAPHIC_CONFLICT"], "description_fr": "Une distance géographique manifestement incompatible prime sur un nom similaire."}
+  ],
+  "confidence_levels": {
+    "INSUFFICIENT": [0.0, 0.39],
+    "LOW": [0.4, 0.59],
+    "MEDIUM": [0.6, 0.79],
+    "HIGH": [0.8, 0.94],
+    "VERY_HIGH": [0.95, 1.0]
+  },
+  "ambiguity_levels": {
+    "NONE": "Aucune ambiguïté détectée.",
+    "LOW": "Un candidat domine avec plusieurs preuves cohérentes.",
+    "MEDIUM": "Le contexte reste partiel ou plusieurs candidats existent.",
+    "HIGH": "Les candidats ont des scores proches ou le nom manque de contexte.",
+    "CRITICAL": "Le nombre d'homonymes rend toute résolution automatique dangereuse."
+  }
+}
