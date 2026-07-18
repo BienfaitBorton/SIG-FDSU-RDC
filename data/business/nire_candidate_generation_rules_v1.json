@@ -1,0 +1,23 @@
+{
+  "version": "nire-candidate-rules-1.0.0",
+  "automatic_merge_allowed": false,
+  "defaults": {"top_k": 10, "spatial_radius_km": 5, "operator_required": false},
+  "entity_types": {
+    "TELECOM_SITE": {"top_k": 10, "spatial_radius_km": 2, "operator_required": true},
+    "SCHOOL": {"top_k": 10, "spatial_radius_km": 5},
+    "FDSU_SITE": {"top_k": 10, "spatial_radius_km": 10},
+    "ADMIN_LOCALITY": {"top_k": 10, "spatial_radius_km": 10}
+  },
+  "type_compatibilities": {
+    "CENI_SITE": ["CENI_SITE", "SCHOOL", "HEALTH_FACILITY", "TELECOM_SITE"],
+    "SCHOOL": ["SCHOOL", "CENI_SITE"],
+    "HEALTH_FACILITY": ["HEALTH_FACILITY", "CENI_SITE"],
+    "TELECOM_SITE": ["TELECOM_SITE", "CENI_SITE"],
+    "TELECOM_NETWORK_GEOMETRY": ["TELECOM_NETWORK_GEOMETRY"],
+    "FDSU_SITE": ["ADMIN_PROVINCE", "ADMIN_CITY", "ADMIN_TERRITORY", "ADMIN_SECTOR", "ADMIN_CHIEFDOM", "ADMIN_GROUPEMENT", "ADMIN_LOCALITY"],
+    "ADMIN_LOCALITY": ["ADMIN_LOCALITY", "FDSU_SITE"]
+  },
+  "priorities": {"exact_id": 100, "spatial": 30, "territory": 25, "operator": 20, "province": 10, "name": 5},
+  "future_mno_classifications": ["EXACT_MATCH", "PROBABLE_MATCH", "AMBIGUOUS", "NEW_SITE", "POSSIBLE_DUPLICATE", "CONFLICT"],
+  "legacy_replacement_requires_coverage_percent": 100
+}

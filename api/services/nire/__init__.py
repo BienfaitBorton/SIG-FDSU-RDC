@@ -14,6 +14,10 @@ from .models import (
     ResolutionRun,
 )
 from .rules import NationalRuleRegistry, default_rule_registry
+from .candidate_generation import CandidateGenerationEngine, CandidateGenerationMetrics, CandidateIndex, CandidateProposal, MemoryCandidateIndex
+from .source_adapters import AdministrativeSourceAdapter, CeniSourceAdapter, EducationSourceAdapter, FdsuSiteSourceAdapter, HealthSourceAdapter, TelecomSourceAdapter
+from .evidence_extractors import AdministrativeEvidenceExtractor, EntityTypeEvidenceExtractor, GeographicEvidenceExtractor, InstitutionalEvidenceExtractor, LexicalEvidenceExtractor, OperatorEvidenceExtractor, SourceQualityEvidenceExtractor, extract_all
+from .calibration import CalibrationMetrics, calculate_calibration, synthetic_ground_truth_cases
 
 __all__ = [
     "AmbiguityLevel", "CandidateStatus", "DecisionType", "EntityReference",
@@ -21,4 +25,8 @@ __all__ = [
     "InMemorySourceAdapter", "NationalEvidence", "NationalRuleRegistry",
     "ResolutionCandidate", "ResolutionDecision", "ResolutionRun", "SourceAdapter",
     "default_rule_registry",
+    "AdministrativeSourceAdapter", "CeniSourceAdapter", "EducationSourceAdapter", "FdsuSiteSourceAdapter", "HealthSourceAdapter", "TelecomSourceAdapter",
+    "CandidateGenerationEngine", "CandidateGenerationMetrics", "CandidateIndex", "CandidateProposal", "MemoryCandidateIndex",
+    "AdministrativeEvidenceExtractor", "EntityTypeEvidenceExtractor", "GeographicEvidenceExtractor", "InstitutionalEvidenceExtractor", "LexicalEvidenceExtractor", "OperatorEvidenceExtractor", "SourceQualityEvidenceExtractor", "extract_all",
+    "CalibrationMetrics", "calculate_calibration", "synthetic_ground_truth_cases",
 ]
