@@ -6,8 +6,15 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 
 from api.main import app
+from api.services import ceni_registry_service
 from app.referentials.ceni_official.models import CeniCategory
-from app.referentials.ceni_official.service import CeniRegistryService, REGISTRY_PATH, SOURCE_PATH
+from app.referentials.ceni_official.service import (
+    SENTINEL_COORDINATES_STATUS,
+    CeniRegistryService,
+    REGISTRY_PATH,
+    SOURCE_PATH,
+    apply_quarantine_contract,
+)
 
 EXPECTED_SHA256 = "C3762911DF483D0B291145AF31CF612A30332039BB3D7BFD86FA894C650ABE9D"
 
@@ -66,9 +73,43 @@ def test_duplicates_are_flagged_not_deleted():
     assert all(row["duplicate"]["automatic_action"] == "none" for row in exact)
 
 
+def test_sentinel_coordinates_are_quarantined_without_geographic_duplicates():
+    ceni_registry_service.registry.cache_clear()
+    registry = ceni_registry_service.registry()
+    quarantined = [row for row in registry["assets"] if row["geometry_status"] == SENTINEL_COORDINATES_STATUS]
+    assert len(quarantined) == 265
+    assert registry["statistics"]["total_raw"] == 32221
+    assert registry["statistics"]["integrated"] == 31956
+    assert registry["statistics"]["quarantined"] == 265
+    assert registry["statistics"]["rejected"] == 0
+    assert registry["statistics"]["resolution_candidates"] == 38
+    assert registry["statistics"]["quarantined_school_candidates"] == 90
+    assert all(row["quarantine"]["primary_reason"] == SENTINEL_COORDINATES_STATUS for row in quarantined)
+    assert all(row["quarantine"]["mappable"] is False for row in quarantined)
+    assert all(row["duplicate"]["status"] not in {"exact", "same_geometry", "probable"} for row in quarantined)
+
+
+def test_real_geographic_duplicates_remain_detected():
+    rows = [
+        {"asset_uid": "A", "name": "SITE TEST", "fingerprint": "F", "longitude": 20.0, "latitude": -4.0, "normalized_category": "OTHER"},
+        {"asset_uid": "B", "name": "SITE TEST", "fingerprint": "F", "longitude": 20.0, "latitude": -4.0, "normalized_category": "OTHER"},
+    ]
+    apply_quarantine_contract(rows, batch_id="TEST")
+    assert [row["duplicate"]["status"] for row in rows] == ["exact", "exact"]
+
+
+def test_ceni_map_never_returns_sentinel_coordinates():
+    payload = ceni_registry_service.map_features(limit=5000)
+    assert payload["features"]
+    assert all(feature["geometry"]["coordinates"] != [0.0, 0.0] for feature in payload["features"])
+    assert all(feature["properties"]["quality"] in {"valid", "suspect"} for feature in payload["features"])
+
+
 def test_api_routes_and_filters():
     client = TestClient(app)
     assert client.get("/api/ceni/statistics").status_code == 200
+    quarantine = client.get("/api/ceni/sites", params={"limit": 300, "quality": SENTINEL_COORDINATES_STATUS}).json()
+    assert quarantine["total"] == 265 and len(quarantine["sites"]) == 265
     categories = client.get("/api/ceni/categories").json()["categories"]
     assert {row["id"] for row in categories} == {category.value for category in CeniCategory}
     payload = client.get("/api/ceni/sites", params={"limit": 3, "category": "UNCLASSIFIED"}).json()

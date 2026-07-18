@@ -32,7 +32,7 @@ test.describe('Référentiel National CENI v1.0', () => {
     await expect(page.locator('#ceni-sites-body tr')).toHaveCount(50);
 
     await page.locator('#ceni-table-search').fill('CENI');
-    await expect(page.locator('#ceni-status')).toContainText('objet');
+    await expect(page.locator('#ceni-status')).toContainText('Site(s) CENI');
     await page.locator('#ceni-table-search').fill('');
     await page.locator('#ceni-table th[data-sort="name"]').click();
     await expect(page.locator('#ceni-table th[data-sort="name"]')).toHaveAttribute('data-direction', /^(asc|desc)$/);
@@ -56,9 +56,9 @@ test.describe('Référentiel National CENI v1.0', () => {
     await page.locator('#ceni-category').selectOption('UNCLASSIFIED');
     await page.locator('#ceni-apply').click();
     await expect(page.locator('#ceni-sites-body tr').first()).toContainText('Non classifié');
-    await page.locator('#ceni-quality').selectOption('outside_country');
+    await page.locator('#ceni-quality').selectOption('coordinates_missing_or_sentinel');
     await page.locator('#ceni-apply').click();
-    await expect(page.locator('#ceni-sites-body tr').first()).toContainText('Hors du pays');
+    await expect(page.locator('#ceni-sites-body tr').first()).toContainText('En quarantaine — coordonnées non exploitables');
   });
 
   test('classification française masque les codes techniques et actualise les statistiques', async ({ page }) => {

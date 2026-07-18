@@ -26,6 +26,8 @@ BATCH_PATH = REPORT_DIR / "ceni_import_batches_v1.json"
 PROVINCES_PATH = ROOT / "data" / "reports" / "province_official" / "province_referential_official.json"
 COLLECTIVITIES_PATH = ROOT / "data" / "reports" / "collectivity_official" / "collectivity_referential_official.json"
 KML_NS = {"k": "http://www.opengis.net/kml/2.2"}
+SENTINEL_COORDINATES_STATUS = "coordinates_missing_or_sentinel"
+MAPPABLE_GEOMETRY_STATUSES = {"valid", "suspect"}
 
 
 def _now() -> str:
@@ -85,6 +87,57 @@ def classify(name: str) -> tuple[str, str, float]:
     return result.normalized_category_code, result.justification_fr, result.confidence
 
 
+def has_sentinel_coordinates(row: dict[str, Any]) -> bool:
+    try:
+        return float(row.get("longitude")) == 0.0 and float(row.get("latitude")) == 0.0
+    except (TypeError, ValueError):
+        return False
+
+
+def apply_quarantine_contract(rows: list[dict[str, Any]], *, batch_id: str | None = None, refresh_duplicates: bool = True) -> None:
+    """Normalise en mémoire les sentinelles et conserve leur traçabilité sans déplacer les lignes."""
+    for row in rows:
+        if has_sentinel_coordinates(row):
+            row["geometry_status"] = SENTINEL_COORDINATES_STATUS
+
+    identity_name = lambda row: str(row.get("normalized_name") or _normalize(row.get("name")))
+    integrated_names = {
+        identity_name(row)
+        for row in rows
+        if row.get("geometry_status") in MAPPABLE_GEOMETRY_STATUSES
+    }
+    for row in rows:
+        if row.get("geometry_status") != SENTINEL_COORDINATES_STATUS:
+            continue
+        row["quarantine"] = {
+            "status": "quarantined",
+            "primary_reason": SENTINEL_COORDINATES_STATUS,
+            "original_coordinates": {"longitude": row.get("longitude"), "latitude": row.get("latitude")},
+            "mappable": False,
+            "requires_additional_source": True,
+            "resolution_candidate": identity_name(row) in integrated_names,
+            "import_batch_id": batch_id,
+        }
+    if refresh_duplicates:
+        apply_duplicate_analysis(rows)
+        return
+
+    sentinel_groups: defaultdict[str, list[dict[str, Any]]] = defaultdict(list)
+    for row in rows:
+        if row.get("geometry_status") == SENTINEL_COORDINATES_STATUS:
+            sentinel_groups[identity_name(row)].append(row)
+    for group in sentinel_groups.values():
+        ids = [row["asset_uid"] for row in group]
+        for row in group:
+            row["duplicate"] = {
+                "status": "same_name" if len(group) > 1 else "none",
+                "group_size": len(group),
+                "related_asset_uids": [uid for uid in ids if uid != row["asset_uid"]],
+                "same_infrastructure_multiple_functions": False,
+                "automatic_action": "none",
+            }
+
+
 def apply_duplicate_analysis(rows: list[dict[str, Any]]) -> None:
     """Classe les ressemblances sans fusion ni suppression automatique."""
     groups: list[tuple[str, defaultdict[str, list[dict[str, Any]]]]] = []
@@ -93,9 +146,11 @@ def apply_duplicate_analysis(rows: list[dict[str, Any]]) -> None:
     probable: defaultdict[str, list[dict[str, Any]]] = defaultdict(list)
     same_name: defaultdict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in rows:
-        exact[row["fingerprint"]].append(row)
+        usable_coordinates = not has_sentinel_coordinates(row)
+        if usable_coordinates:
+            exact[row["fingerprint"]].append(row)
         lon, lat = row.get("longitude"), row.get("latitude")
-        if lon is not None and lat is not None:
+        if usable_coordinates and lon is not None and lat is not None:
             same_geometry[f"{float(lon):.6f}|{float(lat):.6f}"].append(row)
             probable[f"{_normalize(row.get('name'))}|{float(lon):.3f}|{float(lat):.3f}"].append(row)
         same_name[_normalize(row.get("name"))].append(row)
@@ -207,6 +262,8 @@ class CeniRegistryService:
                 longitude, latitude = float(lon_text), float(lat_text)
                 if not (-180 <= longitude <= 180 and -90 <= latitude <= 90):
                     geometry_status = "invalid"
+                elif longitude == 0.0 and latitude == 0.0:
+                    geometry_status = SENTINEL_COORDINATES_STATUS
                 elif not (11.0 <= longitude <= 32.0 and -14.5 <= latitude <= 6.0):
                     geometry_status = "outside_country"
                 else:
@@ -249,7 +306,8 @@ class CeniRegistryService:
                 review_status=classification.review_status,
             ))
         rows = [asset.as_dict() for asset in assets]
-        apply_duplicate_analysis(rows)
+        batch_id = f"CENI-{self.source_hash[:12]}"
+        apply_quarantine_contract(rows, batch_id=batch_id)
         categories = Counter(row["normalized_category"] for row in rows)
         geometries = Counter(row["geometry_status"] for row in rows)
         attachments = Counter(row["administrative_attachment"]["status"] for row in rows)
@@ -265,7 +323,7 @@ class CeniRegistryService:
         return {
             "_meta": {"version": "national-ceni-registry-1.0.0", "generated_at": _now(), "data_first": True, "source_sha256": self.source_hash, "source_size_bytes": self.source_size, "record_count": len(rows)},
             "contract": {"asset_domain": "INSTITUTIONAL", "institution": "CENI", "forbidden_asset_type": "FDSU", "sdg_relations_active": False, "ntie_scores_added": False},
-            "statistics": {"total_raw": len(rows), "integrated": sum(1 for r in rows if r["geometry_status"] in {"valid", "suspect"}), "rejected": sum(1 for r in rows if r["geometry_status"] in {"invalid", "missing", "outside_country"}), "suspect": geometries["suspect"], "categories": dict(categories), "geometry_quality": dict(geometries), "administrative_attachments": dict(attachments), "duplicates": dict(duplicates), "provinces": dict(provinces_count), "territories": dict(territories_count), "classification": {"unclassified_before": unclassified_before, "unclassified_after": unclassified_after, "reduction_count": unclassified_before - unclassified_after, "reduction_rate": round((unclassified_before - unclassified_after) / unclassified_before, 6) if unclassified_before else 0, "categories_before": baseline_categories, "categories_after": dict(categories), "confidence": dict(confidence_counts), "top_rules": dict(rules_count.most_common()), "review_status": dict(review_count)}},
+            "statistics": {"total_raw": len(rows), "integrated": sum(1 for r in rows if r["geometry_status"] in MAPPABLE_GEOMETRY_STATUSES), "quarantined": geometries[SENTINEL_COORDINATES_STATUS], "quarantine_by_reason": {SENTINEL_COORDINATES_STATUS: geometries[SENTINEL_COORDINATES_STATUS]}, "rejected": sum(1 for r in rows if r["geometry_status"] in {"invalid", "missing", "outside_country"}), "suspect": geometries["suspect"], "categories": dict(categories), "geometry_quality": dict(geometries), "administrative_attachments": dict(attachments), "duplicates": dict(duplicates), "provinces": dict(provinces_count), "territories": dict(territories_count), "classification": {"unclassified_before": unclassified_before, "unclassified_after": unclassified_after, "reduction_count": unclassified_before - unclassified_after, "reduction_rate": round((unclassified_before - unclassified_after) / unclassified_before, 6) if unclassified_before else 0, "categories_before": baseline_categories, "categories_after": dict(categories), "confidence": dict(confidence_counts), "top_rules": dict(rules_count.most_common()), "review_status": dict(review_count)}},
             "assets": rows,
         }
 
