@@ -1946,6 +1946,33 @@ body.cartography-focus-mode #carto-focus-btn {
   font-weight: 700;
 }
 
+.national-summary { margin: 0 0 18px; padding: 20px; border: 1px solid rgba(56, 189, 248, 0.18); border-radius: 24px; background: linear-gradient(135deg, rgba(14, 165, 233, 0.08), rgba(15, 23, 42, 0.35)); }
+.national-summary-header { margin-bottom: 16px; }
+.national-kpi-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.national-kpi-card { display: grid; gap: 6px; min-height: 116px; padding: 16px; border: 1px solid rgba(148, 163, 184, 0.16); border-radius: 16px; background: rgba(15, 23, 42, 0.45); cursor: pointer; transition: transform .18s ease, border-color .18s ease; }
+.national-kpi-card:hover, .national-kpi-card:focus { transform: translateY(-2px); border-color: rgba(56, 189, 248, .65); outline: none; }
+.national-kpi-card > span { color: var(--text-muted); font-size: .82rem; text-transform: uppercase; letter-spacing: .05em; }
+.national-kpi-card > strong { font-size: 1.8rem; color: #f8fafc; }
+.national-kpi-card > small { color: #94a3b8; line-height: 1.35; }
+.administrative-coverage-card { margin-top: 16px; padding: 16px; border-radius: 16px; background: rgba(2, 6, 23, .3); }
+.administrative-coverage-card h3, .administrative-coverage-card p { margin: 0 0 8px; }
+.administrative-coverage-table { overflow-x: auto; }
+.administrative-coverage-table table { width: 100%; border-collapse: collapse; }
+.administrative-coverage-table th, .administrative-coverage-table td { padding: 9px 10px; border-bottom: 1px solid rgba(148, 163, 184, .12); text-align: left; }
+.administrative-coverage-note, .education-disclaimer { color: #fbbf24; font-size: .86rem; }
+.administrative-coverage-warning { display: block; max-width: 28rem; margin-top: .2rem; color: #fbbf24; font-size: .72rem; line-height: 1.25; }
+.education-referential { display: grid; gap: 16px; }
+.education-referential.hidden { display: none; }
+.education-kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.education-kpi-grid article { padding: 15px; border: 1px solid rgba(14, 165, 233, .2); border-radius: 14px; background: rgba(14, 165, 233, .06); }
+.education-kpi-grid span, .education-kpi-grid strong { display: block; }
+.education-kpi-grid strong { margin-top: 6px; font-size: 1.45rem; }
+.education-toolbar { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; }
+.education-toolbar label { display: grid; gap: 5px; }
+
+@media (max-width: 1000px) { .national-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .education-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 650px) { .national-kpi-grid, .education-kpi-grid { grid-template-columns: 1fr; } }
+
 .status-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(148, 163, 184, 0.08);

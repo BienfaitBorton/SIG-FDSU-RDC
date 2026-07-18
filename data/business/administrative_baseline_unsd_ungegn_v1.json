@@ -1,0 +1,20 @@
+{
+  "_meta": {"schema_version": "1.0.0", "registry_id": "rdc-administrative-baseline-unsd-ungegn-v1", "title": "Baseline administrative nationale de la RDC", "integration_date": "2026-07-18", "status": "reference_baseline", "is_2026_administrative_update": false},
+  "provenance": {
+    "source": "Référence administrative RDC retenue par le projet",
+    "organization": "UNSD / UNGEGN",
+    "reference_year": null,
+    "reference_version": "UNSD-UNGEGN-RDC-baseline-v1",
+    "notes": ["Baseline datée et versionnée pour mesurer la couverture du SIG.", "L'année de publication n'est pas renseignée dans la source projet disponible.", "Ces valeurs n'écrasent aucun référentiel géospatial et ne constituent pas une mise à jour administrative 2026."]
+  },
+  "levels": {
+    "provinces": {"label": "Provinces", "reference": 26, "comparable_with": "provinces"},
+    "villes": {"label": "Villes", "reference": 33, "comparable_with": "villes"},
+    "territoires": {"label": "Territoires", "reference": 145, "comparable_with": "territoires"},
+    "chefferies": {"label": "Chefferies", "reference": 259, "comparable_with": "chefferies", "comparison_note": "Le total SIG de 260 dépasse la référence de 259; cette anomalie doit être auditée avant toute interprétation de couverture."},
+    "secteurs": {"label": "Secteurs", "reference": 478, "comparable_with": "secteurs"},
+    "groupements": {"label": "Groupements", "reference": 6053, "comparable_with": "groupements"},
+    "villages": {"label": "Villages", "reference": 78855, "comparable_with": "localites", "comparison_note": "Le SIG regroupe villages et autres types de localités; la couverture est indicative et l'écart de nomenclature doit rester visible."}
+  },
+  "non_comparable": {"collectivites": "Ne pas comparer automatiquement les collectivités SIG à la somme secteurs + chefferies sans table d'équivalence validée."}
+}

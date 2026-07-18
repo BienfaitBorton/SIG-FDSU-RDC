@@ -36,6 +36,7 @@ from api.routes import (
     decision_engine,
     reference,
     health as health_routes,
+    education,
     geocoding,
     master,
     ccn,
@@ -577,32 +578,10 @@ def health() -> dict[str, str]:
 
 
 @app.get("/dashboard/summary", tags=["v0.7.0"])
-def dashboard_summary() -> dict[str, int]:
-    if use_database():
-        return {
-            "zones": db_count("zones"),
-            "provinces": db_count("provinces"),
-            "territories": db_count("territoires"),
-            "villes": db_count("villes"),
-            "collectivites": db_count("collectivites"),
-            "groupements": db_count("groupements"),
-            "localites": db_count("localites"),
-            "sites": db_count("sites"),
-            "missions": db_count("missions"),
-            "users": 0,
-        }
-    return {
-        "zones": 5,
-        "provinces": count_from_registry("provinces", 26),
-        "territories": count_from_registry("territoires", 145),
-        "villes": count_from_registry("villes", 11),
-        "collectivites": count_from_registry("collectivites", 733),
-        "groupements": count_from_registry("groupements", 1681),
-        "localites": count_from_registry("localites", 26710),
-        "sites": 0,
-        "missions": 0,
-        "users": 0,
-    }
+def dashboard_summary() -> dict[str, Any]:
+    from api.services import national_dashboard_service
+
+    return national_dashboard_service.build_summary(use_database=use_database())
 
 
 @app.get("/zones", tags=["v0.8.2"])
@@ -939,6 +918,7 @@ app.include_router(analysis.router, prefix="/api/analysis", tags=["Spatial Intel
 app.include_router(decision_engine.router, prefix="/api/decision", tags=["Moteur de Decision FDSU"])
 app.include_router(reference.router, prefix="/api/reference", tags=["National Reference Framework"])
 app.include_router(health_routes.router, prefix="/api/health", tags=["Referentiel Sante"])
+app.include_router(education.router, prefix="/api/education", tags=["Referentiel Education"])
 app.include_router(geocoding.router, prefix="/api/geocoding", tags=["Geocodage Intelligent FDSU"])
 app.include_router(master.router, prefix="/api/master", tags=["Referentiel National des Actifs FDSU"])
 app.include_router(ccn.router, prefix="/api/ccn", tags=["Capability CCN (fondations)"])

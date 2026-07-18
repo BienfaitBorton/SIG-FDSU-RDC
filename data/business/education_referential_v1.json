@@ -1,0 +1,16 @@
+{
+  "_meta": {"schema_version": "1.0.0", "registry_id": "education-referential-provisional-v1", "title": "Référentiel Éducation provisoire", "generated_from": "ceni_registry_v1", "generated_at": "2026-07-18", "official_ministry_registry": false},
+  "sources": [{"id": "CENI", "role": "source_actuelle_principale", "path": "data/reports/ceni_official/ceni_registry_v1.json", "source_sha256": "C3762911DF483D0B291145AF31CF612A30332039BB3D7BFD86FA894C650ABE9D", "classification_engine": "fr-1.0.0"}],
+  "future_source_types": ["Ministère de l'Éducation", "Enquêtes terrain", "Partenaires institutionnels", "Autres référentiels validés"],
+  "statistics": {
+    "establishments": 23604,
+    "by_subtype": {"ECOLE_PRIMAIRE": 17417, "INSTITUT": 4677, "COMPLEXE_SCOLAIRE": 390, "COLLEGE": 669, "LYCEE": 323, "ENSEIGNEMENT_SUPERIEUR": 17, "MATERNELLE": 12, "AUTRE_ETABLISSEMENT_SCOLAIRE": 99},
+    "by_quality_level": {"VALIDE": 4736, "PROBABLE": 18849, "A_VERIFIER": 19}
+  },
+  "quality_rules": {
+    "VALIDE": "Classification certaine à confiance très élevée.",
+    "PROBABLE": "Classification forte issue de DNAI/NSCE, à consolider avec une source Éducation.",
+    "A_VERIFIER": "Classification ambiguë ou confiance moyenne; aucune validation automatique.",
+    "cs_doctrine": "En contexte CENI, CS/C.S privilégie Complexe scolaire; les indices sanitaires explicites priment et les conflits forts restent à vérifier ou non résolus."
+  }
+}

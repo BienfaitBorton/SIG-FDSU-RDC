@@ -77,6 +77,10 @@
           <span class="nav-icon">CENI</span>
           <span>Référentiel National CENI</span>
         </button>
+        <button class="nav-item" data-module="education_referential" data-route="education-referential">
+          <span class="nav-icon">ÉDU</span>
+          <span>Référentiel Éducation</span>
+        </button>
         <button class="nav-item" data-module="dnai" data-route="dnai">
           <span class="nav-icon">DNAI</span>
           <span>Dictionnaire institutionnel</span>
@@ -213,6 +217,26 @@
                 <p class="summary-value" id="stat-utilisateurs">—</p>
               </article>
             </div>
+
+            <section class="national-summary" aria-labelledby="national-summary-title">
+              <div class="panel-header national-summary-header">
+                <div><p class="panel-label">Synthèse nationale</p><h2 id="national-summary-title">Données stratégiques disponibles</h2></div>
+                <span class="panel-badge">Agrégats légers</span>
+              </div>
+              <div class="national-kpi-grid">
+                <article class="national-kpi-card" data-national-route="sites" tabindex="0" title="Programme national FDSU, sans additionner les vagues incluses"><span>Sites FDSU</span><strong id="national-kpi-fdsu">—</strong><small>Programme national</small></article>
+                <article class="national-kpi-card" data-national-route="ceni-registry" tabindex="0" title="Sites CENI intégrés et exploitables dans le SIG"><span>Sites CENI</span><strong id="national-kpi-ceni">—</strong><small id="national-kpi-ceni-note">Intégrés dans le SIG</small></article>
+                <article class="national-kpi-card" data-national-route="education-referential" tabindex="0" title="Projection métier dérivée des classifications CENI"><span>Établissements scolaires</span><strong id="national-kpi-education">—</strong><small>Source actuelle principale : Sites CENI classifiés</small></article>
+                <article class="national-kpi-card" data-national-route="decision-view" tabindex="0" title="Référentiel sanitaire national intégré"><span>Établissements de santé</span><strong id="national-kpi-health">—</strong><small>Référentiel Santé</small></article>
+                <article class="national-kpi-card" data-national-route="decision-view" tabindex="0" title="Infrastructures ponctuelles intégrées; lignes et polygones présentés séparément"><span>Infrastructures télécom</span><strong id="national-kpi-telecom">—</strong><small id="national-kpi-telecom-note">Infrastructures ponctuelles</small></article>
+                <article class="national-kpi-card" data-national-route="referentiel" tabindex="0" title="Couverture présentée séparément pour chaque niveau comparable"><span>Couverture du référentiel administratif</span><strong id="national-kpi-admin">Par niveau</strong><small>Sans taux global artificiel</small></article>
+              </div>
+              <div class="administrative-coverage-card">
+                <div><h3>Couverture du référentiel administratif</h3><p>Référence nationale et données réellement intégrées dans le SIG.</p></div>
+                <div class="administrative-coverage-table"><table><thead><tr><th>Niveau</th><th>Intégré SIG</th><th>Référence nationale</th><th>Couverture</th></tr></thead><tbody id="administrative-coverage-body"><tr><td colspan="4">Chargement des agrégats…</td></tr></tbody></table></div>
+                <p class="administrative-coverage-note" id="administrative-coverage-note">Les collectivités ne sont pas comparées automatiquement aux secteurs et chefferies.</p>
+              </div>
+            </section>
 
             <article class="map-card">
               <div class="panel-header">
@@ -1768,7 +1792,7 @@
 
         <div class="module-panel hidden ceni-registry" id="ceni-registry-panel" data-module="ceni_registry">
           <header class="ceni-hero">
-            <div><p class="panel-label">Référentiel institutionnel national</p><h2>Référentiel National CENI</h2><p>Lecture nationale, qualité et rattachements des objets issus du KMZ officiel.</p></div>
+            <div><p class="panel-label">Référentiel institutionnel national</p><h2>Référentiel National CENI</h2><p>Lecture nationale, qualité et rattachements des Sites CENI issus du KMZ officiel.</p></div>
             <div class="ceni-hero-meta"><span class="panel-badge" id="ceni-version">v1.0.0</span><span class="ceni-live"><i></i>Données officielles chargées</span></div>
           </header>
 
@@ -1779,7 +1803,7 @@
               <label class="ceni-field ceni-field--search"><span>Recherche</span><input id="ceni-search" type="search" placeholder="Nom ou identifiant…" aria-label="Rechercher dans le référentiel CENI"></label>
               <label class="ceni-field"><span>Catégorie</span><select id="ceni-category" aria-label="Filtrer par catégorie"><option value="">Toutes</option></select></label>
               <label class="ceni-field"><span>Province</span><select id="ceni-province" aria-label="Filtrer par province"><option value="">Toutes</option></select></label>
-              <label class="ceni-field"><span>Qualité</span><select id="ceni-quality" aria-label="Filtrer par qualité"><option value="">Toutes</option><option value="valid">Valide</option><option value="suspect">Suspecte</option><option value="invalid">Invalide</option><option value="outside_country">Hors pays</option><option value="missing">Manquante</option></select></label>
+            <label class="ceni-field"><span>Qualité</span><select id="ceni-quality" aria-label="Filtrer par qualité"><option value="">Toutes</option><option value="valid">Valide</option><option value="suspect">Suspecte</option><option value="coordinates_missing_or_sentinel">En quarantaine — coordonnées non exploitables</option><option value="invalid">Invalide</option><option value="outside_country">Hors pays</option><option value="missing">Manquante</option></select></label>
               <button type="button" class="primary-button ceni-action" id="ceni-apply">Appliquer</button>
               <button type="button" class="secondary-button ceni-action" id="ceni-reset">Réinitialiser</button>
             </div>
@@ -1796,7 +1820,7 @@
                 <button type="button" data-ceni-map="basemap" title="Changer de fond" aria-label="Changer de fond">◐</button>
                 <button type="button" data-ceni-map="export" title="Exporter l’image" aria-label="Exporter la carte en image">⇩</button>
               </div>
-              <div class="ceni-map-counter"><strong id="ceni-visible-count">0</strong><span>objets visibles</span></div>
+              <div class="ceni-map-counter"><strong id="ceni-visible-count">0</strong><span>Sites CENI visibles</span></div>
               <div class="ceni-map-legend" id="ceni-map-legend"><strong>Légende</strong></div>
             </div>
             <aside class="ceni-analytics" id="ceni-analytics" aria-label="Analyse nationale CENI">
@@ -1807,13 +1831,13 @@
               <div class="ceni-analytics-block"><h4>Avant / après classification</h4><div id="ceni-classification-progress"></div></div>
               <div class="ceni-analytics-block"><h4>Confiance des déductions</h4><div id="ceni-confidence-bars"></div></div>
               <div class="ceni-analytics-block"><h4>Règles les plus appliquées</h4><div id="ceni-rule-bars"></div></div>
-              <div class="ceni-analytics-block"><h4>Objets à vérifier</h4><div id="ceni-review-count"></div></div>
+              <div class="ceni-analytics-block"><h4>Sites à vérifier</h4><div id="ceni-review-count"></div></div>
               <div class="ceni-analytics-columns"><div><h4>Top provinces</h4><ol id="ceni-top-provinces"></ol></div><div><h4>Top territoires</h4><ol id="ceni-top-territories"></ol></div></div>
             </aside>
           </section>
 
           <section class="ceni-table-card">
-            <header class="ceni-table-header"><div><p class="panel-label">Exploration détaillée</p><h3>Objets CENI</h3></div><div class="ceni-table-actions"><label><span class="sr-only">Recherche instantanée</span><input id="ceni-table-search" type="search" placeholder="Filtrer les lignes…"></label><details class="ceni-columns"><summary>Colonnes</summary><div id="ceni-column-picker"></div></details></div></header>
+            <header class="ceni-table-header"><div><p class="panel-label">Exploration détaillée</p><h3>Sites CENI</h3></div><div class="ceni-table-actions"><label><span class="sr-only">Recherche instantanée</span><input id="ceni-table-search" type="search" placeholder="Filtrer les lignes…"></label><details class="ceni-columns"><summary>Colonnes</summary><div id="ceni-column-picker"></div></details></div></header>
             <div class="ceni-table-scroll">
               <table class="ceni-table" id="ceni-table">
                 <thead><tr><th data-ceni-column="asset_uid" data-sort="asset_uid">Identifiant</th><th data-ceni-column="name" data-sort="name">Nom source</th><th data-ceni-column="normalized_category" data-sort="normalized_category">Catégorie</th><th data-ceni-column="province" data-sort="province">Province</th><th data-ceni-column="territory" data-sort="territory">Territoire</th><th data-ceni-column="geometry_status" data-sort="geometry_status">Qualité</th><th data-ceni-column="classification_confidence" data-sort="classification_confidence">Confiance</th></tr></thead>
@@ -1824,6 +1848,22 @@
           </section>
 
           <aside id="ceni-detail" class="ceni-detail-drawer" aria-label="Fiche détaillée CENI" aria-hidden="true"><button type="button" id="ceni-detail-close" aria-label="Fermer la fiche">✕</button><div id="ceni-detail-body"></div></aside>
+        </div>
+
+        <div class="module-panel hidden education-referential" id="education-referential-panel" data-module="education_referential">
+          <div class="panel-header">
+            <div><p class="panel-label">Projection métier provisoire</p><h2>Référentiel Éducation</h2><p>Établissements scolaires dérivés des Sites CENI classifiés, sans modification de la source CENI.</p></div>
+            <span class="panel-badge">Source principale : CENI</span>
+          </div>
+          <p class="education-disclaimer">Ce référentiel n'est pas le registre officiel exhaustif du Ministère de l'Éducation. Il est conçu pour accueillir ultérieurement des sources ministérielles, terrain et partenaires.</p>
+          <div class="education-kpi-grid" id="education-kpis"><p>Chargement des agrégats à l'ouverture…</p></div>
+          <div class="education-toolbar">
+            <label>Sous-type<select id="education-subtype"><option value="">Tous</option><option value="ECOLE_PRIMAIRE">École primaire</option><option value="INSTITUT">Institut</option><option value="COMPLEXE_SCOLAIRE">Complexe scolaire</option><option value="COLLEGE">Collège</option><option value="LYCEE">Lycée</option><option value="ENSEIGNEMENT_SUPERIEUR">Enseignement supérieur</option></select></label>
+            <label>Qualité<select id="education-quality"><option value="">Tous les niveaux</option><option value="VALIDE">Validé</option><option value="PROBABLE">Probable</option><option value="A_VERIFIER">À vérifier</option></select></label>
+            <button class="primary-button" id="education-apply" type="button">Appliquer</button>
+          </div>
+          <p id="education-status" class="panel-message" aria-live="polite"></p>
+          <div class="table-wrapper"><table class="data-table"><thead><tr><th>Établissement scolaire</th><th>Sous-type</th><th>Province</th><th>Territoire</th><th>Confiance</th><th>Statut</th><th>Source</th></tr></thead><tbody id="education-table-body"><tr><td colspan="7">Ouvrez le module pour charger les premières lignes.</td></tr></tbody></table></div>
         </div>
 
         <div class="module-panel hidden ntie-panel" id="national-territorial-intelligence-panel" data-module="national_territorial_intelligence">

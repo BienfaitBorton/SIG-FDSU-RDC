@@ -14,4 +14,7 @@ test('le chargement initial diffère les couches cartographiques secondaires', a
   for (const layer of ['territoires', 'collectivites', 'groupements', 'localites', 'sites', 'missions']) {
     expect(apiRequests.some((url) => url.includes(`/map/layers/${layer}`))).toBeFalsy();
   }
+  expect(apiRequests.some((url) => url.includes('/api/ceni/sites'))).toBeFalsy();
+  expect(apiRequests.some((url) => url.includes('/api/education/establishments'))).toBeFalsy();
+  expect(apiRequests.some((url) => url.includes('/api/decision/'))).toBeFalsy();
 });

@@ -147,6 +147,8 @@ const ROUTE_TO_MODULE = {
   national_asset_registry: 'national_asset_registry',
   'ceni-registry': 'ceni_registry',
   ceni_registry: 'ceni_registry',
+  'education-referential': 'education_referential',
+  education_referential: 'education_referential',
   dnai: 'dnai',
   ntil: 'ntil',
   'national-territorial-intelligence': 'national_territorial_intelligence',
@@ -195,6 +197,7 @@ const MODULE_TO_ROUTE = {
   gestion_referentiels: 'registry',
   national_asset_registry: 'national-asset-registry',
   ceni_registry: 'ceni-registry',
+  education_referential: 'education-referential',
   dnai: 'dnai',
   ntil: 'ntil',
   national_territorial_intelligence: 'national-territorial-intelligence',
@@ -378,6 +381,7 @@ const moduleNames = {
   gestion_referentiels: 'Gestion des Référentiels',
   national_asset_registry: 'National FDSU Asset Registry',
   national_territorial_intelligence: 'National Territorial Intelligence',
+  education_referential: 'Référentiel Éducation',
   explorateur_sources: 'Explorateur de Sources',
   sites: 'Sites FDSU',
   decision: 'Aide à la décision',
@@ -750,6 +754,10 @@ function setActiveModule(moduleKey) {
 
   if (normalizedModule === 'ceni_registry') {
     initializeCeniRegistry();
+  }
+
+  if (normalizedModule === 'education_referential') {
+    initializeEducationReferential();
   }
 
   if (normalizedModule === 'dnai') {
@@ -9625,6 +9633,7 @@ function getDashboardStats() {
       updateSummaryCard('stat-sites')(Number(data.sites) || 0);
       updateSummaryCard('stat-missions')(Number(data.missions) || 0);
       updateSummaryCard('stat-utilisateurs')(Number(data.users) || 0);
+      renderNationalDashboardSummary(data);
     });
     return;
   }
@@ -9873,6 +9882,35 @@ function updateSummaryCard(id) {
   };
 }
 
+function formatNationalValue(value) {
+  return typeof value === 'number' && Number.isFinite(value) ? value.toLocaleString('fr-FR') : 'Non disponible';
+}
+
+function renderNationalDashboardSummary(data) {
+  const kpis = data?.national_kpis || {};
+  const values = {'#national-kpi-fdsu': kpis.fdsu_sites?.value, '#national-kpi-ceni': kpis.ceni_sites?.value, '#national-kpi-education': kpis.education_establishments?.value, '#national-kpi-health': kpis.health_facilities?.value, '#national-kpi-telecom': kpis.telecom_infrastructure?.value};
+  Object.entries(values).forEach(([selector, value]) => { const host = document.querySelector(selector); if (host) host.textContent = formatNationalValue(value); });
+  const ceniNote = document.querySelector('#national-kpi-ceni-note');
+  if (ceniNote && kpis.ceni_sites) ceniNote.textContent = `Source ${formatNationalValue(kpis.ceni_sites.source_available)} · ${formatNationalValue(kpis.ceni_sites.quarantined_coordinates)} en quarantaine`;
+  const telecomNote = document.querySelector('#national-kpi-telecom-note');
+  if (telecomNote && kpis.telecom_infrastructure) telecomNote.textContent = `${formatNationalValue(kpis.telecom_infrastructure.geospatial_elements_total)} éléments géospatiaux intégrés`;
+  const rows = Array.isArray(data?.administrative_coverage) ? data.administrative_coverage : [];
+  const body = document.querySelector('#administrative-coverage-body');
+  if (body) body.innerHTML = rows.map((row) => {
+    const coverage = row.coverage_percent == null ? 'Non comparable' : `${Number(row.coverage_percent).toLocaleString('fr-FR')} %`;
+    const warning = row.level === 'chefferies' ? 'Anomalie à auditer' : row.comparison_note;
+    return `<tr><td>${escapeHtml(row.label)}</td><td>${formatNationalValue(row.integrated)}</td><td>${formatNationalValue(row.reference)}</td><td>${coverage}${warning ? `<small class="administrative-coverage-warning">${escapeHtml(warning)}</small>` : ''}</td></tr>`;
+  }).join('');
+  const adminKpi = document.querySelector('#national-kpi-admin'); if (adminKpi) adminKpi.textContent = 'Par niveau';
+  document.querySelectorAll('[data-national-route]').forEach((card) => {
+    if (card.dataset.bound === 'true') return;
+    card.dataset.bound = 'true';
+    const open = () => navigateTo(card.dataset.nationalRoute);
+    card.addEventListener('click', open);
+    card.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') open(); });
+  });
+}
+
 function updateZoneCount(zone, value) {
   const element = document.querySelector(`#zone-${zone}`);
   if (!element) return;
@@ -9967,6 +10005,41 @@ function initializeNationalAssetRegistry() {
   });
 }
 
+const educationReferentialState = { initialized: false, loaded: false };
+const EDUCATION_SUBTYPE_LABELS = { ECOLE_PRIMAIRE: 'Écoles primaires', INSTITUT: 'Instituts', COMPLEXE_SCOLAIRE: 'Complexes scolaires', COLLEGE: 'Collèges', LYCEE: 'Lycées', ENSEIGNEMENT_SUPERIEUR: 'Enseignement supérieur', MATERNELLE: 'Maternelles', AUTRE_ETABLISSEMENT_SCOLAIRE: 'Autres établissements' };
+
+function renderEducationStatistics(stats) {
+  const host = document.querySelector('#education-kpis'); if (!host) return;
+  const quality = stats.by_quality_level || {};
+  host.innerHTML = [
+    ['Établissements scolaires', stats.establishments], ['Validés', quality.VALIDE], ['Probables', quality.PROBABLE], ['À vérifier', quality.A_VERIFIER], ['Potentiels en quarantaine', stats.quarantined_school_candidates],
+  ].map(([label, value]) => `<article><span>${escapeHtml(label)}</span><strong>${formatNationalValue(Number(value))}</strong></article>`).join('');
+}
+
+function renderEducationRows(payload) {
+  const body = document.querySelector('#education-table-body'); if (!body) return;
+  body.innerHTML = (payload.establishments || []).map((row) => `<tr><td><strong>${escapeHtml(row.original_name || 'Sans nom')}</strong></td><td>${escapeHtml(EDUCATION_SUBTYPE_LABELS[row.education_subtype] || row.education_subtype)}</td><td>${escapeHtml(row.province || 'Non renseignée')}</td><td>${escapeHtml(row.territory || 'Non renseigné')}</td><td>${escapeHtml(row.confidence_label || 'Non renseignée')}</td><td>${escapeHtml(row.validation_status || 'Non renseigné')}</td><td>Sites CENI</td></tr>`).join('');
+  const status = document.querySelector('#education-status'); if (status) status.textContent = `${formatNationalValue(payload.total)} établissement(s) scolaire(s) · 100 premières lignes affichées`;
+}
+
+function loadEducationEstablishments() {
+  const params = new URLSearchParams({ limit: '100' });
+  const subtype = document.querySelector('#education-subtype')?.value; const quality = document.querySelector('#education-quality')?.value;
+  if (subtype) params.set('subtype', subtype); if (quality) params.set('quality', quality);
+  const status = document.querySelector('#education-status'); if (status) status.textContent = 'Chargement des établissements scolaires…';
+  return fetchApiJson(`/api/education/establishments?${params}`).then(renderEducationRows).catch((error) => { if (status) status.textContent = `Référentiel Éducation indisponible : ${error.message}`; });
+}
+
+function initializeEducationReferential() {
+  if (!educationReferentialState.initialized) {
+    educationReferentialState.initialized = true;
+    document.querySelector('#education-apply')?.addEventListener('click', loadEducationEstablishments);
+  }
+  if (educationReferentialState.loaded) return;
+  educationReferentialState.loaded = true;
+  Promise.all([fetchApiJson('/api/education/statistics'), loadEducationEstablishments()]).then(([stats]) => renderEducationStatistics(stats)).catch(() => { educationReferentialState.loaded = false; });
+}
+
 const CENI_CATEGORY_STYLE = {
   UNCLASSIFIED: { color: '#94a3b8', icon: '❓', label: 'Non classifié' },
   PUBLIC_BUILDING: { color: '#8b5cf6', icon: '🏢', label: 'Bâtiment public' },
@@ -9990,7 +10063,7 @@ function ceniPercent(value, total) { return total ? `${(Number(value || 0) * 100
 function ceniStyle(category) { return CENI_CATEGORY_STYLE[category] || CENI_CATEGORY_STYLE.OTHER; }
 function ceniLabelFr(value, type) {
   if (type === 'category') return ceniStyle(value).label;
-  const labels = { valid: 'Valide', suspect: 'À vérifier', invalid: 'Invalide', outside_country: 'Hors du pays', missing: 'Géométrie manquante', resolved: 'Résolu', partial: 'Partiel', unresolved: 'Non résolu' };
+  const labels = { valid: 'Valide', suspect: 'À vérifier', coordinates_missing_or_sentinel: 'En quarantaine — coordonnées non exploitables', invalid: 'Invalide', outside_country: 'Hors du pays', missing: 'Géométrie manquante', resolved: 'Résolu', partial: 'Partiel', unresolved: 'Non résolu' };
   return labels[value] || value || 'Non disponible';
 }
 function ceniRuleLabelFr(ruleId) {
@@ -10033,7 +10106,7 @@ function renderCeniViewport() {
       const lat = group.reduce((sum, site) => sum + Number(site.latitude), 0) / group.length; const lon = group.reduce((sum, site) => sum + Number(site.longitude), 0) / group.length;
       const marker = window.L.marker([lat, lon], { icon: ceniMapIcon(group[0], group.length), keyboard: true }).addTo(state.layer);
       if (group.length === 1) marker.bindTooltip(escapeHtml(group[0].name || group[0].asset_uid)).on('click', () => renderCeniDetail(group[0]));
-      else marker.bindTooltip(`${ceniFormat(group.length)} objets`).on('click', () => state.map.setView([lat, lon], Math.min(12, zoom + 2)));
+      else marker.bindTooltip(`${ceniFormat(group.length)} Sites CENI`).on('click', () => state.map.setView([lat, lon], Math.min(12, zoom + 2)));
     });
   } else {
     visible.slice(0, 4000).forEach((site) => window.L.marker([site.latitude, site.longitude], { icon: ceniMapIcon(site), keyboard: true }).bindTooltip(escapeHtml(site.name || site.asset_uid)).on('click', () => renderCeniDetail(site)).addTo(state.layer));
@@ -10056,17 +10129,17 @@ function renderCeniLegend() {
 function ceniBarRows(entries, total, limit = 6) { return entries.sort((a, b) => Number(b[1]) - Number(a[1])).slice(0, limit).map(([label, value]) => `<div class="ceni-bar-row"><p><span>${escapeHtml(label)}</span><strong>${ceniFormat(value)}</strong></p><i><b style="width:${Math.max(2, Number(value) * 100 / (total || 1))}%"></b></i></div>`).join(''); }
 
 function renderCeniAnalytics(stats) {
-  const total = Number(stats.total_raw || 0); const valid = Number(stats.geometry_quality?.valid || 0); const suspect = Number(stats.suspect || 0); const rejected = Number(stats.rejected || 0);
+  const total = Number(stats.total_raw || 0); const valid = Number(stats.geometry_quality?.valid || 0); const suspect = Number(stats.suspect || 0); const quarantined = Number(stats.quarantined || 0); const rejected = Number(stats.rejected || 0);
   const validPct = total ? valid * 100 / total : 0; const suspectPct = total ? suspect * 100 / total : 0;
   const donut = document.querySelector('#ceni-quality-donut'); if (donut) { donut.style.setProperty('--valid', `${validPct}%`); donut.style.setProperty('--suspect', `${validPct + suspectPct}%`); donut.querySelector('span').innerHTML = `<strong>${validPct.toLocaleString('fr-FR', { maximumFractionDigits: 1 })}%</strong><small>valides</small>`; }
-  const qualityLegend = document.querySelector('#ceni-quality-legend'); if (qualityLegend) qualityLegend.innerHTML = `<p><i class="is-valid"></i>Valides <strong>${ceniFormat(valid)}</strong></p><p><i class="is-suspect"></i>Suspects <strong>${ceniFormat(suspect)}</strong></p><p><i class="is-rejected"></i>Rejetés <strong>${ceniFormat(rejected)}</strong></p>`;
+  const qualityLegend = document.querySelector('#ceni-quality-legend'); if (qualityLegend) qualityLegend.innerHTML = `<p><i class="is-valid"></i>Valides <strong>${ceniFormat(valid)}</strong></p><p><i class="is-suspect"></i>Suspects <strong>${ceniFormat(suspect)}</strong></p><p><i class="is-rejected"></i>En quarantaine — coordonnées non exploitables <strong>${ceniFormat(quarantined)}</strong></p>${rejected ? `<p><i class="is-rejected"></i>Autres non exploitables <strong>${ceniFormat(rejected)}</strong></p>` : ''}`;
   const attachments = Object.entries(stats.administrative_attachments || {}); const attachmentHost = document.querySelector('#ceni-attachment-bars'); if (attachmentHost) attachmentHost.innerHTML = ceniBarRows(attachments, total, 4);
   const categoryHost = document.querySelector('#ceni-category-bars'); if (categoryHost) categoryHost.innerHTML = ceniBarRows(Object.entries(stats.categories || {}).map(([key, value]) => [ceniStyle(key).label, value]), total, 8);
   const classification = stats.classification || {}; const before = Number(classification.unclassified_before || total); const after = Number(classification.unclassified_after || 0);
-  const progress = document.querySelector('#ceni-classification-progress'); if (progress) progress.innerHTML = ceniBarRows([['Non classifiés avant', before], ['Non classifiés après', after], ['Objets classifiés', Number(classification.reduction_count || 0)]], before, 3) + `<p class="ceni-classification-rate"><strong>${ceniPercent(classification.reduction_count, before)}</strong> de réduction</p>`;
+  const progress = document.querySelector('#ceni-classification-progress'); if (progress) progress.innerHTML = ceniBarRows([['Non classifiés avant', before], ['Non classifiés après', after], ['Sites classifiés', Number(classification.reduction_count || 0)]], before, 3) + `<p class="ceni-classification-rate"><strong>${ceniPercent(classification.reduction_count, before)}</strong> de réduction</p>`;
   const confidence = document.querySelector('#ceni-confidence-bars'); if (confidence) confidence.innerHTML = ceniBarRows(Object.entries(classification.confidence || {}), total, 5);
   const rules = document.querySelector('#ceni-rule-bars'); if (rules) rules.innerHTML = ceniBarRows(Object.entries(classification.top_rules || {}).map(([key, value]) => [key === 'Aucune règle' ? 'Aucune règle applicable' : ceniRuleLabelFr(key), value]), total, 5);
-  const review = document.querySelector('#ceni-review-count'); if (review) review.innerHTML = `<strong>${ceniFormat(classification.review_status?.['À vérifier'] || 0)}</strong><span> classifications prudentes à soumettre à validation humaine</span>`;
+  const review = document.querySelector('#ceni-review-count'); if (review) review.innerHTML = `<strong>${ceniFormat(classification.review_status?.['À vérifier'] || 0)}</strong><span> Sites CENI à soumettre à validation humaine</span>`;
   [['#ceni-top-provinces', stats.provinces], ['#ceni-top-territories', stats.territories]].forEach(([selector, data]) => { const host = document.querySelector(selector); if (host) host.innerHTML = Object.entries(data || {}).filter(([name]) => name !== 'unresolved').sort((a, b) => Number(b[1]) - Number(a[1])).slice(0, 5).map(([name, value]) => `<li><span>${escapeHtml(name)}</span><strong>${ceniFormat(value)}</strong></li>`).join(''); });
 }
 
@@ -10081,14 +10154,14 @@ function renderCeniTable() {
   body?.querySelectorAll('[data-ceni-uid]').forEach((row) => { const open = () => renderCeniDetail(pageRows.find((site) => site.asset_uid === row.dataset.ceniUid)); row.addEventListener('click', open); row.addEventListener('keydown', (event) => { if (event.key === 'Enter') open(); }); });
   state.hiddenColumns.forEach((key) => document.querySelectorAll(`[data-ceni-column="${key}"]`).forEach((cell) => cell.setAttribute('hidden', '')));
   const label = document.querySelector('#ceni-page-label'); if (label) label.textContent = `Page ${state.page} / ${pages}`; const prev = document.querySelector('#ceni-prev'); const next = document.querySelector('#ceni-next'); if (prev) prev.disabled = state.page <= 1; if (next) next.disabled = state.page >= pages;
-  const status = document.querySelector('#ceni-status'); if (status) status.textContent = `${ceniFormat(rows.length)} objet(s) · lignes ${rows.length ? start + 1 : 0}–${Math.min(start + state.pageSize, rows.length)}`;
+  const status = document.querySelector('#ceni-status'); if (status) status.textContent = `${ceniFormat(rows.length)} Site(s) CENI · lignes ${rows.length ? start + 1 : 0}–${Math.min(start + state.pageSize, rows.length)}`;
 }
 
 function renderCeniKpis(stats) {
   const total = Number(stats.total_raw || 0); const cards = [
     { label: 'Total brut', value: total, note: 'Placemark', icon: '◉', tone: 'cyan' },
     { label: 'Intégrés', value: stats.integrated, note: ceniPercent(stats.integrated, total), icon: '✓', tone: 'green' },
-    { label: 'Rejetés', value: stats.rejected, note: 'Hors emprise', icon: '!', tone: 'red' },
+    { label: 'En quarantaine', value: stats.quarantined, note: 'Coordonnées non exploitables', icon: '!', tone: 'red' },
     { label: 'Suspects', value: stats.suspect, note: 'Géométries', icon: '△', tone: 'amber' },
     { label: 'Doublons', value: stats.duplicates?.exact, note: 'Conservés', icon: '⧉', tone: 'violet' },
     { label: 'Rattachements', value: stats.administrative_attachments?.resolved, note: 'Collectivité / Territoire', icon: '⌖', tone: 'blue' },
@@ -10111,7 +10184,7 @@ function resetCeniFilters() { ['#ceni-search', '#ceni-category', '#ceni-province
 function exportCeniMapImage() {
   const map = ceniRegistryState.map; if (!map) return; const size = map.getSize(); const canvas = document.createElement('canvas'); canvas.width = size.x; canvas.height = size.y; const ctx = canvas.getContext('2d'); ctx.fillStyle = '#0b1220'; ctx.fillRect(0, 0, size.x, size.y); const bounds = map.getBounds();
   ceniRegistryState.sites.filter((site) => site.latitude != null && bounds.contains([site.latitude, site.longitude])).slice(0, 12000).forEach((site) => { const point = map.latLngToContainerPoint([site.latitude, site.longitude]); ctx.fillStyle = ceniStyle(site.normalized_category).color; ctx.beginPath(); ctx.arc(point.x, point.y, 2.2, 0, Math.PI * 2); ctx.fill(); });
-  ctx.fillStyle = '#e2e8f0'; ctx.font = 'bold 18px sans-serif'; ctx.fillText('Référentiel National CENI', 18, 28); ctx.font = '12px sans-serif'; ctx.fillText(`${document.querySelector('#ceni-visible-count')?.textContent || 0} objets visibles · export SIG-FDSU RDC`, 18, 48); const link = document.createElement('a'); link.download = 'referentiel-national-ceni.png'; link.href = canvas.toDataURL('image/png'); link.click();
+  ctx.fillStyle = '#e2e8f0'; ctx.font = 'bold 18px sans-serif'; ctx.fillText('Référentiel National CENI', 18, 28); ctx.font = '12px sans-serif'; ctx.fillText(`${document.querySelector('#ceni-visible-count')?.textContent || 0} Sites CENI visibles · export SIG-FDSU RDC`, 18, 48); const link = document.createElement('a'); link.download = 'referentiel-national-ceni.png'; link.href = canvas.toDataURL('image/png'); link.click();
 }
 
 function handleCeniMapAction(action) { const map = ceniRegistryState.map; if (!map) return; if (action === 'fullscreen') { document.querySelector('#ceni-map-stage')?.classList.toggle('is-fullscreen'); window.setTimeout(() => map.invalidateSize(), 100); } else if (action === 'reset') map.fitBounds(ceniRegistryState.defaultView); else if (action === 'basemap') document.querySelector('#ceni-map-stage')?.classList.toggle('is-light'); else if (action === 'export') exportCeniMapImage(); else if (action === 'locate' && navigator.geolocation) navigator.geolocation.getCurrentPosition((position) => map.setView([position.coords.latitude, position.coords.longitude], 12)); }
