@@ -495,9 +495,14 @@
                         <span class="cartography-layer-group-title">Télécommunications</span>
                         <ul class="cartography-layer-group-list">
                           <li><label><input type="checkbox" data-layer="telecom_vodacom" /> Sites Vodacom</label></li>
-                          <li><label><input type="checkbox" data-layer="telecom_orange" /> Infrastructures Orange</label></li>
-                          <li><label><input type="checkbox" data-layer="telecom_fiber_mw" /> Fibre / MW</label></li>
+                          <li><label><input type="checkbox" data-layer="telecom_orange" /> Sites Orange</label></li>
+                          <li><label><input type="checkbox" data-layer="telecom_airtel" /> Sites Airtel</label></li>
+                          <li><label><input type="checkbox" data-layer="telecom_africell" /> Sites Africell</label></li>
+                          <li><label><input type="checkbox" data-layer="telecom_mno_planned" /> Sites MNO Planned</label></li>
+                          <li><label><input type="checkbox" data-layer="telecom_fiber" /> Fibre</label></li>
+                          <li><label><input type="checkbox" data-layer="telecom_microwave" /> Microwave / MW</label></li>
                           <li><label><input type="checkbox" data-layer="telecom_fiberco" /> Fiberco</label></li>
+                          <li><label><input type="checkbox" data-layer="telecom_fiber_mw" /> Fibre / MW (combiné)</label></li>
                           <li><label><input type="checkbox" data-layer="telecom_fttx" /> FTTX</label></li>
                           <li><label><input type="checkbox" data-layer="routes_principales" /> Routes principales</label></li>
                         </ul>
@@ -573,6 +578,30 @@
                         <div class="cartography-legend-item">
                           <button type="button" data-legend-toggle="telecom_orange" aria-pressed="false"><span class="legend-swatch legend-telecom-orange"></span> Orange</button>
                           <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.9" data-legend-opacity="telecom_orange" aria-label="Transparence Orange" />
+                        </div>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="telecom_airtel" aria-pressed="false"><span class="legend-swatch legend-telecom-airtel"></span> Airtel</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.9" data-legend-opacity="telecom_airtel" aria-label="Transparence Airtel" />
+                        </div>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="telecom_africell" aria-pressed="false"><span class="legend-swatch legend-telecom-africell"></span> Africell</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.9" data-legend-opacity="telecom_africell" aria-label="Transparence Africell" />
+                        </div>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="telecom_mno_planned" aria-pressed="false"><span class="legend-swatch legend-telecom-planned"></span> MNO Planned</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.85" data-legend-opacity="telecom_mno_planned" aria-label="Transparence MNO Planned" />
+                        </div>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="telecom_fiber" aria-pressed="false"><span class="legend-swatch legend-telecom-fiber"></span> Fibre</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.85" data-legend-opacity="telecom_fiber" aria-label="Transparence Fibre" />
+                        </div>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="telecom_microwave" aria-pressed="false"><span class="legend-swatch legend-telecom-mw"></span> MW</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.85" data-legend-opacity="telecom_microwave" aria-label="Transparence MW" />
+                        </div>
+                        <div class="cartography-legend-item">
+                          <button type="button" data-legend-toggle="telecom_fiberco" aria-pressed="false"><span class="legend-swatch legend-telecom-fiberco"></span> Fiberco</button>
+                          <input type="range" class="cartography-legend-opacity" min="0.1" max="1" step="0.05" value="0.85" data-legend-opacity="telecom_fiberco" aria-label="Transparence Fiberco" />
                         </div>
                         <div class="cartography-legend-item">
                           <button type="button" data-legend-toggle="telecom_fiber_mw" aria-pressed="false"><span class="legend-swatch legend-telecom-fiber"></span> Fibre / MW</button>

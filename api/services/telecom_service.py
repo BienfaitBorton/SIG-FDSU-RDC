@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from api.config import connect_db
-from psycopg2.extras import RealDictCursor
+from psycopg2.extras import Json, RealDictCursor
 
 LAYER_OPERATOR_MAP = {
     "telecom_vodacom": "VODACOM",
@@ -13,6 +13,12 @@ LAYER_OPERATOR_MAP = {
     "telecom_fiber_mw": "FIBER_MW",
     "telecom_fiberco": "FIBERCO",
     "telecom_fttx": "FTTX",
+    # Couches FDSU / typées — résolues via catalog (voir resolve_layer_geojson)
+    "telecom_airtel": "AIRTEL",
+    "telecom_africell": "AFRICELL",
+    "telecom_mno_planned": "FDSU_MNO_PLANNED",
+    "telecom_fiber": "FIBER",
+    "telecom_microwave": "MICROWAVE",
 }
 
 
@@ -152,9 +158,20 @@ def _feature_from_row(row: dict[str, Any], name_key: str, type_key: str, feature
     }
 
 
+def _enrich_feature_typing(feature: dict[str, Any], geometry_kind: str) -> dict[str, Any]:
+    from api.services.telecom_asset_typing import classify_telecom_asset
+
+    props = feature.get("properties") or {}
+    typed = classify_telecom_asset(props, geometry_kind=geometry_kind)
+    props = {**props, **typed, "source_label": props.get("source_label") or "Référentiel télécom"}
+    feature["properties"] = {k: v for k, v in props.items() if v not in (None, "")}
+    return feature
+
+
 def layer_to_geojson(layer_key: str) -> dict[str, Any]:
+    """Couches DB historiques (Vodacom/Orange/Fiberco/FTTX/Fibre-MW combiné)."""
     operator_code = LAYER_OPERATOR_MAP.get(layer_key)
-    if not operator_code:
+    if not operator_code or operator_code in {"AIRTEL", "AFRICELL", "FDSU_MNO_PLANNED", "FIBER", "MICROWAVE"}:
         return {"type": "FeatureCollection", "features": []}
 
     features: list[dict[str, Any]] = []
@@ -162,20 +179,164 @@ def layer_to_geojson(layer_key: str) -> dict[str, Any]:
 
     if layer_key in {"telecom_vodacom", "telecom_orange"}:
         for row in list_infrastructure(operator_code=operator_code, limit=100000):
-            features.append(_feature_from_row(row, "infra_name", "infra_type", feature_id))
+            feat = _feature_from_row(row, "infra_name", "infra_type", feature_id)
+            feat["properties"]["nire_quality_status"] = "VERIFIED"
+            feat["properties"]["data_source"] = "TELECOM_DB"
+            features.append(_enrich_feature_typing(feat, "point"))
             feature_id += 1
-        return {"type": "FeatureCollection", "features": features}
+        return {"type": "FeatureCollection", "features": features, "meta": {"source_kind": "TELECOM_DB", "kpi_included": True}}
 
     for row in list_infrastructure(operator_code=operator_code, limit=100000):
-        features.append(_feature_from_row(row, "infra_name", "infra_type", feature_id))
+        feat = _feature_from_row(row, "infra_name", "infra_type", feature_id)
+        feat["properties"]["data_source"] = "TELECOM_DB"
+        features.append(_enrich_feature_typing(feat, "point"))
         feature_id += 1
     for row in list_network_lines(operator_code=operator_code, limit=100000):
-        features.append(_feature_from_row(row, "line_name", "line_type", feature_id))
+        feat = _feature_from_row(row, "line_name", "line_type", feature_id)
+        feat["properties"]["data_source"] = "TELECOM_DB"
+        features.append(_enrich_feature_typing(feat, "line"))
         feature_id += 1
     for row in list_coverage_polygons(operator_code=operator_code, limit=100000):
-        features.append(_feature_from_row(row, "polygon_name", "polygon_type", feature_id))
+        feat = _feature_from_row(row, "polygon_name", "polygon_type", feature_id)
+        feat["properties"]["data_source"] = "TELECOM_DB"
+        features.append(_enrich_feature_typing(feat, "polygon"))
         feature_id += 1
-    return {"type": "FeatureCollection", "features": features}
+    return {
+        "type": "FeatureCollection",
+        "features": features,
+        "meta": {"source_kind": "TELECOM_DB", "operator_code": operator_code, "kpi_included": True},
+    }
+
+
+def _typed_backbone_geojson(*, asset_filter: str, limit: int = 50000) -> dict[str, Any]:
+    """Sous-couches Fibre vs Microwave dérivées sans mutation des sources."""
+    from api.services.telecom_asset_typing import classify_telecom_asset, is_microwave_asset
+
+    features: list[dict[str, Any]] = []
+    feature_id = 1
+
+    def maybe_add(row: dict[str, Any], name_key: str, type_key: str, geometry_kind: str, ops: set[str]) -> None:
+        nonlocal feature_id
+        if row.get("operator_code") not in ops:
+            return
+        typed = classify_telecom_asset(row, geometry_kind=geometry_kind)
+        is_mw = is_microwave_asset(row, geometry_kind=geometry_kind)
+        # FIBER_MW footprint (1515 lines) → couche microwave ; Fiberco/FTTX → fibre
+        if asset_filter == "MICROWAVE":
+            if row.get("operator_code") != "FIBER_MW" and not is_mw:
+                return
+            if row.get("operator_code") == "FIBER_MW" or is_mw:
+                pass
+            else:
+                return
+        elif asset_filter == "FIBER":
+            if row.get("operator_code") == "FIBER_MW" and not is_mw:
+                # Inclure aussi les tronçons Fiber/MW non explicitement MW comme fibre backbone
+                pass
+            elif row.get("operator_code") in {"FIBERCO", "FTTX"}:
+                pass
+            elif is_mw:
+                return
+            else:
+                return
+            if row.get("operator_code") == "FIBER_MW" and asset_filter == "FIBER":
+                # Éviter double comptage massif : fibre pure = Fiberco+FTTX ; FIBER_MW va à microwave
+                return
+
+        feat = _feature_from_row(row, name_key, type_key, feature_id)
+        feat["properties"].update(typed)
+        feat["properties"]["data_source"] = "TELECOM_DB"
+        feat["properties"]["source_label"] = "Référentiel télécom"
+        features.append(feat)
+        feature_id += 1
+
+    if asset_filter == "FIBER":
+        ops = {"FIBERCO", "FTTX"}
+    else:
+        ops = {"FIBER_MW"}
+
+    for row in list_infrastructure(limit=100000):
+        maybe_add(row, "infra_name", "infra_type", "point", ops)
+        if len(features) >= limit:
+            break
+    for row in list_network_lines(limit=100000):
+        maybe_add(row, "line_name", "line_type", "line", ops)
+        if len(features) >= limit:
+            break
+    for row in list_coverage_polygons(limit=100000):
+        maybe_add(row, "polygon_name", "polygon_type", "polygon", ops)
+        if len(features) >= limit:
+            break
+
+    return {
+        "type": "FeatureCollection",
+        "features": features[:limit],
+        "meta": {
+            "source_kind": "TELECOM_DB_TYPED",
+            "asset_filter": asset_filter,
+            "returned": min(len(features), limit),
+            "kpi_included": True,
+        },
+    }
+
+
+def resolve_layer_geojson(layer_key: str, *, limit: int = 5000) -> dict[str, Any]:
+    """Résout une couche catalogue : DB, typée, ou FDSU MNO (NIRE non bloquant)."""
+    from api.services.telecom_layer_catalog import get_layer_definition
+
+    definition = get_layer_definition(layer_key)
+    if not definition and layer_key not in LAYER_OPERATOR_MAP:
+        return {"type": "FeatureCollection", "features": [], "meta": {"error": "unknown_layer"}}
+
+    source_kind = (definition or {}).get("source_kind") or "TELECOM_DB"
+
+    if source_kind == "FDSU_MNO_AUDIT":
+        from api.services.nire import mno_audit
+
+        planned_only = (definition or {}).get("filter") == "PLANNED"
+        operator = None if planned_only else (definition or {}).get("operator_code")
+        return mno_audit.layer_geojson(
+            operator,
+            limit=limit,
+            include_planned=True,
+            planned_only=planned_only,
+            ensure_loaded=True,
+        )
+
+    if source_kind == "TELECOM_DB_TYPED":
+        return _typed_backbone_geojson(asset_filter=(definition or {}).get("asset_filter") or "FIBER", limit=limit)
+
+    payload = layer_to_geojson(layer_key)
+    # Plafond Soft pour couches denses (FTTX)
+    feats = payload.get("features") or []
+    if len(feats) > limit:
+        payload = {**payload, "features": feats[:limit], "meta": {**(payload.get("meta") or {}), "capped": True, "returned": limit}}
+    return payload
+
+
+def ensure_operator_metadata(operator_code: str, operator_name: str, operator_type: str = "MNO") -> None:
+    """Insert opérateur métadonnées sans créer d'infrastructures KPI."""
+    with connect_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO telecom.operators (operator_code, operator_name, operator_type, status)
+                VALUES (%s, %s, %s, 'ACTIVE')
+                ON CONFLICT (operator_code) DO UPDATE
+                SET operator_name = EXCLUDED.operator_name,
+                    operator_type = EXCLUDED.operator_type,
+                    updated_at = NOW()
+                """,
+                (operator_code, operator_name, operator_type),
+            )
+        conn.commit()
+
+
+def ensure_fdsu_mobile_operators() -> None:
+    ensure_operator_metadata("AIRTEL", "Airtel", "MNO")
+    ensure_operator_metadata("AFRICELL", "Africell", "MNO")
+    ensure_operator_metadata("VODACOM", "Vodacom", "MNO")
+    ensure_operator_metadata("ORANGE", "Orange RDC", "MNO")
 
 
 def get_statistics() -> dict[str, Any]:
@@ -460,4 +621,204 @@ def get_panel_payload() -> dict[str, Any]:
         },
         "statistics": stats,
         "operators": list_operators(),
+        "fdsu_note": (
+            "Couches FDSU MNO (Airtel/Africell/Planned) visibles avec statut NIRE ; "
+            "exclues du KPI COUNT(telecom.infrastructure)."
+        ),
+    }
+
+
+def ensure_fdsu_staging_table() -> None:
+    from pathlib import Path
+
+    sql_path = Path(__file__).resolve().parents[2] / "database" / "telecom_fdsu_mno_staging.sql"
+    ddl = sql_path.read_text(encoding="utf-8")
+    with connect_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(ddl)
+        conn.commit()
+
+
+def sync_fdsu_mno_staging_from_audit(*, max_rows: int = 20000) -> dict[str, Any]:
+    """Matérialise les sites FDSU MNO hors KPI pour relations PostGIS. Pas d'enqueue NIRE."""
+    from api.services.nire import mno_audit
+
+    ensure_fdsu_staging_table()
+    if not mno_audit.get_state().executed:
+        mno_audit.run_mno_audit(enqueue_reviews=False)
+    rows = [r for r in mno_audit.get_state().rows if r.get("geometry_valid")]
+    synced = 0
+    with connect_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("TRUNCATE telecom.fdsu_mno_sites")
+            for r in rows[:max_rows]:
+                cur.execute(
+                    """
+                    INSERT INTO telecom.fdsu_mno_sites (
+                        row_id, operator_code, site_name, status_normalized, rat,
+                        nire_classification, nire_quality_status, requires_human_review,
+                        latitude, longitude, geom, source_file, source_row, source_hash, properties
+                    ) VALUES (
+                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                        ST_SetSRID(ST_MakePoint(%s, %s), 4326),
+                        %s, %s, %s, %s::jsonb
+                    )
+                    """,
+                    (
+                        r["row_id"],
+                        r["operator"],
+                        r["site_name_original"],
+                        r.get("status_normalized"),
+                        r.get("rat_normalized") or r.get("rat_original"),
+                        r.get("classification"),
+                        mno_audit.nire_quality_status(r),
+                        bool(r.get("requires_human_review")),
+                        float(r["latitude"]),
+                        float(r["longitude"]),
+                        float(r["longitude"]),
+                        float(r["latitude"]),
+                        r.get("source_file"),
+                        r.get("source_row"),
+                        r.get("source_hash"),
+                        Json(
+                            {
+                                "secondary_flags": r.get("secondary_flags") or [],
+                                "kpi_excluded": True,
+                            }
+                        ),
+                    ),
+                )
+                synced += 1
+        conn.commit()
+    return {
+        "synced": synced,
+        "kpi_untouched": True,
+        "table": "telecom.fdsu_mno_sites",
+        "note": "Staging hors COUNT(telecom.infrastructure)",
+    }
+
+
+def _nearest_fdsu_operator(lat: float, lon: float, operator_code: str, radius_m: float) -> dict[str, Any] | None:
+    try:
+        ensure_fdsu_staging_table()
+        with connect_db() as conn:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                cur.execute(
+                    """
+                    SELECT row_id, operator_code, site_name, status_normalized, nire_quality_status,
+                           latitude, longitude,
+                           ST_Distance(geom::geography, ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography) AS distance_m
+                    FROM telecom.fdsu_mno_sites
+                    WHERE operator_code = %s AND geom IS NOT NULL
+                      AND ST_DWithin(geom::geography, ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography, %s)
+                    ORDER BY geom::geography <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+                    LIMIT 1
+                    """,
+                    (lon, lat, operator_code, lon, lat, radius_m, lon, lat),
+                )
+                row = cur.fetchone()
+                return _serialize_row(dict(row)) if row else None
+    except Exception:
+        return None
+
+
+def _nearest_db_operator(lat: float, lon: float, operator_code: str, radius_m: float) -> dict[str, Any] | None:
+    with connect_db() as conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(
+                """
+                SELECT i.id, i.infra_name, i.infra_type, i.technology, o.operator_code, o.operator_name,
+                       i.latitude, i.longitude,
+                       ST_Distance(i.geom::geography, ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography) AS distance_m
+                FROM telecom.infrastructure i
+                JOIN telecom.operators o ON o.id = i.operator_id
+                WHERE o.operator_code = %s AND i.geom IS NOT NULL
+                  AND ST_DWithin(i.geom::geography, ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography, %s)
+                ORDER BY i.geom::geography <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+                LIMIT 1
+                """,
+                (lon, lat, operator_code, lon, lat, radius_m, lon, lat),
+            )
+            row = cur.fetchone()
+            return _serialize_row(dict(row)) if row else None
+
+
+def nearest_fiber_link(lat: float, lon: float, *, radius_m: float = 25000) -> dict[str, Any] | None:
+    with connect_db() as conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(
+                """
+                SELECT l.id, l.line_name, l.line_type, l.technology, o.operator_code, o.operator_name,
+                       ST_Distance(l.geom::geography, ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography) AS distance_m
+                FROM telecom.network_lines l
+                JOIN telecom.operators o ON o.id = l.operator_id
+                WHERE o.operator_code IN ('FIBERCO', 'FTTX') AND l.geom IS NOT NULL
+                  AND ST_DWithin(l.geom::geography, ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography, %s)
+                ORDER BY l.geom::geography <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+                LIMIT 1
+                """,
+                (lon, lat, lon, lat, radius_m, lon, lat),
+            )
+            row = cur.fetchone()
+            return _serialize_row(dict(row)) if row else None
+
+
+def nearest_microwave_link(lat: float, lon: float, *, radius_m: float = 25000) -> dict[str, Any] | None:
+    with connect_db() as conn:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(
+                """
+                SELECT l.id, l.line_name, l.line_type, l.technology, o.operator_code, o.operator_name,
+                       ST_Distance(l.geom::geography, ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography) AS distance_m
+                FROM telecom.network_lines l
+                JOIN telecom.operators o ON o.id = l.operator_id
+                WHERE o.operator_code = 'FIBER_MW' AND l.geom IS NOT NULL
+                  AND ST_DWithin(l.geom::geography, ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography, %s)
+                ORDER BY l.geom::geography <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+                LIMIT 1
+                """,
+                (lon, lat, lon, lat, radius_m, lon, lat),
+            )
+            row = cur.fetchone()
+            return _serialize_row(dict(row)) if row else None
+
+
+def spatial_context_around(lat: float, lon: float, *, radius_m: float = 25000) -> dict[str, Any]:
+    """Relations spatiales étendues pour un site / infrastructure."""
+    nearest_any = nearest_infrastructure(lat, lon, radius_m=radius_m, limit=5)
+    vodacom = _nearest_db_operator(lat, lon, "VODACOM", radius_m)
+    orange = _nearest_db_operator(lat, lon, "ORANGE", radius_m)
+    airtel = _nearest_fdsu_operator(lat, lon, "AIRTEL", radius_m)
+    africell = _nearest_fdsu_operator(lat, lon, "AFRICELL", radius_m)
+    fiber = nearest_fiber_link(lat, lon, radius_m=radius_m)
+    mw = nearest_microwave_link(lat, lon, radius_m=radius_m)
+
+    nearby_ops = []
+    for code, hit in (("VODACOM", vodacom), ("ORANGE", orange), ("AIRTEL", airtel), ("AFRICELL", africell)):
+        if hit and float(hit.get("distance_m") or 1e12) <= min(radius_m, 500):
+            nearby_ops.append(code)
+
+    fiber_dist = float(fiber["distance_m"]) if fiber and fiber.get("distance_m") is not None else None
+    backhaul = bool(fiber and fiber_dist is not None and fiber_dist <= 5000) or bool(
+        mw and float(mw.get("distance_m") or 1e12) <= 5000
+    )
+    mutualization = len(nearby_ops) >= 2
+
+    return {
+        "search_executed": True,
+        "radius_m": radius_m,
+        "nearest_infrastructure": nearest_any.get("nearest"),
+        "NEAREST_MNO_VODACOM": vodacom,
+        "NEAREST_MNO_ORANGE": orange,
+        "NEAREST_MNO_AIRTEL": airtel,
+        "NEAREST_MNO_AFRICELL": africell,
+        "NEAREST_FIBER_LINK": fiber,
+        "DISTANCE_TO_FIBER_M": fiber_dist,
+        "NEAREST_MICROWAVE_LINK": mw,
+        "MULTI_OPERATOR_PROXIMITY": nearby_ops,
+        "COLOCATION_SIGNAL": mutualization,
+        "BACKHAUL_CANDIDATE": backhaul,
+        "MUTUALIZATION_POTENTIAL": mutualization or backhaul,
+        "kpi_national_untouched": True,
+        "fdsu_staging_required_for_airtel_africell": airtel is None and africell is None,
     }

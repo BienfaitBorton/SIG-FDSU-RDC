@@ -42,14 +42,52 @@ const TELECOM_LAYERS = {
     fillColor: '#fb7185',
   },
   telecom_orange: {
-    label: 'Infrastructures Orange',
+    label: 'Sites Orange',
     apiPath: '/api/telecom/layers/telecom_orange',
     pendingMessage: 'Données télécom disponibles en mode DB',
     color: '#ea580c',
     fillColor: '#fb923c',
   },
+  telecom_airtel: {
+    label: 'Sites Airtel',
+    apiPath: '/api/telecom/layers/telecom_airtel?limit=4000',
+    pendingMessage: 'Couche FDSU Airtel (audit MNO) — mode DB',
+    color: '#dc2626',
+    fillColor: '#f87171',
+    fdsuProvisional: true,
+  },
+  telecom_africell: {
+    label: 'Sites Africell',
+    apiPath: '/api/telecom/layers/telecom_africell?limit=2000',
+    pendingMessage: 'Couche FDSU Africell (audit MNO) — mode DB',
+    color: '#16a34a',
+    fillColor: '#4ade80',
+    fdsuProvisional: true,
+  },
+  telecom_mno_planned: {
+    label: 'Sites MNO Planned',
+    apiPath: '/api/telecom/layers/telecom_mno_planned?limit=2000',
+    pendingMessage: 'Couche FDSU Planned — mode DB',
+    color: '#ca8a04',
+    fillColor: '#facc15',
+    fdsuProvisional: true,
+  },
+  telecom_fiber: {
+    label: 'Fibre',
+    apiPath: '/api/telecom/layers/telecom_fiber?limit=8000',
+    pendingMessage: 'Données fibre disponibles en mode DB',
+    color: '#2563eb',
+    fillColor: '#60a5fa',
+  },
+  telecom_microwave: {
+    label: 'Microwave / MW',
+    apiPath: '/api/telecom/layers/telecom_microwave?limit=3000',
+    pendingMessage: 'Données MW disponibles en mode DB',
+    color: '#7c3aed',
+    fillColor: '#a78bfa',
+  },
   telecom_fiber_mw: {
-    label: 'Fibre / MW',
+    label: 'Fibre / MW (combiné)',
     apiPath: '/api/telecom/layers/telecom_fiber_mw',
     pendingMessage: 'Données télécom disponibles en mode DB',
     color: '#2563eb',
@@ -64,7 +102,7 @@ const TELECOM_LAYERS = {
   },
   telecom_fttx: {
     label: 'FTTX',
-    apiPath: '/api/telecom/layers/telecom_fttx',
+    apiPath: '/api/telecom/layers/telecom_fttx?limit=8000',
     pendingMessage: 'Données télécom disponibles en mode DB',
     color: '#7c3aed',
     fillColor: '#a78bfa',
@@ -2315,6 +2353,28 @@ function initializeCartographyModule() {
       pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#ea580c', '#fb923c', 8),
       onEachFeature: (feature, layer) => onTelecomEachFeature(feature, layer, 'telecom_orange'),
     }),
+    telecom_airtel: L.geoJSON(null, {
+      pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#dc2626', '#f87171', 8),
+      onEachFeature: (feature, layer) => onTelecomEachFeature(feature, layer, 'telecom_airtel'),
+    }),
+    telecom_africell: L.geoJSON(null, {
+      pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#16a34a', '#4ade80', 8),
+      onEachFeature: (feature, layer) => onTelecomEachFeature(feature, layer, 'telecom_africell'),
+    }),
+    telecom_mno_planned: L.geoJSON(null, {
+      pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#ca8a04', '#facc15', 8),
+      onEachFeature: (feature, layer) => onTelecomEachFeature(feature, layer, 'telecom_mno_planned'),
+    }),
+    telecom_fiber: L.geoJSON(null, {
+      style: (feature) => styleTelecomFeature(feature, 'telecom_fiber'),
+      pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#2563eb', '#60a5fa', 7),
+      onEachFeature: (feature, layer) => onTelecomEachFeature(feature, layer, 'telecom_fiber'),
+    }),
+    telecom_microwave: L.geoJSON(null, {
+      style: (feature) => styleTelecomFeature(feature, 'telecom_microwave'),
+      pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#7c3aed', '#a78bfa', 7),
+      onEachFeature: (feature, layer) => onTelecomEachFeature(feature, layer, 'telecom_microwave'),
+    }),
     telecom_fiber_mw: L.geoJSON(null, {
       style: (feature) => styleTelecomFeature(feature, 'telecom_fiber_mw'),
       pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#2563eb', '#60a5fa', 7),
@@ -2997,25 +3057,33 @@ function styleTelecomFeature(feature, layerKey) {
 }
 
 function buildTelecomPopupHtml(properties) {
-  const name = properties.infra_name || properties.line_name || properties.polygon_name || properties.name || 'Infrastructure';
-  const infraType = properties.infra_type || properties.line_type || properties.polygon_type || properties.infra_category || 'Non renseigné';
+  const name = properties.infra_name || properties.line_name || properties.polygon_name || properties.site_name || properties.name || 'Infrastructure';
+  const infraType = properties.derived_asset_type || properties.infra_type || properties.line_type || properties.polygon_type || properties.infra_category || 'Non renseigné';
   const distance = properties.distance_to_selected_site_m != null
     ? `${Math.round(properties.distance_to_selected_site_m)} m`
     : (properties.distance_m != null ? `${Math.round(properties.distance_m)} m` : '');
+  const quality = properties.nire_quality_status || '';
+  const qualityNote = quality === 'NEEDS_REVIEW' || quality === 'CONFLICT' || quality === 'PROVISIONAL'
+    ? ' (visible — non bloquant)'
+    : '';
   const lines = [
     ['strong', name],
     ['label', 'Type', infraType],
-    ['label', 'Opérateur', properties.operator_name || properties.operator_code],
-    ['label', 'Technologie', properties.technology],
+    ['label', 'Opérateur', properties.operator_name || properties.operator_code || properties.operator],
+    ['label', 'Statut', properties.status || properties.status_normalized],
+    ['label', 'Technologie / RAT', properties.rat || properties.technology],
+    ['label', 'Qualité NIRE', quality ? `${quality}${qualityNote}` : ''],
+    ['label', 'Classification NIRE', properties.nire_classification || properties.classification],
     ['label', 'Distance au site sélectionné', distance],
     ['label', 'Source', properties.source_label || properties.data_source || 'Référentiel télécom'],
   ];
   // Ne jamais exposer de nom de fichier technique au DG
   if (properties.province) lines.push(['text', properties.province]);
   if (properties.territoire) lines.push(['text', properties.territoire]);
+  if (properties.kpi_excluded) lines.push(['text', 'Hors KPI infrastructures physiques']);
 
   return `
-    <div class="telecom-popup decision-map-popup">
+    <div class="telecom-popup decision-map-popup" data-nire-quality="${escapeHtml(quality || 'NONE')}">
       ${lines.map((entry) => {
         if (entry[0] === 'strong') {
           const value = String(entry[1] || '').trim();

@@ -8,6 +8,7 @@ from fastapi import APIRouter, HTTPException, Query
 
 from api.config import DATA_MODE
 from api.services import telecom_service
+from api.services.telecom_layer_catalog import catalog_payload, known_layer_keys
 
 router = APIRouter()
 
@@ -122,12 +123,63 @@ def list_coverage_polygons(
     return rows
 
 
-@router.get("/layers/{layer_key}", summary="Couche cartographique télécom")
-def telecom_layer(layer_key: str) -> dict[str, Any]:
+@router.get("/layer-catalog", summary="Catalogue extensible des couches télécom")
+def telecom_layer_catalog() -> dict[str, Any]:
+    """Catalogue déclaratif — Smart Map et futurs opérateurs."""
     _ensure_db_mode()
-    if layer_key not in telecom_service.LAYER_OPERATOR_MAP:
+    try:
+        telecom_service.ensure_fdsu_mobile_operators()
+    except Exception:
+        pass
+    return catalog_payload()
+
+
+@router.get("/layers/{layer_key}", summary="Couche cartographique télécom")
+def telecom_layer(
+    layer_key: str,
+    limit: int = Query(5000, gt=0, le=100000),
+) -> dict[str, Any]:
+    _ensure_db_mode()
+    if layer_key not in known_layer_keys() and layer_key not in telecom_service.LAYER_OPERATOR_MAP:
         raise HTTPException(status_code=404, detail="Couche telecom introuvable.")
-    return telecom_service.layer_to_geojson(layer_key)
+    try:
+        telecom_service.ensure_fdsu_mobile_operators()
+    except Exception:
+        pass
+    return telecom_service.resolve_layer_geojson(layer_key, limit=limit)
+
+
+@router.get("/spatial-context", summary="Relations spatiales télécom autour d'un point")
+def telecom_spatial_context(
+    latitude: float = Query(...),
+    longitude: float = Query(...),
+    radius_m: float = Query(25000, gt=0, le=100000),
+) -> dict[str, Any]:
+    """Nearest MNO / fibre / MW / multi-opérateur — PostGIS + staging FDSU."""
+    _ensure_db_mode()
+    return telecom_service.spatial_context_around(latitude, longitude, radius_m=radius_m)
+
+
+@router.post("/fdsu-mno-staging/sync", summary="Synchroniser staging FDSU MNO (hors KPI)")
+def sync_fdsu_mno_staging(max_rows: int = Query(20000, gt=0, le=50000)) -> dict[str, Any]:
+    """Copie dérivée contrôlée vers telecom.fdsu_mno_sites — n'écrit pas dans infrastructure."""
+    _ensure_db_mode()
+    return telecom_service.sync_fdsu_mno_staging_from_audit(max_rows=max_rows)
+
+
+@router.get(
+    "/operator-sites-consolidation",
+    summary="Référentiel consolidé sites opérateurs FDSU (lecture seule)",
+)
+def operator_sites_consolidation_report() -> dict[str, Any]:
+    """Consolidation opérateur-par-opérateur — hors Fibre/MW ; n'écrit pas les sources."""
+    _ensure_db_mode()
+    from api.services.telecom_operator_sites_consolidation import (
+        consolidate_mobile_operator_sites,
+        result_as_dict,
+    )
+
+    return result_as_dict(consolidate_mobile_operator_sites())
 
 
 @router.get("/nearby-sites", summary="Sites FDSU proches d'une infrastructure")

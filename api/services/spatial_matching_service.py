@@ -874,6 +874,82 @@ def match_site_to_telecom(
         else:
             matches.append({**line_base, "relation_type": "NEAREST_FIBER_LINE", "need_id": f"FIBER_LINE_NEAREST::{line_id}"})
 
+    # Relations FDSU étendues (4 MNO + fibre/MW) — NIRE non bloquant
+    try:
+        ctx = telecom_service.spatial_context_around(float(lat), float(lon), radius_m=proximity_m)
+        for rel_key, need_prefix in (
+            ("NEAREST_MNO_VODACOM", "MNO_VODACOM"),
+            ("NEAREST_MNO_ORANGE", "MNO_ORANGE"),
+            ("NEAREST_MNO_AIRTEL", "MNO_AIRTEL"),
+            ("NEAREST_MNO_AFRICELL", "MNO_AFRICELL"),
+            ("NEAREST_FIBER_LINK", "FIBER_LINK"),
+            ("NEAREST_MICROWAVE_LINK", "MW_LINK"),
+        ):
+            hit = ctx.get(rel_key)
+            if not hit:
+                continue
+            dist = float(hit.get("distance_m") or 0)
+            label = hit.get("site_name") or hit.get("infra_name") or hit.get("line_name") or rel_key
+            matches.append(
+                {
+                    "asset_type": "fdsu_site",
+                    "asset_id": asset_id,
+                    "asset_business_id": site_code,
+                    "need_type": "telecom_spatial_context",
+                    "need_id": f"{need_prefix}::{hit.get('id') or hit.get('row_id')}",
+                    "relation_type": rel_key,
+                    "distance_m": round(dist, 1),
+                    "service_radius_m": proximity_m,
+                    "category": "telecom",
+                    "confidence_level": "medium",
+                    "source_asset": "programs.fdsu_sites",
+                    "source_need": "telecom.spatial_context",
+                    "calculation_method": "postgis_telecom_spatial_context",
+                    "province": asset.get("province"),
+                    "territoire": asset.get("territoire"),
+                    "program_code": asset.get("program_code"),
+                    "properties": {
+                        "infra_label": label,
+                        "operator_code": hit.get("operator_code"),
+                        "nire_quality_status": hit.get("nire_quality_status"),
+                        "class_label": f"{rel_key} — {label}",
+                        "asset_lon": float(lon),
+                        "asset_lat": float(lat),
+                        "DISTANCE_TO_FIBER_M": ctx.get("DISTANCE_TO_FIBER_M"),
+                        "MULTI_OPERATOR_PROXIMITY": ctx.get("MULTI_OPERATOR_PROXIMITY"),
+                        "BACKHAUL_CANDIDATE": ctx.get("BACKHAUL_CANDIDATE"),
+                        "MUTUALIZATION_POTENTIAL": ctx.get("MUTUALIZATION_POTENTIAL"),
+                        "COLOCATION_SIGNAL": ctx.get("COLOCATION_SIGNAL"),
+                        "nsme_profile": "Telecom FDSU Spatial Context",
+                    },
+                }
+            )
+        if ctx.get("MUTUALIZATION_POTENTIAL"):
+            matches.append(
+                {
+                    "asset_type": "fdsu_site",
+                    "asset_id": asset_id,
+                    "asset_business_id": site_code,
+                    "need_type": "telecom_spatial_context",
+                    "need_id": f"MUTUALIZATION::{asset_id}",
+                    "relation_type": "MUTUALIZATION_POTENTIAL",
+                    "distance_m": None,
+                    "service_radius_m": proximity_m,
+                    "category": "telecom",
+                    "confidence_level": "medium",
+                    "source_asset": "programs.fdsu_sites",
+                    "source_need": "telecom.spatial_context",
+                    "calculation_method": "postgis_telecom_spatial_context",
+                    "properties": {
+                        "MULTI_OPERATOR_PROXIMITY": ctx.get("MULTI_OPERATOR_PROXIMITY"),
+                        "BACKHAUL_CANDIDATE": ctx.get("BACKHAUL_CANDIDATE"),
+                        "nsme_profile": "Mutualization / Backhaul signal",
+                    },
+                }
+            )
+    except Exception:
+        pass
+
     # Marqueur de recherche exécutée même sans objet (pour SDG)
     if payload.get("search_executed") and not matches:
         matches.append(

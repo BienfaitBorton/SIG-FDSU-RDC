@@ -38,6 +38,17 @@ OPERATORS = [
         "operator_type": "MNO",
     },
     {
+        # Métadonnées uniquement — infrastructures KPI via FDSU staging / audit MNO
+        "operator_code": "AIRTEL",
+        "operator_name": "Airtel",
+        "operator_type": "MNO",
+    },
+    {
+        "operator_code": "AFRICELL",
+        "operator_name": "Africell",
+        "operator_type": "MNO",
+    },
+    {
         "operator_code": "FIBER_MW",
         "operator_name": "Fibre / Micro-ondes",
         "operator_type": "BACKBONE",

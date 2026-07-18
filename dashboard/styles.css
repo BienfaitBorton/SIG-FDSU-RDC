@@ -1312,7 +1312,15 @@ body.cartography-focus-mode #carto-focus-btn {
 .legend-site-300-point { background: #38bdf8; border-radius: 999px; }
 .legend-telecom-vodacom { background: #fb7185; border-radius: 999px; }
 .legend-telecom-orange { background: #fb923c; border-radius: 999px; }
+.legend-telecom-airtel { background: #f87171; border-radius: 999px; }
+.legend-telecom-africell { background: #4ade80; border-radius: 999px; }
+.legend-telecom-planned { background: #facc15; border-radius: 999px; }
 .legend-telecom-fiber { background: #60a5fa; border-radius: 999px; }
+.legend-telecom-mw { background: #a78bfa; border-radius: 999px; }
+.legend-telecom-fiberco { background: #22d3ee; border-radius: 999px; }
+.telecom-popup[data-nire-quality="CONFLICT"] { border-left: 3px solid #dc2626; padding-left: 8px; }
+.telecom-popup[data-nire-quality="NEEDS_REVIEW"] { border-left: 3px solid #d97706; padding-left: 8px; }
+.telecom-popup[data-nire-quality="PROVISIONAL"] { border-left: 3px solid #2563eb; padding-left: 8px; }
 
 .telecom-popup {
   font-size: 0.88rem;

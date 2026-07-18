@@ -1246,30 +1246,107 @@ def list_colocations(*, multi_operator_only: bool = False, offset: int = 0, limi
     return {"total": len(rows), "offset": offset, "limit": limit, "items": rows[offset : offset + limit]}
 
 
-def layer_geojson(operator: str, *, limit: int = 2000, include_planned: bool = True) -> dict[str, Any]:
-    op = _norm_operator(operator)
-    features = []
-    for r in _STATE.rows:
-        if r["operator"] != op or not r.get("geometry_valid"):
-            continue
-        if not include_planned and r["status_normalized"] == "PLANNED":
-            continue
-        features.append(
-            {
-                "type": "Feature",
-                "geometry": {"type": "Point", "coordinates": [r["longitude"], r["latitude"]]},
-                "properties": {
-                    "row_id": r["row_id"],
-                    "site_name": r["site_name_original"],
-                    "operator": r["operator"],
-                    "status_normalized": r["status_normalized"],
-                    "classification": r["classification"],
-                    "secondary_flags": r.get("secondary_flags") or [],
-                    "quarantine": r.get("quarantine"),
-                    "collocation_group_id": r.get("collocation_group_id"),
+def nire_quality_status(row: dict[str, Any]) -> str:
+    """Statut qualité cartographique — n'altère pas la classification métier.
+
+    Une donnée NEEDS_REVIEW / CONFLICT reste visible (NIRE non bloquant).
+    """
+    cls = row.get("classification") or ""
+    if cls == "INVALID_GEOMETRY":
+        return "NEEDS_REVIEW"
+    if cls == "CONFLICT":
+        return "CONFLICT"
+    if cls in {"AMBIGUOUS", "UNRESOLVED", "POSSIBLE_DUPLICATE"}:
+        return "NEEDS_REVIEW"
+    if cls == "NEW_INFRASTRUCTURE_CANDIDATE":
+        return "PROVISIONAL"
+    if cls == "MATCH_EXISTING_INFRASTRUCTURE" and not row.get("requires_human_review"):
+        conf = float(row.get("confidence") or 0)
+        return "VERIFIED" if conf >= 0.9 else "HIGH_CONFIDENCE"
+    if cls == "MATCH_EXISTING_INFRASTRUCTURE":
+        return "HIGH_CONFIDENCE"  # Planned match — visible, validation institutionnelle
+    if cls in {"OPERATOR_PRESENCE_ON_EXISTING_INFRASTRUCTURE", "COLOCATED_MULTI_OPERATOR", "PLANNED_SITE"}:
+        return "PROVISIONAL" if not row.get("requires_human_review") else "NEEDS_REVIEW"
+    if row.get("requires_human_review"):
+        return "NEEDS_REVIEW"
+    return "PROVISIONAL"
+
+
+def _feature_from_mno_row(r: dict[str, Any]) -> dict[str, Any]:
+    rat = r.get("rat_normalized") or r.get("rat_original")
+    return {
+        "type": "Feature",
+        "geometry": {"type": "Point", "coordinates": [r["longitude"], r["latitude"]]},
+        "properties": {
+            "row_id": r["row_id"],
+            "infra_name": r["site_name_original"],
+            "site_name": r["site_name_original"],
+            "name": r["site_name_original"],
+            "operator": r["operator"],
+            "operator_code": r["operator"],
+            "operator_name": r["operator"].title() if r.get("operator") else None,
+            "status": r.get("status_normalized"),
+            "status_normalized": r.get("status_normalized"),
+            "technology": rat,
+            "rat": rat,
+            "infra_type": "mno_declared_site",
+            "nire_classification": r.get("classification"),
+            "classification": r.get("classification"),
+            "nire_quality_status": nire_quality_status(r),
+            "requires_human_review": bool(r.get("requires_human_review")),
+            "secondary_flags": r.get("secondary_flags") or [],
+            "quarantine": r.get("quarantine"),
+            "collocation_group_id": r.get("collocation_group_id"),
+            "confidence": r.get("confidence"),
+            "score": r.get("score"),
+            "source_label": "FDSU MNO",
+            "data_source": "FDSU_MNO_AUDIT",
+            "provenance": {
+                "source_file": r.get("source_file"),
+                "source_row": r.get("source_row"),
+                "source_hash": r.get("source_hash"),
+            },
+            "kpi_excluded": True,
+        },
+    }
+
+
+def layer_geojson(
+    operator: str | None = None,
+    *,
+    limit: int = 2000,
+    include_planned: bool = True,
+    planned_only: bool = False,
+    ensure_loaded: bool = False,
+) -> dict[str, Any]:
+    """GeoJSON FDSU MNO pour Smart Map — visible même si NIRE NEEDS_REVIEW/CONFLICT."""
+    if ensure_loaded and not _STATE.executed:
+        try:
+            run_mno_audit(enqueue_reviews=False)
+        except Exception as exc:  # noqa: BLE001 — surface empty meta, don't crash map
+            return {
+                "type": "FeatureCollection",
+                "features": [],
+                "meta": {
+                    "error": str(exc),
+                    "source_immutable": True,
+                    "kpi_national_untouched": True,
+                    "audit_required": True,
                 },
             }
-        )
+
+    op = _norm_operator(operator) if operator else None
+    features = []
+    for r in _STATE.rows:
+        if not r.get("geometry_valid"):
+            continue
+        if op and r["operator"] != op:
+            continue
+        if planned_only and r.get("status_normalized") != "PLANNED":
+            continue
+        if not include_planned and not planned_only and r.get("status_normalized") == "PLANNED":
+            continue
+        features.append(_feature_from_mno_row(r))
         if len(features) >= limit:
             break
     return {
@@ -1277,10 +1354,13 @@ def layer_geojson(operator: str, *, limit: int = 2000, include_planned: bool = T
         "features": features,
         "meta": {
             "operator": op,
-            "partition": OPERATOR_PARTITIONS.get(op),
+            "partition": OPERATOR_PARTITIONS.get(op) if op else None,
             "returned": len(features),
             "capped": len(features) >= limit,
+            "planned_only": planned_only,
             "source_immutable": True,
             "kpi_national_untouched": True,
+            "nire_non_blocking": True,
+            "audit_executed": _STATE.executed,
         },
     }
