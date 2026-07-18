@@ -149,6 +149,8 @@ const ROUTE_TO_MODULE = {
   ceni_registry: 'ceni_registry',
   'education-referential': 'education_referential',
   education_referential: 'education_referential',
+  'nire-workspace': 'nire_workspace',
+  nire_workspace: 'nire_workspace',
   dnai: 'dnai',
   ntil: 'ntil',
   'national-territorial-intelligence': 'national_territorial_intelligence',
@@ -198,6 +200,7 @@ const MODULE_TO_ROUTE = {
   national_asset_registry: 'national-asset-registry',
   ceni_registry: 'ceni-registry',
   education_referential: 'education-referential',
+  nire_workspace: 'nire-workspace',
   dnai: 'dnai',
   ntil: 'ntil',
   national_territorial_intelligence: 'national-territorial-intelligence',
@@ -382,6 +385,7 @@ const moduleNames = {
   national_asset_registry: 'National FDSU Asset Registry',
   national_territorial_intelligence: 'National Territorial Intelligence',
   education_referential: 'Référentiel Éducation',
+  nire_workspace: 'NIRE — Résolution d’identité',
   explorateur_sources: 'Explorateur de Sources',
   sites: 'Sites FDSU',
   decision: 'Aide à la décision',
@@ -758,6 +762,10 @@ function setActiveModule(moduleKey) {
 
   if (normalizedModule === 'education_referential') {
     initializeEducationReferential();
+  }
+
+  if (normalizedModule === 'nire_workspace') {
+    loadNireWorkspaceOnDemand();
   }
 
   if (normalizedModule === 'dnai') {
@@ -9938,6 +9946,25 @@ function updateSortIndicators() {
 
 function getRouteFromHash() {
   return window.location.hash.replace('#', '').trim() || 'dashboard';
+}
+
+let nireWorkspaceAssetPromise = null;
+function loadNireWorkspaceOnDemand() {
+  const root = document.querySelector('#nire-workspace-root');
+  if (!root) return Promise.resolve();
+  if (window.NireWorkspace) return window.NireWorkspace.mount({ root, apiBase: API_BASE_URL, leaflet: window.L });
+  if (!nireWorkspaceAssetPromise) {
+    nireWorkspaceAssetPromise = new Promise((resolve, reject) => {
+      if (!document.querySelector('link[data-nire-workspace]')) {
+        const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'modules/nire-workspace/nire-workspace.css'; style.dataset.nireWorkspace = 'true'; document.head.appendChild(style);
+      }
+      const script = document.createElement('script'); script.src = 'modules/nire-workspace/nire-workspace.js'; script.dataset.nireWorkspace = 'true'; script.onload = resolve; script.onerror = () => reject(new Error('Workspace NIRE indisponible')); document.body.appendChild(script);
+    });
+  }
+  root.dataset.state = 'loading';
+  return nireWorkspaceAssetPromise.then(() => window.NireWorkspace.mount({ root, apiBase: API_BASE_URL, leaflet: window.L })).catch(() => {
+    root.dataset.state = 'error'; root.innerHTML = '<div class="nire-empty"><strong>Workspace momentanément indisponible.</strong><p>Réessayez ultérieurement.</p></div>';
+  });
 }
 
 const nationalAssetRegistryState = { initialized: false, statistics: null };
