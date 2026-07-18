@@ -994,7 +994,6 @@ function initializeDashboard() {
   getDatabaseStatus();
   getLastImports();
   getZones();
-  preloadPlatformData().then(() => renderDashboardZonesSidebar());
   initializeNationalMapModule();
   setupDashboardDetailPages();
   dashboardState.initialized = true;
@@ -9684,7 +9683,7 @@ function getLastImports() {
 function getZones() {
   const source = LOCAL_JSON_MODE
     ? loadLocalDashboardData().then((data) => data.provinces)
-    : fetchJson('/geo/provinces?limit=500').then((provinces) => asArray(provinces));
+    : fetchPlatformLayerData('provinces');
 
   source.then((provinces) => {
     if (!asArray(cartographyState.data.provinces).length) {
