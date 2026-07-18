@@ -170,7 +170,8 @@ def test_business_vocabulary_visible_labels():
     assert "Intelligence territoriale" in html
     assert "Base nationale de connaissances" in html
     assert "Analyse détaillée" in html
-    assert "Territorial Intelligence" not in html
+    assert "<span>National Territorial Intelligence</span>" in html
+    assert "<span>Territorial Intelligence</span>" not in html
     assert "Knowledge Hub" not in html
     assert "Intelligence territoriale" in app_js
     assert "Analyse détaillée" in app_js
