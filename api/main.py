@@ -60,6 +60,7 @@ from api.routes import (
     ceni,
     dnai,
     ntil,
+    nire,
 )
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
 
@@ -1018,6 +1019,7 @@ app.include_router(
     prefix="/api/data-maturity",
     tags=["National Data Maturity"],
 )
+app.include_router(nire.router, prefix="/api/nire", tags=["NIRE Internal"], include_in_schema=False)
 
 @app.get("/", tags=["Root"])
 def read_root() -> dict[str, str]:
