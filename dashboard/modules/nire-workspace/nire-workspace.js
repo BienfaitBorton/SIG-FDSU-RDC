@@ -37,7 +37,115 @@
   async function cancelDecision(d){const justification=window.prompt('Justification obligatoire pour annuler la décision');if(!justification||justification.trim().length<3||!window.confirm('Confirmer l’annulation ? L’historique sera conservé.'))return;try{await api(`/decisions/${encodeURIComponent(d.decision.decision_id)}/cancel`,{method:'POST',body:JSON.stringify({author:state.role,justification,evidence_ids:[]})});notice('Décision annulée sans suppression de l’historique.','success');openDossier(d.candidate.candidate_id);}catch(e){notice(e.message,'error');}}
   function history(rows){return `<section class="nire-history"><h4>Historique complet</h4>${rows.map(x=>`<article><time>${esc(x.date)}</time><strong>${esc(x.action)}</strong><span>${esc(x.author)}</span><p>${esc(x.old_value||'—')} → ${esc(x.new_value||'—')}</p><p>${esc(x.justification)}</p></article>`).join('')||'<p>Aucune action historique enregistrée.</p>'}</section>`;}
   function drawer(html){const d=state.root.querySelector('#nire-dossier');state.map?.remove();state.map=null;d.innerHTML=html;d.classList.add('open');d.setAttribute('aria-hidden','false');d.querySelector('[data-close]')?.addEventListener('click',()=>{state.map?.remove();state.map=null;d.classList.remove('open');d.setAttribute('aria-hidden','true');});}
-  async function loadMno(){const host=state.root.querySelector('#nire-content');try{const x=await api('/mno-audit/status');host.innerHTML=`<section class="nire-card nire-mno"><header><div><p class="panel-label">Préparation uniquement</p><h3>Audit MNO</h3></div><span class="nire-badge">Aucune source chargée</span></header><div class="nire-empty"><strong>${esc(x.message)}</strong><p>Aucun chiffre ci-dessous n’est calculé ou simulé.</p></div><table><thead><tr><th>Opérateur</th><th>Ancien</th><th>Nouveau</th><th>Retrouvé</th><th>Absent</th><th>Nouveau</th><th>Ambigu</th></tr></thead><tbody>${['Orange','Vodacom','Airtel','Africell'].map(o=>`<tr><td>${o}</td><td colspan="6">Non calculé — aucune source MNO validée</td></tr>`).join('')}</tbody></table><section class="nire-rule"><h4>Règle Orange / Vodacom</h4><strong>REMPLACEMENT LOGIQUE POSSIBLE</strong><p>Uniquement après couverture ou résolution de 100 % des sites existants, absence de conflit bloquant, conservation intégrale de l’information et validation humaine/institutionnelle.</p><strong>Sinon : FUSION CONTRÔLÉE</strong><p>Conservation des anciennes sources. Aucune suppression physique. Aucun remplacement automatique.</p></section></section>`;}catch(e){notice(e.message,'error');}}
+  async function loadMno(){
+    const host=state.root.querySelector('#nire-content');
+    host.innerHTML='<div class="nire-loading">Chargement de l’audit MNO…</div>';
+    const start=performance.now();
+    try{
+      const x=await api('/mno-audit/status');
+      state.timings={...(state.timings||{}),mno_ms:performance.now()-start};
+      if(!x.executed){
+        host.innerHTML=`<section class="nire-card nire-mno"><header><div><p class="panel-label">Préparation uniquement</p><h3>Audit MNO</h3></div><span class="nire-badge">Aucune source chargée</span></header><div class="nire-empty"><strong>${esc(x.message)}</strong><p>Aucun chiffre ci-dessous n’est calculé ou simulé.</p></div><p class="nire-muted">Déclenchement contrôlé : <code>POST /api/nire/mno-audit/run</code> (rôles REVIEWER / APPROVER / ADMIN).</p><table><thead><tr><th>Opérateur</th><th>Ancien</th><th>Nouveau</th><th>Retrouvé</th><th>Absent</th><th>Nouveau</th><th>Ambigu</th></tr></thead><tbody>${['Orange','Vodacom','Airtel','Africell'].map(o=>`<tr><td>${o}</td><td colspan="6">Non calculé — aucune source MNO validée</td></tr>`).join('')}</tbody></table><section class="nire-rule"><h4>Règle Orange / Vodacom</h4><strong>REMPLACEMENT LOGIQUE POSSIBLE</strong><p>Uniquement après couverture ou résolution de 100 % des sites existants, absence de conflit bloquant, conservation intégrale de l’information et validation humaine/institutionnelle.</p><strong>Sinon : FUSION CONTRÔLÉE</strong><p>Conservation des anciennes sources. Aucune suppression physique. Aucun remplacement automatique.</p></section></section>`;
+        return;
+      }
+      const k=x.kpis||{};
+      const est=x.potential_kpi_estimate||{};
+      const coh=x.coherence||{};
+      const excl=(coh.exclusive_classification&&coh.exclusive_classification.rows)||[];
+      const tr=coh.transversal_indicators||{};
+      const hr=coh.human_review||{};
+      const coloc=coh.colocation_metrics||{};
+      const exclSum=coh.exclusive_classification?coh.exclusive_classification.checksum:k.exclusive_classification_checksum;
+      const pop=k.mno_rows_analyzed||coh.population_total||0;
+      const statusMap=k.by_status_normalized||{};
+      const exclCards=excl.length?excl.map(r=>[r.classification,r.count]):[
+        ['MATCH_EXISTING_INFRASTRUCTURE',k.match_existing_infrastructure],
+        ['OPERATOR_PRESENCE_ON_EXISTING_INFRASTRUCTURE',k.operator_presence_on_existing],
+        ['NEW_INFRASTRUCTURE_CANDIDATE',k.new_infrastructure_candidates],
+        ['PLANNED_SITE',k.planned_site_primary],
+        ['POSSIBLE_DUPLICATE',k.possible_duplicates],
+        ['COLOCATED_MULTI_OPERATOR',k.colocated_classification],
+        ['AMBIGUOUS',k.ambiguous],
+        ['CONFLICT',k.conflicts],
+        ['INVALID_GEOMETRY',k.invalid_geometry],
+        ['UNRESOLVED',k.unresolved],
+      ];
+      const reviewBy=hr.by_primary_classification||{};
+      const reviewRows=Object.keys(reviewBy).map(c=>`<tr><td>${esc(c)}</td><td>${fmt(reviewBy[c])}</td></tr>`).join('');
+      const opRows=(x.operators||[]).map(o=>`<tr><td>${esc(o.operator)}</td><td>${fmt(o.total)}</td><td>${fmt(o.match_existing)}</td><td>${fmt(o.operator_presence)}</td><td>${fmt(o.new_candidates)}</td><td>${fmt(o.planned)}</td><td>${fmt(o.ambiguous)}</td><td>${fmt(o.duplicates)}</td><td>${fmt(o.invalid_geometry)}</td></tr>`).join('');
+      const statusRows=Object.keys(statusMap).sort().map(s=>`<tr><td>${esc(s)}</td><td>${fmt(statusMap[s])}</td></tr>`).join('');
+      const exactG=coloc.exact_coordinate_groups_float_equality||{};
+      const roundG=coloc.spatial_colocation_groups_round_6dp||{};
+      host.innerHTML=`<section class="nire-card nire-mno"><header><div><p class="panel-label">Audit contrôlé Phase 5</p><h3>Audit MNO — réconciliation infrastructures</h3></div><span class="nire-badge" title="${esc(x.paradox_explanation||est.explanation||'')}">KPI officiel 14 580 inchangé</span></header>
+        <div class="nire-help">
+          <strong>Paradoxe métier</strong>
+          <p>${esc(est.explanation||'14 580 infrastructures physiques ≠ 12 615 enregistrements MNO. Une co-localisation multi-opérateurs ne crée pas N infrastructures. Les sites Planned n’augmentent pas le KPI « existantes ».')}</p>
+          <p class="nire-muted">Scénario théorique uniquement (non officiel) : 14 580 + ${fmt(est.potential_additional_physical_infrastructures_if_all_new_validated)} = ${fmt(est.potential_kpi_if_all_new_validated)}. Aucune écriture dans telecom.infrastructure.</p>
+        </div>
+
+        <section class="nire-section nire-section-pop">
+          <h4>1. Population totale analysée</h4>
+          <div class="nire-kpis nire-kpis-pop"><article><span>Lignes MNO</span><strong>${fmt(pop)}</strong></article><article><span>KPI national officiel</span><strong>${fmt(k.national_infrastructure_kpi_unchanged)}</strong></article><article><span>Somme classifications exclusives</span><strong>${fmt(exclSum)}</strong></article></div>
+          <p class="nire-muted">Contrôle : somme exclusive = population (${exclSum===pop?'OK':'ÉCART'}).</p>
+        </section>
+
+        <section class="nire-section nire-section-exclusive">
+          <h4>2. Résolution principale — classification exclusive</h4>
+          <p class="nire-muted">Chaque ligne a exactement une classe. Ces compteurs additionnent à ${fmt(pop)}.</p>
+          <div class="nire-kpis nire-kpis-exclusive">${exclCards.map(c=>`<article data-exclusive="1"><span>${esc(c[0])}</span><strong>${fmt(c[1])}</strong></article>`).join('')}</div>
+        </section>
+
+        <section class="nire-section nire-section-transverse">
+          <h4>3. Indicateurs qualité et risques (non exclusifs)</h4>
+          <p class="nire-muted">Une même ligne peut apparaître dans plusieurs indicateurs. <strong>Ne pas additionner</strong> ces valeurs pour retrouver ${fmt(pop)}.</p>
+          <div class="nire-kpis nire-kpis-transverse">
+            <article><span>Planned (statut)</span><strong>${fmt(tr.planned_status_normalized!=null?tr.planned_status_normalized:k.planned_sites)}</strong></article>
+            <article><span>Flag COLOCATED_MULTI_OPERATOR (lignes)</span><strong>${fmt(tr.colocated_multi_operator_flag_rows)}</strong></article>
+            <article><span>Revue humaine (lignes uniques)</span><strong>${fmt(hr.unique_rows_requiring_review!=null?hr.unique_rows_requiring_review:k.requires_human_review_unique)}</strong></article>
+            <article><span>POSSIBLE_DUPLICATE (primaire)</span><strong>${fmt(k.possible_duplicates)}</strong></article>
+            <article><span>AMBIGUOUS (primaire)</span><strong>${fmt(k.ambiguous)}</strong></article>
+            <article><span>CONFLICT (primaire)</span><strong>${fmt(k.conflicts)}</strong></article>
+          </div>
+          <section class="nire-table-card"><h4>Revue humaine — ventilation par motif (classe primaire)</h4><table><thead><tr><th>Motif (classification)</th><th>Lignes uniques</th></tr></thead><tbody>${reviewRows||emptyRow(2,'Aucune revue')}</tbody></table>
+            <p class="nire-muted">Total unique : ${fmt(hr.unique_rows_requiring_review)} (pas une somme de catégories chevauchantes).</p>
+          </section>
+        </section>
+
+        <section class="nire-section nire-section-coloc">
+          <h4>4. Co-localisations (nombre de groupes)</h4>
+          <p class="nire-muted">Règle Phase 5 : égalité après arrondi lat/lon à 6 décimales — pas de rayon PostGIS. Les groupes ≠ lignes.</p>
+          <div class="nire-kpis">
+            <article><span>Groupes Phase 5 (6 déc.)</span><strong>${fmt(coloc.phase5_groups_total!=null?coloc.phase5_groups_total:k.colocations_total_groups)}</strong></article>
+            <article><span>dont multi-opérateurs</span><strong>${fmt(coloc.phase5_groups_multi_operator!=null?coloc.phase5_groups_multi_operator:k.colocations_multi_operator)}</strong></article>
+            <article><span>Exact float — groupes</span><strong>${fmt(exactG.groups)}</strong></article>
+            <article><span>Exact float — multi-op</span><strong>${fmt(exactG.multi_operator_groups)}</strong></article>
+            <article><span>Round 6dp — groupes</span><strong>${fmt(roundG.groups)}</strong></article>
+            <article><span>Round 6dp — multi-op</span><strong>${fmt(roundG.multi_operator_groups)}</strong></article>
+          </div>
+        </section>
+
+        <section class="nire-section">
+          <h4>5. Répartition opérateurs</h4>
+          <div class="nire-kpis"><article><span>Vodacom</span><strong>${fmt(k.vodacom)}</strong></article><article><span>Airtel</span><strong>${fmt(k.airtel)}</strong></article><article><span>Orange</span><strong>${fmt(k.orange)}</strong></article><article><span>Africell</span><strong>${fmt(k.africell)}</strong></article></div>
+          <section class="nire-table-card"><table><thead><tr><th>Opérateur</th><th>Total</th><th>Match infra</th><th>Présence</th><th>Nouveaux</th><th>Planned (statut)</th><th>Ambigus</th><th>Doublons</th><th>Géom. invalide</th></tr></thead><tbody>${opRows||emptyRow(9,'Aucune ventilation')}</tbody></table>
+            <p class="nire-muted">La colonne Planned (statut) est transversale : une ligne Planned peut aussi être Match / Conflict / etc.</p>
+          </section>
+        </section>
+
+        <section class="nire-section">
+          <h4>6. Répartition statuts</h4>
+          <section class="nire-table-card"><table><thead><tr><th>Statut normalisé</th><th>Lignes</th></tr></thead><tbody>${statusRows||emptyRow(2,'Aucun statut')}</tbody></table></section>
+        </section>
+
+        <section class="nire-layers"><h4>Couches cartographiques (indépendantes)</h4><p>Activez chaque opérateur via l’API GeoJSON plafonnée : <code>/api/nire/mno-audit/layers/{vodacom|airtel|orange|africell}</code>. Smart Map existante non remplacée.</p>
+          <div class="nire-layer-toggles">${['Vodacom','Airtel','Orange','Africell'].map(o=>`<label><input type="checkbox" data-mno-layer="${o.toLowerCase()}" checked> ${o}</label>`).join('')}</div>
+        </section>
+        <section class="nire-rule"><h4>Garanties</h4><p>Source MNO immuable (SHA-256 : <code>${esc((x.meta&&x.meta.sha256)||'—')}</code>). Aucune suppression physique. Aucun remplacement automatique. File de revue Phase 4 réutilisée pour les ambiguïtés.</p></section>
+        <section class="nire-performance">Audit UI en ${state.timings.mno_ms.toFixed(1)} ms · moteur ${esc(x.performance?.total_ms||'—')} ms · revue enfilée ${fmt(x.review_enqueued)}</section>
+      </section>`;
+      state.root.querySelectorAll('[data-mno-layer]').forEach(cb=>cb.addEventListener('change',()=>notice(`Couche ${cb.dataset.mnoLayer} ${cb.checked?'activée':'désactivée'} (données via API layers — pas de chargement brut 12 615 points).`,'info')));
+    }catch(e){notice(e.message,'error');host.innerHTML='<div class="nire-empty"><strong>Audit MNO momentanément indisponible.</strong><p>Aucune donnée source n’a été modifiée.</p></div>';}
+  }
   function badge(v){return `<span class="nire-badge" data-status="${esc(v)}">${esc(v||'Non renseigné')}</span>`;}
   function emptyRow(n,msg){return `<tr><td colspan="${n}"><div class="nire-empty">${esc(msg)}</div></td></tr>`;}
   window.NireWorkspace={mount(opts){state.root=opts.root;state.apiBase=opts.apiBase;state.leaflet=opts.leaflet;if(!state.mounted){state.mounted=true;shell();}state.root.dataset.state='ready';return loadOverview();},_test:{validCoord,evidenceGroups,renderCurrent,state}};
