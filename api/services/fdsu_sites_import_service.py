@@ -43,6 +43,8 @@ PROGRAM_CATALOG = {
 
 FIELD_ALIASES = {
     "site_name": ("site name", "site_name", "nom", "name", "site"),
+    "village_name": ("village name", "village_name", "village", "nom village"),
+    "locality_name": ("locality", "locality_name", "localite", "localité", "localite_name"),
     "latitude": ("latitude", "lat", "y"),
     "longitude": ("longitude", "lon", "lng", "long", "x"),
     "province": ("provinces", "province", "prov"),
@@ -186,11 +188,15 @@ def normalize_row(raw: dict[str, Any], mapping: dict[str, str | None], program_c
     is_300 = _to_bool_300(get("is_300_planned"))
     site_name = str(get("site_name") or f"Site_{index}").strip()
     site_code = f"{meta['program_code'].upper()}_{index:05d}"
+    village_name = str(get("village_name")).strip() if get("village_name") not in (None, "") else None
+    locality_name = str(get("locality_name")).strip() if get("locality_name") not in (None, "") else None
 
     return {
         "site_id": index,
         "site_code": site_code,
         "site_name": site_name,
+        "village_name": village_name,
+        "locality_name": locality_name,
         "latitude": lat,
         "longitude": lon,
         "province": (str(get("province")).strip() if get("province") not in (None, "") else None),

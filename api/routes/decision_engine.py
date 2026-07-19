@@ -17,6 +17,8 @@ from api.services import (
     explainable_decision_service,
     fdsu_site_priority_service,
     fdsu_sites_import_service,
+    fdsu_sites_inventory_service,
+    fdsu_sites_nsme_sync_service,
 )
 
 router = APIRouter()
@@ -368,6 +370,48 @@ def list_priority_programs() -> dict[str, Any]:
     }
 
 
+@router.get("/sites/inventory/summary", summary="Synthèse inventaire Sites FDSU (KPI programmes)")
+def sites_inventory_summary() -> dict[str, Any]:
+    return fdsu_sites_inventory_service.inventory_summary()
+
+
+@router.get("/sites/inventory", summary="Inventaire paginé des Sites FDSU")
+def sites_inventory(
+    program_code: str | None = Query(None, description="sites_40 | sites_300 | sites_20476 | portfolio_340 | all"),
+    status: str | None = Query(None),
+    province: str | None = Query(None),
+    territoire: str | None = Query(None),
+    priority: str | None = Query(None),
+    q: str | None = Query(None, description="Recherche code / nom / identifiant technique"),
+    limit: int = Query(50, gt=0, le=500),
+    offset: int = Query(0, ge=0),
+) -> dict[str, Any]:
+    try:
+        return fdsu_sites_inventory_service.list_inventory(
+            program_code=program_code,
+            status=status,
+            province=province,
+            territoire=territoire,
+            priority=priority,
+            q=q,
+            limit=limit,
+            offset=offset,
+        )
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@router.get("/sites/inventory/{site_id}", summary="Fiche détaillée d’un site inventaire FDSU")
+def sites_inventory_detail(
+    site_id: str,
+    program_code: str | None = Query(None),
+) -> dict[str, Any]:
+    result = fdsu_sites_inventory_service.get_inventory_site(site_id, program_code=program_code)
+    if not result:
+        raise HTTPException(status_code=404, detail="Site introuvable dans l’inventaire FDSU.")
+    return result
+
+
 @router.get("/sites/priorities", summary="Priorisation nationale des sites FDSU")
 def sites_priorities(
     program_code: str = Query("sites_20476", description="sites_40 | sites_300 | sites_20476"),
@@ -395,6 +439,35 @@ def sites_top_priorities(
         return fdsu_site_priority_service.top_priorities(program_code, limit=limit)
     except FileNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@router.get("/sites/nsme-status", summary="État d’intégration NSME du programme Sites 20 476")
+def sites_nsme_status() -> dict[str, Any]:
+    return fdsu_sites_nsme_sync_service.nsme_status_20476()
+
+
+@router.post("/sites/sync-nsme-20476", summary="Synchroniser Sites 20 476 vers programs.fdsu_sites (NSME)")
+def sync_sites_20476_nsme(
+    dry_run: bool = Query(False, description="Simuler sans écrire"),
+) -> dict[str, Any]:
+    _ensure_db_mode()
+    try:
+        result = fdsu_sites_nsme_sync_service.sync_sites_20476_to_nsme(dry_run=dry_run)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except Exception as exc:  # noqa: BLE001
+        raise HTTPException(status_code=500, detail=f"Sync NSME échouée: {exc}") from exc
+    # Invalider le cache maturité nationale
+    try:
+        from api.services import data_maturity_engine as dme
+
+        dme._CACHE["payload"] = None  # noqa: SLF001
+        dme._CACHE["ts"] = 0.0  # noqa: SLF001
+    except Exception:  # noqa: BLE001
+        pass
+    return result
 
 
 @router.get("/sites/{site_id}/explain", summary="Expliquer le score d'un site FDSU")

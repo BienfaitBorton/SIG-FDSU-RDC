@@ -66,25 +66,32 @@ def resolve_site(
         }
 
     site = explained.get("site") or {}
+    from api.services.site_display_name import enrich_site_labels
+
+    labeled = enrich_site_labels(site)
     return {
         "resolved": True,
         "entity_type": "site",
-        "site_id": int(site.get("site_id") or sid),
-        "site_name": site.get("site_name") or site.get("name"),
-        "site_code": site.get("site_code") or site.get("business_id"),
-        "program_code": site.get("program_code") or program_code,
-        "province": site.get("province"),
-        "territoire": site.get("territoire"),
-        "zone": site.get("zone"),
-        "latitude": site.get("latitude"),
-        "longitude": site.get("longitude"),
-        "population": site.get("population"),
-        "priority_score": site.get("priority_score"),
-        "priority_level": site.get("priority_level"),
-        "priority_level_label": site.get("priority_level_label"),
-        "distance": site.get("distance"),
-        "distance_level": site.get("distance_level"),
-        "is_300_planned": site.get("is_300_planned"),
+        "site_id": int(labeled.get("site_id") or sid),
+        "site_name": labeled.get("site_name"),
+        "display_name": labeled.get("display_name"),
+        "technical_id": labeled.get("technical_id"),
+        "name": labeled.get("display_name") or labeled.get("name"),
+        "site_code": labeled.get("site_code") or labeled.get("business_id"),
+        "program_code": labeled.get("program_code") or program_code,
+        "province": labeled.get("province"),
+        "territoire": labeled.get("territoire"),
+        "zone": labeled.get("zone"),
+        "latitude": labeled.get("latitude"),
+        "longitude": labeled.get("longitude"),
+        "population": labeled.get("population"),
+        "priority_score": labeled.get("priority_score"),
+        "priority_level": labeled.get("priority_level"),
+        "priority_level_label": labeled.get("priority_level_label"),
+        "distance": labeled.get("distance"),
+        "distance_level": labeled.get("distance_level"),
+        "is_300_planned": labeled.get("is_300_planned"),
+        "infra_name": labeled.get("infra_name"),
         "explained": explained,
         "source": "fdsu_site_priority_service.explain_site",
     }

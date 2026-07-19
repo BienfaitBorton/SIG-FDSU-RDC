@@ -23,6 +23,7 @@
   <link rel="stylesheet" href="modules/shared/territorial-digital-twin/territorial-digital-twin.css" />
   <link rel="stylesheet" href="modules/shared/cartography-experience/cartography-experience.css" />
   <link rel="stylesheet" href="modules/shared/decision-cartography-experience/decision-cartography-experience.css" />
+  <link rel="stylesheet" href="modules/sites-inventory/sites-inventory.css" />
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
 </head>
 <body>
@@ -1934,11 +1935,76 @@
           <div class="panel-header">
             <div>
               <p class="panel-label">Sites FDSU</p>
-              <h2>Inventaire des sites</h2>
+              <h2>Inventaire des Sites FDSU</h2>
             </div>
-            <span class="panel-badge">0 site</span>
+            <span class="panel-badge">—</span>
           </div>
-          <p id="sites-module-message">Module Sites FDSU à construire en v0.7.0.</p>
+
+          <p id="sites-inventory-status" class="sites-inv-status" aria-live="polite"></p>
+          <p id="sites-inventory-counter-note" class="sites-inv-muted"></p>
+
+          <section id="sites-inventory-kpis" class="sites-inv-kpis" aria-label="Indicateurs programmes"></section>
+          <section id="sites-inventory-programs" class="sites-inv-programs" aria-label="Programmes Sites FDSU"></section>
+
+          <section class="sites-inv-filters" aria-label="Filtres inventaire">
+            <select id="sites-filter-program" aria-label="Programme">
+              <option value="">Tous les programmes</option>
+              <option value="sites_40">Sites 40</option>
+              <option value="sites_300">Sites 300</option>
+              <option value="sites_20476">Sites 20 476</option>
+              <option value="portfolio_340">Portefeuille 340 (40+300)</option>
+            </select>
+            <select id="sites-filter-status" aria-label="Statut">
+              <option value="">Tous les statuts</option>
+            </select>
+            <select id="sites-filter-province" aria-label="Province">
+              <option value="">Toutes les provinces</option>
+            </select>
+            <select id="sites-filter-territoire" aria-label="Territoire">
+              <option value="">Tous les territoires</option>
+            </select>
+            <select id="sites-filter-priority" aria-label="Priorité">
+              <option value="">Toutes priorités</option>
+              <option value="critical">Critique</option>
+              <option value="high">Élevée</option>
+              <option value="medium">Moyenne</option>
+              <option value="low">Faible</option>
+            </select>
+            <input id="sites-filter-q" type="search" placeholder="Recherche code, nom, identifiant…" aria-label="Recherche" />
+            <button type="button" class="primary-button" id="sites-filter-apply">Filtrer</button>
+          </section>
+
+          <div class="sites-inv-layout">
+            <div class="sites-inv-table-wrap">
+              <table class="sites-inv-table" aria-label="Tableau inventaire sites">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Nom</th>
+                    <th>Programme</th>
+                    <th>Province</th>
+                    <th>Territoire</th>
+                    <th>Statut</th>
+                    <th>Priorité</th>
+                    <th>Score</th>
+                    <th>Géo</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="sites-inventory-tbody">
+                  <tr><td colspan="10" class="sites-inv-empty">Chargement…</td></tr>
+                </tbody>
+              </table>
+              <div class="sites-inv-pagination">
+                <button type="button" class="secondary-button" id="sites-inventory-prev">Précédent</button>
+                <span id="sites-inventory-page-info">—</span>
+                <button type="button" class="secondary-button" id="sites-inventory-next">Suivant</button>
+              </div>
+            </div>
+            <aside id="sites-inventory-detail" class="sites-inv-detail" aria-live="polite">
+              <p class="sites-inv-muted">Sélectionnez un site pour afficher la fiche métier.</p>
+            </aside>
+          </div>
         </div>
 
         <div class="module-panel hidden" id="decision-panel" data-module="decision">
@@ -2621,6 +2687,8 @@
   <script src="modules/shared/cartography-experience/cartography-experience.js"></script>
   <script src="modules/shared/decision-cartography-experience/decision-cartography-experience.js"></script>
   <script src="modules/shared/institutional-labels.js"></script>
+  <script src="modules/shared/site-display-name.js"></script>
+  <script src="modules/sites-inventory/sites-inventory.js"></script>
   <script src="modules/shared/ux-premium/ux-premium.js"></script>
   <script src="modules/shared/decision-workspace/decision-workspace.js"></script>
   <script src="modules/shared/decision-scenarios/decision-scenarios.js"></script>

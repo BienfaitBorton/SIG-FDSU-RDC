@@ -146,6 +146,27 @@ def _table_ready() -> bool:
         return False
 
 
+def count_fdsu_sites(*, program_code: str | None = None) -> int:
+    """Compte les sites NSME (programs.fdsu_sites) — sans limite artificielle."""
+    if DATA_MODE != "db":
+        return 0
+    clauses = ["1=1"]
+    params: list[Any] = []
+    if program_code:
+        clauses.append("(p.program_code = %s OR LOWER(REPLACE(p.program_code, 'PROG_', '')) = LOWER(%s))")
+        params.extend([program_code, program_code.replace("PROG_", "").lower()])
+    query = f"""
+        SELECT COUNT(*) AS n
+        FROM programs.fdsu_sites s
+        JOIN programs.fdsu_programs p ON p.id = s.program_id
+        WHERE {' AND '.join(clauses)}
+    """
+    with connect_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(query, params)
+            return int(cur.fetchone()[0])
+
+
 def list_fdsu_sites(
     *,
     program_code: str | None = None,
@@ -156,6 +177,9 @@ def list_fdsu_sites(
 ) -> list[dict[str, Any]]:
     if DATA_MODE != "db":
         return []
+    # Programme national : autoriser jusqu’à 25k (évite faux « absent NSME » à 5000)
+    max_limit = 25000
+    effective_limit = max(1, min(int(limit or 5000), max_limit))
     clauses = ["s.latitude IS NOT NULL", "s.longitude IS NOT NULL"]
     params: list[Any] = []
     if asset_id is not None:
@@ -171,7 +195,7 @@ def list_fdsu_sites(
     if territoire:
         clauses.append("LOWER(s.territoire) = LOWER(%s)")
         params.append(territoire)
-    params.append(limit)
+    params.append(effective_limit)
     query = f"""
         SELECT
             s.id,
@@ -184,7 +208,14 @@ def list_fdsu_sites(
             s.latitude,
             s.longitude,
             p.program_code,
-            p.program_name
+            p.program_name,
+            s.technical_id,
+            s.display_name,
+            s.infra_name,
+            s.source_site_id,
+            s.population,
+            s.is_300_planned,
+            s.display_name_source
         FROM programs.fdsu_sites s
         JOIN programs.fdsu_programs p ON p.id = s.program_id
         WHERE {' AND '.join(clauses)}
@@ -193,8 +224,39 @@ def list_fdsu_sites(
     """
     with connect_db() as conn:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute(query, params)
-            return [dict(row) for row in cur.fetchall()]
+            try:
+                cur.execute(query, params)
+            except Exception:
+                # Schéma sans colonnes nationales encore — SELECT minimal
+                conn.rollback()
+                legacy = f"""
+                    SELECT
+                        s.id, s.site_code, s.site_name, s.province, s.territoire,
+                        s.zone, s.status, s.latitude, s.longitude,
+                        p.program_code, p.program_name
+                    FROM programs.fdsu_sites s
+                    JOIN programs.fdsu_programs p ON p.id = s.program_id
+                    WHERE {' AND '.join(clauses)}
+                    ORDER BY s.id
+                    LIMIT %s
+                """
+                cur.execute(legacy, params)
+            rows = [dict(row) for row in cur.fetchall()]
+    # Libellé métier pour consommateurs NSME (sans écraser technical_id)
+    try:
+        from api.services.site_display_name import apply_display_name
+
+        out = []
+        for row in rows:
+            bag = dict(row)
+            if bag.get("display_name"):
+                bag["name"] = bag["display_name"]
+            elif bag.get("site_name"):
+                bag = apply_display_name(bag)
+            out.append(bag)
+        return out
+    except Exception:
+        return rows
 
 
 def _load_ccn_assets() -> list[dict[str, Any]]:

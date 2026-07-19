@@ -291,6 +291,16 @@ def main() -> None:
             )
             print(f"  {count} sites importés.")
         print_summary(conn)
+        # Programme national : sync idempotente séparée (évite de charger 20k GeoJSON ici)
+        print("Synchronisation Sites 20 476 → programs.fdsu_sites (NSME)…")
+        from api.services import fdsu_sites_nsme_sync_service as nsme_sync
+
+        result = nsme_sync.sync_sites_20476_to_nsme()
+        print(
+            f"  NSME 20476 : {result.get('nsme_count_after')} sites "
+            f"(new={result.get('new_rows')}, géom={result.get('with_geometry')})."
+        )
+        print_summary(conn)
 
 
 if __name__ == "__main__":

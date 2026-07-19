@@ -91,7 +91,7 @@
     push('localite', entity.localite_id || entity.localite || entity.village, entity.localite_name || entity.localite || entity.village);
     if (entity.site_id || entity.id || entity.code) {
       const siteId = entity.site_id || entity.id || entity.code;
-      push('site', siteId, entity.name || entity.site_name || `Site ${siteId}`);
+      push('site', siteId, (global.FdsuSiteDisplayName?.siteDisplayLabel?.(entity)) || entity.display_name || entity.name || entity.site_name || `Site ${siteId}`);
     }
     return trail;
   }
@@ -218,7 +218,7 @@
     if (summarySection && summaryBody) {
       summarySection.hidden = false;
       const selLine = selection
-        ? `${selection.name || selection.site_name || selection.id || 'Entité'} — ${selection.province || '—'} / ${selection.territoire || '—'}`
+        ? `${(global.FdsuSiteDisplayName?.siteDisplayLabel?.(selection)) || selection.display_name || selection.name || selection.site_name || selection.id || 'Entité'} — ${selection.province || '—'} / ${selection.territoire || '—'}`
         : 'Aucune entité sélectionnée — cliquez une ligne ou un marqueur.';
       summaryBody.innerHTML = `
         <div class="dw-summary-grid">
@@ -336,7 +336,7 @@
     highlightTableSelection();
     if (options.applyFilters !== false) applyFiltersFromTrail();
     renderContextPanels(state.lastPayload);
-    const label = entity?.name || entity?.site_name || entity?.id || 'aucune';
+    const label = (global.FdsuSiteDisplayName?.siteDisplayLabel?.(entity)) || entity?.display_name || entity?.name || entity?.site_name || entity?.id || 'aucune';
     setSyncMessage(`Sélection synchronisée · ${label} · jeton ${state.syncToken}`);
     emit('selection:change', { selection: state.selection, trail: state.trail, syncToken: state.syncToken });
   }

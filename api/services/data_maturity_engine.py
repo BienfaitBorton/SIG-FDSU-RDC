@@ -372,13 +372,12 @@ def _eval_program_file(code: str, label: str, *, in_nsme: bool, expected: int | 
         if meta.get("with_geometry") is not None:
             with_geom = int(meta["with_geometry"])
 
-    # NSME DB count
+    # NSME DB count (COUNT SQL — pas de plafond 5000)
     nsme_n = None
     if in_nsme:
         from api.services import spatial_matching_service as nsme
 
-        listed = _safe(lambda: nsme.list_fdsu_sites(program_code=code, limit=5000), []) or []
-        nsme_n = len(listed)
+        nsme_n = _safe(lambda: nsme.count_fdsu_sites(program_code=code), 0) or 0
 
     complete = None
     if expected and count is not None:
@@ -389,14 +388,33 @@ def _eval_program_file(code: str, label: str, *, in_nsme: bool, expected: int | 
         complete = 90.0
 
     geo = _ratio_pct(with_geom, count) if (with_geom is not None and count) else (100.0 if nsme_n else None)
-    interop = 95.0 if (nsme_n and nsme_n > 0) else (55.0 if count else None)
-    if code == "sites_20476" and (nsme_n or 0) == 0 and count:
+    native_ok = bool(nsme_n and expected and nsme_n >= expected) or bool(nsme_n and not expected and nsme_n > 0)
+    interop = 95.0 if native_ok else (70.0 if nsme_n else (55.0 if count else None))
+    if code == "sites_20476" and count and (nsme_n or 0) == 0:
         weak = ["Absent de programs.fdsu_sites (NSME) — SDG via fallback fichier"]
         interop = 45.0
         anomalies = ["site_hors_referentiel_nsme"]
+        strengths = [f"{count} sites dans le fichier"]
+        recommendations = ["Charger le programme dans programs.fdsu_sites"]
+        relations_note = "Fichier programme (fallback)"
+    elif code == "sites_20476" and native_ok:
+        weak = []
+        anomalies = []
+        strengths = [f"{nsme_n} sites en programs.fdsu_sites (NSME natif)", f"{count} sites fichier source"]
+        recommendations = []
+        relations_note = "NSME spatial matching (chemin nominal)"
     else:
         weak = []
         anomalies = []
+        strengths = ([f"{count} sites dans le fichier"] if count else []) + (
+            [f"{nsme_n} en NSME"] if nsme_n else []
+        )
+        recommendations = (
+            ["Finaliser le chargement NSME"]
+            if code == "sites_20476" and nsme_n and expected and nsme_n < expected
+            else []
+        )
+        relations_note = "NSME spatial matching" if nsme_n else "Fichier programme"
 
     return _domain_shell(
         code=code,
@@ -414,18 +432,18 @@ def _eval_program_file(code: str, label: str, *, in_nsme: bool, expected: int | 
             "interoperability": interop,
         },
         object_count=count if count is not None else nsme_n,
-        source=str(path.relative_to(ROOT)) if path.exists() else "programs.fdsu_sites",
+        source=(
+            "programs.fdsu_sites"
+            if code == "sites_20476" and native_ok
+            else (str(path.relative_to(ROOT)) if path.exists() else "programs.fdsu_sites")
+        ),
         as_of=_file_mtime_iso(path) or _now(),
         version=code,
-        strengths=[f"{count} sites dans le fichier"] if count else ([f"{nsme_n} en NSME"] if nsme_n else []),
+        strengths=strengths,
         weaknesses=weak + (["Population native absente"] if code in {"sites_40", "sites_300"} and count else []),
         anomalies=anomalies,
-        recommendations=(
-            ["Charger le programme dans programs.fdsu_sites"]
-            if code == "sites_20476" and (nsme_n or 0) == 0
-            else []
-        ),
-        relations_note="NSME spatial matching" if nsme_n else "Fichier programme",
+        recommendations=recommendations,
+        relations_note=relations_note,
         available=bool(count or nsme_n),
     )
 

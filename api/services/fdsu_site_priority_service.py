@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from api.services import decision_engine_service, fdsu_sites_import_service
+from api.services.site_display_name import apply_display_name, enrich_site_labels
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 BUSINESS_DIR = PROJECT_ROOT / "data" / "business"
@@ -247,10 +248,15 @@ def compute_national_site_score(site: dict[str, Any]) -> dict[str, Any]:
         reverse=True,
     )[:3]
 
-    return {
+    scored = {
         "site_id": site.get("site_id"),
         "site_code": site.get("site_code"),
         "site_name": site.get("site_name"),
+        "name": site.get("name"),
+        "village_name": site.get("village_name"),
+        "locality_name": site.get("locality_name") or site.get("localite"),
+        "infra_name": site.get("infra_name"),
+        "nearest_site": site.get("nearest_site"),
         "program_code": fdsu_sites_import_service.normalize_program_code(program_code),
         "province": site.get("province"),
         "territoire": site.get("territoire"),
@@ -279,6 +285,11 @@ def compute_national_site_score(site: dict[str, Any]) -> dict[str, Any]:
             "weights": NATIONAL_WEIGHTS,
         },
     }
+    # Enrichissement libellé (NCI infra_name) pour Sites 20 476 — sans perdre site_name technique
+    try:
+        return enrich_site_labels(scored)
+    except Exception:
+        return apply_display_name(scored)
 
 
 def _sites_from_db_program(program_code: str) -> list[dict[str, Any]]:

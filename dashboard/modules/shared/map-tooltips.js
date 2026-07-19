@@ -158,10 +158,14 @@
     const lines = [];
     const resolved = resolveKind(kind, p);
 
-    if (['site', 'site_fdsu', 'sites', 'sites_40', 'sites_300', 'sites_all'].includes(resolved)) {
+    if (['site', 'site_fdsu', 'sites', 'sites_40', 'sites_300', 'sites_all', 'sites_20476'].includes(resolved)) {
       pushLine(lines, 'Code', pick(p, ['site_code', 'code', 'official_code', 'business_id']));
-      pushLine(lines, 'Localité', pick(p, ['localite', 'locality', 'village', 'name', 'nom', 'site_name']));
-      pushLine(lines, 'Programme', pick(p, ['programme', 'program_code', 'program']) || (resolved === 'sites_300' ? 'Sites 300' : resolved === 'sites_40' ? 'Sites 40' : null));
+      const siteLabel = (global.FdsuSiteDisplayName?.siteDisplayLabel?.(p))
+        || pick(p, ['display_name', 'village_name', 'locality_name', 'infra_name', 'localite', 'locality', 'village', 'name', 'nom', 'site_name']);
+      pushLine(lines, 'Site', siteLabel);
+      const techId = pick(p, ['technical_id']);
+      if (techId && techId !== siteLabel) pushLine(lines, 'Identifiant technique', techId);
+      pushLine(lines, 'Programme', pick(p, ['programme', 'program_code', 'program']) || (resolved === 'sites_300' ? 'Sites 300' : resolved === 'sites_40' ? 'Sites 40' : resolved === 'sites_20476' ? 'Sites 20 476' : null));
       const score = formatScore(pick(p, ['priority_score', 'score']));
       if (score) pushLine(lines, 'Score', score);
       pushLine(lines, 'Priorité', pick(p, ['priority_level_label', 'priority_level', 'priorite', 'priority_status']));

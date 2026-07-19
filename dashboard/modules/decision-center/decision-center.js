@@ -1297,8 +1297,10 @@
       const levelClass = DECISION_ENGINE_PRIORITY_CLASS[site.priority_level] || 'is-low';
       const selected = decisionCenterState.decisionEngineSelectedSiteId === site.site_id ? ' is-selected' : '';
       const territory = [site.territoire, site.province].filter(Boolean).join(' · ') || 'Non renseigné';
-      const siteName = site.site_name || site.site_code || 'Site FDSU';
-      const siteTitle = [site.site_name, site.site_code, formatProgramLabel(site)].filter(Boolean).join(' — ');
+      const siteName = (global.FdsuSiteDisplayName?.siteDisplayLabel?.(site))
+        || site.display_name || site.site_name || site.site_code || 'Site FDSU';
+      const techId = site.technical_id || site.site_name || site.site_code;
+      const siteTitle = [siteName, techId !== siteName ? techId : null, formatProgramLabel(site)].filter(Boolean).join(' — ');
       const factor = formatPrimaryFactor(site);
       const score = Number(site.priority_score || 0).toFixed(1);
       const priorityLabel = site.priority_level_label || site.priority_level || '—';
@@ -1428,16 +1430,20 @@
         bubblingMouseEvents: false,
       });
       marker.bindPopup(`
-        <strong>${escapeHtml(site.site_name || site.site_code || 'Site FDSU')}</strong><br/>
+        <strong>${escapeHtml((global.FdsuSiteDisplayName?.siteDisplayLabel?.(site)) || site.display_name || site.site_name || site.site_code || 'Site FDSU')}</strong><br/>
         Score : ${Number(site.priority_score || 0).toFixed(1)}<br/>
         ${escapeHtml(site.priority_level_label || site.priority_level || '')}<br/>
         <span class="map-popup-action">Cliquer pour le dossier de décision</span>
       `, { maxWidth: 260, className: 'decision-map-popup-wrapper' });
 
+      const label = (global.FdsuSiteDisplayName?.siteDisplayLabel?.(site))
+        || site.display_name || site.site_name || site.site_code || 'Site';
       const tipProps = {
         ...site,
-        name: site.site_name,
-        site_name: site.site_name,
+        name: label,
+        site_name: label,
+        display_name: label,
+        technical_id: site.technical_id || site.site_name,
         site_code: site.site_code,
         program_code: site.program_code,
         programme: site.program_name || site.program_code,
@@ -1458,7 +1464,7 @@
         });
       } else {
         marker.bindTooltip(
-          `<strong>${escapeHtml(site.site_name || site.site_code || 'Site')}</strong><br>Score ${Number(site.priority_score || 0).toFixed(1)}`,
+          `<strong>${escapeHtml(label)}</strong><br>Score ${Number(site.priority_score || 0).toFixed(1)}`,
           { direction: 'auto', opacity: 1, className: 'sig-map-tooltip' },
         );
         marker.on('click', () => selectDecisionEngineSite(site.site_id));
@@ -1562,15 +1568,19 @@
       list.innerHTML = '<li>Aucune priorité disponible pour ce programme.</li>';
       return;
     }
-    list.innerHTML = top.map((site, index) => `
+    list.innerHTML = top.map((site, index) => {
+      const label = (global.FdsuSiteDisplayName?.siteDisplayLabel?.(site))
+        || site.display_name || site.site_name || site.site_code || 'Site';
+      return `
       <li>
         <strong>#${index + 1}</strong>
-        ${escapeHtml(site.site_name || site.site_code || 'Site')}
+        ${escapeHtml(label)}
         — score ${escapeHtml(site.priority_score)}
         (${escapeHtml(site.priority_level_label || site.priority_level)})
         <button type="button" class="secondary-button decision-engine-explain-btn" data-site-id="${escapeHtml(site.site_id)}" data-program-code="${escapeHtml(site.program_code || decisionCenterState.decisionEngineProgram)}">Expliquer</button>
       </li>
-    `).join('');
+    `;
+    }).join('');
   }
 
   function openDecisionEngineExplain(payload) {
@@ -1584,7 +1594,10 @@
     const explanation = payload?.explanation || {};
     const justification = payload?.justification || [];
     const doctrine = payload?.doctrine || {};
-    if (title) title.textContent = site.name || site.site_name || `Site ${site.id || site.site_id}`;
+    if (title) {
+      title.textContent = (global.FdsuSiteDisplayName?.siteDisplayLabel?.(site))
+        || site.display_name || site.name || site.site_name || `Site ${site.id || site.site_id}`;
+    }
 
     const justifyHtml = justification.length
       ? justification.map((item) => `

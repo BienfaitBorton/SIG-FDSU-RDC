@@ -463,7 +463,7 @@
       <div class="dxl-summary-grid">
         <div>
           <p class="dxl-kicker">Résumé exécutif</p>
-          <h3>${escapeHtml(site.site_name || site.name || site.site_code || state.assetId)}</h3>
+          <h3>${escapeHtml((global.FdsuSiteDisplayName?.siteDisplayLabel?.(site)) || site.display_name || site.site_name || site.name || site.site_code || state.assetId)}</h3>
           <p>Code : <strong>${escapeHtml(site.site_code || site.business_id || state.assetId)}</strong>
              · Programme : <strong>${escapeHtml(site.program_code || state.programCode || '—')}</strong></p>
           <p>Statut / priorité : <strong>${escapeHtml(level)}</strong>

@@ -279,6 +279,12 @@ def _list_nsme_sites(program_code: str, limit: int = 5000) -> list[dict[str, Any
     return nsme.list_fdsu_sites(program_code=program_code, limit=limit) or []
 
 
+def _count_nsme_sites(program_code: str) -> int:
+    from api.services import spatial_matching_service as nsme
+
+    return int(nsme.count_fdsu_sites(program_code=program_code) or 0)
+
+
 def _radius() -> float:
     from api.services.spatial_matching_service import _radius_for_asset
 
@@ -518,12 +524,32 @@ def build_coverage_report(
         for k in ("without_coordinates", "without_population", "without_admin", "without_nsme"):
             quality_national[k] += int(q.get(k) or 0)
 
-    # Sites 20476 — fichier (absents de programs.fdsu_sites)
-    sites_20476 = _load_program_sites_json("sites_20476")
-    structural_20476 = _structural_bucket(sites_20476, in_nsme=False, radius=radius)
+    # Sites 20476 — NSME natif si chargé, sinon fallback fichier
+    nsme_count_20476 = _count_nsme_sites("sites_20476")
+    file_sites_20476 = _load_program_sites_json("sites_20476")
+    expected_20476 = len(file_sites_20476) or 20476
+    native_20476 = nsme_count_20476 >= expected_20476 and nsme_count_20476 > 0
+
+    if native_20476:
+        sites_20476 = _list_nsme_sites("sites_20476", limit=25000)
+        structural_20476 = _structural_bucket(sites_20476, in_nsme=True, radius=radius)
+        note_20476 = (
+            "Sites en programs.fdsu_sites — SDG NSME natif. "
+            "Fichier programme conserve comme source autoritative / fallback résilience."
+        )
+        sample_pool = sites_20476
+    else:
+        sites_20476 = file_sites_20476
+        structural_20476 = _structural_bucket(sites_20476, in_nsme=False, radius=radius)
+        note_20476 = (
+            "Inventaire fichier présent (géométries). "
+            "Non chargé dans programs.fdsu_sites — SDG via fallback fichier+spatial si coords."
+        )
+        sample_pool = sites_20476
+
     deep_20476 = {"A": 0, "B": 0, "C": 0, "samples": []}
-    for s in sites_20476[:deep_sample_per_program]:
-        sid = s.get("id") or s.get("site_code")
+    for s in sample_pool[:deep_sample_per_program]:
+        sid = s.get("id") or s.get("source_site_id") or s.get("site_code")
         try:
             assessed = assess_asset(sid, program_code="sites_20476", run_matching=True)
             cls = assessed["diagnosis"]["classification"]
@@ -552,10 +578,9 @@ def build_coverage_report(
         "partial": structural_20476["partial"],
         "impossible": structural_20476["impossible"],
         "coverage_rate_pct": structural_20476["coverage_rate_pct"],
-        "note": (
-            "Inventaire fichier présent (géométries). "
-            "Non chargé dans programs.fdsu_sites — SDG via fallback fichier+spatial si coords."
-        ),
+        "nsme_count": nsme_count_20476,
+        "native_nsme": native_20476,
+        "note": note_20476,
     }
     for k in ("total", "complete", "partial", "impossible"):
         totals[k] += structural_20476[k]
@@ -592,8 +617,14 @@ def build_coverage_report(
         totals["impossible"] += c_impossible
 
     total = totals["total"] or 1
-    nsme_native = programs_out.get("sites_40", {}).get("complete", 0) + programs_out.get("sites_300", {}).get("complete", 0)
-    pending_nsme = int((programs_out.get("sites_20476") or {}).get("total") or 0)
+    # Taux NSME natif = sites structurellement « complete » déjà en programs.fdsu_sites
+    # (40 + 300 + 20476 si chargé) / total observé (programmes + CCN DEMO)
+    nsme_native = (
+        int(programs_out.get("sites_40", {}).get("complete") or 0)
+        + int(programs_out.get("sites_300", {}).get("complete") or 0)
+        + (int(programs_out.get("sites_20476", {}).get("complete") or 0) if native_20476 else 0)
+    )
+    pending_nsme = 0 if native_20476 else int((programs_out.get("sites_20476") or {}).get("total") or 0)
     return {
         "_meta": {
             "engine": ENGINE_VERSION,
@@ -606,7 +637,17 @@ def build_coverage_report(
                 "partial": "Analyse possible via fichier/DEMO ou couches incomplètes",
                 "impossible": "Aucune base calculable (coords / actif introuvables)",
                 "coverage_rate": "(complete+partial)/total — sites pour lesquels une analyse peut être tentée",
-                "nsme_native_rate": "Sites déjà dans le référentiel NSME DB",
+                "nsme_native_rate": (
+                    "Sites déjà dans le référentiel NSME DB (programs.fdsu_sites) "
+                    "avec coords valides, divisé par le total observé (programmes + CCN)."
+                ),
+                "pending_nsme_load": "Sites du programme national encore absents de programs.fdsu_sites",
+            },
+            "nsme_20476": {
+                "native": native_20476,
+                "nsme_count": nsme_count_20476,
+                "expected": expected_20476,
+                "nominal_path": "programs.fdsu_sites" if native_20476 else "file_fallback",
             },
         },
         "coverage_rate": round(100.0 * (totals["complete"] + totals["partial"]) / total, 1),

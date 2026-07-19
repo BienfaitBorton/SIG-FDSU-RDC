@@ -72,10 +72,11 @@
       }
       state.payload = { caseFile, nsmeImpact, nsmeMap, ti };
 
-      const displayName = caseFile?.asset?.site_name
-        || caseFile?.asset?.name
-        || nsmeImpact?.asset?.site_name
-        || nsmeImpact?.asset?.name
+      const assetForLabel = caseFile?.asset || nsmeImpact?.asset || {};
+      const displayName = (global.FdsuSiteDisplayName?.siteDisplayLabel?.(assetForLabel))
+        || assetForLabel.display_name
+        || assetForLabel.site_name
+        || assetForLabel.name
         || null;
       const title = document.querySelector('#dxl-title');
       if (title) {

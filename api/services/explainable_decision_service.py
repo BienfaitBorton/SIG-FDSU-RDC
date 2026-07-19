@@ -584,7 +584,19 @@ def build_site_case(site_id: str, program_code: str | None = None) -> dict[str, 
     score = float(site.get("priority_score") or 0)
     level = str(site.get("priority_level") or "low")
     label = site.get("priority_level_label") or level
-    display_name = site.get("site_name") or site.get("name") or site.get("site_code") or str(sid)
+    try:
+        from api.services.site_display_name import enrich_site_labels
+
+        site = enrich_site_labels(site)
+    except Exception:  # noqa: BLE001
+        pass
+    display_name = (
+        site.get("display_name")
+        or site.get("name")
+        or site.get("site_name")
+        or site.get("site_code")
+        or str(sid)
+    )
     summary = (
         f"Recommandation Site « {display_name} » — "
         f"score {score}/100 ({label}). Doctrine {doctrine_meta.get('title')} v{doctrine_meta.get('version')}."

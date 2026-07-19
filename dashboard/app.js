@@ -1657,10 +1657,14 @@ function updateEnrichmentSuggestion(suggestionId, status) {
 function initializeSitesModule() {
   const panel = document.querySelector('#sites-panel');
   if (!panel) return;
+  if (typeof window.SitesInventory?.initialize === 'function') {
+    window.SitesInventory.initialize();
+    return;
+  }
   const badge = panel.querySelector('.panel-badge');
-  const message = panel.querySelector('#sites-module-message');
-  if (badge) badge.textContent = '0 site';
-  if (message) message.textContent = 'Module Sites FDSU à construire en v0.7.0.';
+  const status = panel.querySelector('#sites-inventory-status');
+  if (badge) badge.textContent = '—';
+  if (status) status.textContent = 'Module inventaire en cours de chargement…';
 }
 
 function initializeImportModule() {
@@ -10507,20 +10511,52 @@ function openSites40ProgramOnMap() {
 function openDecisionSiteOnMap(focus = {}) {
   const siteId = focus.site_id || focus.id;
   const program = String(focus.program_code || '').toLowerCase();
-  const layerKey = program.includes('300') ? 'sites_300' : (program.includes('40') ? 'sites_40' : 'sites_40');
+  const is20476 = program.includes('20476') || program.includes('national');
+  const layerKey = program.includes('300')
+    ? 'sites_300'
+    : (program.includes('40') ? 'sites_40' : (is20476 ? null : 'sites_40'));
   navigateTo('map');
   const activate = () => {
     if (!cartographyState.initialized || !cartographyState.map) {
       window.setTimeout(activate, 120);
       return;
     }
-    const ensure = layerKey === 'sites_300'
-      ? ensureFdsuSitesProgramLayerLoaded('sites_300')
-      : ensureFdsuSitesProgramLayerLoaded('sites_40');
-    ensure.then(() => {
+
+    const focusByCoordinates = () => {
+      const lat = Number(focus.latitude);
+      const lon = Number(focus.longitude);
+      if (!Number.isFinite(lat) || !Number.isFinite(lon)) return false;
+      cartographyState.map.setView([lat, lon], Math.max(cartographyState.map.getZoom(), 10));
+      try {
+        if (cartographyState._focusMarker) {
+          cartographyState.map.removeLayer(cartographyState._focusMarker);
+        }
+        const label = focus.display_name || focus.site_name || focus.site_code || `Site ${siteId || ''}`;
+        cartographyState._focusMarker = L.circleMarker([lat, lon], {
+          radius: 9,
+          color: '#1d4ed8',
+          weight: 2,
+          fillColor: '#3b82f6',
+          fillOpacity: 0.85,
+        }).addTo(cartographyState.map);
+        if (label) cartographyState._focusMarker.bindPopup(String(label)).openPopup();
+      } catch (_e) { /* */ }
+      return true;
+    };
+
+    // Programme national : pas de couche GeoJSON 20k chargée — centrage coordonnées
+    if (!layerKey || is20476) {
+      openCartographyDrawerPanel('layers');
+      if (!focusByCoordinates()) {
+        window.setTimeout(activate, 120);
+      }
+      return;
+    }
+
+    ensureFdsuSitesProgramLayerLoaded(layerKey).then(() => {
       const layer = cartographyState.layers[layerKey];
       if (!layer) {
-        window.setTimeout(activate, 120);
+        focusByCoordinates();
         return;
       }
       const checkbox = document.querySelector(`input[data-layer="${layerKey}"]`);
@@ -10553,13 +10589,7 @@ function openDecisionSiteOnMap(focus = {}) {
           return;
         }
 
-        const lat = Number(focus.latitude);
-        const lon = Number(focus.longitude);
-        if (Number.isFinite(lat) && Number.isFinite(lon)) {
-          cartographyState.map.setView([lat, lon], Math.max(cartographyState.map.getZoom(), 10));
-          return;
-        }
-        fitLayerBounds(layer);
+        if (!focusByCoordinates()) fitLayerBounds(layer);
       });
     });
   };
