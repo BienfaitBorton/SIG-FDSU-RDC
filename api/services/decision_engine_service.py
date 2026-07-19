@@ -746,6 +746,21 @@ def get_national_panel_payload() -> dict[str, Any]:
             territoires = _safe_count(cur, "SELECT COUNT(*) AS c FROM territoires")
             localites = _safe_count(cur, "SELECT COUNT(*) AS c FROM localites")
 
+    # NCI — population déjà calculée (data/coverage/aggregates.json), pas un stub.
+    population_covered = None
+    population_uncovered = None
+    try:
+        from api.services import coverage_intelligence_service
+
+        nci_kpis = (coverage_intelligence_service.statistics() or {}).get("kpis") or {}
+        if nci_kpis.get("population_covered") is not None:
+            population_covered = int(nci_kpis["population_covered"])
+        if nci_kpis.get("population_uncovered") is not None:
+            population_uncovered = int(nci_kpis["population_uncovered"])
+    except Exception:  # noqa: BLE001
+        population_covered = None
+        population_uncovered = None
+
     kpis = {
         "sites_fdsu_total": _kpi_available(sites_fdsu_total, "Sites FDSU"),
         "sites_40": _kpi_available(sites_40, "Sites 40"),
@@ -761,8 +776,16 @@ def get_national_panel_payload() -> dict[str, Any]:
         "provinces": _kpi_available(provinces, "Provinces"),
         "territoires": _kpi_available(territoires, "Territoires"),
         "localites": _kpi_available(localites, "Localités"),
-        "population_covered": _kpi_pending("Population couverte"),
-        "population_uncovered": _kpi_pending("Population non couverte"),
+        "population_covered": (
+            _kpi_available(population_covered, "Population couverte")
+            if population_covered is not None
+            else _kpi_pending("Population couverte")
+        ),
+        "population_uncovered": (
+            _kpi_available(population_uncovered, "Population non couverte")
+            if population_uncovered is not None
+            else _kpi_pending("Population non couverte")
+        ),
         "planned_ccn": _kpi_pending("CCN planifiés"),
         "estimated_investment": _kpi_pending("Investissement estimé"),
     }

@@ -102,9 +102,12 @@ def build_explainable_kpis() -> dict[str, dict[str, Any]]:
             key="sites_fdsu",
             label="Sites FDSU",
             value=sites_fdsu,
-            definition="Nombre total de sites enregistrés dans les programmes FDSU (Sites 40 + Sites 300).",
+            definition=(
+                "Nombre total de sites présents dans programs.fdsu_sites "
+                "(Sites 40 + Sites 300 + inventaire national 20 476 lorsque synchronisé NSME)."
+            ),
             source_table="programs.fdsu_sites",
-            calculation_method="COUNT(*) FROM programs.fdsu_sites (= Sites 40 + Sites 300).",
+            calculation_method="COUNT(*) FROM programs.fdsu_sites (programmes actifs synchronisés).",
             recommended_action="Voir les sites",
         ),
         "sites_priority": _explained(
@@ -237,26 +240,36 @@ def build_explainable_kpis() -> dict[str, dict[str, Any]]:
         "population_covered": _explained(
             key="population_covered",
             label="Population couverte",
-            value=None,
-            available=False,
-            display=NOT_CALCULATED,
-            definition="Population bénéficiant d'un accès effectif au service universel.",
-            source_table="référentiel Population (non intégré)",
-            calculation_method="Non calculable tant que le référentiel Population n'est pas branché.",
-            recommended_action="Intégrer le référentiel Population",
-            limitations=NOT_CALCULATED,
+            value=(national.get("kpis") or {}).get("population_covered", {}).get("value"),
+            available=bool((national.get("kpis") or {}).get("population_covered", {}).get("available")),
+            definition="Population des localités couvertes selon le Référentiel National des Besoins (NCI).",
+            source_table="data/coverage/aggregates.json",
+            source_label="National Coverage Intelligence",
+            calculation_method="SUM(population) des localités NCI au statut covered (agrégats précalculés).",
+            recommended_action="Ouvrir l'Intelligence Territoriale / couverture",
+            limitations=(
+                None
+                if (national.get("kpis") or {}).get("population_covered", {}).get("available")
+                else NOT_CALCULATED
+            ),
+            confidence="high",
         ),
         "population_uncovered": _explained(
             key="population_uncovered",
             label="Population non couverte",
-            value=None,
-            available=False,
-            display=NOT_CALCULATED,
-            definition="Population hors couverture effective FDSU/CCN.",
-            source_table="référentiel Population (non intégré)",
-            calculation_method="Non calculable sans Population + couverture.",
-            recommended_action="Intégrer le référentiel Population",
-            limitations=NOT_CALCULATED,
+            value=(national.get("kpis") or {}).get("population_uncovered", {}).get("value"),
+            available=bool((national.get("kpis") or {}).get("population_uncovered", {}).get("available")),
+            definition="Population des localités non couvertes selon le Référentiel National des Besoins (NCI).",
+            source_table="data/coverage/aggregates.json",
+            source_label="National Coverage Intelligence",
+            calculation_method="SUM(population) des localités NCI au statut uncovered (agrégats précalculés).",
+            recommended_action="Cibler les gaps prioritaires NCI",
+            limitations=(
+                None
+                if (national.get("kpis") or {}).get("population_uncovered", {}).get("available")
+                else NOT_CALCULATED
+            ),
+            confidence="high",
         ),
         "planned_ccn": _explained(
             key="planned_ccn",

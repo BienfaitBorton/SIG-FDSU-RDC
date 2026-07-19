@@ -65,10 +65,10 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
     await expect(page.locator('#decision-kpi-territoires')).toHaveText('145');
     await expect(page.locator('#decision-kpi-health-facilities')).toHaveText(/37[\s\u00a0\u202f]?562/);
 
-    // Indicateurs prospectifs non disponibles — aucun chiffre fictif
+    // Population NCI réelle ; CCN / Budget restent prospectifs (aucun chiffre fictif)
+    await expect(page.locator('#decision-kpi-covered-population')).toHaveText(/20[\s\u00a0\u202f]?690[\s\u00a0\u202f]?227/);
+    await expect(page.locator('#decision-kpi-uncovered-population')).toHaveText(/52[\s\u00a0\u202f]?575[\s\u00a0\u202f]?042/);
     const pendingMessage = /Donnée non encore calculée|Données en cours d['’]intégration|nécessite référentiel/;
-    await expect(page.locator('#decision-kpi-covered-population')).toHaveText(pendingMessage);
-    await expect(page.locator('#decision-kpi-uncovered-population')).toHaveText(pendingMessage);
     await expect(page.locator('#decision-kpi-planned-ccn')).toHaveText(pendingMessage);
     await expect(page.locator('#decision-kpi-investment')).toHaveText(pendingMessage);
 
@@ -344,7 +344,7 @@ test.describe('SIG-FDSU RDC – Centre de Décision FDSU', () => {
     await expect(panel).toContainText('🟡 Planifié');
     await expect(panel).toContainText('300');
     await expect(panel).toContainText('Non démarré');
-    await expect(panel).toContainText('À calculer');
+    await expect(panel).toContainText(/300 scorés|En attente moteur/);
     await expect(page.locator('#decision-center-sites-300-map-btn')).toBeVisible();
 
     await page.screenshot({ path: 'test-results/decision-center-sites-300.png', fullPage: false });

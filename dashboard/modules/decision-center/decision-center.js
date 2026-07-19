@@ -867,13 +867,24 @@
       .catch(() => null);
   }
 
-  function renderSites300ProgramPanel(payload, matrixLoader) {
+  function renderSites300ProgramPanel(payload, matrixLoader, scoresPayload) {
     const container = document.querySelector('#decision-center-sites-300-body');
     if (!container) return;
 
     const sites = asArray(payload?.sites);
     const total = payload?._meta?.count || sites.length;
-    const matrixStatus = matrixLoader?.status?.message || 'Matrice disponible — scoring FDSU à calculer.';
+    const scoredTotal = Number(
+      scoresPayload?._meta?.total_filtered
+      ?? scoresPayload?.sites?.length
+      ?? 0,
+    );
+    const scoreReady = scoredTotal > 0;
+    const scoreDisplay = scoreReady
+      ? `${Number(scoredTotal).toLocaleString('fr-FR')} scorés`
+      : 'En attente moteur';
+    const matrixStatus = scoreReady
+      ? (matrixLoader?.status?.message || 'Matrice disponible — scores moteur de décision FDSU actifs.')
+      : (matrixLoader?.status?.message || 'Matrice disponible — scoring FDSU en attente.');
 
     container.innerHTML = `
       <div class="decision-center-sites-40-summary">
@@ -891,7 +902,7 @@
         </article>
         <article class="decision-center-sites-40-stat">
           <p class="summary-label">Score FDSU</p>
-          <p class="summary-value">À calculer</p>
+          <p class="summary-value">${escapeHtml(scoreDisplay)}</p>
         </article>
         <article class="decision-center-sites-40-stat">
           <p class="summary-label">Déploiement</p>
@@ -939,7 +950,7 @@
       matrixButton.addEventListener('click', () => {
         loadPriorityMatrix().then((loader) => {
           const source = loader?.source?.strategic_copy || 'data/programs/sites_300/matrice_priorisation_300_sites.xlsx';
-          showSites300Info(`Matrice officielle référencée : ${source}. Le pipeline de normalisation et de scoring est préparé ; le calcul FDSU n'est pas encore activé.`);
+          showSites300Info(`Matrice officielle référencée : ${source}. Les scores de priorité Sites 300 sont produits par le moteur de décision FDSU (decision.fdsu_site_scores).`);
         });
       });
     }
@@ -969,9 +980,12 @@
     return Promise.all([
       fetchProgramJson('sites_300/sites_300.json'),
       loadPriorityMatrix(),
+      fetch('/api/decision/site-scores?program_code=PROG_SITES_300&limit=1')
+        .then((response) => (response.ok ? response.json() : null))
+        .catch(() => null),
     ])
-      .then(([payload, matrixLoader]) => {
-        renderSites300ProgramPanel(payload, matrixLoader);
+      .then(([payload, matrixLoader, scoresPayload]) => {
+        renderSites300ProgramPanel(payload, matrixLoader, scoresPayload);
       })
       .catch(() => {
         container.innerHTML = '<p class="decision-center-program-error">Programme Sites 300 indisponible (<code>data/programs/sites_300/sites_300.json</code>).</p>';
