@@ -703,7 +703,179 @@ def build_site_case(site_id: str, program_code: str | None = None) -> dict[str, 
             "doctrine": "DOCTRINE_SITES_FDSU + priority_matrix",
             "confidence_level": nci_context.get("confidence_level"),
         }
+
+    # Preuves spatiales P1 — signaux disponibles, non inventés, scoring inchangé
+    shell["telecom_context"] = _build_telecom_case_context(site)
+    shell["education_context"] = _build_education_case_context(site)
+    shell["ceni_context"] = _build_ceni_case_context(site)
+    shell["spatial_evidence"] = {
+        "telecom": shell["telecom_context"],
+        "education": shell["education_context"],
+        "ceni": shell["ceni_context"],
+        "health_note": "Santé via NSME NEAREST/NEAR_HEALTH_FACILITY (PostGIS)",
+        "scoring_note": (
+            "Signaux éducation / CENI / télécom exposés comme preuves. "
+            "Critères sectoriels moteur à poids 0 restent non pondérés."
+        ),
+    }
+    if shell["telecom_context"].get("available"):
+        shell.setdefault("sources", []).append("Contexte télécom spatial (/api/telecom/spatial-context)")
+    if shell["education_context"].get("available"):
+        shell.setdefault("sources", []).append("Projection Éducation CENI SCHOOL")
+    if shell["ceni_context"].get("available"):
+        shell.setdefault("sources", []).append("Signal institutionnel CENI (≠ site FDSU)")
+
+    edu_n = shell["education_context"].get("nearby_count")
+    if edu_n is not None and isinstance(shell.get("impacts"), dict):
+        shell["impacts"]["ecoles_concernees"] = edu_n
     return shell
+
+
+def _fmt_km(distance_m: Any) -> str | None:
+    from api.services.spatial_nearest_utils import format_km
+
+    return format_km(distance_m if distance_m is not None else None)
+
+
+def _build_telecom_case_context(site: dict[str, Any]) -> dict[str, Any]:
+    lat, lon = site.get("latitude"), site.get("longitude")
+    if lat is None or lon is None:
+        return {"available": False, "reason": "Coordonnées site absentes"}
+    try:
+        from api.services import telecom_service
+
+        ctx = telecom_service.spatial_context_around(float(lat), float(lon), radius_m=25_000) or {}
+    except Exception as exc:  # noqa: BLE001
+        return {"available": False, "reason": str(exc)}
+
+    def _hit(key: str) -> dict[str, Any] | None:
+        row = ctx.get(key)
+        if not row:
+            return None
+        return {
+            "label": row.get("site_name") or row.get("infra_name") or row.get("line_name") or key,
+            "operator_code": row.get("operator_code"),
+            "distance_m": row.get("distance_m"),
+            "distance_display": _fmt_km(row.get("distance_m")),
+            "data_source": row.get("data_source"),
+            "nire_quality_status": row.get("nire_quality_status"),
+        }
+
+    operators = {
+        "vodacom": _hit("NEAREST_MNO_VODACOM"),
+        "orange": _hit("NEAREST_MNO_ORANGE"),
+        "airtel": _hit("NEAREST_MNO_AIRTEL"),
+        "africell": _hit("NEAREST_MNO_AFRICELL"),
+    }
+    fiber = _hit("NEAREST_FIBER_LINK")
+    mw = _hit("NEAREST_MICROWAVE_LINK")
+    multi = list(ctx.get("MULTI_OPERATOR_PROXIMITY") or [])
+    backhaul = bool(ctx.get("BACKHAUL_CANDIDATE"))
+    mutual = bool(ctx.get("MUTUALIZATION_POTENTIAL"))
+    colocation = bool(ctx.get("COLOCATION_SIGNAL"))
+
+    summary_parts = []
+    if fiber and fiber.get("distance_display"):
+        summary_parts.append(f"Fibre la plus proche : {fiber['distance_display']}")
+    if mw and mw.get("distance_display"):
+        summary_parts.append(f"MW le plus proche : {mw['distance_display']}")
+    for code, hit in operators.items():
+        if hit and hit.get("distance_display"):
+            summary_parts.append(f"{code.capitalize()} : {hit['distance_display']}")
+    if mutual:
+        summary_parts.append("Potentiel de mutualisation : Oui")
+    if backhaul:
+        mode = "Fibre" if fiber else ("MW" if mw else "Oui")
+        summary_parts.append(f"Backhaul possible : {mode}")
+
+    return {
+        "available": bool(ctx.get("search_executed")),
+        "search_executed": bool(ctx.get("search_executed")),
+        "operators": operators,
+        "operators_nearby": multi,
+        "fiber": fiber,
+        "microwave": mw,
+        "distance_to_fiber_m": ctx.get("DISTANCE_TO_FIBER_M"),
+        "distance_to_fiber_display": _fmt_km(ctx.get("DISTANCE_TO_FIBER_M")),
+        "backhaul_candidate": backhaul,
+        "mutualization_potential": mutual,
+        "colocation_signal": colocation,
+        "summary_lines": summary_parts,
+        "scoring_weighted": False,
+        "source": "telecom.spatial_context",
+    }
+
+
+def _build_education_case_context(site: dict[str, Any]) -> dict[str, Any]:
+    lat, lon = site.get("latitude"), site.get("longitude")
+    if lat is None or lon is None:
+        return {"available": False, "reason": "Coordonnées site absentes"}
+    try:
+        from api.services import education_referential_service as edu
+
+        payload = edu.nearest_establishment(float(lat), float(lon), radius_m=25_000, limit=10)
+    except Exception as exc:  # noqa: BLE001
+        return {"available": False, "reason": str(exc)}
+    nearest = payload.get("nearest")
+    nearby = list(payload.get("establishments") or [])
+    return {
+        "available": bool(payload.get("data_available")),
+        "search_executed": bool(payload.get("search_executed")),
+        "nearby_count": len(nearby),
+        "nearest": (
+            {
+                "name": (nearest or {}).get("normalized_name") or (nearest or {}).get("original_name"),
+                "subtype": (nearest or {}).get("education_subtype"),
+                "distance_m": (nearest or {}).get("distance_m"),
+                "distance_display": _fmt_km((nearest or {}).get("distance_m")),
+                "province": (nearest or {}).get("province"),
+            }
+            if nearest
+            else None
+        ),
+        "derived_projection": True,
+        "official_ministry_registry": False,
+        "scoring_weighted": False,
+        "note": "Signal éducatif disponible — critère moteur education poids 0",
+        "source": "CENI SCHOOL projection",
+    }
+
+
+def _build_ceni_case_context(site: dict[str, Any]) -> dict[str, Any]:
+    lat, lon = site.get("latitude"), site.get("longitude")
+    if lat is None or lon is None:
+        return {"available": False, "reason": "Coordonnées site absentes"}
+    try:
+        from api.services import ceni_registry_service as ceni
+
+        payload = ceni.nearest_signals(
+            float(lat), float(lon), radius_m=15_000, limit=10, exclude_schools=True
+        )
+    except Exception as exc:  # noqa: BLE001
+        return {"available": False, "reason": str(exc)}
+    nearest = payload.get("nearest")
+    nearby = list(payload.get("sites") or [])
+    return {
+        "available": bool(payload.get("data_available")),
+        "search_executed": bool(payload.get("search_executed")),
+        "nearby_count": len(nearby),
+        "nearest": (
+            {
+                "name": (nearest or {}).get("name"),
+                "category": (nearest or {}).get("normalized_category"),
+                "distance_m": (nearest or {}).get("distance_m"),
+                "distance_display": _fmt_km((nearest or {}).get("distance_m")),
+                "asset_uid": (nearest or {}).get("asset_uid"),
+            }
+            if nearest
+            else None
+        ),
+        "not_fdsu_sites": True,
+        "scoring_weighted": False,
+        "note": "Signal disponible — non pondéré dans le scoring actuel",
+        "signal_role": "administrative_centrality",
+        "source": "CENI registry",
+    }
 
 
 def get_decision_case(asset_id: str, *, asset_type: str | None = None, program_code: str | None = None) -> dict[str, Any] | None:

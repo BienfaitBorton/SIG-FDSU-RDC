@@ -2156,7 +2156,7 @@
     if (!canUseDb) {
       renderSectorialCatalogCards([
         { code: 'HEALTH', name: 'Référentiel Santé', status: 'in_progress' },
-        { code: 'EDUCATION', name: 'Référentiel Éducation', status: 'planned' },
+        { code: 'EDUCATION', name: 'Référentiel Éducation', status: 'partial' },
         { code: 'ENERGY', name: 'Référentiel Énergie', status: 'planned' },
         { code: 'ROADS', name: 'Référentiel Routes', status: 'planned' },
         { code: 'POPULATION', name: 'Référentiel Population', status: 'planned' },
@@ -2191,7 +2191,7 @@
         } else {
           renderSectorialCatalogCards([
             { code: 'HEALTH', name: 'Référentiel Santé', status: healthPayload?.statistics?.data_available ? 'active' : 'in_progress' },
-            { code: 'EDUCATION', name: 'Référentiel Éducation', status: 'planned' },
+            { code: 'EDUCATION', name: 'Référentiel Éducation', status: 'partial' },
             { code: 'ENERGY', name: 'Référentiel Énergie', status: 'planned' },
             { code: 'ROADS', name: 'Référentiel Routes', status: 'planned' },
             { code: 'POPULATION', name: 'Référentiel Population', status: 'planned' },

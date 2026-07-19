@@ -22,6 +22,7 @@ UTF8_CONTENT_TYPES = {
 DASHBOARD_DIR = Path(__file__).resolve().parent
 BUSINESS_DATA_DIR = DASHBOARD_DIR.parent / "data" / "business"
 PROGRAMS_DATA_DIR = DASHBOARD_DIR.parent / "data" / "programs"
+REPORTS_DATA_DIR = DASHBOARD_DIR.parent / "data" / "reports"
 HEALTH_PATH = "/healthz"
 
 
@@ -62,6 +63,8 @@ class Utf8StaticHandler(SimpleHTTPRequestHandler):
         for prefix, root_dir in (
             ("/business/", BUSINESS_DATA_DIR),
             ("/programs/", PROGRAMS_DATA_DIR),
+            # app.js REPORTS_BASE = '../data/reports' → URL /data/reports/...
+            ("/data/reports/", REPORTS_DATA_DIR),
         ):
             if normalized.startswith(prefix):
                 relative = normalized[len(prefix):].lstrip("/")

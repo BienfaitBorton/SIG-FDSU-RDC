@@ -514,6 +514,34 @@
       if (typeof field === 'object' && 'value' in field) return field.value ?? '—';
       return field;
     };
+    const telecom = caseFile?.telecom_context || {};
+    const education = caseFile?.education_context || {};
+    const ceni = caseFile?.ceni_context || {};
+    const telecomLines = Array.isArray(telecom.summary_lines) ? telecom.summary_lines : [];
+    const eduNearest = education.nearest || {};
+    const ceniNearest = ceni.nearest || {};
+    const evidenceBits = [];
+    if (telecomLines.length) {
+      evidenceBits.push(`<li><strong>Télécom</strong><ul>${telecomLines.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul></li>`);
+    }
+    if (education.available) {
+      evidenceBits.push(
+        `<li><strong>Éducation</strong> — ${escapeHtml(
+          eduNearest.distance_display
+            ? `Plus proche : ${eduNearest.name || 'établissement'} (${eduNearest.distance_display}) · ${education.nearby_count || 0} dans le rayon`
+            : `${education.nearby_count || 0} établissement(s) dans le rayon`,
+        )} <em>(signal, non pondéré)</em></li>`,
+      );
+    }
+    if (ceni.available) {
+      evidenceBits.push(
+        `<li><strong>CENI</strong> — ${escapeHtml(
+          ceniNearest.distance_display
+            ? `Signal le plus proche : ${ceniNearest.name || ceniNearest.category || 'site'} (${ceniNearest.distance_display})`
+            : `${ceni.nearby_count || 0} site(s) proches`,
+        )} <em>(≠ site FDSU · non pondéré)</em></li>`,
+      );
+    }
     host.innerHTML = `
       <p class="dxl-kicker">Contexte territorial</p>
       <div class="dxl-kpi-strip">
@@ -522,7 +550,8 @@
         <article><span>NDCI</span><strong>${escapeHtml(getVal(cov.ndci) ?? '—')}</strong></article>
         <article><span>Santé (échantillon)</span><strong>${escapeHtml(formatNumber((ti?.assets?.health_sample || []).length))}</strong></article>
       </div>
-      <p class="dxl-note">Sources : Intelligence territoriale · Référentiel National des Besoins · pas de valeur inventée.</p>
+      ${evidenceBits.length ? `<div class="dxl-spatial-evidence"><p class="dxl-kicker">Preuves spatiales disponibles</p><ul>${evidenceBits.join('')}</ul></div>` : ''}
+      <p class="dxl-note">Sources : Intelligence territoriale · NCI · Télécom/Éducation/CENI · pas de valeur inventée. Signaux exposés sans pondération artificielle.</p>
     `;
   }
 

@@ -3519,8 +3519,14 @@ function loadLocalityPointLayer() {
   if (!cartographyState.map || typeof L === 'undefined') return;
 
   const source = LOCAL_JSON_MODE
-    ? fetchReportJson('locality_official/locality_referential_official.json').then((result) => result.data?.locality_referential)
-    : fetchJson('/localites?limit=1500');
+    ? Promise.all([
+        fetchReportJson('locality_official/locality_referential_official.json'),
+        fetchReportJson('locality_official/locality_referential_nci_enrichment.json'),
+      ]).then(([base, nci]) => [
+        ...asArray(base.data?.locality_referential),
+        ...asArray(nci.data?.locality_referential),
+      ])
+    : fetchJson('/localites?limit=5000');
 
   source
     .then((items) => {
@@ -6830,6 +6836,8 @@ const NATIONAL_REFERENTIAL_JSON_FILES = {
   territoryGroupementIndex: 'groupement_official/territory_groupement_index.json',
   provinceGroupementIndex: 'groupement_official/province_groupement_index.json',
   localityReferential: 'locality_official/locality_referential_official.json',
+  localityNciEnrichment: 'locality_official/locality_referential_nci_enrichment.json',
+  localityNationalManifest: 'locality_official/locality_referential_national_manifest.json',
   localityFactSheets: 'locality_official/locality_fact_sheets.json',
   localityQuality: 'locality_official/locality_quality_report.json',
   provinceLocalityIndex: 'locality_official/province_locality_index.json',
@@ -7738,7 +7746,9 @@ function buildNationalReferentialReportFromJson(payload) {
   const cities = asArray(payload.cityReferential?.city_referential);
   const collectivities = asArray(payload.collectivityReferential?.collectivity_referential);
   const groupements = asArray(payload.groupementReferential?.groupement_referential);
-  const localities = asArray(payload.localityReferential?.locality_referential);
+  const localitiesBase = asArray(payload.localityReferential?.locality_referential);
+  const localitiesNci = asArray(payload.localityNciEnrichment?.locality_referential);
+  const localities = localitiesBase.concat(localitiesNci);
   const groupementAudit = payload.groupementCoverageAudit || {};
   const groupementQuality = payload.groupementQuality || {};
   const collectivityQuality = payload.collectivityQuality || {};
@@ -7761,12 +7771,17 @@ function buildNationalReferentialReportFromJson(payload) {
     secteur: registryCounters.secteurs?.nombre ?? collectivities.filter((item) => item.type_collectivite === 'Secteur').length,
     chefferie: registryCounters.chefferies?.nombre ?? collectivities.filter((item) => item.type_collectivite === 'Chefferie').length,
     groupement: foundGroupements,
-    localite: registryCounters.localites?.nombre ?? localityQuality.locality_count ?? localities.length,
+    localite: localityQuality.locality_count
+      ?? registryCounters.localites?.nombre
+      ?? localities.length,
   };
   const totalEntities = Object.values(byLevel).reduce((total, value) => total + (Number(value) || 0), 0);
   const missingFiles = Object.values(payload.sources || {}).filter((source) => !source.available).length;
   const duplicateCount = (groupementQuality.duplicate_count || 0) + (collectivityQuality.duplicate_count || 0) + (provinceQuality.duplicates || 0) + (localityQuality.duplicate_count || 0);
   const orphanCount = (groupementQuality.orphan_count || 0) + (collectivityQuality.missing_territory_count || 0) + (localityQuality.orphan_count || 0);
+  const localitiesSourceLabel = registryCounters.localites?.enrichissement_nci_fdsu
+    ? `Historique KMZ ${registryCounters.localites.historique_kmz ?? 26710} + NCI/FDSU ${registryCounters.localites.enrichissement_nci_fdsu}`
+    : 'Localités.kmz';
   const referentielRows = [
     buildRegistryRow('zones', 'Zones FDSU', 'Zone FDSU', 5, tree.children.length, '100%', 'Validé', 'Non publié', qualityScore, 'Référentiel national consolidé'),
     buildRegistryRow('provinces', 'Provinces', 'Province', 26, byLevel.province, '100%', registryCounters.provinces?.statut || 'Validé', 'Non publié', provinceQuality.global_score, 'Province26.kmz'),
@@ -7774,7 +7789,7 @@ function buildNationalReferentialReportFromJson(payload) {
     buildRegistryRow('villes', 'Villes', 'Ville', 11, byLevel.ville, '100%', registryCounters.villes?.statut || 'Validé', 'Non publié', cityQuality.global_score, 'zones_fdsu.kmz'),
     buildRegistryRow('collectivites', 'Collectivités', 'Secteur / Chefferie', 733, registryCounters.collectivites?.nombre ?? collectivities.length, '100%', registryCounters.collectivites?.statut || 'Validé provisoirement', 'Non publié', collectivityQuality.global_score, 'collectivites.kmz'),
     buildRegistryRow('groupements', 'Groupements', 'Groupement', expectedGroupements, foundGroupements, groupementCoverage, registryCounters.groupements?.statut || 'Partiel', registryCounters.groupements?.validation || 'Non publié', groupementQuality.global_score, 'Groupements.kmz'),
-    buildRegistryRow('localites', 'Localités', 'Localité', registryCounters.localites?.reference_nationale, byLevel.localite, registryCounters.localites?.comparaison_reference || 'Référence nationale non disponible', registryCounters.localites?.statut || 'Partiel', registryCounters.localites?.validation || 'Non publié', localityQuality.global_score, 'Localités.kmz'),
+    buildRegistryRow('localites', 'Localités', 'Localité', registryCounters.localites?.reference_nationale ?? byLevel.localite, byLevel.localite, registryCounters.localites?.comparaison_reference || 'Référentiel enrichi dynamique', registryCounters.localites?.statut || 'Enrichi', registryCounters.localites?.validation || 'Non publié', localityQuality.global_score, localitiesSourceLabel),
   ];
 
   return {
@@ -9890,7 +9905,9 @@ function loadLocalDashboardData() {
           villes: counters.villes?.nombre ?? 11,
           collectivites: counters.collectivites?.nombre ?? 733,
           groupements: counters.groupements?.trouve ?? counters.groupements?.nombre ?? 1681,
-          localites: counters.localites?.nombre ?? localityQuality.locality_count ?? 26710,
+          localites: localityQuality.locality_count
+            ?? counters.localites?.nombre
+            ?? null,
           sites: 0,
           missions: 0,
           users: 0,

@@ -618,6 +618,43 @@ def _eval_health() -> dict[str, Any]:
     )
 
 
+def _eval_education() -> dict[str, Any]:
+    from api.services import education_referential_service as edu
+
+    stats = _safe(lambda: edu.statistics(), {}) or {}
+    total = int(stats.get("establishments") or 0)
+    has = total > 0
+    return _domain_shell(
+        code="education",
+        label="Éducation",
+        dimensions={
+            "completeness": _clamp(min(100.0, 35 + min(55, total / 400))) if has else None,
+            "quality": 70.0 if has else None,
+            "geolocation": 85.0 if has else None,
+            "normalization": 75.0 if has else None,
+            "spatial_relations": 88.0 if has else None,
+            "documentation": 80.0 if has else 25.0,
+            "traceability": 80.0 if has else None,
+            "freshness": None,
+            "official_source": 40.0 if has else None,
+            "interoperability": 85.0 if has else 20.0,
+        },
+        object_count=total if has else None,
+        source="CENI SCHOOL projection (education_referential)",
+        as_of=_now(),
+        version="education-nsme-p1",
+        strengths=[f"{total} établissements scolaires projetés", "NSME NEAR/NEAREST_SCHOOL"] if has else [],
+        weaknesses=(
+            ["Pas de registre ministériel officiel", "Projection dérivée CENI"]
+            if has
+            else ["Référentiel éducation vide"]
+        ),
+        anomalies=[],
+        recommendations=["Brancher un registre ministériel quand disponible"],
+        available=has,
+    )
+
+
 def _eval_absent(code: str, label: str, note: str) -> dict[str, Any]:
     """Référentiel non branché — scores bas documentés, pas de faux 0 silencieux partout."""
     return _domain_shell(
@@ -958,9 +995,9 @@ def build_national_maturity(*, use_cache: bool = True) -> dict[str, Any]:
         fibre,
         _eval_routes(),
         _eval_health(),
-        _eval_absent("education", "Éducation", "Référentiel éducation non intégré (probe SDG / TI)"),
+        _eval_education(),
         _eval_absent("energie", "Énergie", "Référentiel énergie non intégré"),
-        _eval_absent("services_publics", "Services publics", "Hors santé : écoles / admin / marchés partiels ou absents"),
+        _eval_absent("services_publics", "Services publics", "Admin / marchés partiels — CENI signal séparé"),
         _eval_absent("economie", "Économie", "Référentiel économique non intégré"),
         _eval_coverage_radio(),
         _eval_sdg(),

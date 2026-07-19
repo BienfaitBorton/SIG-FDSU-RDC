@@ -47,7 +47,9 @@
       "incoherences_attributaires": 176
     },
     "localites": {
-      "nombre": 26710,
+      "nombre": 47130,
+      "historique_kmz": 26710,
+      "enrichissement_nci_fdsu": 20420,
       "repartition_par_type": {
         "Autre": 43,
         "Camp": 1649,
@@ -56,12 +58,17 @@
         "Quartier": 25,
         "Village": 24051
       },
-      "statut": "partiel",
+      "statut": "enrichi",
       "validation": "non publié",
       "score_qualite": 98.18,
-      "reference_nationale": null,
-      "comparaison_reference": "reference nationale localites non disponible dans le registre",
-      "anomalies": 2556
+      "reference_nationale": 47130,
+      "comparaison_reference": "Référentiel enrichi = historique KMZ 26710 + NCI/FDSU 20420",
+      "anomalies": 2556,
+      "provenance": {
+        "historique": "Localités.kmz → locality_referential_official.json",
+        "enrichissement": "NCI/FDSU → locality_referential_nci_enrichment.json",
+        "fusion": "dynamique au chargement"
+      }
     },
     "anomalies_localites": {
       "nombre": 2556,
@@ -71,5 +78,5 @@
     }
   },
   "source_groupements": "Groupements.kmz",
-  "source_localites": "Localités.kmz"
+  "source_localites": "Localités.kmz + NCI/FDSU enrichment"
 }

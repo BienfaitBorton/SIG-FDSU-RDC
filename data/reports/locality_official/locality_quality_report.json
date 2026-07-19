@@ -1,7 +1,7 @@
 {
   "source_file": "Localités.kmz",
   "generated_at": "2026-07-03T17:28:18+00:00",
-  "locality_count": 26710,
+  "locality_count": 47130,
   "type_distribution": {
     "Autre": 43,
     "Camp": 1649,
@@ -25487,5 +25487,8 @@
       "suggestion": "Verifier les localites homonymes/code identique."
     }
   ],
-  "global_score": 98.18
+  "global_score": 98.18,
+  "nci_enrichment_added": 20420,
+  "national_total_dynamic": true,
+  "updated_at_integration": "2026-07-19T15:40:15.708121+00:00"
 }

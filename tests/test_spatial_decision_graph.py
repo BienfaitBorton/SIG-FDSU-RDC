@@ -16,11 +16,15 @@ def test_categories_meta_has_expected_keys():
     assert "site" in sdg.CATEGORIES
     assert "localities" in sdg.CATEGORIES
     assert "health" in sdg.CATEGORIES
-    assert sdg.CATEGORIES["education"]["available"] is False
+    assert sdg.CATEGORIES["education"]["available"] is True
+    assert sdg.CATEGORIES["ceni"]["available"] is True
     assert sdg.CATEGORIES["energy"]["available"] is False
     assert sdg.CATEGORIES["markets"]["available"] is False
     assert "SERVES_LOCALITY" in sdg.RELATION_STYLES
     assert sdg.RELATION_STYLES["SERVES_LOCALITY"]["category"] == "localities"
+    assert "NEAREST_SCHOOL" in sdg.RELATION_STYLES
+    assert "NEAREST_CENI_SIGNAL" in sdg.RELATION_STYLES
+    assert "NEAREST_MNO_VODACOM" in sdg.RELATION_STYLES
     assert sdg.ENGINE_VERSION.startswith("sdg-2.2")
 
 
@@ -39,7 +43,8 @@ def test_build_graph_real_sites_typed_relations(site_id):
 
     statuses = {c["id"]: c["status"] for c in graph["categories"]}
     assert statuses["site"] == "active"
-    assert statuses["education"] == "future"
+    assert statuses["education"] in {"active", "empty", "partial"}
+    assert statuses["ceni"] in {"active", "empty", "partial"}
     assert statuses["energy"] == "future"
 
     for edge in graph["edges"]:
@@ -116,8 +121,12 @@ def test_kpi_zero_vs_unavailable():
     by_id = {k["id"]: k for k in graph["kpis"]}
     edu = by_id.get("education")
     assert edu is not None
-    assert edu["status"] == "unavailable"
-    assert edu["display"] == "Non disponible"
+    # Éducation P1 : disponible (0 calculé ou valeur) — plus « future unavailable »
+    assert edu["status"] in {"success", "empty", "partial"}
+    assert edu["display"] != "Non disponible" or edu.get("value") == 0
+    ceni = by_id.get("ceni")
+    assert ceni is not None
+    assert ceni["status"] in {"success", "empty", "partial", "unavailable"}
     health = by_id.get("health")
     assert health is not None
     # Santé intégré : 0 calculé ou valeur réelle — jamais inventé

@@ -80,6 +80,13 @@ CATEGORIES: dict[str, dict[str, Any]] = {
             "NEAR_BACKBONE",
             "NEAREST_TELECOM_INFRA",
             "NEAREST_FIBER_LINE",
+            "NEAREST_MNO_VODACOM",
+            "NEAREST_MNO_ORANGE",
+            "NEAREST_MNO_AIRTEL",
+            "NEAREST_MNO_AFRICELL",
+            "NEAREST_FIBER_LINK",
+            "NEAREST_MICROWAVE_LINK",
+            "MUTUALIZATION_POTENTIAL",
         ],
     },
     "roads": {
@@ -111,9 +118,18 @@ CATEGORIES: dict[str, dict[str, Any]] = {
         "label": "Éducation",
         "color": "#7c3aed",
         "symbol": "school",
-        "available": False,
-        "relation_types": ["NEAR_SCHOOL"],
-        "note": "Éducation — référentiel non encore importé.",
+        "available": True,
+        "relation_types": ["NEAR_SCHOOL", "NEAREST_SCHOOL"],
+        "note": "Projection CENI SCHOOL — pas de registre ministériel officiel.",
+    },
+    "ceni": {
+        "id": "ceni",
+        "label": "Signal CENI",
+        "color": "#475569",
+        "symbol": "building",
+        "available": True,
+        "relation_types": ["NEAREST_CENI_SIGNAL", "NEAR_CENI_SITE"],
+        "note": "Signal institutionnel CENI (≠ sites FDSU) — non pondéré dans le scoring.",
     },
     "energy": {
         "id": "energy",
@@ -227,10 +243,90 @@ RELATION_STYLES: dict[str, dict[str, Any]] = {
     "NEAR_SCHOOL": {
         "category": "education",
         "label": "Proximité école",
-        "color": "#0d9488",
+        "color": "#7c3aed",
         "weight": 2,
         "dash": "4 4",
-        "why": "Une école proche complète le tissu de services publics.",
+        "why": "Un établissement éducatif (projection CENI SCHOOL) se trouve dans le rayon de proximité.",
+    },
+    "NEAREST_SCHOOL": {
+        "category": "education",
+        "label": "Établissement éducatif le plus proche",
+        "color": "#6d28d9",
+        "weight": 3,
+        "dash": None,
+        "why": "Établissement éducatif le plus proche du site — signal social (non pondéré si critère moteur à poids 0).",
+    },
+    "NEAREST_CENI_SIGNAL": {
+        "category": "ceni",
+        "label": "Signal CENI le plus proche",
+        "color": "#475569",
+        "weight": 2,
+        "dash": None,
+        "why": "Site institutionnel CENI le plus proche — présence administrative / humaine (≠ site FDSU).",
+    },
+    "NEAR_CENI_SITE": {
+        "category": "ceni",
+        "label": "Proximité site CENI",
+        "color": "#64748b",
+        "weight": 1,
+        "dash": "4 4",
+        "why": "Un site CENI se trouve dans le rayon de proximité — signal de centralité locale.",
+    },
+    "NEAREST_MNO_VODACOM": {
+        "category": "telecom",
+        "label": "Vodacom le plus proche",
+        "color": "#e11d48",
+        "weight": 2,
+        "dash": None,
+        "why": "Site Vodacom le plus proche du site FDSU étudié.",
+    },
+    "NEAREST_MNO_ORANGE": {
+        "category": "telecom",
+        "label": "Orange le plus proche",
+        "color": "#f97316",
+        "weight": 2,
+        "dash": None,
+        "why": "Site Orange le plus proche du site FDSU étudié.",
+    },
+    "NEAREST_MNO_AIRTEL": {
+        "category": "telecom",
+        "label": "Airtel le plus proche",
+        "color": "#ef4444",
+        "weight": 2,
+        "dash": None,
+        "why": "Site Airtel le plus proche (référentiel FDSU MNO / NIRE).",
+    },
+    "NEAREST_MNO_AFRICELL": {
+        "category": "telecom",
+        "label": "Africell le plus proche",
+        "color": "#a855f7",
+        "weight": 2,
+        "dash": None,
+        "why": "Site Africell le plus proche (référentiel FDSU MNO / NIRE).",
+    },
+    "NEAREST_FIBER_LINK": {
+        "category": "telecom",
+        "label": "Fibre la plus proche",
+        "color": "#0891b2",
+        "weight": 3,
+        "dash": None,
+        "why": "Tronçon fibre le plus proche — candidat backhaul.",
+    },
+    "NEAREST_MICROWAVE_LINK": {
+        "category": "telecom",
+        "label": "MW le plus proche",
+        "color": "#0e7490",
+        "weight": 2,
+        "dash": "4 4",
+        "why": "Lien micro-ondes le plus proche — alternative backhaul.",
+    },
+    "MUTUALIZATION_POTENTIAL": {
+        "category": "telecom",
+        "label": "Potentiel de mutualisation",
+        "color": "#155e75",
+        "weight": 2,
+        "dash": "6 3",
+        "why": "Plusieurs opérateurs et/ou backhaul proches — opportunité de mutualisation.",
     },
     "NEAR_MARKET": {
         "category": "markets",
@@ -511,7 +607,57 @@ def _probe_referential_availability(lon: float | None, lat: float | None) -> dic
         }
     probes["admin"] = {"referential_exists": True, "nsme_wired": True, "nsme_source": "NCI / admin derived"}
     probes["needs"] = {"referential_exists": True, "nsme_wired": True, "nsme_source": "CANDIDATE_FOR_MISSION"}
-    probes["education"] = {"referential_exists": False, "nsme_wired": False}
+
+    edu_stats = _safe(
+        lambda: __import__(
+            "api.services.education_referential_service", fromlist=["statistics"]
+        ).statistics(),
+        {},
+    ) or {}
+    edu_n = edu_stats.get("establishments") or edu_stats.get("classified_total")
+    probes["education"] = {
+        "referential_exists": bool(edu_n and int(edu_n) > 0),
+        "record_count": edu_n,
+        "nsme_wired": True,
+        "nsme_source": "CENI SCHOOL projection (education_referential)",
+        "derived_projection": True,
+        "official_ministry_registry": False,
+        "search_radius_m": None,
+        "scoring_weighted": False,
+    }
+    try:
+        from api.services.spatial_matching_service import get_rules
+
+        radii = get_rules().get("service_radii_m") or {}
+        probes["education"]["search_radius_m"] = radii.get("school_proximity") or 3000
+        probes["education"]["nearest_max_m"] = radii.get("school_nearest_max") or 25000
+    except Exception:
+        probes["education"]["search_radius_m"] = 3000
+
+    ceni_stats = _safe(
+        lambda: __import__("api.services.ceni_registry_service", fromlist=["statistics"]).statistics(),
+        {},
+    ) or {}
+    ceni_n = ceni_stats.get("integrated") or ceni_stats.get("total_raw")
+    probes["ceni"] = {
+        "referential_exists": bool(ceni_n and int(ceni_n) > 0),
+        "record_count": ceni_n,
+        "nsme_wired": True,
+        "nsme_source": "CENI registry file (institutional signal)",
+        "not_fdsu_sites": True,
+        "scoring_weighted": False,
+        "search_radius_m": None,
+        "note": "Signal disponible — non pondéré dans le scoring actuel",
+    }
+    try:
+        from api.services.spatial_matching_service import get_rules
+
+        radii = get_rules().get("service_radii_m") or {}
+        probes["ceni"]["search_radius_m"] = radii.get("ceni_proximity") or 5000
+        probes["ceni"]["nearest_max_m"] = radii.get("ceni_nearest_max") or 15000
+    except Exception:
+        probes["ceni"]["search_radius_m"] = 5000
+
     probes["energy"] = {"referential_exists": False, "nsme_wired": False}
     probes["markets"] = {"referential_exists": False, "nsme_wired": False}
     return probes
@@ -570,9 +716,24 @@ def _classify_category_emptiness(
     produced = bool(graph_rel_types & nsme_rel_types) or count > 0
     search_markers = {
         "fdsu_sites": {"FDSU_SEARCH_EXECUTED"},
-        "telecom": {"TELECOM_SEARCH_EXECUTED", "NEAREST_TELECOM_INFRA", "NEAREST_FIBER_LINE", "NEAR_FIBER", "NEAR_BACKBONE"},
+        "telecom": {
+            "TELECOM_SEARCH_EXECUTED",
+            "NEAREST_TELECOM_INFRA",
+            "NEAREST_FIBER_LINE",
+            "NEAR_FIBER",
+            "NEAR_BACKBONE",
+            "NEAREST_MNO_VODACOM",
+            "NEAREST_MNO_ORANGE",
+            "NEAREST_MNO_AIRTEL",
+            "NEAREST_MNO_AFRICELL",
+            "NEAREST_FIBER_LINK",
+            "NEAREST_MICROWAVE_LINK",
+            "MUTUALIZATION_POTENTIAL",
+        },
         "ccn": {"CCN_SEARCH_EXECUTED", "NEAR_CCN", "CONNECTS_CCN"},
         "health": {"NEAR_HEALTH_FACILITY", "NEAREST_HEALTH_FACILITY", "WITHIN_HEALTH_SERVICE_AREA"},
+        "education": {"NEAR_SCHOOL", "NEAREST_SCHOOL", "EDUCATION_SEARCH_EXECUTED"},
+        "ceni": {"NEAREST_CENI_SIGNAL", "NEAR_CENI_SITE", "CENI_SEARCH_EXECUTED"},
         "roads": {"NEAR_MAIN_ROAD", "ROAD_ACCESSIBILITY", "WITHIN_ROAD_CORRIDOR"},
     }
     search_executed = bool(nsme_rel_types & search_markers.get(cat_id, graph_rel_types)) or bool(
@@ -593,7 +754,7 @@ def _classify_category_emptiness(
         search_executed = True
 
     # Admin / besoins : dérivés des localités NCI — si localités cherchées, la recherche domaine est considérée exécutée
-    if cat_id in {"admin", "needs", "education", "markets"}:
+    if cat_id in {"admin", "needs", "markets"}:
         locality_searched = any(
             str(m.get("relation_type") or "") in {"SERVES_LOCALITY", "IMPACTS_POPULATION", "CANDIDATE_FOR_MISSION"}
             or str(m.get("calculation_method") or "") == "derived_from_nci_infra"
@@ -601,7 +762,7 @@ def _classify_category_emptiness(
         )
         if locality_searched:
             search_executed = True
-        if cat_id in {"education", "markets"} and not cat.get("available", True):
+        if cat_id == "markets" and not cat.get("available", True):
             pass  # futur : laisser integrating
         elif cat_id == "admin" and not produced and locality_searched:
             # pas d'infra admin dans les localités matchées → aucun objet trouvé, pas une erreur
@@ -612,7 +773,19 @@ def _classify_category_emptiness(
     nearest = None
     if cat_id == "telecom":
         nearest = _nearest_from_matches(
-            matches, {"NEAREST_TELECOM_INFRA", "NEAR_FIBER", "NEAR_BACKBONE", "NEAREST_FIBER_LINE"}
+            matches,
+            {
+                "NEAREST_TELECOM_INFRA",
+                "NEAR_FIBER",
+                "NEAR_BACKBONE",
+                "NEAREST_FIBER_LINE",
+                "NEAREST_FIBER_LINK",
+                "NEAREST_MICROWAVE_LINK",
+                "NEAREST_MNO_VODACOM",
+                "NEAREST_MNO_ORANGE",
+                "NEAREST_MNO_AIRTEL",
+                "NEAREST_MNO_AFRICELL",
+            },
         )
     elif cat_id == "roads":
         nearest = _nearest_from_matches(matches, {"NEAR_MAIN_ROAD", "ROAD_ACCESSIBILITY", "WITHIN_ROAD_CORRIDOR"})
@@ -620,6 +793,10 @@ def _classify_category_emptiness(
         nearest = _nearest_from_matches(
             matches, {"NEAREST_HEALTH_FACILITY", "NEAR_HEALTH_FACILITY", "WITHIN_HEALTH_SERVICE_AREA"}
         )
+    elif cat_id == "education":
+        nearest = _nearest_from_matches(matches, {"NEAREST_SCHOOL", "NEAR_SCHOOL"})
+    elif cat_id == "ceni":
+        nearest = _nearest_from_matches(matches, {"NEAREST_CENI_SIGNAL", "NEAR_CENI_SITE"})
     elif cat_id == "fdsu_sites":
         nearest = _nearest_from_matches(
             matches, {"NEAR_FDSU_SITE", "SAME_PROGRAM", "COMPLEMENTS_FDSU_SITE", "OVERLAPPING_SERVICE_AREA"}
@@ -1732,7 +1909,18 @@ def _build_kpis(asset, impact, edges, categories, case, referential_probes=None)
             status="success" if impact_body.get("population_impacted") is not None else "unavailable",
         ),
         cat_kpi("health", "Établissements de santé", "health"),
-        cat_kpi("education", "Écoles", "education", future_note="Éducation — référentiel non encore importé"),
+        cat_kpi(
+            "education",
+            "Écoles",
+            "education",
+            future_note="Projection CENI SCHOOL — registre ministériel non officiel",
+        ),
+        cat_kpi(
+            "ceni",
+            "Signal CENI",
+            "ceni",
+            future_note="Signal institutionnel — non pondéré dans le scoring",
+        ),
         cat_kpi("telecom", "Infrastructures télécom", "telecom"),
         cat_kpi("roads", "Routes principales", "roads"),
         cat_kpi("ccn", "CCN", "ccn"),

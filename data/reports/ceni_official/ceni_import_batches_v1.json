@@ -1,0 +1,15 @@
+{
+  "batches": [
+    {
+      "batch_id": "CENI-C3762911DF48",
+      "source_sha256": "C3762911DF483D0B291145AF31CF612A30332039BB3D7BFD86FA894C650ABE9D",
+      "created_at": "2026-07-16T19:57:35.376907+00:00",
+      "status": "validated_file_registry",
+      "record_count": 32221,
+      "rollback": {
+        "mode": "delete generated artifacts for this batch only",
+        "source_untouched": true
+      }
+    }
+  ]
+}

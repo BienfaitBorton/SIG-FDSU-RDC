@@ -624,9 +624,59 @@ def read_groupements_json(skip: int = Query(0, ge=0), limit: int = Query(2000, g
 
 @app.get("/localites", tags=["v0.7.0"])
 def read_localites_json(skip: int = Query(0, ge=0), limit: int = Query(1500, gt=0)) -> list[dict[str, Any]]:
-    if use_database():
-        return db_entity_rows("localites", skip, limit)
-    return paginate(report_items("locality_official/locality_referential_official.json", "locality_referential"), skip, limit)
+    """Référentiel national enrichi = fusion dynamique base KMZ + couche NCI (indépendant du mode DB)."""
+    try:
+        from api.services.nire import locality_controlled_integration as lci
+
+        items = lci.load_national_locality_items(include_enrichment=True)
+        return paginate([simplify_entity(item) for item in items], skip, limit)
+    except Exception:
+        if use_database():
+            return db_entity_rows("localites", skip, limit)
+        return paginate(report_items("locality_official/locality_referential_official.json", "locality_referential"), skip, limit)
+
+
+@app.get("/localites/count", tags=["v0.7.0"])
+def read_localites_count() -> dict[str, Any]:
+    """Total dynamique du référentiel national (base KMZ + enrichissement NCI).
+
+    La table Postgres `localites` reste le miroir historique KMZ ; elle n'est pas
+    le total national enrichi. Le compteur actif lit toujours la fusion fichier.
+    """
+    try:
+        from api.services.nire import locality_controlled_integration as lci
+
+        payload = {
+            "count": lci.national_locality_count(include_enrichment=True),
+            "base_count": lci.national_locality_count(include_enrichment=False),
+            "enrichment_count": len(lci.load_enrichment_doc().get("locality_referential") or []),
+            "source": "locality_referential_official.json + nci_enrichment",
+        }
+        if use_database():
+            try:
+                from api.config import connect_db
+
+                with connect_db() as conn:
+                    with conn.cursor() as cur:
+                        cur.execute("SELECT COUNT(*) FROM localites")
+                        payload["db_localites_historique_count"] = int(cur.fetchone()[0])
+            except Exception:
+                pass
+        return payload
+    except Exception:
+        if use_database():
+            try:
+                from api.config import connect_db
+
+                with connect_db() as conn:
+                    with conn.cursor() as cur:
+                        cur.execute("SELECT COUNT(*) FROM localites")
+                        n = int(cur.fetchone()[0])
+                return {"count": n, "source": "public.localites"}
+            except Exception:
+                pass
+        items = report_items("locality_official/locality_referential_official.json", "locality_referential")
+        return {"count": len(items), "source": "locality_referential_official.json"}
 
 
 def read_villages_json(skip: int = Query(0, ge=0), limit: int = Query(1500, gt=0)) -> list[dict[str, Any]]:
@@ -730,7 +780,15 @@ def read_map_layer(layer_name: str, skip: int = Query(0, ge=0), limit: int = Que
     source = json_sources.get(layer_name)
     if not source or not source[0]:
         return {"type": "FeatureCollection", "features": []}
-    items = as_list(load_report(source[0]).get(source[1]))
+    if layer_name in ("localites", "villages"):
+        try:
+            from api.services.nire import locality_controlled_integration as lci
+
+            items = lci.load_national_locality_items(include_enrichment=True)
+        except Exception:
+            items = as_list(load_report(source[0]).get(source[1]))
+    else:
+        items = as_list(load_report(source[0]).get(source[1]))
     if layer_name == "zones":
         province_items = as_list(load_report("province_official/province_referential_official.json").get("province_referential"))
         features = []
@@ -792,7 +850,12 @@ def search_entities(
     matches: list[dict[str, Any]] = []
     for layer_name in requested_layers:
         canonical_layer = "localites" if layer_name == "villages" else layer_name
-        items = entity_source_items(canonical_layer, 0, 5000)
+        # Localités : parcourir le référentiel national fusionné (historique + NCI),
+        # pas seulement les 5 000 premières lignes (sinon les 20 420 NCI sont invisibles).
+        if canonical_layer == "localites":
+            items = entity_source_items(canonical_layer, 0, 100_000)
+        else:
+            items = entity_source_items(canonical_layer, 0, 5000)
         for item in items:
             simplified = simplify_entity(item) if canonical_layer != "zones" else enrich_entity(item)
             if normalized_query and normalized_query not in entity_search_text(simplified, canonical_layer):
@@ -851,7 +914,16 @@ def read_entity(layer: str, entity_id: int | str) -> dict[str, Any]:
     source = layer_sources.get(layer)
     if not source:
         return {}
-    for item in as_list(load_report(source[0]).get(source[1])):
+    if layer in ("localites", "villages"):
+        try:
+            from api.services.nire import locality_controlled_integration as lci
+
+            layer_items = lci.load_national_locality_items(include_enrichment=True)
+        except Exception:
+            layer_items = as_list(load_report(source[0]).get(source[1]))
+    else:
+        layer_items = as_list(load_report(source[0]).get(source[1]))
+    for item in layer_items:
         simplified = simplify_entity(item)
         candidates = [
             simplified.get("id"),

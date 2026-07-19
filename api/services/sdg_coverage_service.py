@@ -19,6 +19,8 @@ PROGRAMS = ("sites_40", "sites_300", "sites_20476")
 LAYER_KEYS = (
     "localities",
     "health",
+    "education",
+    "ceni",
     "telecom",
     "roads",
     "population",
@@ -32,10 +34,23 @@ RELATION_TO_LAYER = {
     "NEAR_HEALTH_FACILITY": "health",
     "NEAREST_HEALTH_FACILITY": "health",
     "WITHIN_HEALTH_SERVICE_AREA": "health",
+    "NEAR_SCHOOL": "education",
+    "NEAREST_SCHOOL": "education",
+    "NEAREST_CENI_SIGNAL": "ceni",
+    "NEAR_CENI_SITE": "ceni",
     "NEAR_TELECOM": "telecom",
     "NEAR_BTS": "telecom",
     "NEAR_FIBER": "telecom",
     "NEAR_BACKBONE": "telecom",
+    "NEAREST_TELECOM_INFRA": "telecom",
+    "NEAREST_FIBER_LINE": "telecom",
+    "NEAREST_MNO_VODACOM": "telecom",
+    "NEAREST_MNO_ORANGE": "telecom",
+    "NEAREST_MNO_AIRTEL": "telecom",
+    "NEAREST_MNO_AFRICELL": "telecom",
+    "NEAREST_FIBER_LINK": "telecom",
+    "NEAREST_MICROWAVE_LINK": "telecom",
+    "MUTUALIZATION_POTENTIAL": "telecom",
     "NEAR_ROAD": "roads",
     "ACCESSIBLE_BY_ROAD": "roads",
     "NEAR_FDSU_SITE": "neighbor_sites",
@@ -333,6 +348,8 @@ def assess_asset(
                 matches = []
                 matches.extend(nsme.match_site_to_uncovered_localities(site, max_distance_m=radius) or [])
                 matches.extend(nsme.match_site_to_health_facilities(site, max_distance_m=radius) or [])
+                matches.extend(nsme.match_site_to_schools(site, max_distance_m=radius) or [])
+                matches.extend(nsme.match_site_to_ceni_signal(site, max_distance_m=radius) or [])
                 matches.extend(nsme.match_site_to_telecom(site, max_distance_m=radius) or [])
                 matches.extend(nsme.match_site_to_roads(site, max_distance_m=radius) or [])
                 nsme_found = True  # calcul spatial exécuté depuis fichier

@@ -120,3 +120,68 @@ def map_features(*, category: str | None = None, province: str | None = None, li
 
 def import_batches() -> dict[str, Any]:
     return json.loads(BATCH_PATH.read_text(encoding="utf-8")) if BATCH_PATH.exists() else {"batches": []}
+
+
+@lru_cache(maxsize=1)
+def _mappable_signal_points() -> tuple[dict[str, Any], ...]:
+    """Points CENI mappables pour signal décisionnel (≠ sites FDSU)."""
+    points: list[dict[str, Any]] = []
+    for row in registry().get("assets", []):
+        if row.get("geometry_status") not in MAPPABLE_GEOMETRY_STATUSES:
+            continue
+        lat, lon = row.get("latitude"), row.get("longitude")
+        if lat is None or lon is None:
+            continue
+        try:
+            if float(lat) == 0.0 and float(lon) == 0.0:
+                continue
+        except (TypeError, ValueError):
+            continue
+        admin = row.get("administrative_attachment") or {}
+        points.append(
+            {
+                "asset_uid": row.get("asset_uid"),
+                "name": row.get("name") or row.get("normalized_name"),
+                "normalized_name": row.get("normalized_name"),
+                "normalized_category": row.get("normalized_category"),
+                "latitude": float(lat),
+                "longitude": float(lon),
+                "province": admin.get("province"),
+                "territory": admin.get("territory"),
+                "institution": "CENI",
+                "asset_domain": "INSTITUTIONAL",
+                "signal_role": "administrative_centrality",
+            }
+        )
+    return tuple(points)
+
+
+def nearest_signals(
+    lat: float,
+    lon: float,
+    *,
+    radius_m: float = 15_000,
+    limit: int = 15,
+    exclude_schools: bool = False,
+) -> dict[str, Any]:
+    """Sites CENI les plus proches — signal institutionnel, jamais un site FDSU."""
+    from api.services.spatial_nearest_utils import nearest_points
+
+    pool = list(_mappable_signal_points())
+    if exclude_schools:
+        pool = [p for p in pool if p.get("normalized_category") != "SCHOOL"]
+    hits = nearest_points(lat, lon, pool, radius_m=radius_m, limit=limit)
+    return {
+        "data_available": bool(pool),
+        "search_executed": True,
+        "referential_count": len(pool),
+        "radius_m": radius_m,
+        "limit": limit,
+        "source": "CENI registry file (read-only)",
+        "not_fdsu_sites": True,
+        "calculation_method": "haversine_bbox_ceni",
+        "sites": hits,
+        "nearest": hits[0] if hits else None,
+        "scoring_weighted": False,
+        "note": "Signal disponible — non pondéré dans le scoring actuel",
+    }

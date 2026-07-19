@@ -5,7 +5,13 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from pydantic import BaseModel, Field
 
-from api.services.nire import mno_audit
+from api.services.nire import (
+    locality_controlled_integration,
+    locality_coverage,
+    locality_enrichment_audit,
+    locality_preintegration_validation,
+    mno_audit,
+)
 from api.services.nire.operational import NireRole, ReviewActionType
 from api.services.nire.operational_service import NireOperationalService
 from api.services.nire.persistence import PostgresNireRepository
@@ -44,6 +50,26 @@ class MnoAuditRunRequest(BaseModel):
     enqueue_reviews: bool = False
     max_review_items: int = Field(500, gt=0, le=5000)
     source_path: str | None = None
+
+
+class LocalityCoverageRunRequest(BaseModel):
+    max_rows: int | None = Field(None, gt=0, le=100000)
+    write_cache: bool = False
+
+
+class LocalityEnrichmentRunRequest(BaseModel):
+    write_cache: bool = False
+    run_coverage_if_needed: bool = True
+
+
+class LocalityPreintegrationRunRequest(BaseModel):
+    write_cache: bool = False
+    run_upstream_if_needed: bool = True
+
+
+class LocalityControlledIntegrationRunRequest(BaseModel):
+    apply: bool = True
+    write_cache: bool = True
 
 
 @router.post("/candidates/generate")
@@ -275,6 +301,161 @@ def mno_audit_source():
             "default_path": str(mno_audit.DEFAULT_SOURCE),
         }
     return {"source_loaded": True, "meta": state.meta, "immutable": True}
+
+
+@router.get("/locality-coverage/status")
+def locality_coverage_status():
+    return locality_coverage.status_payload()
+
+
+@router.post("/locality-coverage/run")
+def locality_coverage_run(p: LocalityCoverageRunRequest, r=Depends(role)):
+    if r not in {NireRole.APPROVER, NireRole.ADMIN, NireRole.REVIEWER}:
+        raise HTTPException(403, "Role insuffisant pour declencher le rapprochement localites")
+    state = locality_coverage.run_locality_coverage(max_rows=p.max_rows, write_cache=p.write_cache)
+    return {
+        "executed": state.executed,
+        "message": state.message,
+        "kpis": state.kpis,
+        "meta": state.meta,
+        "performance": state.performance,
+        "universes_not_forced_equal": True,
+        "sources_immutable": True,
+    }
+
+
+@router.get("/locality-coverage/summary")
+def locality_coverage_summary():
+    if not locality_coverage.get_state().executed:
+        raise HTTPException(409, "Aucun rapprochement localites — lancez POST /api/nire/locality-coverage/run")
+    return locality_coverage.summary_payload()
+
+
+@router.get("/locality-coverage/rows")
+def locality_coverage_rows(
+    classification: str | None = None,
+    coverage_status: str | None = None,
+    province: str | None = None,
+    offset: int = Query(0, ge=0),
+    limit: int = Query(50, gt=0, le=200),
+):
+    if not locality_coverage.get_state().executed:
+        raise HTTPException(409, "Aucun rapprochement localites — lancez POST /api/nire/locality-coverage/run")
+    return locality_coverage.list_rows(
+        classification=classification,
+        coverage_status=coverage_status,
+        province=province,
+        offset=offset,
+        limit=limit,
+    )
+
+
+@router.get("/locality-enrichment/status")
+def locality_enrichment_status():
+    return locality_enrichment_audit.status_payload()
+
+
+@router.post("/locality-enrichment/run")
+def locality_enrichment_run(p: LocalityEnrichmentRunRequest, r=Depends(role)):
+    if r not in {NireRole.APPROVER, NireRole.ADMIN, NireRole.REVIEWER}:
+        raise HTTPException(403, "Role insuffisant pour declencher l'audit enrichissement")
+    state = locality_enrichment_audit.run_enrichment_audit(
+        write_cache=p.write_cache,
+        run_coverage_if_needed=p.run_coverage_if_needed,
+    )
+    return {
+        "executed": state.executed,
+        "message": state.message,
+        "kpis": state.kpis,
+        "funnel": state.funnel,
+        "meta": state.meta,
+        "performance": state.performance,
+        "referential_not_modified": True,
+        "auto_creation_disabled": True,
+        "sources_immutable": True,
+    }
+
+
+@router.get("/locality-enrichment/summary")
+def locality_enrichment_summary():
+    if not locality_enrichment_audit.get_state().executed:
+        raise HTTPException(409, "Aucun audit enrichissement — lancez POST /api/nire/locality-enrichment/run")
+    return locality_enrichment_audit.summary_payload()
+
+
+@router.get("/locality-enrichment/rows")
+def locality_enrichment_rows(
+    enrichment_class: str | None = None,
+    offset: int = Query(0, ge=0),
+    limit: int = Query(50, gt=0, le=200),
+):
+    if not locality_enrichment_audit.get_state().executed:
+        raise HTTPException(409, "Aucun audit enrichissement — lancez POST /api/nire/locality-enrichment/run")
+    return locality_enrichment_audit.list_rows(
+        enrichment_class=enrichment_class,
+        offset=offset,
+        limit=limit,
+    )
+
+
+@router.get("/locality-preintegration/status")
+def locality_preintegration_status():
+    return locality_preintegration_validation.status_payload()
+
+
+@router.post("/locality-preintegration/run")
+def locality_preintegration_run(p: LocalityPreintegrationRunRequest, r=Depends(role)):
+    if r not in {NireRole.APPROVER, NireRole.ADMIN, NireRole.REVIEWER}:
+        raise HTTPException(403, "Role insuffisant pour la validation pre-integration")
+    state = locality_preintegration_validation.run_preintegration_validation(
+        write_cache=p.write_cache,
+        run_upstream_if_needed=p.run_upstream_if_needed,
+    )
+    return {
+        "executed": state.executed,
+        "message": state.message,
+        "kpis": state.kpis,
+        "simulation": state.simulation,
+        "meta": state.meta,
+        "performance": state.performance,
+        "referential_not_modified": True,
+        "auto_creation_disabled": True,
+        "sources_immutable": True,
+    }
+
+
+@router.get("/locality-preintegration/summary")
+def locality_preintegration_summary():
+    if not locality_preintegration_validation.get_state().executed:
+        raise HTTPException(
+            409,
+            "Aucune validation pre-integration — lancez POST /api/nire/locality-preintegration/run",
+        )
+    return locality_preintegration_validation.summary_payload()
+
+
+@router.get("/locality-controlled-integration/status")
+def locality_controlled_integration_status():
+    return locality_controlled_integration.status_payload()
+
+
+@router.post("/locality-controlled-integration/run")
+def locality_controlled_integration_run(p: LocalityControlledIntegrationRunRequest, r=Depends(role)):
+    if r not in {NireRole.APPROVER, NireRole.ADMIN}:
+        raise HTTPException(403, "Role insuffisant pour l'integration controlee")
+    state = locality_controlled_integration.run_controlled_integration(
+        apply=p.apply,
+        write_cache=p.write_cache,
+    )
+    return {
+        "executed": state.executed,
+        "message": state.message,
+        "kpis": state.kpis,
+        "meta": state.meta,
+        "performance": state.performance,
+        "base_untouched": True,
+        "sources_immutable": True,
+    }
 
 
 def apply(review_id, p, action, r, s):

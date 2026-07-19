@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-07-19T16:04:16.001057+00:00",
+  "engine": "nire-locality-controlled-integration-1.0.0",
+  "OLD_LOCALITIES": 26710,
+  "NEW_LOCALITIES_ADDED": 20420,
+  "NEW_TOTAL_LOCALITIES": 47130,
+  "base_file": "C:\\SIG-FDSU-RDC\\data\\reports\\locality_official\\locality_referential_official.json",
+  "enrichment_file": "C:\\SIG-FDSU-RDC\\data\\reports\\locality_official\\locality_referential_nci_enrichment.json",
+  "base_sha256": "af0fd9108975a7ec53275db26b38a94b792e996fbce11adb30a1cabbd06d7ebe",
+  "enrichment_sha256": "d24727aafafc0840f65d7918942ba223fb9d99968c5f0d3cedb0ef303bba0128",
+  "base_untouched": true,
+  "kpis": {
+    "INSERTED_FIRST_RUN": 20420,
+    "INSERTED_SECOND_RUN": 0,
+    "idempotent": true,
+    "repair_note": "deduped accidental double persist during git audit"
+  }
+}

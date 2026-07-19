@@ -730,6 +730,260 @@ def match_site_to_health_facilities(
     return matches
 
 
+def match_site_to_schools(
+    asset: dict[str, Any],
+    max_distance_m: float | None = None,
+) -> list[dict[str, Any]]:
+    """NSME — établissements éducatifs (projection CENI SCHOOL), lecture seule."""
+    lon = asset.get("longitude")
+    lat = asset.get("latitude")
+    if lon is None or lat is None:
+        return []
+
+    rules = get_rules()
+    radii = rules.get("service_radii_m") or {}
+    proximity_m = float(radii.get("school_proximity") or 3000)
+    nearest_max_m = float(max_distance_m or radii.get("school_nearest_max") or max(proximity_m, 25000))
+    limit = int(radii.get("school_max_matches") or 15)
+    query_radius = max(proximity_m, nearest_max_m)
+
+    try:
+        from api.services import education_referential_service as edu
+
+        payload = edu.nearest_establishment(float(lat), float(lon), radius_m=query_radius, limit=limit)
+    except Exception:
+        return []
+
+    if not payload.get("data_available"):
+        return []
+
+    establishments = list(payload.get("establishments") or [])
+    asset_id = asset.get("id") or asset.get("site_id")
+    site_code = asset.get("site_code") or str(asset_id)
+    matches: list[dict[str, Any]] = []
+
+    for idx, fac in enumerate(establishments):
+        distance = float(fac.get("distance_m") or 0)
+        edu_id = fac.get("education_id") or fac.get("source_id")
+        name = fac.get("normalized_name") or fac.get("original_name") or f"Établissement {edu_id}"
+        subtype = fac.get("education_subtype")
+        base_props = {
+            "infra_label": name,
+            "facility_name": name,
+            "education_subtype": subtype,
+            "class_label": subtype or "Établissement scolaire",
+            "need_lon": fac.get("longitude"),
+            "need_lat": fac.get("latitude"),
+            "asset_lon": float(lon),
+            "asset_lat": float(lat),
+            "referential": "CENI SCHOOL projection",
+            "derived_projection": True,
+            "official_ministry_registry": False,
+            "province_name": fac.get("province"),
+            "territory_name": fac.get("territory"),
+            "school_proximity_m": proximity_m,
+            "school_nearest_max_m": nearest_max_m,
+        }
+        base = {
+            "asset_type": "fdsu_site",
+            "asset_id": asset_id,
+            "asset_business_id": site_code,
+            "need_type": "education_establishment",
+            "need_id": f"EDU::{edu_id}",
+            "distance_m": round(distance, 1),
+            "service_radius_m": proximity_m,
+            "population_impacted": None,
+            "localities_impacted": None,
+            "infrastructure_type": subtype,
+            "priority_level": None,
+            "category": "education",
+            "confidence_level": "medium",
+            "source_asset": "programs.fdsu_sites",
+            "source_need": "education_referential_v1 / CENI SCHOOL",
+            "calculation_method": "haversine_nearest_education",
+            "province": asset.get("province") or fac.get("province"),
+            "territoire": asset.get("territoire") or fac.get("territory"),
+            "program_code": asset.get("program_code"),
+            "properties": base_props,
+        }
+        if idx == 0 and distance <= nearest_max_m:
+            matches.append(
+                {
+                    **base,
+                    "relation_type": "NEAREST_SCHOOL",
+                    "need_id": f"EDU_NEAREST::{edu_id}",
+                    "service_radius_m": nearest_max_m,
+                    "properties": {**base_props, "nsme_profile": "Nearest School", "is_nearest": True},
+                }
+            )
+        if distance <= proximity_m:
+            matches.append(
+                {
+                    **base,
+                    "relation_type": "NEAR_SCHOOL",
+                    "properties": {**base_props, "nsme_profile": "Near School"},
+                }
+            )
+
+    if payload.get("search_executed") and not matches:
+        matches.append(
+            {
+                "asset_type": "fdsu_site",
+                "asset_id": asset_id,
+                "asset_business_id": site_code,
+                "need_type": "education_establishment",
+                "need_id": f"EDU_SEARCH::{asset_id}",
+                "relation_type": "EDUCATION_SEARCH_EXECUTED",
+                "distance_m": None,
+                "service_radius_m": proximity_m,
+                "category": "education",
+                "confidence_level": "high",
+                "source_asset": "programs.fdsu_sites",
+                "source_need": "education_referential_v1 / CENI SCHOOL",
+                "calculation_method": "haversine_nearest_education",
+                "properties": {
+                    "search_executed": True,
+                    "referential_count": payload.get("referential_count"),
+                    "suppress_graph_edge": True,
+                    "nsme_profile": "Education Search Executed",
+                },
+            }
+        )
+    return matches
+
+
+def match_site_to_ceni_signal(
+    asset: dict[str, Any],
+    max_distance_m: float | None = None,
+) -> list[dict[str, Any]]:
+    """NSME — signal institutionnel CENI (≠ site FDSU), non pondéré dans le scoring."""
+    lon = asset.get("longitude")
+    lat = asset.get("latitude")
+    if lon is None or lat is None:
+        return []
+
+    rules = get_rules()
+    radii = rules.get("service_radii_m") or {}
+    proximity_m = float(radii.get("ceni_proximity") or 5000)
+    nearest_max_m = float(max_distance_m or radii.get("ceni_nearest_max") or max(proximity_m, 15000))
+    limit = int(radii.get("ceni_max_matches") or 15)
+    query_radius = max(proximity_m, nearest_max_m)
+
+    try:
+        from api.services import ceni_registry_service as ceni
+
+        # Exclure SCHOOL pour éviter double comptage avec match_site_to_schools
+        payload = ceni.nearest_signals(
+            float(lat),
+            float(lon),
+            radius_m=query_radius,
+            limit=limit,
+            exclude_schools=True,
+        )
+    except Exception:
+        return []
+
+    if not payload.get("data_available"):
+        return []
+
+    sites = list(payload.get("sites") or [])
+    asset_id = asset.get("id") or asset.get("site_id")
+    site_code = asset.get("site_code") or str(asset_id)
+    matches: list[dict[str, Any]] = []
+
+    for idx, row in enumerate(sites):
+        distance = float(row.get("distance_m") or 0)
+        uid = row.get("asset_uid")
+        name = row.get("normalized_name") or row.get("name") or uid
+        category = row.get("normalized_category")
+        base_props = {
+            "infra_label": name,
+            "facility_name": name,
+            "ceni_category": category,
+            "class_label": f"CENI — {category or 'site'}",
+            "need_lon": row.get("longitude"),
+            "need_lat": row.get("latitude"),
+            "asset_lon": float(lon),
+            "asset_lat": float(lat),
+            "referential": "CENI registry",
+            "institution": "CENI",
+            "asset_domain": "INSTITUTIONAL",
+            "not_fdsu_site": True,
+            "signal_role": "administrative_centrality",
+            "scoring_weighted": False,
+            "ceni_proximity_m": proximity_m,
+        }
+        base = {
+            "asset_type": "fdsu_site",
+            "asset_id": asset_id,
+            "asset_business_id": site_code,
+            "need_type": "ceni_institutional_signal",
+            "need_id": f"CENI::{uid}",
+            "distance_m": round(distance, 1),
+            "service_radius_m": proximity_m,
+            "category": "ceni",
+            "confidence_level": "medium",
+            "source_asset": "programs.fdsu_sites",
+            "source_need": "ceni_registry_v1",
+            "calculation_method": "haversine_nearest_ceni",
+            "province": asset.get("province") or row.get("province"),
+            "territoire": asset.get("territoire") or row.get("territory"),
+            "program_code": asset.get("program_code"),
+            "properties": base_props,
+        }
+        if idx == 0 and distance <= nearest_max_m:
+            matches.append(
+                {
+                    **base,
+                    "relation_type": "NEAREST_CENI_SIGNAL",
+                    "need_id": f"CENI_NEAREST::{uid}",
+                    "service_radius_m": nearest_max_m,
+                    "properties": {
+                        **base_props,
+                        "nsme_profile": "Nearest CENI Signal",
+                        "is_nearest": True,
+                        "note": "Signal disponible — non pondéré dans le scoring actuel",
+                    },
+                }
+            )
+        if distance <= proximity_m:
+            matches.append(
+                {
+                    **base,
+                    "relation_type": "NEAR_CENI_SITE",
+                    "properties": {**base_props, "nsme_profile": "Near CENI Site"},
+                }
+            )
+
+    if payload.get("search_executed") and not matches:
+        matches.append(
+            {
+                "asset_type": "fdsu_site",
+                "asset_id": asset_id,
+                "asset_business_id": site_code,
+                "need_type": "ceni_institutional_signal",
+                "need_id": f"CENI_SEARCH::{asset_id}",
+                "relation_type": "CENI_SEARCH_EXECUTED",
+                "distance_m": None,
+                "service_radius_m": proximity_m,
+                "category": "ceni",
+                "confidence_level": "high",
+                "source_asset": "programs.fdsu_sites",
+                "source_need": "ceni_registry_v1",
+                "calculation_method": "haversine_nearest_ceni",
+                "properties": {
+                    "search_executed": True,
+                    "referential_count": payload.get("referential_count"),
+                    "suppress_graph_edge": True,
+                    "not_fdsu_site": True,
+                    "scoring_weighted": False,
+                    "nsme_profile": "CENI Search Executed",
+                },
+            }
+        )
+    return matches
+
+
 def match_site_to_telecom(
     asset: dict[str, Any],
     max_distance_m: float | None = None,
@@ -975,6 +1229,8 @@ def match_site_to_telecom(
                         "operator_code": hit.get("operator_code"),
                         "nire_quality_status": hit.get("nire_quality_status"),
                         "class_label": f"{rel_key} — {label}",
+                        "need_lon": hit.get("longitude"),
+                        "need_lat": hit.get("latitude"),
                         "asset_lon": float(lon),
                         "asset_lat": float(lat),
                         "DISTANCE_TO_FIBER_M": ctx.get("DISTANCE_TO_FIBER_M"),
@@ -1354,6 +1610,8 @@ def match_asset_to_needs(
         matches.extend(impact_extra)
         matches.extend(match_site_to_roads(asset, max_distance_m=max_m))
         matches.extend(match_site_to_health_facilities(asset, max_distance_m=max_m))
+        matches.extend(match_site_to_schools(asset, max_distance_m=max_m))
+        matches.extend(match_site_to_ceni_signal(asset, max_distance_m=max_m))
         matches.extend(match_site_to_telecom(asset, max_distance_m=max_m))
         matches.extend(match_site_to_neighbor_fdsu(asset, max_distance_m=max_m))
         matches.extend(match_site_to_near_ccn(asset, max_distance_m=max_m))
@@ -1714,8 +1972,10 @@ def refresh_matches(
                     "properties": {"aggregate": True, "population_status": impact.get("population_status")},
                 }
             )
-        # Santé / routes / télécom / sites FDSU voisins / CCN DEMO (référentiels existants)
+        # Santé / éducation / CENI / routes / télécom / sites FDSU voisins / CCN DEMO
         rows.extend(match_site_to_health_facilities(site))
+        rows.extend(match_site_to_schools(site))
+        rows.extend(match_site_to_ceni_signal(site))
         rows.extend(match_site_to_roads(site))
         rows.extend(match_site_to_telecom(site))
         rows.extend(match_site_to_neighbor_fdsu(site))
@@ -1906,6 +2166,18 @@ def get_asset_needs(asset_id: str | int, **filters: Any) -> dict[str, Any]:
             str(m.get("relation_type") or "") in {"NEAR_MAIN_ROAD", "ROAD_ACCESSIBILITY", "WITHIN_ROAD_CORRIDOR"}
             for m in stored
         )
+        has_education = any(
+            str(m.get("relation_type") or "")
+            in {"NEAR_SCHOOL", "NEAREST_SCHOOL", "EDUCATION_SEARCH_EXECUTED"}
+            or str(m.get("category") or "") == "education"
+            for m in stored
+        )
+        has_ceni = any(
+            str(m.get("relation_type") or "")
+            in {"NEAREST_CENI_SIGNAL", "NEAR_CENI_SITE", "CENI_SEARCH_EXECUTED"}
+            or str(m.get("category") or "") == "ceni"
+            for m in stored
+        )
         # Enrichissement live si le refresh antérieur n’incluait pas encore ces domaines
         if asset_type in {"fdsu_site", "site", "sites"} and DATA_MODE == "db":
             site_id = int(asset_id) if str(asset_id).isdigit() else None
@@ -1915,6 +2187,10 @@ def get_asset_needs(asset_id: str | int, **filters: Any) -> dict[str, Any]:
                 extra: list[dict[str, Any]] = []
                 if not has_postgis_health:
                     extra.extend(match_site_to_health_facilities(site, max_distance_m=max_m))
+                if not has_education:
+                    extra.extend(match_site_to_schools(site, max_distance_m=max_m))
+                if not has_ceni:
+                    extra.extend(match_site_to_ceni_signal(site, max_distance_m=max_m))
                 if not has_roads:
                     extra.extend(match_site_to_roads(site, max_distance_m=max_m))
                 if not has_postgis_telecom:

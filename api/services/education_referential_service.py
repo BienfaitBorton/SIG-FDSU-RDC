@@ -69,3 +69,46 @@ def list_establishments(*, subtype: str | None = None, quality: str | None = Non
     selected = [row for row in rows if (not subtype or row["education_subtype"] == subtype) and (not quality or row["validation_status"] == quality) and (not province or row.get("province") == province)]
     summary = statistics()
     return {"total": len(selected), "classified_total": summary["establishments"], "quarantined_school_candidates": summary["quarantined_school_candidates"], "offset": offset, "limit": limit, "establishments": selected[offset:offset + limit], "_meta": configuration()["_meta"]}
+
+
+@lru_cache(maxsize=1)
+def _mappable_schools() -> tuple[dict[str, Any], ...]:
+    """Projection SCHOOL mappable — cache mémoire, lecture seule du registre CENI."""
+    rows = []
+    for row in ceni_registry_service.registry().get("assets", []):
+        if row.get("normalized_category") != "SCHOOL":
+            continue
+        if row.get("geometry_status") not in MAPPABLE_GEOMETRY_STATUSES:
+            continue
+        projected = _project(row)
+        if projected.get("latitude") is None or projected.get("longitude") is None:
+            continue
+        rows.append(projected)
+    return tuple(rows)
+
+
+def nearest_establishment(
+    lat: float,
+    lon: float,
+    *,
+    radius_m: float = 25_000,
+    limit: int = 15,
+) -> dict[str, Any]:
+    """Établissements éducatifs les plus proches (bbox + Haversine, pas PostGIS)."""
+    from api.services.spatial_nearest_utils import nearest_points
+
+    schools = list(_mappable_schools())
+    hits = nearest_points(lat, lon, schools, radius_m=radius_m, limit=limit)
+    return {
+        "data_available": bool(schools),
+        "search_executed": True,
+        "referential_count": len(schools),
+        "radius_m": radius_m,
+        "limit": limit,
+        "source": "CENI SCHOOL projection (derived)",
+        "derived_projection": True,
+        "official_ministry_registry": False,
+        "calculation_method": "haversine_bbox_education",
+        "establishments": hits,
+        "nearest": hits[0] if hits else None,
+    }
