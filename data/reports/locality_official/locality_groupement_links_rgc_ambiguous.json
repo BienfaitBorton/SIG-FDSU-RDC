@@ -1,0 +1,2199 @@
+{
+  "generated_at": "2026-07-19T21:11:23.091228+00:00",
+  "engine": "nire-groupement-rgc-controlled-integration-1.0.0",
+  "count": 313,
+  "items": [
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-SD-LOC-MOBA-MUTAMBA-MUTAMBALA-70620289",
+      "locality_name": "Mutambala",
+      "existing_groupement": "Mutamba",
+      "groupement_rgc": "Mutambala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-SD-LOC-MOBA-KITENDWE-MULONDE-70620237",
+      "locality_name": "Mulonde",
+      "existing_groupement": "Kitendwe",
+      "groupement_rgc": "Mulonde"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-SD-LOC-MOBA-MOLIRO-KILEBA-70620372",
+      "locality_name": "Kileba",
+      "existing_groupement": "Moliro",
+      "groupement_rgc": "Muliro"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-SD-LOC-MOBA-MOLIRO-LIBONDWE-70620374",
+      "locality_name": "Libondwe",
+      "existing_groupement": "Moliro",
+      "groupement_rgc": "Muliro"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-SD-LOC-MOBA-MOLIRO-SHEBELE-70620378",
+      "locality_name": "Shebele",
+      "existing_groupement": "Moliro",
+      "groupement_rgc": "Muliro"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-SD-LOC-MOBA-MOLIRO-MAMBOMENGI-70620380",
+      "locality_name": "Mambomengi",
+      "existing_groupement": "Moliro",
+      "groupement_rgc": "Muliro"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-OT-LOC-MASI_MANIMBA-MBARI-MIKWATI-99003238",
+      "locality_name": "Mikwati",
+      "existing_groupement": "Mbari",
+      "groupement_rgc": "Mbadi"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-OT-LOC-MASI_MANIMBA-MBARI-KINGOMA-99003283",
+      "locality_name": "Kingoma",
+      "existing_groupement": "Mbari",
+      "groupement_rgc": "Mbadi"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-OT-LOC-MASI_MANIMBA-MUDIMBATA_KIZINGA-KIMBWALU_I-99003273",
+      "locality_name": "Kimbwalu I",
+      "existing_groupement": "Mudimbata kizinga",
+      "groupement_rgc": "Mudimbata"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-OT-LOC-MASI_MANIMBA-MUDIMBATA_KIZINGA-KIMBWALU_II-99003274",
+      "locality_name": "Kimbwalu II",
+      "existing_groupement": "Mudimbata kizinga",
+      "groupement_rgc": "Mudimbata"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-OT-LOC-MASI_MANIMBA-KATEMBO-KIBWINBA_VILLAGE-99003296",
+      "locality_name": "Kibwinba Village",
+      "existing_groupement": "Katembo",
+      "groupement_rgc": "Katemo"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-BENYE_YUA-FATAKI_I-99004504",
+      "locality_name": "Fataki I",
+      "existing_groupement": "Benye Yua",
+      "groupement_rgc": "Jua"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-BENYE_YUA-FATAKI_II-99004505",
+      "locality_name": "Fataki II",
+      "existing_groupement": "Benye Yua",
+      "groupement_rgc": "Jua"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-BENYE_YUA-FATAKI_III-99004506",
+      "locality_name": "Fataki III",
+      "existing_groupement": "Benye Yua",
+      "groupement_rgc": "Jua"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-BENYE_YUA-KALIMU-99004507",
+      "locality_name": "Kalimu",
+      "existing_groupement": "Benye Yua",
+      "groupement_rgc": "Jua"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-BENYE_YUA-KANUMBI-99004508",
+      "locality_name": "Kanumbi",
+      "existing_groupement": "Benye Yua",
+      "groupement_rgc": "Jua"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-BENYE_YUA-KIKEZI-99004509",
+      "locality_name": "Kikezi",
+      "existing_groupement": "Benye Yua",
+      "groupement_rgc": "Jua"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-BENYE_YUA-LUTALA-99004510",
+      "locality_name": "Lutala",
+      "existing_groupement": "Benye Yua",
+      "groupement_rgc": "Jua"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-BENYE_YUA-MUSENGE-99004511",
+      "locality_name": "Musenge",
+      "existing_groupement": "Benye Yua",
+      "groupement_rgc": "Jua"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-BENYE_YUA-PENSION_BILIZA-99004512",
+      "locality_name": "Pension Biliza",
+      "existing_groupement": "Benye Yua",
+      "groupement_rgc": "Jua"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-BENYE_YUA-KANDOLO-62240056",
+      "locality_name": "Kandolo",
+      "existing_groupement": "Benye Yua",
+      "groupement_rgc": "Jua"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-BENYE_YUA-KIYOO_I-99004514",
+      "locality_name": "Kiyoo I",
+      "existing_groupement": "Benye Yua",
+      "groupement_rgc": "Jua"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-BENYE_YUA-KIYOO_II-99004515",
+      "locality_name": "Kiyoo II",
+      "existing_groupement": "Benye Yua",
+      "groupement_rgc": "Jua"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-BENYE_YUA-MUKANDILWA-99004516",
+      "locality_name": "Mukandilwa",
+      "existing_groupement": "Benye Yua",
+      "groupement_rgc": "Jua"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-BENYE_YUA-MUMINIA-99004517",
+      "locality_name": "Muminia",
+      "existing_groupement": "Benye Yua",
+      "groupement_rgc": "Jua"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-YUMA-62240174",
+      "locality_name": "Yuma",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-KIMBALA_BWIBULA-99004523",
+      "locality_name": "Kimbala Bwibula",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-TUMPANGA-99004524",
+      "locality_name": "Tumpanga",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-LUTALA-62240178",
+      "locality_name": "Lutala",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-KIKUNGWA-62240093",
+      "locality_name": "Kikungwa",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-KAMUNDALA_I-99004525",
+      "locality_name": "Kamundala I",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-KAMUNDALA_II-99004526",
+      "locality_name": "Kamundala II",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-NZOGU-99004527",
+      "locality_name": "Nzogu",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-LUKUNDJI-62240179",
+      "locality_name": "Lukundji",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-LUSOLO-62240122",
+      "locality_name": "Lusolo",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-KINTIMBUKA-62240092",
+      "locality_name": "Kintimbuka",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-LUBILE-99004528",
+      "locality_name": "Lubile",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-MASANDI-99004529",
+      "locality_name": "Masandi",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-MILUNGU-99004530",
+      "locality_name": "Milungu",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-MUKOMBE-99004531",
+      "locality_name": "Mukombe",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-MOBILE-62240136",
+      "locality_name": "Mobile",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-MUNZUNZU-62240148",
+      "locality_name": "Munzunzu",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-KASEME-99004532",
+      "locality_name": "Kaseme",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-MAGENDE-99004533",
+      "locality_name": "Magende",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-MALINGI-99004534",
+      "locality_name": "Malingi",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-NKOLA_MANZANZA-99004535",
+      "locality_name": "Nkola Manzanza",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-KAKOZWA-99004536",
+      "locality_name": "Kakozwa",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-KIZINGAZINGA-99004537",
+      "locality_name": "Kizingazinga",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-LUSASA-99004538",
+      "locality_name": "Lusasa",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-MBILI-99004539",
+      "locality_name": "Mbili",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-KAMILI-62240065",
+      "locality_name": "Kamili",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-KAYEYE-62240073",
+      "locality_name": "Kayeye",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-KAGOLOMBA-99004540",
+      "locality_name": "Kagolomba",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-KAMILUNGU-99004541",
+      "locality_name": "Kamilungu",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-KANDOLO_MABILA-99004542",
+      "locality_name": "Kandolo/ Mabila",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-MIMBITE-99004543",
+      "locality_name": "Mimbite",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-NGENGELE-99004544",
+      "locality_name": "Ngengele",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-SIMOLO_SALUBEZYA-99004545",
+      "locality_name": "Simolo Salubezya",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-KANGELA-62240053",
+      "locality_name": "Kangela",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGE-NDAKALA-62240151",
+      "locality_name": "Ndakala",
+      "existing_groupement": "Nsange",
+      "groupement_rgc": "N'Sange"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGULI-KABUMBA-99004659",
+      "locality_name": "Kabumba",
+      "existing_groupement": "Nsanguli",
+      "groupement_rgc": "N'Sanguli"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGULI-KATAMBWE-99004660",
+      "locality_name": "Katambwe",
+      "existing_groupement": "Nsanguli",
+      "groupement_rgc": "N'Sanguli"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGULI-KIBILA-99004661",
+      "locality_name": "Kibila",
+      "existing_groupement": "Nsanguli",
+      "groupement_rgc": "N'Sanguli"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGULI-MAKANGILA-99004662",
+      "locality_name": "Makangila",
+      "existing_groupement": "Nsanguli",
+      "groupement_rgc": "N'Sanguli"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGULI-MBOKANI-99004663",
+      "locality_name": "Mbokani",
+      "existing_groupement": "Nsanguli",
+      "groupement_rgc": "N'Sanguli"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-PANGI-NSANGULI-KANDOLO-99004666",
+      "locality_name": "Kandolo",
+      "existing_groupement": "Nsanguli",
+      "groupement_rgc": "N'Sanguli"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BANGOMA-ISAMBIKA-63250036",
+      "locality_name": "Isambika",
+      "existing_groupement": "Bangoma",
+      "groupement_rgc": "Bagabo"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-KABUKINGA-63250042",
+      "locality_name": "Kabukinga",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAGABO-KIFUKO-63250082",
+      "locality_name": "Kifuko",
+      "existing_groupement": "Bagabo",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MWENGA-BASIMWENDA-MABALA-63250124",
+      "locality_name": "Mabala",
+      "existing_groupement": "Basimwenda",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-LUZA-63250127",
+      "locality_name": "Luza",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAGABO-MAKUTANO-63250139",
+      "locality_name": "Makutano",
+      "existing_groupement": "Bagabo",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BANGOMA-MANKULU-63250152",
+      "locality_name": "Mankulu",
+      "existing_groupement": "Bangoma",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-MILENDA-63250156",
+      "locality_name": "Milenda",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-MIKONDE-63250158",
+      "locality_name": "Mikonde",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BALIGA-MULUNGU-63250167",
+      "locality_name": "Mulungu",
+      "existing_groupement": "Baliga",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BALIGA-MULAMBA-63250168",
+      "locality_name": "Mulamba",
+      "existing_groupement": "Baliga",
+      "groupement_rgc": "Bagabo"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-UVIRA-LUVUNGI-ITARA-63220006",
+      "locality_name": "Itara",
+      "existing_groupement": "Luvungi",
+      "groupement_rgc": "Luvungi Itara"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-BULUNGU-63250009",
+      "locality_name": "Bulungu",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-IKOZI-63250015",
+      "locality_name": "Ikozi",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-IBONGA-63250029",
+      "locality_name": "Ibonga",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Baliga"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KABILU-63250045",
+      "locality_name": "Kabilu",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KAKOZI-63250057",
+      "locality_name": "Kakozi",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_NORD-KANANGA-63250061",
+      "locality_name": "Kananga",
+      "existing_groupement": "Bamunguba Nord",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BALIGA-KAMPALA-63250062",
+      "locality_name": "Kampala",
+      "existing_groupement": "Baliga",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KIFUKO-63250083",
+      "locality_name": "Kifuko",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KILALO-63250101",
+      "locality_name": "Kilalo",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KINZANZA-63250107",
+      "locality_name": "Kinzanza",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-LOLO-63250116",
+      "locality_name": "Lolo",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_NORD-LULINGU-63250136",
+      "locality_name": "Lulingu",
+      "existing_groupement": "Bamunguba Nord",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MWENGA-BASIMUKINDJE_1-KITOPO-63240071",
+      "locality_name": "Kitopo",
+      "existing_groupement": "Basimukindje 1",
+      "groupement_rgc": "Basimukindje I"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MWENGA-BASIMWENDA-LUBUNGA-63240081",
+      "locality_name": "Lubunga",
+      "existing_groupement": "Basimwenda",
+      "groupement_rgc": "Bashimwenda"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_I-KAMANA-63230032",
+      "locality_name": "Kamana",
+      "existing_groupement": "Babungwe I",
+      "groupement_rgc": "Babungwe Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_I-KALEMBELEMBE-63230035",
+      "locality_name": "Kalembelembe",
+      "existing_groupement": "Babungwe I",
+      "groupement_rgc": "Babungwe Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUNIAKA-KISANGA-63230068",
+      "locality_name": "Kisanga",
+      "existing_groupement": "Basimuniaka",
+      "groupement_rgc": "Basimunyaka Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_I-MAKUNGU-63230099",
+      "locality_name": "Makungu",
+      "existing_groupement": "Babungwe I",
+      "groupement_rgc": "Babungwe Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKUMA_1-MULENGA-63230116",
+      "locality_name": "Mulenga",
+      "existing_groupement": "Basimukuma 1",
+      "groupement_rgc": "Basimukuma Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BATALI-BISIEGE-63250021",
+      "locality_name": "Bisiege",
+      "existing_groupement": "Batali",
+      "groupement_rgc": "Ikama-Kasanza"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BATALI-MAKAKO-63250144",
+      "locality_name": "Makako",
+      "existing_groupement": "Batali",
+      "groupement_rgc": "Nkulu"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_II-ILAKALA-63230006",
+      "locality_name": "Ilakala",
+      "existing_groupement": "Babungwe II",
+      "groupement_rgc": "Babungwe Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_I-SELE-63230134",
+      "locality_name": "Sele",
+      "existing_groupement": "Babungwe I",
+      "groupement_rgc": "Babungwe Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKINJE-ABELA-63230155",
+      "locality_name": "Abela",
+      "existing_groupement": "Basimukinje",
+      "groupement_rgc": "Basimukindje"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUNIAKA_I-BITOBOLO-63230172",
+      "locality_name": "Bitobolo",
+      "existing_groupement": "Basimuniaka I",
+      "groupement_rgc": "Basimuniaka Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKINJE-EKWENA-63230176",
+      "locality_name": "Ekwena",
+      "existing_groupement": "Basimukinje",
+      "groupement_rgc": "Basimukindje"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKINJE-KANDALE-63230195",
+      "locality_name": "Kandale",
+      "existing_groupement": "Basimukinje",
+      "groupement_rgc": "Basimukindje"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABWARI-LUBOMU-63230220",
+      "locality_name": "Lubomu",
+      "existing_groupement": "Babwari",
+      "groupement_rgc": "Ubwari"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABWARI-MWAYENGA-63230254",
+      "locality_name": "Mwayenga",
+      "existing_groupement": "Babwari",
+      "groupement_rgc": "Ubwari"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABWARI-NEMBA-63230256",
+      "locality_name": "Nemba",
+      "existing_groupement": "Babwari",
+      "groupement_rgc": "Ubwari"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_I-TALAMA-63230269",
+      "locality_name": "Talama",
+      "existing_groupement": "Babungwe I",
+      "groupement_rgc": "Babungwe Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_I-YUNGU-63230270",
+      "locality_name": "Yungu",
+      "existing_groupement": "Babungwe I",
+      "groupement_rgc": "Babungwe Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABWARI-KATETE-63230272",
+      "locality_name": "Katete",
+      "existing_groupement": "Babwari",
+      "groupement_rgc": "Ubwari"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABWARI-BUMA-63230273",
+      "locality_name": "Buma",
+      "existing_groupement": "Babwari",
+      "groupement_rgc": "Ubwari"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-UVIRA-LUVUNGI-LUVUNGI-63220034",
+      "locality_name": "Luvungi",
+      "existing_groupement": "Luvungi",
+      "groupement_rgc": "Luvungi Itara"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BALIGA-NIAKIBIZIE-63250187",
+      "locality_name": "Niakibizie",
+      "existing_groupement": "Baliga",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_NORD-TUKUTU-63250209",
+      "locality_name": "Tukutu",
+      "existing_groupement": "Bamunguba Nord",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MWENGA-BASIMWENDA-TUBANGWA-63240128",
+      "locality_name": "Tubangwa",
+      "existing_groupement": "Basimwenda",
+      "groupement_rgc": "Bashimwenda"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUNIAKA-KABINGO-63230184",
+      "locality_name": "Kabingo",
+      "existing_groupement": "Basimuniaka",
+      "groupement_rgc": "Basimunyaka Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUNIAKA-KABINGO1-63230185",
+      "locality_name": "Kabingo1",
+      "existing_groupement": "Basimuniaka",
+      "groupement_rgc": "Basimunyaka Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUNIAKA-KIVUMU-63230215",
+      "locality_name": "Kivumu",
+      "existing_groupement": "Basimuniaka",
+      "groupement_rgc": "Basimunyaka Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUNIAKA-LUNUNDU-63230226",
+      "locality_name": "Lunundu",
+      "existing_groupement": "Basimuniaka",
+      "groupement_rgc": "Basimunyaka Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUNIAKA-MASHA-63230236",
+      "locality_name": "Masha",
+      "existing_groupement": "Basimuniaka",
+      "groupement_rgc": "Basimunyaka Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUNIAKA-MISHASHU-63230241",
+      "locality_name": "Mishashu",
+      "existing_groupement": "Basimuniaka",
+      "groupement_rgc": "Basimunyaka Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUNIAKA-NYAWALIMBA-63230261",
+      "locality_name": "Nyawalimba",
+      "existing_groupement": "Basimuniaka",
+      "groupement_rgc": "Basimunyaka Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUNIAKA-RUHEMBA-63230264",
+      "locality_name": "Ruhemba",
+      "existing_groupement": "Basimuniaka",
+      "groupement_rgc": "Basimunyaka Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUNIAKA-RUTIGITA_MONYI-63230265",
+      "locality_name": "Rutigita Monyi",
+      "existing_groupement": "Basimuniaka",
+      "groupement_rgc": "Basimunyaka Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKUMA_2-BENGE-63230169",
+      "locality_name": "Benge",
+      "existing_groupement": "Basimukuma 2",
+      "groupement_rgc": "Basimukuma Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKINJE-EBONDJWA-63230175",
+      "locality_name": "Ebondjwa",
+      "existing_groupement": "Basimukinje",
+      "groupement_rgc": "Basimukindje"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKUMA_2-ITOTA-63230181",
+      "locality_name": "Itota",
+      "existing_groupement": "Basimukuma 2",
+      "groupement_rgc": "Basimukuma Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABWARI-KABANGA-63230182",
+      "locality_name": "Kabanga",
+      "existing_groupement": "Babwari",
+      "groupement_rgc": "Ubwari"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKINJE-KAFULO-63230187",
+      "locality_name": "Kafulo",
+      "existing_groupement": "Basimukinje",
+      "groupement_rgc": "Basimukindje"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKUMA_2-KAKUNGU-63230190",
+      "locality_name": "Kakungu",
+      "existing_groupement": "Basimukuma 2",
+      "groupement_rgc": "Basimukuma Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKINJE-KALINGA-63230191",
+      "locality_name": "Kalinga",
+      "existing_groupement": "Basimukinje",
+      "groupement_rgc": "Basimukindje"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKINJE-BASIMUKINDJE-63230193",
+      "locality_name": "Basimukindje",
+      "existing_groupement": "Basimukinje",
+      "groupement_rgc": "Basimukindje"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKUMA_2-KASONGE-63230199",
+      "locality_name": "Kasonge",
+      "existing_groupement": "Basimukuma 2",
+      "groupement_rgc": "Basimukuma Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKUMA_2-KITSHULA-63230208",
+      "locality_name": "Kitshula",
+      "existing_groupement": "Basimukuma 2",
+      "groupement_rgc": "Basimukuma Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABWARI-KISOKWE-63230214",
+      "locality_name": "Kisokwe",
+      "existing_groupement": "Babwari",
+      "groupement_rgc": "Ubwari"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKUMA_2-LUMBE-63230225",
+      "locality_name": "Lumbe",
+      "existing_groupement": "Basimukuma 2",
+      "groupement_rgc": "Basimukuma Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKUMA_2-MALINDE1-63230233",
+      "locality_name": "Malinde1",
+      "existing_groupement": "Basimukuma 2",
+      "groupement_rgc": "Basimukuma Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKUMA_2-MALINDE2-63230234",
+      "locality_name": "Malinde2",
+      "existing_groupement": "Basimukuma 2",
+      "groupement_rgc": "Basimukuma Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABWARI-MANGA-63230235",
+      "locality_name": "Manga",
+      "existing_groupement": "Babwari",
+      "groupement_rgc": "Ubwari"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKINJE-MATATA-63230237",
+      "locality_name": "Matata",
+      "existing_groupement": "Basimukinje",
+      "groupement_rgc": "Basimukindje"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKINJE-MATONGO-63230238",
+      "locality_name": "Matongo",
+      "existing_groupement": "Basimukinje",
+      "groupement_rgc": "Basimukindje"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKINJE-MAKU-63230239",
+      "locality_name": "Maku",
+      "existing_groupement": "Basimukinje",
+      "groupement_rgc": "Basimukindje"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKINJE-M_MONA-63230244",
+      "locality_name": "M'Mona",
+      "existing_groupement": "Basimukinje",
+      "groupement_rgc": "Basimukindje"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKINJE-MONGEMONGE_BASIMUKINDJE-63230245",
+      "locality_name": "Mongemonge (Basimukindje)",
+      "existing_groupement": "Basimukinje",
+      "groupement_rgc": "Basimukindje"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKUMA_2-MUKERA-63230246",
+      "locality_name": "Mukera",
+      "existing_groupement": "Basimukuma 2",
+      "groupement_rgc": "Basimukuma Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKUMA_2-MULONGWE-63230249",
+      "locality_name": "Mulongwe",
+      "existing_groupement": "Basimukuma 2",
+      "groupement_rgc": "Basimukuma Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKINJE-MUSHIMBAKYE2-63230252",
+      "locality_name": "Mushimbakye2",
+      "existing_groupement": "Basimukinje",
+      "groupement_rgc": "Basimukindje"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABWARI-RUBANA-63230263",
+      "locality_name": "Rubana",
+      "existing_groupement": "Babwari",
+      "groupement_rgc": "Ubwari"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKUMA_2-SIMBI-63230267",
+      "locality_name": "Simbi",
+      "existing_groupement": "Basimukuma 2",
+      "groupement_rgc": "Basimukuma Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_I-BACHANGA_SUD-63230158",
+      "locality_name": "Bachanga Sud",
+      "existing_groupement": "Babungwe I",
+      "groupement_rgc": "Babungwe Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_I-BITONGOTONGO-63230173",
+      "locality_name": "Bitongotongo",
+      "existing_groupement": "Babungwe I",
+      "groupement_rgc": "Babungwe Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_I-ISEKE-63230180",
+      "locality_name": "Iseke",
+      "existing_groupement": "Babungwe I",
+      "groupement_rgc": "Babungwe Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_I-LUBICHAKO_ISEBWE-63230219",
+      "locality_name": "Lubichako Isebwe",
+      "existing_groupement": "Babungwe I",
+      "groupement_rgc": "Babungwe Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_I-LUBONDJA-63230221",
+      "locality_name": "Lubondja",
+      "existing_groupement": "Babungwe I",
+      "groupement_rgc": "Babungwe Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_I-NYANGI_MILIMBA-63230240",
+      "locality_name": "Nyangi Milimba",
+      "existing_groupement": "Babungwe I",
+      "groupement_rgc": "Babungwe Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_I-NGALULA-63230257",
+      "locality_name": "Ngalula",
+      "existing_groupement": "Babungwe I",
+      "groupement_rgc": "Babungwe Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_I-NYANGILEKESHA-63230260",
+      "locality_name": "Nyangilekesha",
+      "existing_groupement": "Babungwe I",
+      "groupement_rgc": "Babungwe Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_I-SEBELE-63230266",
+      "locality_name": "Sebele",
+      "existing_groupement": "Babungwe I",
+      "groupement_rgc": "Babungwe Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-WALUNGU-WALUNGU-KAHEMBARHI-99000150",
+      "locality_name": "Kahembarhi",
+      "existing_groupement": "Walungu",
+      "groupement_rgc": ""
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-UVIRA-RUNINGU-RUNINGU-63220075",
+      "locality_name": "Runingu",
+      "existing_groupement": "Runingu",
+      "groupement_rgc": "Runingo"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKUMA_2-KAKAMBA-63230153",
+      "locality_name": "Kakamba",
+      "existing_groupement": "Basimukuma 2",
+      "groupement_rgc": "Basimukuma Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_II-A_AMBA-63230154",
+      "locality_name": "A'Amba",
+      "existing_groupement": "Babungwe II",
+      "groupement_rgc": "Babungwe Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUNIAKA_I-AKOMBA_AKUKU-63230157",
+      "locality_name": "Akomba Akuku",
+      "existing_groupement": "Basimuniaka I",
+      "groupement_rgc": "Basimuniaka Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKINJE-BIBOKOBOKO1-63230170",
+      "locality_name": "Bibokoboko1",
+      "existing_groupement": "Basimukinje",
+      "groupement_rgc": "Basimukindje"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKINJE-BIBOKOBOKO2-63230171",
+      "locality_name": "Bibokoboko2",
+      "existing_groupement": "Basimukinje",
+      "groupement_rgc": "Basimukindje"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKUMA_1-ELOMBE2-63230177",
+      "locality_name": "Elombe2",
+      "existing_groupement": "Basimukuma 1",
+      "groupement_rgc": "Basimukuma Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKUMA_2-KICHANGA-63230206",
+      "locality_name": "Kichanga",
+      "existing_groupement": "Basimukuma 2",
+      "groupement_rgc": "Basimukuma Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKUMA_2-LUMANYA-63230224",
+      "locality_name": "Lumanya",
+      "existing_groupement": "Basimukuma 2",
+      "groupement_rgc": "Basimukuma Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUKUMA_1-LUSAMBO-63230227",
+      "locality_name": "Lusambo",
+      "existing_groupement": "Basimukuma 1",
+      "groupement_rgc": "Basimukuma Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BASIMUNIAKA-LWIKO-63230230",
+      "locality_name": "Lwiko",
+      "existing_groupement": "Basimuniaka",
+      "groupement_rgc": "Basikalangwa"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_II-MUKWEZI-63230248",
+      "locality_name": "Mukwezi",
+      "existing_groupement": "Babungwe II",
+      "groupement_rgc": "Babungwe Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-LUMPUMPU-99002011",
+      "locality_name": "Lumpumpu",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KAMPALA-99002013",
+      "locality_name": "Kampala",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-MITALA_II-99002018",
+      "locality_name": "Mitala II",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MWENGA-BASIMWENDA-MIZULO-99002429",
+      "locality_name": "Mizulo",
+      "existing_groupement": "Basimwenda",
+      "groupement_rgc": "Bashimwenda"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-WALUNGU-LURHALA-KALENGERA-99002731",
+      "locality_name": "Kalengera",
+      "existing_groupement": "Lurhala",
+      "groupement_rgc": ""
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-WALUNGU-KAMISIMBI-CANGOMA-99002747",
+      "locality_name": "Cangoma",
+      "existing_groupement": "Kamisimbi",
+      "groupement_rgc": ""
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-WALUNGU-KAMISIMBI-KASHENDO-99002748",
+      "locality_name": "Kashendo",
+      "existing_groupement": "Kamisimbi",
+      "groupement_rgc": ""
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-WALUNGU-KAMISIMBI-MUSAKAMBO-99002750",
+      "locality_name": "Musakambo",
+      "existing_groupement": "Kamisimbi",
+      "groupement_rgc": ""
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-WALUNGU-KAMISIMBI-MUSAMBO-99002751",
+      "locality_name": "Musambo",
+      "existing_groupement": "Kamisimbi",
+      "groupement_rgc": ""
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BANGOMA-BUKAFU-99003192",
+      "locality_name": "Bukafu",
+      "existing_groupement": "Bangoma",
+      "groupement_rgc": "Bakyunga"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BANGOMA-LUKANDO-99002994",
+      "locality_name": "Lukando",
+      "existing_groupement": "Bangoma",
+      "groupement_rgc": "Bagabo"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAKYUNGA-TULOLE-99002895",
+      "locality_name": "Tulole",
+      "existing_groupement": "Bakyunga",
+      "groupement_rgc": "Bagabo"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAKYUNGA-KIMBULU-63250096",
+      "locality_name": "Kimbulu",
+      "existing_groupement": "Bakyunga",
+      "groupement_rgc": "Bagabo"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAKYUNGA-BIAZI_I-99002796",
+      "locality_name": "Biazi I",
+      "existing_groupement": "Bakyunga",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAKYUNGA-BIAZI_II-99002697",
+      "locality_name": "Biazi II",
+      "existing_groupement": "Bakyunga",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAKYUNGA-TAITOLEA-99002598",
+      "locality_name": "Taitolea",
+      "existing_groupement": "Bakyunga",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAKYUNGA-KEENDE-99002499",
+      "locality_name": "Keende",
+      "existing_groupement": "Bakyunga",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAKYUNGA-CHABEGELE-99002400",
+      "locality_name": "Chabegele",
+      "existing_groupement": "Bakyunga",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAKYUNGA-MASANGA-99002301",
+      "locality_name": "Masanga",
+      "existing_groupement": "Bakyunga",
+      "groupement_rgc": "Bagabo"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAKYUNGA-KASANGATI-99002202",
+      "locality_name": "Kasangati",
+      "existing_groupement": "Bakyunga",
+      "groupement_rgc": "Bagabo"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BANGOMA-KIGANGALA-99002103",
+      "locality_name": "Kigangala",
+      "existing_groupement": "Bangoma",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BANGOMA-KIMBONDI-99002004",
+      "locality_name": "Kimbondi",
+      "existing_groupement": "Bangoma",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KIMBONDI_I-99001905",
+      "locality_name": "Kimbondi I",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_NORD-KIBALAKA-99001806",
+      "locality_name": "Kibalaka",
+      "existing_groupement": "Bamunguba Nord",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_NORD-LANGALANGA_MUTUTUNGU-99001707",
+      "locality_name": "Langalanga Mututungu",
+      "existing_groupement": "Bamunguba Nord",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_NORD-MUTUTUNGU_LANGALANGA-99001608",
+      "locality_name": "Mututungu Langalanga",
+      "existing_groupement": "Bamunguba Nord",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_NORD-LULIGI-99001509",
+      "locality_name": "Luligi",
+      "existing_groupement": "Bamunguba Nord",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_NORD-TUMPYEPYE_I-99001311",
+      "locality_name": "Tumpyepye I",
+      "existing_groupement": "Bamunguba Nord",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_NORD-TUMPYEPYE_2-99001212",
+      "locality_name": "Tumpyepye 2",
+      "existing_groupement": "Bamunguba Nord",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KATCHUNGU-63250078",
+      "locality_name": "Katchungu",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KITANDI-99001113",
+      "locality_name": "Kitandi",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-BATOBA-99001014",
+      "locality_name": "Batoba",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-LUKUTAMBA-99000816",
+      "locality_name": "Lukutamba",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-LUMBA-99000519",
+      "locality_name": "Lumba",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BALIGA-TUKUMBI-98999529",
+      "locality_name": "Tukumbi",
+      "existing_groupement": "Baliga",
+      "groupement_rgc": "Bangoma"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-MISWAKI-98998737",
+      "locality_name": "Miswaki",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-WASEZYA-98998638",
+      "locality_name": "Wasezya",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-LOKOMBA-98998539",
+      "locality_name": "Lokomba",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-KIMBONDI-63250097",
+      "locality_name": "Kimbondi",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-BITOBOLO-63250020",
+      "locality_name": "Bitobolo",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-TUSISI-63250205",
+      "locality_name": "Tusisi",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-KIGOGO-98998341",
+      "locality_name": "Kigogo",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-KIKAMBA-63250228",
+      "locality_name": "Kikamba",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BASITABYALE-KALOLE_C_C-98997747",
+      "locality_name": "Kalole C.C",
+      "existing_groupement": "Basitabyale",
+      "groupement_rgc": "Ikama-Kasanza"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BATALI-KAKOLA-98997648",
+      "locality_name": "Kakola",
+      "existing_groupement": "Batali",
+      "groupement_rgc": "Ikama-Kasanza"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BATALI-MAKAMBA-63250143",
+      "locality_name": "Makamba",
+      "existing_groupement": "Batali",
+      "groupement_rgc": "Ikama-Kasanza"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-NDESE-99000717",
+      "locality_name": "Ndese",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MWENGA-BASIMWENDA-MILAMBA-99003754",
+      "locality_name": "Milamba",
+      "existing_groupement": "Basimwenda",
+      "groupement_rgc": "Bashimwenda"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MWENGA-BASIMWENDA-MITEMBU-99003755",
+      "locality_name": "Mitembu",
+      "existing_groupement": "Basimwenda",
+      "groupement_rgc": "Bashimwenda"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MWENGA-BASIMWENDA-WENGWE-99003756",
+      "locality_name": "Wengwe",
+      "existing_groupement": "Basimwenda",
+      "groupement_rgc": "Bashimwenda"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MWENGA-BASIMWENDA-ISOGA-63240024",
+      "locality_name": "Isoga",
+      "existing_groupement": "Basimwenda",
+      "groupement_rgc": "Bashimwenda"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MWENGA-BASIMUKINDJE_2-KANGELE-63240045",
+      "locality_name": "Kangele",
+      "existing_groupement": "Basimukindje 2",
+      "groupement_rgc": "Basimukindje II"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-MILANGA-98998440",
+      "locality_name": "Milanga",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_NORD-MUTALINDULWE-63250019",
+      "locality_name": "Mutalindulwe",
+      "existing_groupement": "Bamunguba Nord",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_NORD-KALIGILA-63250052",
+      "locality_name": "Kaligila",
+      "existing_groupement": "Bamunguba Nord",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_NORD-BIGANANGWA-99001410",
+      "locality_name": "Biganangwa",
+      "existing_groupement": "Bamunguba Nord",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAGABO-MAKUTANO-63250139",
+      "locality_name": "Makutano",
+      "existing_groupement": "Bagabo",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "MULTI_NAME_TERRITORY_HIT",
+      "nom1": "Cifunzi",
+      "territoire": "Kalehe",
+      "groupement_rgc": "Kalonge",
+      "hits": 6
+    },
+    {
+      "reason": "MULTI_NAME_TERRITORY_HIT",
+      "nom1": "Mboko",
+      "territoire": "Fizi",
+      "groupement_rgc": "Babungwe Sud",
+      "hits": 2
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_I-BITONGOTONGO-63230173",
+      "locality_name": "Bitongotongo",
+      "existing_groupement": "Babungwe I",
+      "groupement_rgc": "Basikalangwa"
+    },
+    {
+      "reason": "MULTI_NAME_TERRITORY_HIT",
+      "nom1": "Lwemba",
+      "territoire": "Mwenga",
+      "groupement_rgc": "Basimukindje 1",
+      "hits": 2
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_II-BANGWE-63230005",
+      "locality_name": "Bangwe",
+      "existing_groupement": "Babungwe II",
+      "groupement_rgc": "Babungwe-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-FIZI-BABUNGWE_I-NGALULA-63230257",
+      "locality_name": "Ngalula",
+      "existing_groupement": "Babungwe I",
+      "groupement_rgc": "Babungwe-Nord"
+    },
+    {
+      "reason": "MULTI_NAME_TERRITORY_HIT",
+      "nom1": "Matala",
+      "territoire": "Shabunda",
+      "groupement_rgc": "Batali",
+      "hits": 3
+    },
+    {
+      "reason": "MULTI_NAME_TERRITORY_HIT",
+      "nom1": "Idumbu",
+      "territoire": "Shabunda",
+      "groupement_rgc": "Nkulu",
+      "hits": 3
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-PALAIS-99000915",
+      "locality_name": "Palais",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "MULTI_NAME_TERRITORY_HIT",
+      "nom1": "Byangama",
+      "territoire": "Shabunda",
+      "groupement_rgc": "Bamuguba-Sud",
+      "hits": 2
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-MPWE_MAMBUBI-99002007",
+      "locality_name": "Mpwe(Mambubi)",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-RISERIE-99002006",
+      "locality_name": "Riserie",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-MISSION-99002010",
+      "locality_name": "Mission",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-BYASESE-99002009",
+      "locality_name": "Byasese",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-MITALA_I-99002008",
+      "locality_name": "Mitala I",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-MITALA_II-99002018",
+      "locality_name": "Mitala II",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KAKONGYA-99002017",
+      "locality_name": "Kakongya",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-LUTIKA-99002012",
+      "locality_name": "Lutika",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KABUKIKI-99002014",
+      "locality_name": "Kabukiki",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-LUSEKE-99002015",
+      "locality_name": "Luseke",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-ISEZIA-99002016",
+      "locality_name": "Isezia",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-NGOLOMBE-63250189",
+      "locality_name": "Ngolombe",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KIMBILI-99002021",
+      "locality_name": "Kimbili",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-BIBUGWA-99002022",
+      "locality_name": "Bibugwa",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-NYALUBEMBA-99002019",
+      "locality_name": "Nyalubemba",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-NYOMBE-99002020",
+      "locality_name": "Nyombe",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-MAIMINGI-99002023",
+      "locality_name": "Maimingi",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "MULTI_NAME_TERRITORY_HIT",
+      "nom1": "Kitandi",
+      "territoire": "Shabunda",
+      "groupement_rgc": "Ikama-Kasanza",
+      "hits": 2
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BALIGA-MULAMBA-63250168",
+      "locality_name": "Mulamba",
+      "existing_groupement": "Baliga",
+      "groupement_rgc": "Ikama-Kasanza"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MWENGA-BASIKAMAKULU-BILIGI-99003739",
+      "locality_name": "Biligi",
+      "existing_groupement": "Basikamakulu",
+      "groupement_rgc": "Basikamugulu"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MWENGA-BASIKAMAKULU-BANGOYE-99003738",
+      "locality_name": "Bangoye",
+      "existing_groupement": "Basikamakulu",
+      "groupement_rgc": "Basikamugulu"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MWENGA-BAGUNGA-TUNKELE-99003705",
+      "locality_name": "Tunkele",
+      "existing_groupement": "Bagunga",
+      "groupement_rgc": "Babunga"
+    },
+    {
+      "reason": "MULTI_NAME_TERRITORY_HIT",
+      "nom1": "Kakuku",
+      "territoire": "Mwenga",
+      "groupement_rgc": "Bakute",
+      "hits": 2
+    },
+    {
+      "reason": "MULTI_NAME_TERRITORY_HIT",
+      "nom1": "Kalundu",
+      "territoire": "Mwenga",
+      "groupement_rgc": "Basitonga",
+      "hits": 2
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MWENGA-KIOMVU-KATONDE-99003675",
+      "locality_name": "Katonde",
+      "existing_groupement": "Kiomvu",
+      "groupement_rgc": "Kihonvu"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MWENGA-KABABIOLE-KABALOLE-99001977",
+      "locality_name": "Kabalole",
+      "existing_groupement": "Kababiole",
+      "groupement_rgc": "Kabalole"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-WALUNGU-MULAMBA-MADAKA_CENTRE-99001993",
+      "locality_name": "Madaka Centre",
+      "existing_groupement": "Mulamba",
+      "groupement_rgc": "Mushinga"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-KABARE-CIRUNGA-MBONOBONO-99002031",
+      "locality_name": "Mbonobono",
+      "existing_groupement": "Cirunga",
+      "groupement_rgc": "Cirunga TEMP"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-IDJWI-KIBUMBA-KISHENYI-63270007",
+      "locality_name": "Kishenyi",
+      "existing_groupement": "Kibumba",
+      "groupement_rgc": "Kihumba"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-IDJWI-KIBUMBA-KIHUMBA-99001043",
+      "locality_name": "Kihumba",
+      "existing_groupement": "Kibumba",
+      "groupement_rgc": "Kihumba"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-BALIGA-99002005",
+      "locality_name": "Baliga",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Sud"
+    },
+    {
+      "reason": "MULTI_NAME_TERRITORY_HIT",
+      "nom1": "Makobola",
+      "territoire": "Uvira",
+      "groupement_rgc": "Makobola",
+      "hits": 2
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BANGOMA-MANKULU-63250152",
+      "locality_name": "Mankulu",
+      "existing_groupement": "Bangoma",
+      "groupement_rgc": "Bagabo"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BANGOMA-MANKULU-63250152",
+      "locality_name": "Mankulu",
+      "existing_groupement": "Bangoma",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BANGOMA-LUKANDO-99002994",
+      "locality_name": "Lukando",
+      "existing_groupement": "Bangoma",
+      "groupement_rgc": "Bagabo"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-KABUKINGA-63250042",
+      "locality_name": "Kabukinga",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-KABUKINGA-63250042",
+      "locality_name": "Kabukinga",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-KABUKINGA-63250042",
+      "locality_name": "Kabukinga",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-LOKOMBA-98998539",
+      "locality_name": "Lokomba",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-TUSISI-63250205",
+      "locality_name": "Tusisi",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-KIGOGO-98998341",
+      "locality_name": "Kigogo",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-KIKAMBA-63250228",
+      "locality_name": "Kikamba",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-KIGOGO-98998341",
+      "locality_name": "Kigogo",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-KIGOGO-98998341",
+      "locality_name": "Kigogo",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-KIGOGO-98998341",
+      "locality_name": "Kigogo",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Beygala"
+    },
+    {
+      "reason": "MULTI_NAME_TERRITORY_HIT",
+      "nom1": "Mankulu",
+      "territoire": "Shabunda",
+      "groupement_rgc": "Bangoma",
+      "hits": 2
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-MILANGA-98998440",
+      "locality_name": "Milanga",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Bangoma"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KATCHUNGU-63250078",
+      "locality_name": "Katchungu",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KATCHUNGU-63250078",
+      "locality_name": "Katchungu",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KATCHUNGU-63250078",
+      "locality_name": "Katchungu",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KATCHUNGU-63250078",
+      "locality_name": "Katchungu",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KATCHUNGU-63250078",
+      "locality_name": "Katchungu",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KATCHUNGU-63250078",
+      "locality_name": "Katchungu",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KATCHUNGU-63250078",
+      "locality_name": "Katchungu",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Bamuguba-Nord"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-KABUKIKI-99002014",
+      "locality_name": "Kabukiki",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Baliga"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAYGALA-KIKAMBA-63250228",
+      "locality_name": "Kikamba",
+      "existing_groupement": "Baygala",
+      "groupement_rgc": "Baliga"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MASISI-KIBABI_II-BIBATAMA-61260011",
+      "locality_name": "Bibatama",
+      "existing_groupement": "Kibabi II",
+      "groupement_rgc": "Kibabi 2"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MASISI-NYAMABOKO_II-KIKOMA-61260043",
+      "locality_name": "Kikoma",
+      "existing_groupement": "Nyamaboko II",
+      "groupement_rgc": "Nyamaboko 2"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MASISI-NYAMABOKO_I-KAKUNGWE-61260033",
+      "locality_name": "Kakungwe",
+      "existing_groupement": "Nyamaboko I",
+      "groupement_rgc": "Nyamaboko 1"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MASISI-NYAMABOKO_I-KINENE-61260047",
+      "locality_name": "Kinene",
+      "existing_groupement": "Nyamaboko I",
+      "groupement_rgc": "Nyamaboko 1"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MASISI-NYAMABOKO_II-LUHO-61260061",
+      "locality_name": "Luho",
+      "existing_groupement": "Nyamaboko II",
+      "groupement_rgc": "Nyamaboko 2"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-OICHA-MALIO-VURONDO_CENTRE-61240096",
+      "locality_name": "Vurondo Centre",
+      "existing_groupement": "Malio",
+      "groupement_rgc": "Masiki Kalo"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-OICHA-BATANGI_MBAU-MAVIVI-61240108",
+      "locality_name": "Mavivi",
+      "existing_groupement": "Batangi mbau",
+      "groupement_rgc": "Batangi"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-RUTSHURU-TONGO-KIRUMBA-61250060",
+      "locality_name": "Kirumba",
+      "existing_groupement": "Tongo",
+      "groupement_rgc": "Bambo"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-SHABUNDA-BAMUNGUBA_SUD-NDESE-99000717",
+      "locality_name": "Ndese",
+      "existing_groupement": "Bamunguba Sud",
+      "groupement_rgc": "Watalinga"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MASISI-BASHALI_KAEMBE-MURANGARA-99000878",
+      "locality_name": "Murangara",
+      "existing_groupement": "Bashali-Kaembe",
+      "groupement_rgc": "Bashali-Kae"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MASISI-BASHALI_KAEMBE-KAUSA-99000877",
+      "locality_name": "Kausa",
+      "existing_groupement": "Bashali-Kaembe",
+      "groupement_rgc": "Bashali-Kae"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MASISI-BASHALI_KAEMBE-RUSHINGA-99000875",
+      "locality_name": "Rushinga",
+      "existing_groupement": "Bashali-Kaembe",
+      "groupement_rgc": "Bashali-Kae"
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-MASISI-BASHALI_KAEMBE-MUHETO-99000038",
+      "locality_name": "Muheto",
+      "existing_groupement": "Bashali-Kaembe",
+      "groupement_rgc": "Bashali-Kae"
+    },
+    {
+      "reason": "MULTI_NAME_TERRITORY_HIT",
+      "nom1": "Mayuwano",
+      "territoire": "Walikale",
+      "groupement_rgc": "Wassa",
+      "hits": 2
+    },
+    {
+      "reason": "MULTI_NAME_TERRITORY_HIT",
+      "nom1": "Kalundu",
+      "territoire": "Lubero",
+      "groupement_rgc": "Mwenye",
+      "hits": 2
+    },
+    {
+      "reason": "MULTI_NAME_TERRITORY_HIT",
+      "nom1": "Karambi",
+      "territoire": "Rutshuru",
+      "groupement_rgc": "Bwisha",
+      "hits": 3
+    },
+    {
+      "reason": "MULTI_NAME_TERRITORY_HIT",
+      "nom1": "Karambi",
+      "territoire": "Rutshuru",
+      "groupement_rgc": "Bwisha",
+      "hits": 3
+    },
+    {
+      "reason": "EXISTING_GROUPMENT_CONFLICT",
+      "locality_canonical_id": "RDC-ET-LOC-RUTSHURU-BUKOMA-KANYAMONDO-61250044",
+      "locality_name": "Kanyamondo",
+      "existing_groupement": "Bukoma",
+      "groupement_rgc": "Bwisha"
+    }
+  ],
+  "note": "Revue NIRE — non intégrés automatiquement"
+}

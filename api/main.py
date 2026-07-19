@@ -472,10 +472,15 @@ def simplify_entity(item: dict[str, Any]) -> dict[str, Any]:
         "collectivite": item.get("collectivite") or item.get("collectivité") or item.get("collectivite_parent"),
         "groupement": item.get("groupement"),
         "source": item.get("source"),
+        "provenance": item.get("provenance"),
         "statut": item.get("statut"),
         "qualite": item.get("qualite") or item.get("qualité"),
         "quality": item.get("quality"),
         "geometry": item.get("geometry"),
+        "geometry_role": item.get("geometry_role"),
+        "geometry_provenance": item.get("geometry_provenance"),
+        "geometry_source_date": item.get("geometry_source_date"),
+        "geometry_origin": item.get("geometry_origin"),
         "metadata": item.get("metadata"),
     })
 
@@ -616,10 +621,45 @@ def read_collectivites_json(skip: int = Query(0, ge=0), limit: int = Query(1000,
     return paginate(report_items("collectivity_official/collectivity_referential_official.json", "collectivity_referential"), skip, limit)
 
 
-def read_groupements_json(skip: int = Query(0, ge=0), limit: int = Query(2000, gt=0)) -> list[dict[str, Any]]:
-    if use_database():
-        return db_entity_rows("groupements", skip, limit)
-    return paginate(report_items("groupement_official/groupement_referential_official.json", "groupement_referential"), skip, limit)
+def read_groupements_json(skip: int = Query(0, ge=0), limit: int = Query(5000, gt=0)) -> list[dict[str, Any]]:
+    """Référentiel national enrichi = fusion dynamique historique KMZ + couche RGC."""
+    try:
+        from api.services.nire import groupement_controlled_integration as gci
+
+        items = gci.load_national_groupement_items(include_enrichment=True)
+        return paginate([simplify_entity(item) for item in items], skip, limit)
+    except Exception:
+        if use_database():
+            return db_entity_rows("groupements", skip, limit)
+        return paginate(
+            report_items("groupement_official/groupement_referential_official.json", "groupement_referential"),
+            skip,
+            limit,
+        )
+
+
+@app.get("/groupements/count", tags=["v0.7.0"])
+def read_groupements_count() -> dict[str, Any]:
+    """Total dynamique du référentiel groupements (historique + enrichissement RGC)."""
+    try:
+        from api.services.nire import groupement_controlled_integration as gci
+
+        counts = gci.national_groupement_counts(include_enrichment=True)
+        return {
+            **counts,
+            "count": counts["total_count"],
+            "source": "groupement_referential_official.json + rgc_enrichment",
+            "geometry_role_rgc": "REPRESENTATIVE_POINT",
+        }
+    except Exception:
+        items = report_items("groupement_official/groupement_referential_official.json", "groupement_referential")
+        return {
+            "historical_count": len(items),
+            "enrichment_count": 0,
+            "total_count": len(items),
+            "count": len(items),
+            "source": "groupement_referential_official.json",
+        }
 
 
 @app.get("/localites", tags=["v0.7.0"])
@@ -714,7 +754,7 @@ def geo_collectivites(skip: int = Query(0, ge=0), limit: int = Query(1000, gt=0)
 
 
 @app.get("/geo/groupements", tags=["v0.7.0", "geo-referential"])
-def geo_groupements(skip: int = Query(0, ge=0), limit: int = Query(2000, gt=0)) -> list[dict[str, Any]]:
+def geo_groupements(skip: int = Query(0, ge=0), limit: int = Query(5000, gt=0)) -> list[dict[str, Any]]:
     return read_groupements_json(skip=skip, limit=limit)
 
 
@@ -787,6 +827,13 @@ def read_map_layer(layer_name: str, skip: int = Query(0, ge=0), limit: int = Que
             items = lci.load_national_locality_items(include_enrichment=True)
         except Exception:
             items = as_list(load_report(source[0]).get(source[1]))
+    elif layer_name == "groupements":
+        try:
+            from api.services.nire import groupement_controlled_integration as gci
+
+            items = gci.load_national_groupement_items(include_enrichment=True)
+        except Exception:
+            items = as_list(load_report(source[0]).get(source[1]))
     else:
         items = as_list(load_report(source[0]).get(source[1]))
     if layer_name == "zones":
@@ -852,7 +899,7 @@ def search_entities(
         canonical_layer = "localites" if layer_name == "villages" else layer_name
         # Localités : parcourir le référentiel national fusionné (historique + NCI),
         # pas seulement les 5 000 premières lignes (sinon les 20 420 NCI sont invisibles).
-        if canonical_layer == "localites":
+        if canonical_layer in ("localites", "groupements"):
             items = entity_source_items(canonical_layer, 0, 100_000)
         else:
             items = entity_source_items(canonical_layer, 0, 5000)
@@ -919,6 +966,13 @@ def read_entity(layer: str, entity_id: int | str) -> dict[str, Any]:
             from api.services.nire import locality_controlled_integration as lci
 
             layer_items = lci.load_national_locality_items(include_enrichment=True)
+        except Exception:
+            layer_items = as_list(load_report(source[0]).get(source[1]))
+    elif layer == "groupements":
+        try:
+            from api.services.nire import groupement_controlled_integration as gci
+
+            layer_items = gci.load_national_groupement_items(include_enrichment=True)
         except Exception:
             layer_items = as_list(load_report(source[0]).get(source[1]))
     else:

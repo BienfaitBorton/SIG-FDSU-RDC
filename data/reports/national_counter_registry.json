@@ -31,15 +31,26 @@
     },
     "groupements": {
       "attendu_officiel": 6053,
-      "trouve": 1681,
-      "couverture": "27.77%",
-      "statut": "partiel",
+      "trouve": 2642,
+      "couverture": "43.65%",
+      "statut": "enrichi",
       "validation": "non publié",
       "anomalies": 179,
       "orphelins": 1,
       "territoires_sans_groupement": 27,
       "collectivites_sans_groupement": 250,
-      "recommandation": "source partielle, à compléter avec une autre source avant validation nationale"
+      "recommandation": "Enrichissement RGC contrôlé — points représentatifs, pas frontières officielles. Gap résiduel indicatif vs 6053: 3411.",
+      "nombre": 2642,
+      "historique_kmz": 1681,
+      "enrichissement_rgc": 961,
+      "comparaison_reference": "Référentiel enrichi = historique KMZ 1681 + RGC 961",
+      "provenance": {
+        "historique": "Groupements.kmz → groupement_referential_official.json",
+        "enrichissement": "RGC → groupement_referential_rgc_enrichment.json",
+        "fusion": "dynamique au chargement",
+        "geometry_role_rgc": "REPRESENTATIVE_POINT",
+        "millesime_rgc": "2010-09-22"
+      }
     },
     "anomalies_groupements": {
       "nombre": 179,
@@ -77,6 +88,7 @@
       "rattachements_impossibles": 924
     }
   },
-  "source_groupements": "Groupements.kmz",
-  "source_localites": "Localités.kmz + NCI/FDSU enrichment"
+  "source_groupements": "Groupements.kmz + RGC enrichment",
+  "source_localites": "Localités.kmz + NCI/FDSU enrichment",
+  "generated_at_groupement_rgc_integration": "2026-07-19T21:11:29.531103+00:00"
 }

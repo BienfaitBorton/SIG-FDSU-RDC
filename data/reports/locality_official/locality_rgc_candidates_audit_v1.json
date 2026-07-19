@@ -1,0 +1,247 @@
+{
+  "generated_at": "2026-07-19T21:11:29.365269+00:00",
+  "engine": "nire-groupement-rgc-controlled-integration-1.0.0",
+  "audit_only": true,
+  "no_integration": true,
+  "RGC_LOCALITY_CANDIDATES_ANALYZED": 30272,
+  "ALREADY_IN_47130": 26370,
+  "EXISTING_VARIANTS": 4,
+  "NEW_WITH_VALID_GEOMETRY": 3814,
+  "NEW_VILLAGE_WITH_VALID_GEOMETRY": 0,
+  "AMBIGUOUS": 1,
+  "HOMONYM_DISTINCT": 745,
+  "DUPLICATES": 83,
+  "classification_counts": {
+    "ALREADY_IN_LOCALITY_REFERENTIAL": 26370,
+    "DUPLICATE_RGC_LOCALITY": 83,
+    "NEW_RGC_LOCALITY_WITH_VALID_GEOMETRY": 3814,
+    "HOMONYM_DISTINCT_RGC_LOCALITY": 745,
+    "AMBIGUOUS_RGC_LOCALITY": 1,
+    "EXISTING_LOCALITY_VARIANT": 4
+  },
+  "samples": {
+    "NEW_WITH_VALID_GEOMETRY": [
+      {
+        "nom1": "Hembe Moya",
+        "nom2": "",
+        "territoire": "",
+        "groupement": "",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -4.017644299399481,
+        "lon": 27.771509470661503,
+        "type_code": "0"
+      },
+      {
+        "nom1": "Matete",
+        "nom2": "",
+        "territoire": "",
+        "groupement": "",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -4.005854538141631,
+        "lon": 27.566273160014795,
+        "type_code": "0"
+      },
+      {
+        "nom1": "Ngundu",
+        "nom2": "",
+        "territoire": "",
+        "groupement": "",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -4.023411660023077,
+        "lon": 27.617909177008997,
+        "type_code": "0"
+      },
+      {
+        "nom1": "Division",
+        "nom2": "",
+        "territoire": "",
+        "groupement": "",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -2.5595246672456216,
+        "lon": 26.713713619082853,
+        "type_code": "0"
+      },
+      {
+        "nom1": "Pension",
+        "nom2": "",
+        "territoire": "",
+        "groupement": "",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -2.5751334857047663,
+        "lon": 26.67798916936508,
+        "type_code": "0"
+      },
+      {
+        "nom1": "Kalima",
+        "nom2": "",
+        "territoire": "",
+        "groupement": "",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -2.5061375347442048,
+        "lon": 26.55477661396181,
+        "type_code": "0"
+      },
+      {
+        "nom1": "Kalima",
+        "nom2": "",
+        "territoire": "",
+        "groupement": "",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -2.503023732091162,
+        "lon": 26.55344085109768,
+        "type_code": "0"
+      },
+      {
+        "nom1": "Nguliro",
+        "nom2": "",
+        "territoire": "Kalehe",
+        "groupement": "Bitale",
+        "code_grpt": 62260202,
+        "pcode": null,
+        "lat": -2.2412568629980743,
+        "lon": 28.611778857073894,
+        "type_code": "0"
+      },
+      {
+        "nom1": "Rasi",
+        "nom2": "",
+        "territoire": "Fizi",
+        "groupement": "",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -4.038861679578614,
+        "lon": 29.235591556394393,
+        "type_code": "0"
+      },
+      {
+        "nom1": "Kitindi",
+        "nom2": "",
+        "territoire": "Shabunda",
+        "groupement": "Ikama-Kasanza",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -3.5160769739448394,
+        "lon": 27.682650691818004,
+        "type_code": "0"
+      },
+      {
+        "nom1": "Masango II",
+        "nom2": "",
+        "territoire": "Uvira",
+        "groupement": "",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -3.297435434323503,
+        "lon": 28.903268707858373,
+        "type_code": "0"
+      },
+      {
+        "nom1": "Mahungubwe",
+        "nom2": "",
+        "territoire": "Uvira",
+        "groupement": "",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -3.0170847924455795,
+        "lon": 29.011265915586712,
+        "type_code": "0"
+      },
+      {
+        "nom1": "Bulagiza",
+        "nom2": "",
+        "territoire": "Kalehe",
+        "groupement": "",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -1.7637949693649846,
+        "lon": 28.944199435053324,
+        "type_code": "0"
+      },
+      {
+        "nom1": "Kitalima",
+        "nom2": "",
+        "territoire": "Kalehe",
+        "groupement": "",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -1.7460016088781056,
+        "lon": 28.945804686096913,
+        "type_code": "0"
+      },
+      {
+        "nom1": "De la poste",
+        "nom2": "",
+        "territoire": "Kalehe",
+        "groupement": "",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -1.68570133684529,
+        "lon": 29.035673742001656,
+        "type_code": "0"
+      },
+      {
+        "nom1": "Kishinji",
+        "nom2": "",
+        "territoire": "Kalehe",
+        "groupement": "",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -1.7007765825594139,
+        "lon": 29.05448716027929,
+        "type_code": "0"
+      },
+      {
+        "nom1": "Mubimbi",
+        "nom2": "",
+        "territoire": "Kalehe",
+        "groupement": "",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -1.7161625366316176,
+        "lon": 29.045780123721045,
+        "type_code": "0"
+      },
+      {
+        "nom1": "Kiata",
+        "nom2": "",
+        "territoire": "Kalehe",
+        "groupement": "",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -1.7216019857828377,
+        "lon": 29.033341500066403,
+        "type_code": "0"
+      },
+      {
+        "nom1": "Makelele",
+        "nom2": "",
+        "territoire": "Kalehe",
+        "groupement": "",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -1.759730186043906,
+        "lon": 29.00656699224954,
+        "type_code": "0"
+      },
+      {
+        "nom1": "Bwisha",
+        "nom2": "",
+        "territoire": "Kalehe",
+        "groupement": "",
+        "code_grpt": 0,
+        "pcode": null,
+        "lat": -1.6912185795451693,
+        "lon": 28.99672530168307,
+        "type_code": "0"
+      }
+    ]
+  },
+  "recommendation": "Intégration future candidate-par-candidate après revue NIRE d'identité. Millésime RGC ~2010 — ne pas intégrer en masse sans validation. Toute entité absente des 47 130, géolocalisée et distincte peut combler le gap."
+}

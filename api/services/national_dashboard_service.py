@@ -60,6 +60,19 @@ def _file_counts() -> dict[str, int]:
 
 def build_summary(*, use_database: bool) -> dict[str, Any]:
     counts, levels = (_db_counts() if use_database else _file_counts()), baseline()["levels"]
+    # Totaux nationaux dynamiques (fusion fichier) — priorité sur miroir DB historique
+    try:
+        from api.services.nire import groupement_controlled_integration as gci
+
+        counts["groupements"] = gci.national_groupement_count(include_enrichment=True)
+    except Exception:
+        pass
+    try:
+        from api.services.nire import locality_controlled_integration as lci
+
+        counts["localites"] = lci.national_locality_count(include_enrichment=True)
+    except Exception:
+        pass
     education = education_referential_service.statistics()
     administrative = []
     for level in ("provinces", "villes", "territoires", "secteurs", "chefferies", "groupements", "villages"):

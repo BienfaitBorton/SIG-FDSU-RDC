@@ -1,0 +1,36 @@
+{
+  "engine": "nire-rgc-groupements-localities-audit-1.0.0",
+  "generated_at": "2026-07-19T21:54:31.421694+00:00",
+  "original_producer": "Référentiel Géographique Commun (RGC RDC)",
+  "original_url_catalog": "https://rgc.cd/index.php?Itemid=183&id=41&option=com_content&view=category",
+  "rgc_site_status": "inaccessible_php_fatal_error_2026-07-19",
+  "millesime_annonce_catalogue": "2010-09-22",
+  "datasets": {
+    "localites": {
+      "obtained": true,
+      "download_mirror": "HDX / OCHA DRC",
+      "mirror_dataset": "https://data.humdata.org/dataset/dr-congo-settlements",
+      "mirror_resource_id": "673bb25c-5979-4d3f-91c2-826e318f457f",
+      "mirror_url": "https://data.humdata.org/dataset/609a58ef-f2fa-44e2-87f0-6e46dac4d45a/resource/673bb25c-5979-4d3f-91c2-826e318f457f/download/localite.zip",
+      "attribution_note": "Miroir institutionnel HDX — producteur original = RGC. Ne pas présenter HDX comme producteur.",
+      "local_path": "data\\raw\\rgc\\Localite.zip",
+      "sha256": "77448bf0ff28652c2914468e22d664d8f37e2b0540537e651a2359a4ae31c650",
+      "size_bytes": 3323162,
+      "layers": [
+        "Localite.shp",
+        "Localite_p.shp"
+      ],
+      "projection": "World_Mercator (WGS84 meters) — converted to WGS84 degrees for analysis",
+      "encoding": "cp1252"
+    },
+    "groupements_shapefile": {
+      "obtained": false,
+      "catalogue_size_annonce": "92 Ko",
+      "catalogue_update": "2010-09-22",
+      "reason": "Site RGC en erreur fatale PHP ; fichier Groupements.zip absent de HDX. Inventaire groupements dérivé des attributs Localite (GROUPEMENT/CODE_GRPT).",
+      "fallback_method": "DERIVED_FROM_RGC_LOCALITIES_ATTRIBUTES"
+    }
+  },
+  "immutable_raw": true,
+  "no_in_place_modification": true
+}

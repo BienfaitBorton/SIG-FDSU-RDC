@@ -161,7 +161,11 @@ def load_enrichment_doc() -> dict[str, Any]:
 
 
 def load_national_locality_items(*, include_enrichment: bool = True) -> list[dict[str, Any]]:
-    """Référentiel national = base officielle (+ enrichissement NCI si présent)."""
+    """Référentiel national = base officielle (+ enrichissement NCI si présent).
+
+    Si un overlay de liens Groupement→Localité RGC est présent, il est appliqué
+    en lecture seule (enrichit le champ groupement sans créer de localité).
+    """
     items: list[dict[str, Any]] = []
     if OFFICIAL_JSON.exists():
         doc = json.loads(OFFICIAL_JSON.read_text(encoding="utf-8"))
@@ -169,6 +173,13 @@ def load_national_locality_items(*, include_enrichment: bool = True) -> list[dic
     if include_enrichment and ENRICHMENT_JSON.exists():
         enr = load_enrichment_doc()
         items.extend(enr.get("locality_referential") or [])
+    if include_enrichment:
+        try:
+            from api.services.nire import groupement_controlled_integration as gci
+
+            items = gci.apply_groupement_links_to_localities(items)
+        except Exception:
+            pass
     return items
 
 

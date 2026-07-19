@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from api.services.nire import (
+    groupement_controlled_integration,
     locality_controlled_integration,
     locality_coverage,
     locality_enrichment_audit,
@@ -68,6 +69,11 @@ class LocalityPreintegrationRunRequest(BaseModel):
 
 
 class LocalityControlledIntegrationRunRequest(BaseModel):
+    apply: bool = True
+    write_cache: bool = True
+
+
+class GroupementControlledIntegrationRunRequest(BaseModel):
     apply: bool = True
     write_cache: bool = True
 
@@ -455,6 +461,33 @@ def locality_controlled_integration_run(p: LocalityControlledIntegrationRunReque
         "performance": state.performance,
         "base_untouched": True,
         "sources_immutable": True,
+    }
+
+
+@router.get("/groupement-controlled-integration/status")
+def groupement_controlled_integration_status():
+    return groupement_controlled_integration.status_payload()
+
+
+@router.post("/groupement-controlled-integration/run")
+def groupement_controlled_integration_run(p: GroupementControlledIntegrationRunRequest, r=Depends(role)):
+    if r not in {NireRole.APPROVER, NireRole.ADMIN}:
+        raise HTTPException(403, "Role insuffisant pour l'integration controlee")
+    state = groupement_controlled_integration.run_controlled_integration(
+        apply=p.apply,
+        write_cache=p.write_cache,
+    )
+    return {
+        "executed": state.executed,
+        "message": state.message,
+        "kpis": state.kpis,
+        "meta": state.meta,
+        "idempotence": state.idempotence,
+        "candidates": state.candidates,
+        "performance": state.performance,
+        "base_untouched": True,
+        "sources_immutable": True,
+        "locality_candidates_not_integrated": True,
     }
 
 

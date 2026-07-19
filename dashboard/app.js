@@ -2326,7 +2326,12 @@ function initializeCartographyModule() {
     secteurs: L.geoJSON(null),
     chefferies: L.geoJSON(null),
     groupements: L.geoJSON(null, {
-      pointToLayer: (_feature, latlng) => makePointMarker(latlng, '#7c3aed', '#a78bfa'),
+      pointToLayer: (feature, latlng) => {
+        const props = feature?.properties || {};
+        const isRgc = String(props.provenance || props.source || '').toLowerCase().includes('rgc');
+        // RGC = point représentatif (symbole distinct, pas une frontière)
+        return makePointMarker(latlng, isRgc ? '#0369a1' : '#7c3aed', isRgc ? '#38bdf8' : '#a78bfa', isRgc ? 7 : 8);
+      },
       onEachFeature: (feature, layer) => onGeoEachFeature(feature, layer, 'groupements'),
     }),
     villages: L.geoJSON(null, {
@@ -3585,8 +3590,9 @@ const WEB_SIG_LAYER_DEFINITIONS = {
   groupements: {
     label: 'Groupements',
     reportPath: 'groupement_official/groupement_referential_official.json',
+    enrichmentReportPath: 'groupement_official/groupement_referential_rgc_enrichment.json',
     listKey: 'groupement_referential',
-    endpoint: '/geo/groupements?limit=2000',
+    endpoint: '/geo/groupements?limit=5000',
     visibleByDefault: false,
   },
   villages: {
@@ -3865,6 +3871,15 @@ function geoJsonToItems(payload) {
 
 function loadLayerItemsFromReports(definition) {
   if (!definition.reportPath) return Promise.resolve(definition.fallbackItems || []);
+  if (definition.enrichmentReportPath) {
+    return Promise.all([
+      fetchReportJson(definition.reportPath),
+      fetchReportJson(definition.enrichmentReportPath),
+    ]).then(([base, enrichment]) => [
+      ...asArray(base.data?.[definition.listKey]),
+      ...asArray(enrichment.data?.[definition.listKey]),
+    ]);
+  }
   return fetchReportJson(definition.reportPath).then((result) => result.data?.[definition.listKey] || []);
 }
 
@@ -5227,6 +5242,20 @@ function onGeoEachFeature(feature, layer, layerKey) {
   if (layer.bindPopup) {
     if (typeof window !== 'undefined' && window.SigMapTooltips?.bindRichPopup) {
       window.SigMapTooltips.bindRichPopup(layer, feature, layerKey, { onNavigate: true });
+    } else if (layerKey === 'groupements') {
+      const geomRole = properties.geometry_role || 'point';
+      const isRepPoint = String(geomRole).toUpperCase() === 'REPRESENTATIVE_POINT' || String(properties.provenance || properties.source || '').toLowerCase().includes('rgc');
+      layer.bindPopup(`
+        <div class="decision-map-popup">
+          <strong>${escapeHtml(getFeatureProperty(properties, ['nom', 'name', 'libelle']))}</strong><br>
+          Territoire : ${escapeHtml(properties.territoire || '—')}<br>
+          Secteur/Chefferie : ${escapeHtml(properties.collectivite || properties.collectivite_parent || '—')}<br>
+          Provenance : ${escapeHtml(properties.provenance || properties.source || 'historique')}<br>
+          Géométrie : ${escapeHtml(isRepPoint ? 'Point représentatif (chef-lieu / localité)' : geomRole)}<br>
+          ${isRepPoint ? 'Source RGC · millésime 2010-09-22<br><em>Ce n’est pas une limite administrative polygonale.</em><br>' : ''}
+          <span class="map-popup-action">Voir fiche territoriale</span>
+        </div>
+      `, { maxWidth: 300, className: 'decision-map-popup-wrapper sig-map-popup', autoPan: true, keepInView: true });
     } else {
       layer.bindPopup(`
         <div class="decision-map-popup">
@@ -6532,7 +6561,7 @@ function renderGovernanceKpis() {
   const kpis = [
     { label: 'Provinces', value: formatGovernanceMetric(registry.provinces?.nombre ?? 26) },
     { label: 'Collectivités', value: formatGovernanceMetric(registry.collectivites?.nombre ?? 733) },
-    { label: 'Groupements', value: `${formatGovernanceMetric(groupements.trouve ?? groupements.nombre ?? 1681)} / ${formatGovernanceMetric(groupements.attendu_officiel ?? 6053)}` },
+    { label: 'Groupements', value: `${formatGovernanceMetric(groupements.trouve ?? groupements.nombre ?? 1681)} / ${formatGovernanceMetric(groupements.attendu_officiel ?? 6053)}${groupements.enrichissement_rgc ? ` (KMZ ${formatGovernanceMetric(groupements.historique_kmz ?? 1681)} + RGC ${formatGovernanceMetric(groupements.enrichissement_rgc)})` : ''}` },
     { label: 'Localités', value: formatGovernanceMetric(localites.nombre) },
     { label: 'Qualité globale', value: formatGovernanceMetric(governanceState.normalization.summary?.qualityScore) },
   ];
@@ -7758,6 +7787,9 @@ function buildNationalReferentialReportFromJson(payload) {
   const expectedGroupements = registryCounters.groupements?.attendu_officiel ?? groupementAudit.national_reference?.expected_groupements;
   const foundGroupements = registryCounters.groupements?.trouve ?? registryCounters.groupements?.nombre ?? groupements.length;
   const groupementCoverage = registryCounters.groupements?.couverture ?? (groupementAudit.national_reference?.coverage_percent ? `${groupementAudit.national_reference.coverage_percent}%` : 'Donnée non disponible');
+  const groupementProvenanceNote = registryCounters.groupements?.enrichissement_rgc
+    ? `Historique KMZ ${registryCounters.groupements.historique_kmz ?? 1681} + RGC ${registryCounters.groupements.enrichissement_rgc}`
+    : '';
 
   const tree = buildOfficialHierarchyTree({ provinces, territories, cities, collectivities, groupements, localities });
   const anomalyRows = buildOfficialAnomalyRows({ groupementAudit, groupementQuality, collectivityQuality, localityQuality });
@@ -7788,7 +7820,7 @@ function buildNationalReferentialReportFromJson(payload) {
     buildRegistryRow('territoires', 'Territoires', 'Territoire', 145, byLevel.territoire, '100%', registryCounters.territoires?.statut || 'Validé', 'Non publié', payload.territoryHierarchy ? 100 : null, 'territoires_hierarchie_kmz.report.json'),
     buildRegistryRow('villes', 'Villes', 'Ville', 11, byLevel.ville, '100%', registryCounters.villes?.statut || 'Validé', 'Non publié', cityQuality.global_score, 'zones_fdsu.kmz'),
     buildRegistryRow('collectivites', 'Collectivités', 'Secteur / Chefferie', 733, registryCounters.collectivites?.nombre ?? collectivities.length, '100%', registryCounters.collectivites?.statut || 'Validé provisoirement', 'Non publié', collectivityQuality.global_score, 'collectivites.kmz'),
-    buildRegistryRow('groupements', 'Groupements', 'Groupement', expectedGroupements, foundGroupements, groupementCoverage, registryCounters.groupements?.statut || 'Partiel', registryCounters.groupements?.validation || 'Non publié', groupementQuality.global_score, 'Groupements.kmz'),
+    buildRegistryRow('groupements', 'Groupements', 'Groupement', expectedGroupements, foundGroupements, groupementCoverage, registryCounters.groupements?.statut || 'Partiel', registryCounters.groupements?.validation || 'Non publié', groupementQuality.global_score, groupementProvenanceNote || 'Groupements.kmz'),
     buildRegistryRow('localites', 'Localités', 'Localité', registryCounters.localites?.reference_nationale ?? byLevel.localite, byLevel.localite, registryCounters.localites?.comparaison_reference || 'Référentiel enrichi dynamique', registryCounters.localites?.statut || 'Enrichi', registryCounters.localites?.validation || 'Non publié', localityQuality.global_score, localitiesSourceLabel),
   ];
 
@@ -9754,7 +9786,17 @@ function getDashboardStats() {
   getCount('/geo/provinces?limit=500').then(updateSummaryCard('stat-provinces'));
   getCount('/geo/territoires?limit=500').then(updateSummaryCard('stat-territoires'));
   getCount('/geo/collectivites?limit=500').then(updateSummaryCard('stat-collectivites'));
-  getCount('/geo/groupements?limit=500').then(updateSummaryCard('stat-groupements'));
+  fetchReportJson('national_counter_registry.json')
+    .then((result) => {
+      const g = result.data?.registre_national_des_compteurs?.groupements || {};
+      const total = Number(g.trouve ?? g.nombre ?? 0);
+      if (total > 0) {
+        updateSummaryCard('stat-groupements')(total);
+        return;
+      }
+      return getCount('/geo/groupements?limit=5000').then(updateSummaryCard('stat-groupements'));
+    })
+    .catch(() => getCount('/geo/groupements?limit=5000').then(updateSummaryCard('stat-groupements')));
   getCount('/geo/villages?limit=500').then(updateSummaryCard('stat-villages'));
   updateSummaryCard('stat-sites')(0);
   updateSummaryCard('stat-missions')(0);
