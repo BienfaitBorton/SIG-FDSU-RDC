@@ -56,6 +56,12 @@ def test_catalog_includes_four_mnos_and_backbone():
     airtel = get_layer_definition("telecom_airtel")
     assert airtel["source_kind"] == "FDSU_MNO_AUDIT"
     assert airtel.get("kpi_excluded") is True
+    vodacom = get_layer_definition("telecom_vodacom")
+    orange = get_layer_definition("telecom_orange")
+    assert vodacom["source_kind"] == "OPERATOR_SITES_CONSOLIDATED"
+    assert orange["source_kind"] == "OPERATOR_SITES_CONSOLIDATED"
+    fiber = get_layer_definition("telecom_fiber")
+    assert "polygon" not in (fiber.get("geometry_kinds") or [])
 
 
 def test_asset_typing_preserves_original():

@@ -546,6 +546,192 @@ def consolidate_mobile_operator_sites(
     )
 
 
+def build_consolidated_operator_geojson(
+    operator: str,
+    *,
+    limit: int = 100000,
+    source: Path | None = None,
+) -> dict[str, Any]:
+    """GeoJSON du référentiel consolidé Vodacom/Orange (DB + ajouts MNO, sans écriture)."""
+    operator = (operator or "").upper()
+    if operator not in {"VODACOM", "ORANGE"}:
+        return {
+            "type": "FeatureCollection",
+            "features": [],
+            "meta": {"error": "operator_not_supported_for_db_mno_merge", "operator": operator},
+        }
+
+    meta, mno_rows = ingest_mno_rows(Path(source) if source else DEFAULT_SOURCE)
+    db_rows = _load_db_operator(operator)
+    detail = consolidate_operator_db_mno(operator, db_rows, mno_rows)
+
+    # Rejouer le matching pour récupérer les lignes MNO enrichissantes
+    op_mno = [r for r in mno_rows if r.get("operator") == operator]
+    index = _index_db_for_match(db_rows)
+    matched_db_ids: set[int] = set()
+    mno_by_db_id: dict[int, dict[str, Any]] = {}
+    matched_mno_ids: set[str] = set()
+
+    for mno in op_mno:
+        cands = _candidate_db_rows(mno, index)
+        best = None
+        for db in cands:
+            did = int(db["id"])
+            if did in matched_db_ids:
+                continue
+            ok, strength, _ev = _same_operator_match(mno, db)
+            if strength == "STRONG" and ok:
+                score = name_similarity(mno.get("site_name_original") or "", _db_name(db))
+                if best is None or score > best[0]:
+                    best = (score, db, mno)
+        if best is not None:
+            db = best[1]
+            mno = best[2]
+            matched_db_ids.add(int(db["id"]))
+            matched_mno_ids.add(str(mno["row_id"]))
+            mno_by_db_id[int(db["id"])] = mno
+
+    # Reconstruire added_kept comme dans consolidate_operator_db_mno
+    added = [m for m in op_mno if str(m["row_id"]) not in matched_mno_ids]
+    added_kept: list[dict[str, Any]] = []
+    seen_added_keys: set[str] = set()
+    for mno in added:
+        name = mno.get("site_name_normalized") or ""
+        if mno.get("geometry_valid"):
+            key = f"{name}|{coord_key(float(mno['latitude']), float(mno['longitude']))}"
+        else:
+            key = f"{name}|INVALID|{mno.get('row_id')}"
+        collapse = False
+        if name and mno.get("geometry_valid"):
+            for kept in added_kept:
+                kn = kept.get("site_name_normalized") or ""
+                if kn != name or not kept.get("geometry_valid"):
+                    continue
+                d = haversine_m(
+                    (float(mno["latitude"]), float(mno["longitude"])),
+                    (float(kept["latitude"]), float(kept["longitude"])),
+                )
+                if d < NEAR_SAME_SITE_M or coord_key(
+                    float(mno["latitude"]), float(mno["longitude"])
+                ) == coord_key(float(kept["latitude"]), float(kept["longitude"])):
+                    collapse = True
+                    break
+        if key in seen_added_keys or collapse:
+            continue
+        seen_added_keys.add(key)
+        added_kept.append(mno)
+
+    features: list[dict[str, Any]] = []
+    fid = 1
+
+    for db in db_rows:
+        if db.get("latitude") is None or db.get("longitude") is None:
+            continue
+        lat, lon = float(db["latitude"]), float(db["longitude"])
+        if lat == 0.0 and lon == 0.0:
+            continue
+        mno = mno_by_db_id.get(int(db["id"]))
+        props: dict[str, Any] = {
+            "id": db.get("id"),
+            "infra_code": db.get("infra_code"),
+            "infra_name": _db_name(db),
+            "site_name": _db_name(db),
+            "name": _db_name(db),
+            "operator_code": operator,
+            "operator_name": "Vodacom" if operator == "VODACOM" else "Orange RDC",
+            "operator": operator,
+            "status": (mno.get("status_normalized") if mno else None) or db.get("status") or "IN_SERVICE",
+            "status_normalized": mno.get("status_normalized") if mno else None,
+            "technology": db.get("technology"),
+            "rat": ((mno.get("rat") or {}).get("rat_normalized") if mno else None) or db.get("technology"),
+            "infra_type": db.get("infra_type") or "mobile_site",
+            "latitude": lat,
+            "longitude": lon,
+            "nire_quality_status": "VERIFIED" if mno else "HIGH_CONFIDENCE",
+            "data_source": "OPERATOR_SITES_CONSOLIDATED",
+            "source_label": "Référentiel consolidé FDSU",
+            "provenance": {
+                "db_id": db.get("id"),
+                "db_source_file": db.get("source_file"),
+                "mno_row_id": mno.get("row_id") if mno else None,
+                "mno_source_file": mno.get("source_file") if mno else None,
+                "sources": ["TELECOM_DB", "FDSU_MNO"] if mno else ["TELECOM_DB"],
+            },
+            "consolidation_status": "MATCHED_DB_MNO" if mno else "DB_ONLY_KEPT",
+        }
+        features.append(
+            {
+                "type": "Feature",
+                "id": fid,
+                "geometry": {"type": "Point", "coordinates": [lon, lat]},
+                "properties": {k: v for k, v in props.items() if v not in (None, "")},
+            }
+        )
+        fid += 1
+        if len(features) >= limit:
+            break
+
+    if len(features) < limit:
+        for mno in added_kept:
+            if not mno.get("geometry_valid"):
+                continue
+            lat, lon = float(mno["latitude"]), float(mno["longitude"])
+            rat = (mno.get("rat") or {}).get("rat_normalized") or mno.get("rat_original")
+            props = {
+                "row_id": mno.get("row_id"),
+                "infra_name": mno.get("site_name_original"),
+                "site_name": mno.get("site_name_original"),
+                "name": mno.get("site_name_original"),
+                "operator_code": operator,
+                "operator_name": "Vodacom" if operator == "VODACOM" else "Orange RDC",
+                "operator": operator,
+                "status": mno.get("status_normalized"),
+                "status_normalized": mno.get("status_normalized"),
+                "rat": rat,
+                "technology": rat,
+                "infra_type": "mno_declared_site",
+                "latitude": lat,
+                "longitude": lon,
+                "nire_quality_status": "PROVISIONAL",
+                "data_source": "OPERATOR_SITES_CONSOLIDATED",
+                "source_label": "FDSU MNO (ajout consolidé)",
+                "provenance": {
+                    "mno_row_id": mno.get("row_id"),
+                    "mno_source_file": mno.get("source_file"),
+                    "source_hash": mno.get("source_hash"),
+                    "sources": ["FDSU_MNO"],
+                },
+                "consolidation_status": "MNO_NEW_ADDED",
+                "planned": _is_planned(mno.get("status_normalized")),
+            }
+            features.append(
+                {
+                    "type": "Feature",
+                    "id": fid,
+                    "geometry": {"type": "Point", "coordinates": [lon, lat]},
+                    "properties": {k: v for k, v in props.items() if v not in (None, "", False)},
+                }
+            )
+            fid += 1
+            if len(features) >= limit:
+                break
+
+    return {
+        "type": "FeatureCollection",
+        "features": features,
+        "meta": {
+            "source_kind": "OPERATOR_SITES_CONSOLIDATED",
+            "operator": operator,
+            "returned": len(features),
+            "total_consolide": detail.get("total_consolide"),
+            "matches": detail.get("correspondances_doublons_ancien_nouveau"),
+            "nouveaux_ajoutes": detail.get("nouveaux_sites_ajoutes"),
+            "mno_sha256": meta.sha256,
+            "kpi_note": "Couche sites opérateurs consolidés — distincte du COUNT telecom.infrastructure",
+        },
+    }
+
+
 def result_as_dict(result: OperatorSitesResult) -> dict[str, Any]:
     return {
         "by_operator": result.by_operator,

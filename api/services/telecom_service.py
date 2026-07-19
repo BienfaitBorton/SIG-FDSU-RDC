@@ -146,9 +146,19 @@ def _feature_from_row(row: dict[str, Any], name_key: str, type_key: str, feature
         "province",
         "territoire",
         "status",
+        "latitude",
+        "longitude",
     ):
         if row.get(key) not in (None, "") and key not in properties:
             properties[key] = row.get(key)
+    # Coordonnées depuis géométrie si absentes (popups / tooltips)
+    geom = row.get("geometry") or {}
+    coords = geom.get("coordinates") if isinstance(geom, dict) else None
+    if isinstance(coords, (list, tuple)) and len(coords) >= 2:
+        if properties.get("longitude") is None:
+            properties["longitude"] = coords[0]
+        if properties.get("latitude") is None:
+            properties["latitude"] = coords[1]
     properties["infra_category"] = type_key.replace("_type", "")
     return {
         "type": "Feature",
@@ -196,15 +206,17 @@ def layer_to_geojson(layer_key: str) -> dict[str, Any]:
         feat["properties"]["data_source"] = "TELECOM_DB"
         features.append(_enrich_feature_typing(feat, "line"))
         feature_id += 1
-    for row in list_coverage_polygons(operator_code=operator_code, limit=100000):
-        feat = _feature_from_row(row, "polygon_name", "polygon_type", feature_id)
-        feat["properties"]["data_source"] = "TELECOM_DB"
-        features.append(_enrich_feature_typing(feat, "polygon"))
-        feature_id += 1
+    # Polygones de couverture exclus des couches Fiberco/FTTX/Fibre-MW combiné
+    # (ne pas les présenter comme des objets fibre).
     return {
         "type": "FeatureCollection",
         "features": features,
-        "meta": {"source_kind": "TELECOM_DB", "operator_code": operator_code, "kpi_included": True},
+        "meta": {
+            "source_kind": "TELECOM_DB",
+            "operator_code": operator_code,
+            "kpi_included": True,
+            "coverage_polygons_excluded": True,
+        },
     }
 
 
@@ -263,10 +275,8 @@ def _typed_backbone_geojson(*, asset_filter: str, limit: int = 50000) -> dict[st
         maybe_add(row, "line_name", "line_type", "line", ops)
         if len(features) >= limit:
             break
-    for row in list_coverage_polygons(limit=100000):
-        maybe_add(row, "polygon_name", "polygon_type", "polygon", ops)
-        if len(features) >= limit:
-            break
+    # Couverture polygones ≠ fibre / MW — exclus des couches typées Fibre & Microwave.
+    # (Les polygones restent accessibles via /coverage-polygons si besoin métier.)
 
     return {
         "type": "FeatureCollection",
@@ -275,13 +285,14 @@ def _typed_backbone_geojson(*, asset_filter: str, limit: int = 50000) -> dict[st
             "source_kind": "TELECOM_DB_TYPED",
             "asset_filter": asset_filter,
             "returned": min(len(features), limit),
+            "coverage_polygons_excluded": True,
             "kpi_included": True,
         },
     }
 
 
 def resolve_layer_geojson(layer_key: str, *, limit: int = 5000) -> dict[str, Any]:
-    """Résout une couche catalogue : DB, typée, ou FDSU MNO (NIRE non bloquant)."""
+    """Résout une couche catalogue : consolidé opérateurs, DB, typée, ou FDSU MNO."""
     from api.services.telecom_layer_catalog import get_layer_definition
 
     definition = get_layer_definition(layer_key)
@@ -289,6 +300,14 @@ def resolve_layer_geojson(layer_key: str, *, limit: int = 5000) -> dict[str, Any
         return {"type": "FeatureCollection", "features": [], "meta": {"error": "unknown_layer"}}
 
     source_kind = (definition or {}).get("source_kind") or "TELECOM_DB"
+
+    if source_kind == "OPERATOR_SITES_CONSOLIDATED":
+        from api.services.telecom_operator_sites_consolidation import (
+            build_consolidated_operator_geojson,
+        )
+
+        op = (definition or {}).get("operator_code") or LAYER_OPERATOR_MAP.get(layer_key)
+        return build_consolidated_operator_geojson(str(op or ""), limit=limit)
 
     if source_kind == "FDSU_MNO_AUDIT":
         from api.services.nire import mno_audit
@@ -698,6 +717,44 @@ def sync_fdsu_mno_staging_from_audit(*, max_rows: int = 20000) -> dict[str, Any]
     }
 
 
+def _nearest_mno_audit_operator(lat: float, lon: float, operator_code: str, radius_m: float) -> dict[str, Any] | None:
+    """Fallback spatial Airtel/Africell via audit MNO en mémoire (si staging vide)."""
+    try:
+        from api.services.nire import mno_audit
+        from api.services.nire.mno_audit import haversine_m
+
+        if not mno_audit._STATE.executed:  # noqa: SLF001
+            mno_audit.run_mno_audit(enqueue_reviews=False)
+        best = None
+        best_d = float("inf")
+        for r in mno_audit._STATE.rows:  # noqa: SLF001
+            if r.get("operator") != operator_code or not r.get("geometry_valid"):
+                continue
+            if (r.get("status_normalized") or "") == "PLANNED":
+                continue
+            d = haversine_m((lat, lon), (float(r["latitude"]), float(r["longitude"])))
+            if d <= radius_m and d < best_d:
+                best_d = d
+                best = r
+        if not best:
+            return None
+        return {
+            "row_id": best.get("row_id"),
+            "infra_name": best.get("site_name_original"),
+            "site_name": best.get("site_name_original"),
+            "operator_code": best.get("operator"),
+            "operator_name": str(best.get("operator") or "").title(),
+            "status_normalized": best.get("status_normalized"),
+            "nire_quality_status": mno_audit.nire_quality_status(best),
+            "latitude": best.get("latitude"),
+            "longitude": best.get("longitude"),
+            "distance_m": best_d,
+            "data_source": "FDSU_MNO_AUDIT",
+        }
+    except Exception:
+        return None
+
+
 def _nearest_fdsu_operator(lat: float, lon: float, operator_code: str, radius_m: float) -> dict[str, Any] | None:
     try:
         ensure_fdsu_staging_table()
@@ -717,9 +774,13 @@ def _nearest_fdsu_operator(lat: float, lon: float, operator_code: str, radius_m:
                     (lon, lat, operator_code, lon, lat, radius_m, lon, lat),
                 )
                 row = cur.fetchone()
-                return _serialize_row(dict(row)) if row else None
+                if row:
+                    out = _serialize_row(dict(row))
+                    out["data_source"] = "FDSU_MNO_STAGING"
+                    return out
     except Exception:
-        return None
+        pass
+    return _nearest_mno_audit_operator(lat, lon, operator_code, radius_m)
 
 
 def _nearest_db_operator(lat: float, lon: float, operator_code: str, radius_m: float) -> dict[str, Any] | None:
@@ -820,5 +881,10 @@ def spatial_context_around(lat: float, lon: float, *, radius_m: float = 25000) -
         "BACKHAUL_CANDIDATE": backhaul,
         "MUTUALIZATION_POTENTIAL": mutualization or backhaul,
         "kpi_national_untouched": True,
-        "fdsu_staging_required_for_airtel_africell": airtel is None and africell is None,
+        "data_absence_vs_error": {
+            "NEAREST_MNO_AIRTEL": "none" if airtel else "no_site_within_radius_or_unloaded",
+            "NEAREST_MNO_AFRICELL": "none" if africell else "no_site_within_radius_or_unloaded",
+            "NEAREST_FIBER_LINK": "none" if fiber else "no_link_within_radius",
+            "NEAREST_MICROWAVE_LINK": "none" if mw else "no_link_within_radius",
+        },
     }

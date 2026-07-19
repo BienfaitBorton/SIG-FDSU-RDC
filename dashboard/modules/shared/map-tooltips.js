@@ -80,16 +80,16 @@
     market: { label: 'Marché', icon: '🛒' },
     administration: { label: 'Administration', icon: '🏛️' },
     telecom: { label: 'Infrastructure télécom', icon: '📶' },
-    telecom_vodacom: { label: 'Couverture Vodacom', icon: '📶' },
-    telecom_orange: { label: 'Couverture Orange', icon: '📶' },
-    telecom_airtel: { label: 'Sites Airtel (FDSU)', icon: '📶' },
-    telecom_africell: { label: 'Sites Africell (FDSU)', icon: '📶' },
+    telecom_vodacom: { label: 'Sites Vodacom', icon: '📶' },
+    telecom_orange: { label: 'Sites Orange', icon: '📶' },
+    telecom_airtel: { label: 'Sites Airtel', icon: '📶' },
+    telecom_africell: { label: 'Sites Africell', icon: '📶' },
     telecom_mno_planned: { label: 'Sites MNO Planned', icon: '📶' },
-    telecom_fiber: { label: 'Fibre optique', icon: '🧵' },
+    telecom_fiber: { label: 'Fibre', icon: '🧵' },
     telecom_microwave: { label: 'Microwave / MW', icon: '📡' },
-    telecom_fiber_mw: { label: 'Lien micro-ondes / fibre', icon: '📡' },
-    telecom_fiberco: { label: 'Backbone fibre', icon: '🧵' },
-    telecom_fttx: { label: 'Accès fibre (FTTx)', icon: '🧵' },
+    telecom_fiber_mw: { label: 'Fibre / MW (combiné)', icon: '📡' },
+    telecom_fiberco: { label: 'Fiberco', icon: '🧵' },
+    telecom_fttx: { label: 'FTTX', icon: '🧵' },
     fiber: { label: 'Fibre optique', icon: '🧵' },
     fibre: { label: 'Fibre optique', icon: '🧵' },
     backbone: { label: 'Backbone', icon: '🧵' },
@@ -263,10 +263,18 @@
     if (String(resolved).startsWith('telecom') || resolved === 'fiber' || resolved === 'fibre' || resolved === 'backbone' || resolved === 'telecom') {
       pushLine(lines, 'Opérateur', pick(p, ['operator_name', 'operator_code', 'operator', 'operateur', 'owner']));
       pushLine(lines, 'Type', pick(p, ['derived_asset_type', 'infra_type', 'line_type', 'polygon_type', 'infra_category', 'type']));
-      pushLine(lines, 'Technologie', pick(p, ['rat', 'technology', 'technologie']));
+      pushLine(lines, 'Technologie / RAT', pick(p, ['rat', 'rat_normalized', 'technology', 'technologie']));
       pushLine(lines, 'Statut', pick(p, ['status', 'status_normalized', 'statut', 'operational_status']));
+      const lat = p.latitude != null ? Number(p.latitude) : null;
+      const lon = p.longitude != null ? Number(p.longitude) : null;
+      if (Number.isFinite(lat) && Number.isFinite(lon)) {
+        pushLine(lines, 'Coordonnées', `${lat.toFixed(5)}, ${lon.toFixed(5)}`);
+      }
+      const provenance = p.provenance && typeof p.provenance === 'object'
+        ? (Array.isArray(p.provenance.sources) ? p.provenance.sources.join(' + ') : null)
+        : null;
+      pushLine(lines, 'Provenance', provenance || pick(p, ['source_label', 'data_source', 'consolidation_status']) || 'Référentiel télécom');
       pushLine(lines, 'Qualité NIRE', pick(p, ['nire_quality_status', 'quality_label']));
-      pushLine(lines, 'Source', pick(p, ['source_label', 'data_source']) || 'Référentiel télécom');
       const dist = formatDistance(pick(p, ['distance_to_selected_site_m', 'distance_m']));
       if (dist) pushLine(lines, 'Distance utile', dist);
       return lines;

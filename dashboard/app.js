@@ -13,7 +13,7 @@ const FDSU_ZONE_DEFINITIONS = {
   ET: { nom: 'Zone Est', colorVar: '--zone-et' },
 };
 const FDSU_ZONE_CODES = ['ND', 'OT', 'CE', 'SD', 'ET'];
-const FDSU_LAYER_STACK_ORDER = ['rdcBoundary', 'zones', 'provinces', 'territoires', 'collectivites', 'groupements', 'villages', 'sites', 'sites_all', 'sites_40', 'sites_300', 'telecom_vodacom', 'telecom_orange', 'telecom_fiber_mw', 'telecom_fiberco', 'telecom_fttx', 'routes_principales', 'spatial_relations', 'asset_need_matches', 'missions'];
+const FDSU_LAYER_STACK_ORDER = ['rdcBoundary', 'zones', 'provinces', 'territoires', 'collectivites', 'groupements', 'villages', 'sites', 'sites_all', 'sites_40', 'sites_300', 'telecom_vodacom', 'telecom_orange', 'telecom_airtel', 'telecom_africell', 'telecom_mno_planned', 'telecom_fiber', 'telecom_microwave', 'telecom_fiberco', 'telecom_fttx', 'telecom_fiber_mw', 'routes_principales', 'spatial_relations', 'asset_need_matches', 'missions'];
 const FDSU_SITES_PROGRAM_LAYERS = {
   sites_all: {
     label: 'Tous les sites',
@@ -36,21 +36,21 @@ const FDSU_SITES_PROGRAM_LAYERS = {
 const TELECOM_LAYERS = {
   telecom_vodacom: {
     label: 'Sites Vodacom',
-    apiPath: '/api/telecom/layers/telecom_vodacom',
-    pendingMessage: 'Données télécom disponibles en mode DB',
+    apiPath: '/api/telecom/layers/telecom_vodacom?limit=10000',
+    pendingMessage: 'Référentiel Vodacom consolidé — mode DB',
     color: '#e11d48',
     fillColor: '#fb7185',
   },
   telecom_orange: {
     label: 'Sites Orange',
-    apiPath: '/api/telecom/layers/telecom_orange',
-    pendingMessage: 'Données télécom disponibles en mode DB',
+    apiPath: '/api/telecom/layers/telecom_orange?limit=10000',
+    pendingMessage: 'Référentiel Orange consolidé — mode DB',
     color: '#ea580c',
     fillColor: '#fb923c',
   },
   telecom_airtel: {
     label: 'Sites Airtel',
-    apiPath: '/api/telecom/layers/telecom_airtel?limit=4000',
+    apiPath: '/api/telecom/layers/telecom_airtel?limit=5000',
     pendingMessage: 'Couche FDSU Airtel (audit MNO) — mode DB',
     color: '#dc2626',
     fillColor: '#f87171',
@@ -74,36 +74,36 @@ const TELECOM_LAYERS = {
   },
   telecom_fiber: {
     label: 'Fibre',
-    apiPath: '/api/telecom/layers/telecom_fiber?limit=8000',
-    pendingMessage: 'Données fibre disponibles en mode DB',
+    apiPath: '/api/telecom/layers/telecom_fiber?limit=20000',
+    pendingMessage: 'Nœuds + lignes fibre (sans polygones) — mode DB',
     color: '#2563eb',
     fillColor: '#60a5fa',
   },
   telecom_microwave: {
     label: 'Microwave / MW',
     apiPath: '/api/telecom/layers/telecom_microwave?limit=3000',
-    pendingMessage: 'Données MW disponibles en mode DB',
+    pendingMessage: 'Liaisons MW — mode DB',
     color: '#7c3aed',
     fillColor: '#a78bfa',
   },
   telecom_fiber_mw: {
     label: 'Fibre / MW (combiné)',
-    apiPath: '/api/telecom/layers/telecom_fiber_mw',
-    pendingMessage: 'Données télécom disponibles en mode DB',
+    apiPath: '/api/telecom/layers/telecom_fiber_mw?limit=5000',
+    pendingMessage: 'Couche combinée legacy — mode DB',
     color: '#2563eb',
     fillColor: '#60a5fa',
   },
   telecom_fiberco: {
     label: 'Fiberco',
-    apiPath: '/api/telecom/layers/telecom_fiberco',
-    pendingMessage: 'Données télécom disponibles en mode DB',
+    apiPath: '/api/telecom/layers/telecom_fiberco?limit=10000',
+    pendingMessage: 'Nœuds + lignes Fiberco — mode DB',
     color: '#0891b2',
     fillColor: '#22d3ee',
   },
   telecom_fttx: {
     label: 'FTTX',
-    apiPath: '/api/telecom/layers/telecom_fttx?limit=8000',
-    pendingMessage: 'Données télécom disponibles en mode DB',
+    apiPath: '/api/telecom/layers/telecom_fttx?limit=15000',
+    pendingMessage: 'Nœuds + lignes FTTX — mode DB',
     color: '#7c3aed',
     fillColor: '#a78bfa',
   },
@@ -3066,16 +3066,29 @@ function buildTelecomPopupHtml(properties) {
   const qualityNote = quality === 'NEEDS_REVIEW' || quality === 'CONFLICT' || quality === 'PROVISIONAL'
     ? ' (visible — non bloquant)'
     : '';
+  const lat = properties.latitude != null ? Number(properties.latitude) : (Array.isArray(properties.coordinates) ? Number(properties.coordinates[1]) : null);
+  const lon = properties.longitude != null ? Number(properties.longitude) : (Array.isArray(properties.coordinates) ? Number(properties.coordinates[0]) : null);
+  const coords = (Number.isFinite(lat) && Number.isFinite(lon))
+    ? `${lat.toFixed(6)}, ${lon.toFixed(6)}`
+    : '';
+  const provenance = properties.provenance && typeof properties.provenance === 'object'
+    ? (Array.isArray(properties.provenance.sources)
+      ? properties.provenance.sources.join(' + ')
+      : (properties.provenance.source_file || properties.provenance.mno_source_file || ''))
+    : '';
+  const rat = properties.rat || properties.rat_normalized || properties.technology || '';
   const lines = [
     ['strong', name],
     ['label', 'Type', infraType],
     ['label', 'Opérateur', properties.operator_name || properties.operator_code || properties.operator],
+    ['label', 'Coordonnées', coords],
     ['label', 'Statut', properties.status || properties.status_normalized],
-    ['label', 'Technologie / RAT', properties.rat || properties.technology],
+    ['label', 'Technologie / RAT', rat],
+    ['label', 'Provenance', provenance || properties.source_label || properties.data_source || 'Référentiel télécom'],
     ['label', 'Qualité NIRE', quality ? `${quality}${qualityNote}` : ''],
     ['label', 'Classification NIRE', properties.nire_classification || properties.classification],
+    ['label', 'Consolidation', properties.consolidation_status],
     ['label', 'Distance au site sélectionné', distance],
-    ['label', 'Source', properties.source_label || properties.data_source || 'Référentiel télécom'],
   ];
   // Ne jamais exposer de nom de fichier technique au DG
   if (properties.province) lines.push(['text', properties.province]);
@@ -5316,11 +5329,16 @@ function getTooltipLayerLabel(layerKey) {
     sites_40: 'Site 40 FDSU',
     sites_300: 'Site 300 FDSU',
     missions: 'Mission',
-    telecom_vodacom: 'Couverture Vodacom',
-    telecom_orange: 'Couverture Orange',
-    telecom_fiber_mw: 'Lien micro-ondes / fibre',
-    telecom_fiberco: 'Backbone fibre',
-    telecom_fttx: 'Accès fibre (FTTx)',
+    telecom_vodacom: 'Sites Vodacom',
+    telecom_airtel: 'Sites Airtel',
+    telecom_africell: 'Sites Africell',
+    telecom_mno_planned: 'Sites MNO Planned',
+    telecom_fiber: 'Fibre',
+    telecom_microwave: 'Microwave / MW',
+    telecom_orange: 'Sites Orange',
+    telecom_fiber_mw: 'Fibre / MW (combiné)',
+    telecom_fiberco: 'Fiberco',
+    telecom_fttx: 'FTTX',
     health: 'Établissement de santé',
     ccn: 'Centre communautaire',
     uncovered_locality: 'Localité non couverte',
