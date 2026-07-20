@@ -420,7 +420,47 @@
   }
 
   function localityStableId(node) {
-    return node?.need_id || node?.locality_id || node?.locality_code || node?.official_code || node?.id || null;
+    return businessObjectId(node);
+  }
+
+  /**
+   * Identifiant métier stable d’un nœud (jamais le seul nom).
+   * Priorité : canonical_id → need_id / locality_id / codes → id nœud.
+   */
+  function businessObjectId(node) {
+    if (!node || typeof node !== 'object') return null;
+    const raw = node.canonical_id
+      || node.need_id
+      || node.locality_id
+      || node.asset_id
+      || node.locality_code
+      || node.official_code
+      || node.site_id
+      || node.id
+      || null;
+    if (raw == null || raw === '') return null;
+    return String(raw);
+  }
+
+  /**
+   * Déduplique une liste de nœuds par objet métier.
+   * Préfère le nœud qui a une population valide lorsque plusieurs partagent la même clé.
+   */
+  function uniqueBusinessNodes(nodes, preferFn) {
+    const map = new Map();
+    (nodes || []).forEach((node) => {
+      const key = businessObjectId(node);
+      if (key == null || key === '') return;
+      const current = map.get(key);
+      if (!current) {
+        map.set(key, node);
+        return;
+      }
+      if (typeof preferFn === 'function' && preferFn(node, current)) {
+        map.set(key, node);
+      }
+    });
+    return Array.from(map.values());
   }
 
   function localityHasSource(node) {
@@ -463,6 +503,7 @@
       totalLocalities,
       visibleLocalities: totalLocalities,
       analyzedLocalities: documentedLocalities,
+      localitiesWithPopulation: documentedLocalities,
       missingPopulationCount,
       dataStatus,
       confidence: totalLocalities ? documentedLocalities / totalLocalities : 0,
@@ -472,13 +513,16 @@
   function currentPopulationSummary() {
     const visibleNodes = (state.graph?.nodes || []).filter((node) => node.kind !== 'site' && nodeVisible(node));
     const summary = computePopulationSummary(state.graph, visibleNodes);
-    const visibleLocalities = state.visibleObjectsRegistry.localities?.visible ?? summary.visibleLocalities;
+    // Compteur objets métier = nœuds uniques (jamais nœuds + arêtes).
+    const registryVisible = state.visibleObjectsRegistry.localities?.visible;
+    const visibleLocalities = registryVisible != null ? registryVisible : summary.visibleLocalities;
     const missingPopulationCount = Math.max(0, visibleLocalities - summary.documentedLocalities);
     return {
       ...summary,
       totalLocalities: visibleLocalities,
       visibleLocalities,
       analyzedLocalities: summary.documentedLocalities,
+      localitiesWithPopulation: summary.documentedLocalities,
       missingPopulationCount,
       dataStatus: summary.documentedLocalities === 0
         ? 'unavailable'
@@ -493,12 +537,13 @@
     const coverage = `${summary.documentedLocalities} / ${summary.totalLocalities} localités renseignées`;
     const note = summary.dataStatus === 'unavailable'
       ? 'Référentiel démographique non disponible pour ce périmètre.'
-      : (summary.dataStatus === 'partial' ? 'Données partielles' : 'Données documentées');
+      : (summary.dataStatus === 'partial' ? 'Données partielles' : 'Données complètes');
     return `<section class="sdg-population-summary${compact ? ' is-compact' : ''}" data-sdg-population-summary data-status="${summary.dataStatus}">
       ${fieldRow(populationLabel, populationDisplay)}
       ${fieldRow('Localités visibles', summary.visibleLocalities)}
-      ${fieldRow('Localités analysées', summary.analyzedLocalities)}
+      ${fieldRow('Localités avec population renseignée', summary.analyzedLocalities)}
       ${summary.dataStatus === 'partial' ? fieldRow('Couverture démographique', coverage) : ''}
+      ${summary.dataStatus === 'documented' ? fieldRow('Couverture démographique', coverage) : ''}
       <p class="sdg-population-summary-note">${escapeHtml(note)}</p>
     </section>`;
   }
@@ -507,21 +552,23 @@
     const populationDisplay = formatPopulation(summary.totalPopulation) || 'Non disponible';
     const partial = summary.dataStatus === 'partial'
       ? `Données partielles — ${summary.documentedLocalities}/${summary.visibleLocalities} localités renseignées`
-      : (summary.dataStatus === 'unavailable' ? 'Référentiel démographique non disponible pour ce périmètre.' : 'Données documentées');
-    return `<section class="sdg-relation-business-metrics" data-sdg-relation-population data-status="${summary.dataStatus}" aria-label="Population et localités analysées">
+      : (summary.dataStatus === 'unavailable'
+        ? 'Référentiel démographique non disponible pour ce périmètre.'
+        : `Données complètes — ${summary.documentedLocalities}/${summary.visibleLocalities} localités renseignées`);
+    return `<section class="sdg-relation-business-metrics" data-sdg-relation-population data-status="${summary.dataStatus}" aria-label="Population et localités">
       <div class="sdg-relation-business-row" data-sdg-relation-metric="population">
         <span class="sdg-swatch sdg-symbol-people" aria-hidden="true">${symbolGlyph('people')}</span>
-        <span><strong>Population concernée</strong><small>${escapeHtml(partial)}</small></span>
+        <span><strong>${summary.dataStatus === 'partial' ? 'Population documentée' : 'Population concernée'}</strong><small>${escapeHtml(partial)}</small></span>
         <em>${escapeHtml(populationDisplay)}</em>
       </div>
       <div class="sdg-relation-business-row" data-sdg-relation-metric="visible-localities">
         <span class="sdg-swatch sdg-symbol-place" aria-hidden="true">${symbolGlyph('place')}</span>
-        <span><strong>Localités visibles</strong><small>Objets localité actuellement pris en compte sur la carte.</small></span>
+        <span><strong>Localités visibles</strong><small>Objets localité uniques (nœuds), hors relations spatiales.</small></span>
         <em>${summary.visibleLocalities}</em>
       </div>
       <div class="sdg-relation-business-row" data-sdg-relation-metric="analyzed-localities">
         <span class="sdg-swatch sdg-symbol-place" aria-hidden="true">${symbolGlyph('place')}</span>
-        <span><strong>Localités analysées</strong><small>Localités disposant d’une population valide et sourcée.</small></span>
+        <span><strong>Localités avec population renseignée</strong><small>Localités disposant d’une population valide et sourcée.</small></span>
         <em>${summary.analyzedLocalities}</em>
       </div>
     </section>`;
@@ -704,12 +751,22 @@
       const edges = (state.graph?.edges || []).filter((edge) => edge.category === category.id);
       const drawableNodes = nodes.filter((node) => Boolean(state.nodeLayers[node.id]));
       const drawableEdges = edges.filter((edge) => Boolean(state.edgeLayers[edge.id]));
-      const visibleNodes = drawableNodes.filter((node) => nodeVisible(node)
+      const visibleNodeList = drawableNodes.filter((node) => nodeVisible(node)
         && Boolean(state.layer?.hasLayer(state.nodeLayers[node.id])));
-      const visibleEdges = drawableEdges.filter((edge) => edgeVisible(edge)
+      const visibleEdgeList = drawableEdges.filter((edge) => edgeVisible(edge)
         && Boolean(state.layer?.hasLayer(state.edgeLayers[edge.id])));
-      const available = drawableNodes.length + drawableEdges.length;
-      const visible = visibleNodes.length + visibleEdges.length;
+
+      // Objets métier = nœuds uniques. Les arêtes sont des relations, pas des objets.
+      const uniqueDrawable = uniqueBusinessNodes(drawableNodes, (candidate, current) => (
+        localityHasValidPopulation(candidate) && !localityHasValidPopulation(current)
+      ));
+      const uniqueVisible = uniqueBusinessNodes(visibleNodeList, (candidate, current) => (
+        localityHasValidPopulation(candidate) && !localityHasValidPopulation(current)
+      ));
+      const available = uniqueDrawable.length;
+      const visible = uniqueVisible.length;
+      const availableRelations = drawableEdges.length;
+      const visibleRelations = visibleEdgeList.length;
       const declared = Number(category.count || 0);
       registry[category.id] = {
         id: category.id,
@@ -719,9 +776,21 @@
         visible,
         hidden: Math.max(0, available - visible),
         outside: Math.max(0, declared - available),
-        state: available === 0 ? 'unavailable' : (visible > 0 ? 'visible' : 'hidden'),
-        nodeIds: drawableNodes.map((node) => node.id),
+        availableRelations,
+        visibleRelations,
+        hiddenRelations: Math.max(0, availableRelations - visibleRelations),
+        // Compat : totaux cartographiques bruts (debug / cohérence couches)
+        drawableNodeCount: drawableNodes.length,
+        drawableEdgeCount: drawableEdges.length,
+        visibleNodeCount: visibleNodeList.length,
+        visibleEdgeCount: visibleEdgeList.length,
+        state: available === 0 && availableRelations === 0
+          ? 'unavailable'
+          : (visible > 0 || visibleRelations > 0 ? 'visible' : 'hidden'),
+        nodeIds: uniqueDrawable.map((node) => node.id),
+        visibleNodeIds: uniqueVisible.map((node) => node.id),
         edgeIds: drawableEdges.map((edge) => edge.id),
+        visibleEdgeIds: visibleEdgeList.map((edge) => edge.id),
       };
     });
     state.visibleObjectsRegistry = registry;
@@ -731,10 +800,9 @@
   function validateSpatialLayers() {
     const registry = rebuildVisibleObjectsRegistry();
     const issues = Object.values(registry).filter((entry) => {
-      const announced = entry.state === 'visible' ? entry.visible : 0;
-      const drawn = entry.nodeIds.filter((id) => state.layer?.hasLayer(state.nodeLayers[id])).length
-        + entry.edgeIds.filter((id) => state.layer?.hasLayer(state.edgeLayers[id])).length;
-      return announced !== drawn;
+      const drawnObjects = (entry.visibleNodeIds || []).filter((id) => state.layer?.hasLayer(state.nodeLayers[id])).length;
+      const drawnRelations = (entry.visibleEdgeIds || []).filter((id) => state.layer?.hasLayer(state.edgeLayers[id])).length;
+      return entry.visible !== drawnObjects || entry.visibleRelations !== drawnRelations;
     });
     state.consistencyIssues = issues;
     if (issues.length) console.warn('[SpatialDecisionGraph] Incohérence détectée', issues);
@@ -1102,8 +1170,9 @@
       <div class="sdg-layer-stats-list">
         ${rows.map((row) => `<article class="sdg-layer-stat" data-sdg-layer-stat="${escapeHtml(row.id)}" data-state="${row.state}">
           <strong>${escapeHtml(row.label)}</strong>
-          <span>${row.available} disponible(s)</span><span>${row.visible} visible(s)</span>
+          <span>${row.available} objet(s) disponible(s)</span><span>${row.visible} objet(s) visible(s)</span>
           <span>${row.hidden} masqué(s)</span><span>${row.outside} hors périmètre</span>
+          <span>${row.visibleRelations || 0} relation(s) visible(s)</span>
         </article>`).join('')}
       </div>
       <div class="sdg-availability-diagnostic">
@@ -1206,8 +1275,8 @@
     });
     const active = (id) => categoryEnabled(id);
     const kpis = [
-      { ...source.population, id: 'population', label: populationSummary.dataStatus === 'partial' ? 'Population documentée' : 'Population concernée', value: populationSummary.totalPopulation, display: formatPopulation(populationSummary.totalPopulation) || 'Non disponible', status: populationSummary.dataStatus === 'unavailable' ? 'unavailable' : populationSummary.dataStatus, note: populationSummary.dataStatus === 'unavailable' ? 'Référentiel démographique non disponible pour ce périmètre.' : (populationSummary.dataStatus === 'partial' ? `${populationSummary.documentedLocalities} / ${populationSummary.totalLocalities} localités renseignées · Données partielles` : 'Population totale documentée des localités visibles.') },
-      { ...source.localities, id: 'localities', label: 'Localités visibles', value: populationSummary.visibleLocalities, display: String(populationSummary.visibleLocalities), status: 'success', note: `${populationSummary.analyzedLocalities} localité(s) analysée(s) dans le calcul de Population concernée.` },
+      { ...source.population, id: 'population', label: populationSummary.dataStatus === 'partial' ? 'Population documentée' : 'Population concernée', value: populationSummary.totalPopulation, display: formatPopulation(populationSummary.totalPopulation) || 'Non disponible', status: populationSummary.dataStatus === 'unavailable' ? 'unavailable' : populationSummary.dataStatus, note: populationSummary.dataStatus === 'unavailable' ? 'Référentiel démographique non disponible pour ce périmètre.' : (populationSummary.dataStatus === 'partial' ? `${populationSummary.documentedLocalities} / ${populationSummary.totalLocalities} localités renseignées · Données partielles` : `${populationSummary.documentedLocalities} / ${populationSummary.totalLocalities} localités renseignées · Données complètes`) },
+      { ...source.localities, id: 'localities', label: 'Localités visibles', value: populationSummary.visibleLocalities, display: String(populationSummary.visibleLocalities), status: 'success', note: `${populationSummary.analyzedLocalities} localité(s) avec population renseignée.` },
       { id: 'average_distance', label: 'Distance moyenne', value: averageDistance, display: averageDistance == null ? 'Non disponible' : formatDistance(averageDistance), status: averageDistance == null ? 'unavailable' : 'success', note: 'Moyenne des distances réellement calculées pour les objets visibles.' },
       { ...source.health, id: 'health', label: 'Services de santé', value: active('health') ? source.health?.value : 0, display: active('health') ? source.health?.display : '0' },
       { ...source.education, id: 'education', label: 'Écoles' },
@@ -1680,6 +1749,9 @@
     layoutMapLabels,
     computePopulationSummary,
     getPopulationSummary: currentPopulationSummary,
+    businessObjectId,
+    uniqueBusinessNodes,
+    rebuildVisibleObjectsRegistry,
     state,
     get visibleObjectsRegistry() { return state.visibleObjectsRegistry; },
     get labelMetrics() { return state.labelMetrics; },
