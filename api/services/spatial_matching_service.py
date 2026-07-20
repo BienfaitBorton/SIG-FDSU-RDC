@@ -455,13 +455,23 @@ def match_ccn_to_population(
     return raw
 
 
-def match_asset_to_public_infrastructure(asset: dict[str, Any]) -> list[dict[str, Any]]:
+def match_asset_to_public_infrastructure(
+    asset: dict[str, Any],
+    locality_matches: list[dict[str, Any]] | None = None,
+) -> list[dict[str, Any]]:
     """Utilise les infos NCI infra_* de localités déjà matchées ou proches.
 
     Ne produit jamais de relation Santé fictive : les établissements réels
     viennent exclusivement de match_site_to_health_facilities (PostGIS).
+
+    Si ``locality_matches`` est fourni (typiquement le résultat brut
+    SERVES_LOCALITY), aucun second scan uncovered n'est exécuté.
     """
-    matches = match_site_to_uncovered_localities(asset)
+    matches = (
+        list(locality_matches)
+        if locality_matches is not None
+        else match_site_to_uncovered_localities(asset)
+    )
     infra_matches = []
     for m in matches:
         infra = m.get("infrastructure_type")
@@ -1617,14 +1627,15 @@ def match_asset_to_needs(
                 "matches": [],
             }
         asset = sites[0]
-        matches = match_site_to_uncovered_localities(asset, max_distance_m=max_m)
+        locality_matches = match_site_to_uncovered_localities(asset, max_distance_m=max_m)
+        matches = list(locality_matches)
         # WITHIN_TERRITORY synthetic if territoire known
         if asset.get("territoire"):
             for m in matches:
                 if (m.get("territoire") or "").lower() == str(asset.get("territoire")).lower():
                     m.setdefault("properties", {})["within_territory"] = True
         # Candidate mission for high priority close localities
-        for m in matches:
+        for m in locality_matches:
             if str(m.get("priority_level") or "").lower() in {"high", "critical"} and (m.get("distance_m") or 1e9) <= (
                 max_m or _radius_for_asset("fdsu_site")
             ):
@@ -1635,7 +1646,8 @@ def match_asset_to_needs(
                     "calculation_method": "priority_distance_rule",
                 }
                 matches.append(cand)
-        impact_extra = match_asset_to_public_infrastructure(asset)
+        # Réutilise le brut SERVES_LOCALITY — pas la liste enrichie (missions).
+        impact_extra = match_asset_to_public_infrastructure(asset, locality_matches=locality_matches)
         # Exclure les dérivations NCI fibre/backbone désormais couvertes par PostGIS télécom
         impact_extra = [
             m

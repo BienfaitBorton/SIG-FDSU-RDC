@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import os
 import threading
 import time
@@ -9,6 +10,8 @@ from typing import Any
 
 from api.config import connect_db
 from psycopg2.extras import Json, RealDictCursor
+
+logger = logging.getLogger(__name__)
 
 LAYER_OPERATOR_MAP = {
     "telecom_vodacom": "VODACOM",
@@ -781,18 +784,30 @@ def _nearest_mno_audit_operator(lat: float, lon: float, operator_code: str, radi
 
 
 def _nearest_fdsu_operator(lat: float, lon: float, operator_code: str, radius_m: float) -> dict[str, Any] | None:
-    """Nearest Airtel/Africell via staging PostGIS (préféré) puis audit mémoire.
+    """Nearest Airtel/Africell via staging PostGIS ; audit mémoire seulement si staging vide.
 
-    Important perf : ne pas relancer run_mno_audit à chaque dossier.
-    SharedSpatialContext.ensure_fdsu_mno_staging_ready synchronise la table une fois
-    si elle est vide ; ensuite les requêtes GiST restent < 10 ms.
+    Si ``telecom.fdsu_mno_sites`` contient au moins une ligne, le fallback
+    ``_nearest_mno_audit_operator`` (et donc ``run_mno_audit``) est interdit :
+    miss opérateur / hors rayon / erreur PostGIS → ``None``.
     """
+    staging_rows = 0
     try:
         from api.services import shared_spatial_context as ssc
 
-        ssc.ensure_fdsu_mno_staging_ready(sync_if_empty=True)
+        meta = ssc.ensure_fdsu_mno_staging_ready(sync_if_empty=True) or {}
+        staging_rows = int(meta.get("rows") or 0)
     except Exception:
-        ensure_fdsu_staging_table()
+        try:
+            ensure_fdsu_staging_table()
+            with connect_db() as conn:
+                with conn.cursor() as cur:
+                    cur.execute("SELECT COUNT(*) FROM telecom.fdsu_mno_sites")
+                    staging_rows = int(cur.fetchone()[0] or 0)
+        except Exception:
+            staging_rows = 0
+
+    staging_ready = staging_rows > 0
+
     try:
         with connect_db() as conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -817,8 +832,26 @@ def _nearest_fdsu_operator(lat: float, lon: float, operator_code: str, radius_m:
                         return None
                     out["data_source"] = "FDSU_MNO_STAGING"
                     return out
-    except Exception:
-        pass
+                # Staging peuplé mais aucun site pour cet opérateur → pas d'audit.
+                if staging_ready:
+                    return None
+    except Exception as exc:
+        if staging_ready:
+            logger.warning(
+                "PostGIS staging FDSU MNO indisponible pour %s (staging_rows=%s) — "
+                "pas de fallback run_mno_audit : %s",
+                operator_code,
+                staging_rows,
+                exc,
+            )
+            return None
+        logger.warning(
+            "PostGIS staging FDSU MNO indisponible et staging vide pour %s — fallback audit autorisé : %s",
+            operator_code,
+            exc,
+        )
+
+    # Staging global réellement vide / indisponible → seul cas où l'audit mémoire est permis.
     return _nearest_mno_audit_operator(lat, lon, operator_code, radius_m)
 
 
