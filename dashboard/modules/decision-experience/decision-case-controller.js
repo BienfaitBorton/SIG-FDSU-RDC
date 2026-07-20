@@ -1,7 +1,6 @@
 /**
  * Decision Case Controller — Ownership Integrity Gate.
- * Charge le dossier décisionnel ; délègue la carte SDG à SpatialImpactController.
- * Attaché à window.DecisionCaseController.
+ * Phase 2 : premier contenu utile (core) puis preuves spatiales en parallèle.
  */
 (function initDecisionCaseController(global) {
   async function load(assetType, assetId, programCode) {
@@ -51,26 +50,22 @@
 
     setLoading(true);
     setStatus('Chargement du dossier de décision…');
-    const qs = programCode
-      ? `?asset_type=${encodeURIComponent(assetType === 'site' ? 'site' : assetType)}&program_code=${encodeURIComponent(programCode)}`
-      : `?asset_type=${encodeURIComponent(assetType === 'site' ? 'site' : assetType)}`;
+    const baseQs = programCode
+      ? `asset_type=${encodeURIComponent(assetType === 'site' ? 'site' : assetType)}&program_code=${encodeURIComponent(programCode)}`
+      : `asset_type=${encodeURIComponent(assetType === 'site' ? 'site' : assetType)}`;
+    const coreQs = `?${baseQs}&include_spatial_evidence=false`;
+    const fullQs = `?${baseQs}`;
     try {
+      // 1) Core + impact + map en parallèle — core sans preuves spatiales lourdes
       const [caseRes, impactRes, mapRes] = await Promise.all([
-        tracedFetch(`/api/decision/case/${encodeURIComponent(assetId)}${qs}`, 'decisionCase'),
+        tracedFetch(`/api/decision/case/${encodeURIComponent(assetId)}${coreQs}`, 'decisionCase'),
         tracedFetch(`/api/spatial-matching/assets/${encodeURIComponent(assetId)}/impact`, 'impact'),
         tracedFetch(`/api/spatial-matching/map?asset_id=${encodeURIComponent(assetId)}`, 'map'),
       ]);
-      const caseFile = caseRes.ok ? caseRes.data : null;
+      let caseFile = caseRes.ok ? caseRes.data : null;
       const nsmeImpact = impactRes.ok ? impactRes.data : null;
       const nsmeMap = mapRes.ok ? mapRes.data : null;
-      let ti = null;
-      const territoire = caseFile?.asset?.territoire || caseFile?.site?.territoire || caseFile?.asset?.territory_id
-        || nsmeImpact?.asset?.territoire;
-      if (territoire) {
-        const tiRes = await tracedFetch(`/api/territorial-intelligence/territories/${encodeURIComponent(territoire)}`, 'coverage');
-        ti = tiRes.ok ? tiRes.data : null;
-      }
-      state.payload = { caseFile, nsmeImpact, nsmeMap, ti };
+      state.payload = { caseFile, nsmeImpact, nsmeMap, ti: null };
 
       const assetForLabel = caseFile?.asset || nsmeImpact?.asset || {};
       const displayName = (global.FdsuSiteDisplayName?.siteDisplayLabel?.(assetForLabel))
@@ -120,23 +115,8 @@
         }
       }
 
-      // Carte dossier : déléguée au SpatialImpactController (SDG) — pas d’appel direct SDG
-      if (global.SpatialImpactController?.mountOnCaseMap) {
-        global.SpatialImpactController.mountOnCaseMap({
-          assetType,
-          assetId,
-          programCode,
-          caseFile,
-          nsmeImpact,
-          map: ensureMap(),
-          layer: state.layer,
-        });
-      } else {
-        ensureMap(); // graceful without SDG
-      }
-
       renderWhy(caseFile || {});
-      renderContext(caseFile || {}, ti || {});
+      renderContext(caseFile || {}, {});
       if (nsmeImpact) renderImpact(caseFile?.impacts, nsmeImpact);
       else {
         const host = document.querySelector('#dxl-section-impact');
@@ -148,13 +128,67 @@
           );
         }
       }
-      if (global.TerritorialImpactUI?.mountSiteImpact) {
-        global.TerritorialImpactUI.mountSiteImpact(assetId, programCode);
-      }
       renderRisks(caseFile || {});
       renderTraceability(caseFile || {});
       renderRecommendation(caseFile || {});
       renderActions();
+
+      // TIME_TO_FIRST_USEFUL_CONTENT
+      setLoading(false);
+      setStatus('Dossier partiel — enrichissement spatial en cours…', false);
+
+      const territoire = caseFile?.asset?.territoire || caseFile?.site?.territoire || caseFile?.asset?.territory_id
+        || nsmeImpact?.asset?.territoire;
+
+      const evidencePromise = tracedFetch(
+        `/api/decision/case/${encodeURIComponent(assetId)}/spatial-evidence${fullQs}`,
+        'spatialEvidence',
+      ).then((evRes) => (evRes.ok ? evRes.data : null)).catch(() => null);
+
+      const tiPromise = territoire
+        ? tracedFetch(`/api/territorial-intelligence/territories/${encodeURIComponent(territoire)}`, 'coverage')
+          .then((tiRes) => (tiRes.ok ? tiRes.data : null))
+          .catch(() => null)
+        : Promise.resolve(null);
+
+      const sdgPromise = Promise.resolve().then(() => {
+        if (global.SpatialImpactController?.mountOnCaseMap) {
+          global.SpatialImpactController.mountOnCaseMap({
+            assetType,
+            assetId,
+            programCode,
+            caseFile,
+            nsmeImpact,
+            map: ensureMap(),
+            layer: state.layer,
+          });
+        } else {
+          ensureMap();
+        }
+      });
+
+      const tiePromise = Promise.resolve().then(() => {
+        if (global.TerritorialImpactUI?.mountSiteImpact) {
+          global.TerritorialImpactUI.mountSiteImpact(assetId, programCode);
+        }
+      });
+
+      const [evidence, ti] = await Promise.all([evidencePromise, tiPromise, sdgPromise, tiePromise]);
+      if (evidence) {
+        caseFile = evidence;
+        state.payload.caseFile = evidence;
+        // Re-render sections that depend on spatial proofs
+        renderExecutiveSummary(evidence, nsmeImpact?.impact);
+        renderWhy(evidence);
+        renderContext(evidence, ti || {});
+        renderRisks(evidence);
+        renderTraceability(evidence);
+        renderRecommendation(evidence);
+      } else if (ti) {
+        state.payload.ti = ti;
+        renderContext(caseFile || {}, ti);
+      }
+      if (ti) state.payload.ti = ti;
 
       const failedLabels = [];
       if (!caseRes.ok) failedLabels.push('dossier décisionnel');

@@ -2121,6 +2121,19 @@ def _query_matches(
 
 
 def get_asset_needs(asset_id: str | int, **filters: Any) -> dict[str, Any]:
+    from api.services import site_spatial_context_cache as scc
+
+    asset_type = filters.get("asset_type") or "fdsu_site"
+    key = scc.make_key(
+        f"needs:{filters.get('max_distance_km')}:{filters.get('limit')}:{filters.get('relation_type')}",
+        asset_id,
+        program_code=filters.get("program_code"),
+        asset_type=str(asset_type),
+    )
+    return scc.get_or_build(key, lambda: _get_asset_needs_uncached(asset_id, **filters))
+
+
+def _get_asset_needs_uncached(asset_id: str | int, **filters: Any) -> dict[str, Any]:
     asset_type = filters.pop("asset_type", None) or "fdsu_site"
     max_km = filters.pop("max_distance_km", None)
     max_m = float(max_km) * 1000 if max_km is not None else None
@@ -2253,6 +2266,18 @@ def get_need_assets(need_id: str, **filters: Any) -> dict[str, Any]:
 
 
 def get_asset_impact(asset_id: str | int, **filters: Any) -> dict[str, Any]:
+    from api.services import site_spatial_context_cache as scc
+
+    key = scc.make_key(
+        f"impact:{filters.get('max_distance_km')}:{filters.get('limit')}",
+        asset_id,
+        program_code=filters.get("program_code"),
+        asset_type=str(filters.get("asset_type") or "fdsu_site"),
+    )
+    return scc.get_or_build(key, lambda: _get_asset_impact_uncached(asset_id, **filters))
+
+
+def _get_asset_impact_uncached(asset_id: str | int, **filters: Any) -> dict[str, Any]:
     payload = get_asset_needs(asset_id, **filters)
     area = None
     asset = payload.get("asset")

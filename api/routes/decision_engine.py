@@ -302,12 +302,17 @@ def decision_case(
     asset_id: str,
     asset_type: str | None = Query(None, description="ccn | site"),
     program_code: str | None = Query(None),
+    include_spatial_evidence: bool = Query(
+        True,
+        description="Si false : identité+score+résumé seulement (TIME_TO_FIRST_USEFUL_CONTENT).",
+    ),
 ) -> dict[str, Any]:
     try:
         result = explainable_decision_service.get_decision_case(
             asset_id,
             asset_type=asset_type,
             program_code=program_code,
+            include_spatial_evidence=include_spatial_evidence,
         )
     except Exception as exc:  # noqa: BLE001 — ne jamais exposer Extra data / stack au client
         raise HTTPException(
@@ -317,6 +322,35 @@ def decision_case(
     if not result:
         raise HTTPException(status_code=404, detail="Dossier de décision introuvable pour cet actif.")
     return result
+
+
+@router.get(
+    "/case/{asset_id}/spatial-evidence",
+    summary="Preuves spatiales du dossier (telecom / éducation / CENI)",
+)
+def decision_case_spatial_evidence(
+    asset_id: str,
+    asset_type: str | None = Query(None, description="ccn | site"),
+    program_code: str | None = Query(None),
+) -> dict[str, Any]:
+    """Chargement progressif des preuves — ne bloque pas le premier contenu utile."""
+    try:
+        core = explainable_decision_service.get_decision_case(
+            asset_id,
+            asset_type=asset_type,
+            program_code=program_code,
+            include_spatial_evidence=False,
+        )
+        if not core:
+            raise HTTPException(status_code=404, detail="Dossier de décision introuvable pour cet actif.")
+        return explainable_decision_service.attach_spatial_evidence(core)
+    except HTTPException:
+        raise
+    except Exception as exc:  # noqa: BLE001
+        raise HTTPException(
+            status_code=503,
+            detail="Preuves spatiales temporairement indisponibles.",
+        ) from exc
 
 
 @router.get("/explain/{asset_id}", summary="Justification détaillée d'une recommandation")

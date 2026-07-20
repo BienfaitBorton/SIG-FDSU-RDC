@@ -490,7 +490,12 @@ def build_ccn_case(ccn_id: str) -> dict[str, Any] | None:
     )
 
 
-def build_site_case(site_id: str, program_code: str | None = None) -> dict[str, Any] | None:
+def build_site_case(
+    site_id: str,
+    program_code: str | None = None,
+    *,
+    include_spatial_evidence: bool = True,
+) -> dict[str, Any] | None:
     from api.services import knowledge_hub_service, site_entity_resolver
 
     doctrine_bundle = load_doctrine_by_id("DOCTRINE_SITES_FDSU")
@@ -704,10 +709,28 @@ def build_site_case(site_id: str, program_code: str | None = None) -> dict[str, 
             "confidence_level": nci_context.get("confidence_level"),
         }
 
-    # Preuves spatiales P1 — signaux disponibles, non inventés, scoring inchangé
-    shell["telecom_context"] = _build_telecom_case_context(site)
-    shell["education_context"] = _build_education_case_context(site)
-    shell["ceni_context"] = _build_ceni_case_context(site)
+    # Preuves spatiales P1 — optionnelles pour TIME_TO_FIRST_USEFUL_CONTENT
+    if not include_spatial_evidence:
+        shell["spatial_evidence_status"] = "deferred"
+        shell["telecom_context"] = {"available": False, "deferred": True}
+        shell["education_context"] = {"available": False, "deferred": True}
+        shell["ceni_context"] = {"available": False, "deferred": True}
+        shell["spatial_evidence"] = {
+            "status": "deferred",
+            "note": "Preuves spatiales chargées via include_spatial_evidence=1 ou /spatial-evidence",
+        }
+        return shell
+
+    from concurrent.futures import ThreadPoolExecutor
+
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        fut_tel = pool.submit(_build_telecom_case_context, site)
+        fut_edu = pool.submit(_build_education_case_context, site)
+        fut_ceni = pool.submit(_build_ceni_case_context, site)
+        shell["telecom_context"] = fut_tel.result()
+        shell["education_context"] = fut_edu.result()
+        shell["ceni_context"] = fut_ceni.result()
+    shell["spatial_evidence_status"] = "ready"
     shell["spatial_evidence"] = {
         "telecom": shell["telecom_context"],
         "education": shell["education_context"],
@@ -731,6 +754,43 @@ def build_site_case(site_id: str, program_code: str | None = None) -> dict[str, 
     return shell
 
 
+def attach_spatial_evidence(case_shell: dict[str, Any]) -> dict[str, Any]:
+    """Enrichit un dossier core avec les preuves spatiales (progressive loading)."""
+    asset = case_shell.get("asset") or {}
+    site = {
+        "latitude": asset.get("latitude"),
+        "longitude": asset.get("longitude"),
+        "site_id": asset.get("site_id") or asset.get("id"),
+        "program_code": asset.get("program_code"),
+        "territoire": asset.get("territoire"),
+        "province": asset.get("province"),
+    }
+    from concurrent.futures import ThreadPoolExecutor
+
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        fut_tel = pool.submit(_build_telecom_case_context, site)
+        fut_edu = pool.submit(_build_education_case_context, site)
+        fut_ceni = pool.submit(_build_ceni_case_context, site)
+        case_shell["telecom_context"] = fut_tel.result()
+        case_shell["education_context"] = fut_edu.result()
+        case_shell["ceni_context"] = fut_ceni.result()
+    case_shell["spatial_evidence_status"] = "ready"
+    case_shell["spatial_evidence"] = {
+        "telecom": case_shell["telecom_context"],
+        "education": case_shell["education_context"],
+        "ceni": case_shell["ceni_context"],
+        "health_note": "Santé via NSME NEAREST/NEAR_HEALTH_FACILITY (PostGIS)",
+        "scoring_note": (
+            "Signaux éducation / CENI / télécom exposés comme preuves. "
+            "Critères sectoriels moteur à poids 0 restent non pondérés."
+        ),
+    }
+    edu_n = case_shell["education_context"].get("nearby_count")
+    if edu_n is not None and isinstance(case_shell.get("impacts"), dict):
+        case_shell["impacts"]["ecoles_concernees"] = edu_n
+    return case_shell
+
+
 def _fmt_km(distance_m: Any) -> str | None:
     from api.services.spatial_nearest_utils import format_km
 
@@ -742,9 +802,9 @@ def _build_telecom_case_context(site: dict[str, Any]) -> dict[str, Any]:
     if lat is None or lon is None:
         return {"available": False, "reason": "Coordonnées site absentes"}
     try:
-        from api.services import telecom_service
+        from api.services import shared_spatial_context as ssc
 
-        ctx = telecom_service.spatial_context_around(float(lat), float(lon), radius_m=25_000) or {}
+        ctx = ssc.get_telecom_spatial_context(float(lat), float(lon), radius_m=25_000) or {}
     except Exception as exc:  # noqa: BLE001
         return {"available": False, "reason": str(exc)}
 
@@ -811,9 +871,9 @@ def _build_education_case_context(site: dict[str, Any]) -> dict[str, Any]:
     if lat is None or lon is None:
         return {"available": False, "reason": "Coordonnées site absentes"}
     try:
-        from api.services import education_referential_service as edu
+        from api.services import shared_spatial_context as ssc
 
-        payload = edu.nearest_establishment(float(lat), float(lon), radius_m=25_000, limit=10)
+        payload = ssc.get_education_nearest(float(lat), float(lon), radius_m=25_000, limit=10)
     except Exception as exc:  # noqa: BLE001
         return {"available": False, "reason": str(exc)}
     nearest = payload.get("nearest")
@@ -846,9 +906,9 @@ def _build_ceni_case_context(site: dict[str, Any]) -> dict[str, Any]:
     if lat is None or lon is None:
         return {"available": False, "reason": "Coordonnées site absentes"}
     try:
-        from api.services import ceni_registry_service as ceni
+        from api.services import shared_spatial_context as ssc
 
-        payload = ceni.nearest_signals(
+        payload = ssc.get_ceni_nearest(
             float(lat), float(lon), radius_m=15_000, limit=10, exclude_schools=True
         )
     except Exception as exc:  # noqa: BLE001
@@ -878,11 +938,33 @@ def _build_ceni_case_context(site: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def get_decision_case(asset_id: str, *, asset_type: str | None = None, program_code: str | None = None) -> dict[str, Any] | None:
+def get_decision_case(
+    asset_id: str,
+    *,
+    asset_type: str | None = None,
+    program_code: str | None = None,
+    include_spatial_evidence: bool = True,
+) -> dict[str, Any] | None:
     kind, value = _parse_asset_ref(asset_id, asset_type)
     if kind == "ccn":
         return build_ccn_case(value)
-    return build_site_case(value, program_code=program_code)
+
+    from api.services import site_spatial_context_cache as scc
+
+    key = scc.make_key(
+        f"decision_case:ev{int(bool(include_spatial_evidence))}",
+        value,
+        program_code=program_code,
+        asset_type=asset_type or "site",
+    )
+    return scc.get_or_build(
+        key,
+        lambda: build_site_case(
+            value,
+            program_code=program_code,
+            include_spatial_evidence=include_spatial_evidence,
+        ),
+    )
 
 
 def explain_decision(asset_id: str, *, asset_type: str | None = None, program_code: str | None = None) -> dict[str, Any] | None:

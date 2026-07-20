@@ -1240,6 +1240,13 @@ def _road_endpoint(match: dict[str, Any], asset_lon: float | None, asset_lat: fl
 
 
 def build_graph(asset_type: str, asset_id: str, *, program_code: str | None = None) -> dict[str, Any] | None:
+    from api.services import site_spatial_context_cache as scc
+
+    key = scc.make_key("sdg_graph", asset_id, program_code=program_code, asset_type=asset_type)
+    return scc.get_or_build(key, lambda: _build_graph_uncached(asset_type, asset_id, program_code=program_code))
+
+
+def _build_graph_uncached(asset_type: str, asset_id: str, *, program_code: str | None = None) -> dict[str, Any] | None:
     from api.services import spatial_matching_service as nsme
     from api.services import explainable_decision_service as eds
 

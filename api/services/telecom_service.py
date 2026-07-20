@@ -756,10 +756,22 @@ def _nearest_mno_audit_operator(lat: float, lon: float, operator_code: str, radi
 
 
 def _nearest_fdsu_operator(lat: float, lon: float, operator_code: str, radius_m: float) -> dict[str, Any] | None:
+    """Nearest Airtel/Africell via staging PostGIS (préféré) puis audit mémoire.
+
+    Important perf : ne pas relancer run_mno_audit à chaque dossier.
+    SharedSpatialContext.ensure_fdsu_mno_staging_ready synchronise la table une fois
+    si elle est vide ; ensuite les requêtes GiST restent < 10 ms.
+    """
     try:
+        from api.services import shared_spatial_context as ssc
+
+        ssc.ensure_fdsu_mno_staging_ready(sync_if_empty=True)
+    except Exception:
         ensure_fdsu_staging_table()
+    try:
         with connect_db() as conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                # KNN geometry (index GiST) puis distance geography — évite cast geography dans ORDER BY
                 cur.execute(
                     """
                     SELECT row_id, operator_code, site_name, status_normalized, nire_quality_status,
@@ -767,15 +779,17 @@ def _nearest_fdsu_operator(lat: float, lon: float, operator_code: str, radius_m:
                            ST_Distance(geom::geography, ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography) AS distance_m
                     FROM telecom.fdsu_mno_sites
                     WHERE operator_code = %s AND geom IS NOT NULL
-                      AND ST_DWithin(geom::geography, ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography, %s)
-                    ORDER BY geom::geography <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+                    ORDER BY geom <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)
                     LIMIT 1
                     """,
-                    (lon, lat, operator_code, lon, lat, radius_m, lon, lat),
+                    (lon, lat, operator_code, lon, lat),
                 )
                 row = cur.fetchone()
                 if row:
                     out = _serialize_row(dict(row))
+                    dist = out.get("distance_m")
+                    if dist is not None and float(dist) > float(radius_m):
+                        return None
                     out["data_source"] = "FDSU_MNO_STAGING"
                     return out
     except Exception:
@@ -845,14 +859,51 @@ def nearest_microwave_link(lat: float, lon: float, *, radius_m: float = 25000) -
 
 
 def spatial_context_around(lat: float, lon: float, *, radius_m: float = 25000) -> dict[str, Any]:
-    """Relations spatiales étendues pour un site / infrastructure."""
-    nearest_any = nearest_infrastructure(lat, lon, radius_m=radius_m, limit=5)
-    vodacom = _nearest_db_operator(lat, lon, "VODACOM", radius_m)
-    orange = _nearest_db_operator(lat, lon, "ORANGE", radius_m)
-    airtel = _nearest_fdsu_operator(lat, lon, "AIRTEL", radius_m)
-    africell = _nearest_fdsu_operator(lat, lon, "AFRICELL", radius_m)
-    fiber = nearest_fiber_link(lat, lon, radius_m=radius_m)
-    mw = nearest_microwave_link(lat, lon, radius_m=radius_m)
+    """Relations spatiales étendues pour un site / infrastructure.
+
+    Prépare le staging FDSU MNO une fois, puis exécute les nearest en parallèle
+    (ThreadPool) pour réduire le cold path du Dossier de Décision.
+    """
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    try:
+        from api.services import shared_spatial_context as ssc
+
+        ssc.ensure_fdsu_mno_staging_ready(sync_if_empty=True)
+    except Exception:
+        pass
+
+    tasks = {
+        "nearest_any": lambda: nearest_infrastructure(lat, lon, radius_m=radius_m, limit=5),
+        "vodacom": lambda: _nearest_db_operator(lat, lon, "VODACOM", radius_m),
+        "orange": lambda: _nearest_db_operator(lat, lon, "ORANGE", radius_m),
+        "airtel": lambda: _nearest_fdsu_operator(lat, lon, "AIRTEL", radius_m),
+        "africell": lambda: _nearest_fdsu_operator(lat, lon, "AFRICELL", radius_m),
+        "fiber": lambda: nearest_fiber_link(lat, lon, radius_m=radius_m),
+        "mw": lambda: nearest_microwave_link(lat, lon, radius_m=radius_m),
+    }
+    results: dict[str, Any] = {}
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        futures = {pool.submit(fn): name for name, fn in tasks.items()}
+        for fut in as_completed(futures):
+            name = futures[fut]
+            try:
+                results[name] = fut.result()
+            except Exception:
+                results[name] = None if name != "nearest_any" else {
+                    "data_available": False,
+                    "search_executed": False,
+                    "nearest": None,
+                    "facilities": [],
+                }
+
+    nearest_any = results.get("nearest_any") or {}
+    vodacom = results.get("vodacom")
+    orange = results.get("orange")
+    airtel = results.get("airtel")
+    africell = results.get("africell")
+    fiber = results.get("fiber")
+    mw = results.get("mw")
 
     nearby_ops = []
     for code, hit in (("VODACOM", vodacom), ("ORANGE", orange), ("AIRTEL", airtel), ("AFRICELL", africell)):
