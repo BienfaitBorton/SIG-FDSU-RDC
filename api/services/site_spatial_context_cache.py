@@ -64,20 +64,32 @@ def _rules_ver() -> str:
     return f"{int(st.st_mtime)}-{int(st.st_size)}"
 
 
-def make_key(kind: str, site_id: str | int, *, program_code: str | None = None, asset_type: str | None = None) -> str:
+def make_key(
+    kind: str,
+    site_id: str | int,
+    *,
+    program_code: str | None = None,
+    asset_type: str | None = None,
+    lat: float | None = None,
+    lon: float | None = None,
+) -> str:
     from api.config import DATA_MODE
 
-    return "|".join(
-        [
-            "site_ctx_v1",
-            str(kind),
-            str(site_id),
-            str(program_code or ""),
-            str(asset_type or "site"),
-            str(DATA_MODE or "json"),
-            _rules_ver(),
-        ]
-    )
+    parts = [
+        "site_ctx_v2",
+        str(kind),
+        str(site_id),
+        str(program_code or ""),
+        str(asset_type or "site"),
+        str(DATA_MODE or "json"),
+        _rules_ver(),
+    ]
+    if lat is not None and lon is not None:
+        try:
+            parts.append(f"{float(lat):.5f}:{float(lon):.5f}")
+        except (TypeError, ValueError):
+            parts.append("nocoord")
+    return "|".join(parts)
 
 
 def get(key: str) -> Any | None:

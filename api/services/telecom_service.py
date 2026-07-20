@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import threading
 from typing import Any
 
 from api.config import connect_db
@@ -858,11 +859,14 @@ def nearest_microwave_link(lat: float, lon: float, *, radius_m: float = 25000) -
             return _serialize_row(dict(row)) if row else None
 
 
+_SPATIAL_TLS = threading.local()
+
+
 def spatial_context_around(lat: float, lon: float, *, radius_m: float = 25000) -> dict[str, Any]:
     """Relations spatiales étendues pour un site / infrastructure.
 
     Prépare le staging FDSU MNO une fois, puis exécute les nearest en parallèle
-    (ThreadPool) pour réduire le cold path du Dossier de Décision.
+    sauf si déjà dans un pool (évite ThreadPool imbriqués).
     """
     from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -883,12 +887,11 @@ def spatial_context_around(lat: float, lon: float, *, radius_m: float = 25000) -
         "mw": lambda: nearest_microwave_link(lat, lon, radius_m=radius_m),
     }
     results: dict[str, Any] = {}
-    with ThreadPoolExecutor(max_workers=6) as pool:
-        futures = {pool.submit(fn): name for name, fn in tasks.items()}
-        for fut in as_completed(futures):
-            name = futures[fut]
+    nested = bool(getattr(_SPATIAL_TLS, "in_pool", False))
+    if nested:
+        for name, fn in tasks.items():
             try:
-                results[name] = fut.result()
+                results[name] = fn()
             except Exception:
                 results[name] = None if name != "nearest_any" else {
                     "data_available": False,
@@ -896,6 +899,24 @@ def spatial_context_around(lat: float, lon: float, *, radius_m: float = 25000) -
                     "nearest": None,
                     "facilities": [],
                 }
+    else:
+        _SPATIAL_TLS.in_pool = True
+        try:
+            with ThreadPoolExecutor(max_workers=4) as pool:
+                futures = {pool.submit(fn): name for name, fn in tasks.items()}
+                for fut in as_completed(futures):
+                    name = futures[fut]
+                    try:
+                        results[name] = fut.result()
+                    except Exception:
+                        results[name] = None if name != "nearest_any" else {
+                            "data_available": False,
+                            "search_executed": False,
+                            "nearest": None,
+                            "facilities": [],
+                        }
+        finally:
+            _SPATIAL_TLS.in_pool = False
 
     nearest_any = results.get("nearest_any") or {}
     vodacom = results.get("vodacom")

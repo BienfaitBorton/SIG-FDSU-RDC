@@ -189,3 +189,104 @@ Contrôles statiques :
 | Tests | 12 passed (ciblés) |
 
 **Aucun commit / aucun push** dans cette clôture — validation humaine requise avant commit.
+
+---
+
+## 11. PERFORMANCE PHASE 2B — Impact / Needs / SDG / Map
+
+**HEAD de départ :** `468441a` (Phase 2A poussée)
+**Statut :** correctifs appliqués localement — **aucun commit / push** (attente validation).
+
+### 11.1 Baseline légère (site 29, une fois froid + une fois chaud)
+
+| Métrique | Cold ms | Warm ms |
+|---|---:|---:|
+| IMPACT | **5 270,8** | 18,5 |
+| NEEDS | **5 829,3** | 63,6 |
+| SDG | **12 342,2** | 260,1 |
+| MAP | **4 989,2** | 23,3 |
+
+### 11.2 Causes
+
+Profilage `get_asset_needs` (site 29) :
+
+| Sous-étape | ms |
+|---|---:|
+| match_telecom | ~2 904 |
+| match_schools | ~2 579 |
+| match_roads | ~1 207 |
+| match_health / neighbors / ceni | ~375 / 397 / 125 |
+
+Problèmes structurels :
+
+1. **Clés de cache `needs` incluaient `limit`** → impact (`limit` absent), needs (`limit=50`), map (`limit=500`), SDG (`limit=200`) **recalculaient** chacun le même enrichissement spatial.
+2. **SDG** appelait `get_decision_case` **avec preuves spatiales** → re-coût telecom/éducation/CENI du dossier.
+3. `map_payload` = `get_asset_needs` complet.
+4. Parallélisation des enrichissements NSME multi-connexions PostGIS **a régressé** le cold (~7–9 s) → **retirée** (séquentiel conservé).
+5. Construction graphe SDG reste ~4,5–5,5 s même avec needs chaud (coût structurel graphe).
+
+### 11.3 Corrections
+
+| Correction | Détail |
+|---|---|
+| Clé needs canonique | sans `limit`/`offset` ; pagination en sortie |
+| Impact / map / SDG | réutilisent le même corpus needs |
+| SDG | `get_decision_case(..., include_spatial_evidence=False)` |
+| SharedSpatialContext | education + CENI + caches PostGIS telecom NSME |
+| Clé cache v2 | option `lat`/`lon` arrondis + `rules` mtime |
+| ThreadPool telecom | max_workers 4 + **garde anti-imbrication** (`threading.local`) |
+| Enrichissement NSME | reste **séquentiel** (mesure : parallèle pire) |
+
+### 11.4 AFTER (HTTP site 29 — impact en premier, puis dépendants)
+
+| Métrique | Cold ms | Warm ms | vs BEFORE cold |
+|---|---:|---:|---|
+| IMPACT (1er consommateur) | **7 005** | **24** | ordre comparable (variance cold) |
+| NEEDS (après impact) | **77** | **62** | **−98,7 %** |
+| MAP (après impact) | **25** | **28** | **−99,5 %** |
+| SDG | **5 410** | **264** | **−56,2 %** |
+| FIRST_USEFUL (core) | **74** (process chaud) | — | niveau 2A conservé |
+
+Lecture UX dossier : **un seul** cold spatial (~5–7 s) pour impact/needs/map ; les suivants sont des hits. SDG reste le coût résiduel principal (~5,4 s).
+
+### 11.5 Invalidation
+
+- TTL inchangé comme filet (90–120 s).
+- Clé `site_ctx_v2` : kind + site_id + program + asset_type + DATA_MODE + mtime/size règles NSME + coords optionnelles.
+- Pas d’infrastructure distribuée.
+
+### 11.6 Thread pools
+
+- NSME enrichment : **pas de pool** (séquentiel mesuré plus fiable).
+- `spatial_context_around` : pool ≤ 4, désactivé si déjà dans un pool (anti-nested).
+- Front Phase 2A : rendu progressif **conservé** (pas de Promise.all global bloquant).
+
+### 11.7 Smoke multi-sites (fonctionnel uniquement)
+
+| Site | HTTP | Cohérence |
+|---|---|---|
+| 41 / sites_300 | 200 | nom métier OK |
+| 341 / sites_20476 | 200 | nom métier OK |
+
+### 11.8 Non-régression
+
+- Localités **47 130** · Groupements **2 642** · Staging FDSU **12 611**
+
+### 11.9 Tests
+
+```
+pytest tests/test_phase2b_spatial_dedup.py tests/test_site_spatial_context_cache.py tests/test_shared_spatial_context.py
+→ 16 passed
+```
+
+### 11.10 Limites restantes (Phase 2C candidate)
+
+- Premier cold needs/impact encore ~5–7 s (telecom + schools + roads PostGIS).
+- SDG build_graph ~4,5–5,5 s hors needs (assemblage graphe).
+- `match_site_to_neighbor_fdsu` charge jusqu’à 5000 sites (haversine).
+- Roads cold ~1,2 s non encore mutualisé hors needs.
+
+### 11.11 Fichiers Phase 2B (locaux, non commités)
+
+**Modifiés :** `spatial_matching_service.py`, `spatial_decision_graph_service.py`, `telecom_service.py`, `site_spatial_context_cache.py`, ce rapport.
+**Ajoutés :** `tests/test_phase2b_spatial_dedup.py`, `scripts/profile_phase2b_needs_breakdown.py` (outil, hors runtime).

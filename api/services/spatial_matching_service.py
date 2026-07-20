@@ -748,9 +748,9 @@ def match_site_to_schools(
     query_radius = max(proximity_m, nearest_max_m)
 
     try:
-        from api.services import education_referential_service as edu
+        from api.services import shared_spatial_context as ssc
 
-        payload = edu.nearest_establishment(float(lat), float(lon), radius_m=query_radius, limit=limit)
+        payload = ssc.get_education_nearest(float(lat), float(lon), radius_m=query_radius, limit=limit)
     except Exception:
         return []
 
@@ -870,10 +870,10 @@ def match_site_to_ceni_signal(
     query_radius = max(proximity_m, nearest_max_m)
 
     try:
-        from api.services import ceni_registry_service as ceni
+        from api.services import shared_spatial_context as ssc
 
         # Exclure SCHOOL pour éviter double comptage avec match_site_to_schools
-        payload = ceni.nearest_signals(
+        payload = ssc.get_ceni_nearest(
             float(lat),
             float(lon),
             radius_m=query_radius,
@@ -1003,14 +1003,36 @@ def match_site_to_telecom(
 
     try:
         from api.services import telecom_service
+        from api.services import shared_spatial_context as ssc
 
-        payload = telecom_service.nearest_infrastructure(
+        def _infra():
+            return telecom_service.nearest_infrastructure(
+                float(lat),
+                float(lon),
+                radius_m=max(proximity_m, nearest_max_m),
+                limit=limit,
+            )
+
+        def _line():
+            return telecom_service.nearest_network_line(
+                float(lat), float(lon), radius_m=max(fiber_m, proximity_m)
+            )
+
+        # Cache partagé des deux requêtes PostGIS télécom NSME
+        key_infra = ssc.make_geo_key(
+            f"nsme_infra:{limit}:{int(max(proximity_m, nearest_max_m))}",
             float(lat),
             float(lon),
             radius_m=max(proximity_m, nearest_max_m),
-            limit=limit,
         )
-        line_payload = telecom_service.nearest_network_line(float(lat), float(lon), radius_m=max(fiber_m, proximity_m))
+        key_line = ssc.make_geo_key(
+            f"nsme_line:{int(max(fiber_m, proximity_m))}",
+            float(lat),
+            float(lon),
+            radius_m=max(fiber_m, proximity_m),
+        )
+        payload = ssc.get_or_build(key_infra, _infra)
+        line_payload = ssc.get_or_build(key_line, _line)
     except Exception:
         return []
 
@@ -2124,22 +2146,42 @@ def get_asset_needs(asset_id: str | int, **filters: Any) -> dict[str, Any]:
     from api.services import site_spatial_context_cache as scc
 
     asset_type = filters.get("asset_type") or "fdsu_site"
+    # Clé canonique SANS limit/offset — une seule résolution spatiale froide
+    # alimente impact / needs / map / SDG ; le limit est appliqué en sortie.
     key = scc.make_key(
-        f"needs:{filters.get('max_distance_km')}:{filters.get('limit')}:{filters.get('relation_type')}",
+        f"needs:{filters.get('max_distance_km')}:{filters.get('relation_type')}",
         asset_id,
         program_code=filters.get("program_code"),
         asset_type=str(asset_type),
     )
-    return scc.get_or_build(key, lambda: _get_asset_needs_uncached(asset_id, **filters))
+    full = scc.get_or_build(key, lambda: _get_asset_needs_uncached(asset_id, **{**filters, "limit": None, "offset": 0}))
+    if not isinstance(full, dict):
+        return full
+    limit = filters.get("limit")
+    offset = int(filters.get("offset") or 0)
+    if limit is None:
+        return full
+    matches = list(full.get("matches") or [])
+    sliced = matches[offset : offset + int(limit)]
+    out = dict(full)
+    out["matches"] = sliced
+    out["match_count"] = len(sliced)
+    out["_meta"] = dict(full.get("_meta") or {})
+    out["_meta"]["full_match_count"] = len(matches)
+    out["_meta"]["limit_applied"] = int(limit)
+    return out
 
 
 def _get_asset_needs_uncached(asset_id: str | int, **filters: Any) -> dict[str, Any]:
     asset_type = filters.pop("asset_type", None) or "fdsu_site"
     max_km = filters.pop("max_distance_km", None)
     max_m = float(max_km) * 1000 if max_km is not None else None
+    # limit/offset ignorés ici — pagination appliquée par get_asset_needs
+    filters.pop("limit", None)
+    filters.pop("offset", None)
     stored = _query_matches(asset_type=asset_type, asset_id=asset_id, max_distance_m=max_m, **{
         k: v for k, v in filters.items() if k in {
-            "relation_type", "program_code", "province", "territoire", "priority_level", "category", "limit", "offset"
+            "relation_type", "program_code", "province", "territoire", "priority_level", "category"
         }
     })
     if stored:
@@ -2197,6 +2239,9 @@ def _get_asset_needs_uncached(asset_id: str | int, **filters: Any) -> dict[str, 
             sites = list_fdsu_sites(asset_id=site_id, limit=1) if site_id else []
             if sites:
                 site = sites[0]
+                # Séquentiel volontaire : la parallélisation PostGIS multi-connexions
+                # a régressé le cold (~7,4 s vs ~5,8 s). Le gain Phase 2B vient du
+                # cache needs partagé (impact/map/SDG) + SharedSpatialContext.
                 extra: list[dict[str, Any]] = []
                 if not has_postgis_health:
                     extra.extend(match_site_to_health_facilities(site, max_distance_m=max_m))
@@ -2268,8 +2313,9 @@ def get_need_assets(need_id: str, **filters: Any) -> dict[str, Any]:
 def get_asset_impact(asset_id: str | int, **filters: Any) -> dict[str, Any]:
     from api.services import site_spatial_context_cache as scc
 
+    # Même famille que needs (sans limit) pour partager le calcul spatial
     key = scc.make_key(
-        f"impact:{filters.get('max_distance_km')}:{filters.get('limit')}",
+        f"impact:{filters.get('max_distance_km')}:{filters.get('relation_type')}",
         asset_id,
         program_code=filters.get("program_code"),
         asset_type=str(filters.get("asset_type") or "fdsu_site"),

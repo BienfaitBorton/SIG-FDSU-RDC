@@ -1297,7 +1297,15 @@ def _build_graph_uncached(asset_type: str, asset_id: str, *, program_code: str |
         }
 
     impact = _safe(lambda: nsme.get_asset_impact(asset_id), {}) or {}
-    case = _safe(lambda: eds.get_decision_case(asset_id, asset_type=asset_type, program_code=program_code), {}) or {}
+    case = _safe(
+        lambda: eds.get_decision_case(
+            asset_id,
+            asset_type=asset_type,
+            program_code=program_code,
+            include_spatial_evidence=False,
+        ),
+        {},
+    ) or {}
 
     asset = needs.get("asset") or (case.get("asset") if case else None)
     if not asset and str(asset_id).isdigit():
