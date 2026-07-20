@@ -16,6 +16,7 @@ from __future__ import annotations
 import os
 import threading
 import time
+from concurrent.futures import Future
 from pathlib import Path
 from typing import Any, Callable, TypeVar
 
@@ -23,6 +24,7 @@ T = TypeVar("T")
 
 _LOCK = threading.RLock()
 _STORE: dict[str, tuple[float, Any]] = {}
+_INFLIGHT: dict[str, Future] = {}
 _STATS: dict[str, int] = {"HIT": 0, "MISS": 0, "SET": 0, "EXPIRED": 0}
 
 _TTL_S = float(os.environ.get("SIG_SITE_CTX_TTL_S", "90") or 90)
@@ -50,6 +52,7 @@ def reset_stats() -> None:
 def clear() -> None:
     with _LOCK:
         _STORE.clear()
+        _INFLIGHT.clear()
 
 
 def stats() -> dict[str, int]:
@@ -122,10 +125,52 @@ def set_value(key: str, value: Any, *, ttl_s: float | None = None) -> Any:
 
 
 def get_or_build(key: str, builder: Callable[[], T], *, ttl_s: float | None = None) -> T:
+    """Retourne la valeur cache, sinon exécute builder() avec single-flight par clé.
+
+    Plusieurs threads sur la même clé froide : un seul builder ; les autres
+    attendent le Future. Le builder ne tourne jamais sous ``_LOCK``.
+    """
+    if not _ENABLED:
+        return builder()
+
     cached = get(key)
     if cached is not None:
         return cached  # type: ignore[return-value]
-    value = builder()
-    if value is not None:
-        set_value(key, value, ttl_s=ttl_s)
-    return value
+
+    leader = False
+    future: Future
+    with _LOCK:
+        # Relecture sous lock : un autre thread a pu remplir le store.
+        item = _STORE.get(key)
+        if item is not None:
+            expires_at, value = item
+            if expires_at >= time.time():
+                _STATS["HIT"] += 1
+                return value  # type: ignore[return-value]
+            _STORE.pop(key, None)
+            _STATS["EXPIRED"] += 1
+
+        existing = _INFLIGHT.get(key)
+        if existing is not None:
+            future = existing
+        else:
+            future = Future()
+            _INFLIGHT[key] = future
+            leader = True
+
+    if not leader:
+        return future.result()  # type: ignore[return-value]
+
+    try:
+        value = builder()
+        if value is not None:
+            set_value(key, value, ttl_s=ttl_s)
+        future.set_result(value)
+        return value
+    except BaseException as exc:
+        future.set_exception(exc)
+        raise
+    finally:
+        with _LOCK:
+            if _INFLIGHT.get(key) is future:
+                _INFLIGHT.pop(key, None)

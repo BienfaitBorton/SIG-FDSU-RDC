@@ -15,12 +15,14 @@ from __future__ import annotations
 import os
 import threading
 import time
+from concurrent.futures import Future
 from typing import Any, Callable, TypeVar
 
 T = TypeVar("T")
 
 _LOCK = threading.RLock()
 _STORE: dict[str, tuple[float, Any]] = {}
+_INFLIGHT: dict[str, Future] = {}
 _STATS = {"HIT": 0, "MISS": 0, "SET": 0, "EXPIRED": 0, "TELECOM_BUILDS": 0}
 
 _TTL_S = float(os.environ.get("SIG_SHARED_SPATIAL_TTL_S", "120") or 120)
@@ -44,6 +46,7 @@ def set_cache_enabled(enabled: bool) -> None:
 def clear() -> None:
     with _LOCK:
         _STORE.clear()
+        _INFLIGHT.clear()
 
 
 def reset_stats() -> None:
@@ -92,10 +95,18 @@ def make_geo_key(kind: str, lat: float, lon: float, *, radius_m: float = 25000) 
 
 
 def get_or_build(key: str, builder: Callable[[], T], *, ttl_s: float | None = None) -> T:
+    """Retourne la valeur cache, sinon exécute builder() avec single-flight par clé.
+
+    Plusieurs threads sur la même clé froide : un seul builder ; les autres
+    attendent le Future. Le builder ne tourne jamais sous ``_LOCK``.
+    """
     if not _ENABLED:
         return builder()
-    now = time.time()
+
+    leader = False
+    future: Future
     with _LOCK:
+        now = time.time()
         item = _STORE.get(key)
         if item:
             expires_at, value = item
@@ -104,14 +115,35 @@ def get_or_build(key: str, builder: Callable[[], T], *, ttl_s: float | None = No
                 return value  # type: ignore[return-value]
             _STORE.pop(key, None)
             _STATS["EXPIRED"] += 1
-        _STATS["MISS"] += 1
-    value = builder()
-    if value is not None:
-        ttl = _TTL_S if ttl_s is None else float(ttl_s)
+
+        existing = _INFLIGHT.get(key)
+        if existing is not None:
+            future = existing
+        else:
+            _STATS["MISS"] += 1
+            future = Future()
+            _INFLIGHT[key] = future
+            leader = True
+
+    if not leader:
+        return future.result()  # type: ignore[return-value]
+
+    try:
+        value = builder()
+        if value is not None:
+            ttl = _TTL_S if ttl_s is None else float(ttl_s)
+            with _LOCK:
+                _STORE[key] = (time.time() + ttl, value)
+                _STATS["SET"] += 1
+        future.set_result(value)
+        return value
+    except BaseException as exc:
+        future.set_exception(exc)
+        raise
+    finally:
         with _LOCK:
-            _STORE[key] = (time.time() + ttl, value)
-            _STATS["SET"] += 1
-    return value
+            if _INFLIGHT.get(key) is future:
+                _INFLIGHT.pop(key, None)
 
 
 def ensure_fdsu_mno_staging_ready(*, sync_if_empty: bool = True) -> dict[str, Any]:
