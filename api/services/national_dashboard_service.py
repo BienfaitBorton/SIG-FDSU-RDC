@@ -20,7 +20,13 @@ def baseline() -> dict[str, Any]: return json.loads(BASELINE_PATH.read_text(enco
 
 
 @lru_cache(maxsize=1)
-def counter_registry() -> dict[str, Any]: return json.loads(COUNTERS_PATH.read_text(encoding="utf-8"))["registre_national_des_compteurs"]
+def counter_registry() -> dict[str, Any]:
+    from api.services import referential_runtime_cache as rrc
+
+    if not COUNTERS_PATH.exists():
+        return {}
+    doc = rrc.load_json_file(COUNTERS_PATH, label="national_counter_registry.json")
+    return doc.get("registre_national_des_compteurs") or {}
 
 
 def _coverage(integrated: int | None, reference: int | None) -> float | None:

@@ -103,7 +103,10 @@ def file_sha256(path: Path) -> str | None:
 def load_official_groupements() -> list[dict[str, Any]]:
     if not OFFICIAL_JSON.exists():
         return []
-    return list(json.loads(OFFICIAL_JSON.read_text(encoding="utf-8")).get("groupement_referential") or [])
+    from api.services import referential_runtime_cache as rrc
+
+    doc = rrc.load_json_file(OFFICIAL_JSON, label="groupement_referential_official.json")
+    return list(doc.get("groupement_referential") or [])
 
 
 def load_enrichment_doc() -> dict[str, Any]:
@@ -118,7 +121,9 @@ def load_enrichment_doc() -> dict[str, Any]:
             "by_canonical_id": {},
             "integration_runs": [],
         }
-    return json.loads(ENRICHMENT_JSON.read_text(encoding="utf-8"))
+    from api.services import referential_runtime_cache as rrc
+
+    return rrc.load_json_file(ENRICHMENT_JSON, label="groupement_referential_rgc_enrichment.json")
 
 
 def load_crosswalk_doc() -> dict[str, Any]:
@@ -131,7 +136,9 @@ def load_crosswalk_doc() -> dict[str, Any]:
             "by_fdsu_id": {},
             "integration_runs": [],
         }
-    return json.loads(CROSSWALK_JSON.read_text(encoding="utf-8"))
+    from api.services import referential_runtime_cache as rrc
+
+    return rrc.load_json_file(CROSSWALK_JSON, label="groupement_rgc_crosswalk.json")
 
 
 def load_links_doc() -> dict[str, Any]:
@@ -143,39 +150,65 @@ def load_links_doc() -> dict[str, Any]:
             "links_by_locality_canonical_id": {},
             "integration_runs": [],
         }
-    return json.loads(LINKS_JSON.read_text(encoding="utf-8"))
+    from api.services import referential_runtime_cache as rrc
+
+    return rrc.load_json_file(LINKS_JSON, label="locality_groupement_links_rgc.json")
 
 
 def load_national_groupement_items(*, include_enrichment: bool = True) -> list[dict[str, Any]]:
-    """Référentiel unifié = historique (+ enrichissement RGC) + enrichissements identity crosswalk."""
-    items: list[dict[str, Any]] = []
-    official = load_official_groupements()
-    crosswalk = load_crosswalk_doc() if include_enrichment else {}
-    by_fdsu = crosswalk.get("by_fdsu_id") or {}
+    """Référentiel unifié = historique (+ enrichissement RGC) + enrichissements identity crosswalk.
 
-    for item in official:
-        row = dict(item)
-        if include_enrichment:
-            cid = str(row.get("canonical_id") or "")
-            enrich = by_fdsu.get(cid)
-            if enrich:
-                row = _merge_historical_enrichment(row, enrich)
-        items.append(row)
+    Cache mémoire partagé (mtime) — invalidé si les fichiers sources changent.
+    """
+    from api.services import referential_runtime_cache as rrc
 
+    paths = [OFFICIAL_JSON]
     if include_enrichment:
-        enr = load_enrichment_doc()
-        items.extend(enr.get("groupement_referential") or [])
-    return items
+        paths.extend([ENRICHMENT_JSON, CROSSWALK_JSON])
+    signature = (include_enrichment,) + rrc.file_signature(*paths)
+    cache_key = "national_groupement_items" if include_enrichment else "national_groupement_items_base"
+
+    def _build() -> list[dict[str, Any]]:
+        items: list[dict[str, Any]] = []
+        official = load_official_groupements()
+        crosswalk = load_crosswalk_doc() if include_enrichment else {}
+        by_fdsu = crosswalk.get("by_fdsu_id") or {}
+
+        for item in official:
+            row = dict(item)
+            if include_enrichment:
+                cid = str(row.get("canonical_id") or "")
+                enrich = by_fdsu.get(cid)
+                if enrich:
+                    row = _merge_historical_enrichment(row, enrich)
+            items.append(row)
+
+        if include_enrichment:
+            enr = load_enrichment_doc()
+            items.extend(enr.get("groupement_referential") or [])
+        return items
+
+    return rrc.get_or_build(cache_key, signature, _build)
 
 
 def national_groupement_counts(*, include_enrichment: bool = True) -> dict[str, int]:
-    historical = len(load_official_groupements())
-    enrichment = len(load_enrichment_doc().get("groupement_referential") or []) if include_enrichment else 0
-    return {
-        "historical_count": historical,
-        "enrichment_count": enrichment,
-        "total_count": historical + enrichment if include_enrichment else historical,
-    }
+    from api.services import referential_runtime_cache as rrc
+
+    paths = [OFFICIAL_JSON]
+    if include_enrichment:
+        paths.append(ENRICHMENT_JSON)
+    signature = (include_enrichment,) + rrc.file_signature(*paths)
+
+    def _build() -> dict[str, int]:
+        historical = len(load_official_groupements())
+        enrichment = len(load_enrichment_doc().get("groupement_referential") or []) if include_enrichment else 0
+        return {
+            "historical_count": historical,
+            "enrichment_count": enrichment,
+            "total_count": historical + enrichment if include_enrichment else historical,
+        }
+
+    return rrc.get_or_build("national_groupement_counts", signature, _build)
 
 
 def national_groupement_count(*, include_enrichment: bool = True) -> int:
@@ -359,6 +392,12 @@ def persist_enrichment(records: list[dict[str, Any]], *, dry_run: bool = False) 
         doc["integration_runs"] = runs[-20:]
         ENRICHMENT_JSON.parent.mkdir(parents=True, exist_ok=True)
         ENRICHMENT_JSON.write_text(json.dumps(doc, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        try:
+            from api.services import referential_runtime_cache as rrc
+
+            rrc.invalidate_paths(ENRICHMENT_JSON, OFFICIAL_JSON, CROSSWALK_JSON, LINKS_JSON)
+        except Exception:
+            pass
 
     return {
         "inserted": inserted,
@@ -409,6 +448,12 @@ def persist_crosswalk(mappings: list[dict[str, Any]], *, dry_run: bool = False) 
         doc["integration_runs"] = runs[-20:]
         CROSSWALK_JSON.parent.mkdir(parents=True, exist_ok=True)
         CROSSWALK_JSON.write_text(json.dumps(doc, ensure_ascii=False, indent=2), encoding="utf-8")
+        try:
+            from api.services import referential_runtime_cache as rrc
+
+            rrc.invalidate_paths(CROSSWALK_JSON, OFFICIAL_JSON, ENRICHMENT_JSON)
+        except Exception:
+            pass
 
     return {"inserted": inserted, "skipped_existing": skipped, "total_mappings": len(by_fdsu)}
 
@@ -541,6 +586,12 @@ def persist_links(auto_links: dict[str, dict[str, Any]], *, dry_run: bool = Fals
         doc["integration_runs"] = runs[-20:]
         LINKS_JSON.parent.mkdir(parents=True, exist_ok=True)
         LINKS_JSON.write_text(json.dumps(doc, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        try:
+            from api.services import referential_runtime_cache as rrc
+
+            rrc.invalidate_paths(LINKS_JSON)
+        except Exception:
+            pass
 
     return {"inserted": inserted, "skipped_existing": skipped, "total_links": len(by_id)}
 

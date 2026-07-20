@@ -147,8 +147,15 @@ class DNAIService:
         return {"referential": referential, "discoveries": [{"abbreviation": key, "occurrences": value, "contexts": contexts[key], "expansion": None, "status": "À vérifier", "already_pending": key in pending} for key, value in counts.most_common()]}
 
     def discover_ceni(self) -> dict[str, Any]:
-        if not CENI_REGISTRY_PATH.exists(): return {"referential": "CENI", "discoveries": [], "warning": "Registre CENI indisponible."}
-        rows = json.loads(CENI_REGISTRY_PATH.read_text(encoding="utf-8")).get("assets", [])
+        if not CENI_REGISTRY_PATH.exists():
+            return {"referential": "CENI", "discoveries": [], "warning": "Registre CENI indisponible."}
+        # Réutilise le cache process CENI — pas de second parse des ~52 Mo.
+        try:
+            from api.services import ceni_registry_service
+
+            rows = ceni_registry_service.registry().get("assets", [])
+        except Exception:
+            rows = json.loads(CENI_REGISTRY_PATH.read_text(encoding="utf-8")).get("assets", [])
         return self.discover((row.get("name", "") for row in rows), "CENI")
 
 

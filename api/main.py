@@ -62,7 +62,28 @@ from api.routes import (
     ntil,
     nire,
 )
+from contextlib import asynccontextmanager
+
 from app.fdsu_nomenclature import enrich_entity, load_nomenclature
+
+_APP_BOOT_STARTED = __import__("time").perf_counter()
+
+
+@asynccontextmanager
+async def _app_lifespan(app):
+    """Observabilité légère — ne charge aucun référentiel lourd au boot."""
+    import logging
+    import time
+
+    from api.services import referential_runtime_cache as rrc
+
+    elapsed_ms = (time.perf_counter() - _APP_BOOT_STARTED) * 1000.0
+    logging.getLogger("sig.startup").setLevel(logging.INFO)
+    rrc.log_startup("API process import+routes ready", ms=elapsed_ms)
+    rrc.log_startup("CENI deferred: lazy (@lru_cache on first CENI/education request)")
+    rrc.log_startup("Localities/Groupements: shared mtime cache (no preload at startup)")
+    yield
+
 
 app = FastAPI(
     title="SIG-FDSU RDC - API SIG",
@@ -72,6 +93,7 @@ app = FastAPI(
         "pour les provinces, territoires, collectivités, groupements, villages, sites, missions, documents et photos."
     ),
     version="0.1.0",
+    lifespan=_app_lifespan,
 )
 
 app.add_middleware(
@@ -444,8 +466,13 @@ def load_report(relative_path: str) -> dict[str, Any]:
     path = REPORTS_DIR / relative_path
     if not path.exists():
         return {}
-    with path.open("r", encoding="utf-8") as handle:
-        return json.load(handle)
+    try:
+        from api.services import referential_runtime_cache as rrc
+
+        return rrc.load_json_file(path, label=Path(relative_path).name)
+    except Exception:
+        with path.open("r", encoding="utf-8") as handle:
+            return json.load(handle)
 
 
 def as_list(value: Any) -> list[Any]:

@@ -157,7 +157,9 @@ def load_enrichment_doc() -> dict[str, Any]:
             "by_canonical_id": {},
             "integration_runs": [],
         }
-    return json.loads(ENRICHMENT_JSON.read_text(encoding="utf-8"))
+    from api.services import referential_runtime_cache as rrc
+
+    return rrc.load_json_file(ENRICHMENT_JSON, label="locality_referential_nci_enrichment.json")
 
 
 def load_national_locality_items(*, include_enrichment: bool = True) -> list[dict[str, Any]]:
@@ -165,25 +167,46 @@ def load_national_locality_items(*, include_enrichment: bool = True) -> list[dic
 
     Si un overlay de liens Groupement→Localité RGC est présent, il est appliqué
     en lecture seule (enrichit le champ groupement sans créer de localité).
-    """
-    items: list[dict[str, Any]] = []
-    if OFFICIAL_JSON.exists():
-        doc = json.loads(OFFICIAL_JSON.read_text(encoding="utf-8"))
-        items.extend(doc.get("locality_referential") or [])
-    if include_enrichment and ENRICHMENT_JSON.exists():
-        enr = load_enrichment_doc()
-        items.extend(enr.get("locality_referential") or [])
-    if include_enrichment:
-        try:
-            from api.services.nire import groupement_controlled_integration as gci
 
-            items = gci.apply_groupement_links_to_localities(items)
-        except Exception:
-            pass
-    return items
+    Cache mémoire partagé (mtime) — invalidé si les fichiers sources changent.
+    """
+    from api.services import referential_runtime_cache as rrc
+
+    try:
+        from api.services.nire import groupement_controlled_integration as gci
+
+        links_path = gci.LINKS_JSON
+    except Exception:
+        links_path = ROOT / "data" / "reports" / "locality_official" / "locality_groupement_links_rgc.json"
+
+    paths = [OFFICIAL_JSON]
+    if include_enrichment:
+        paths.extend([ENRICHMENT_JSON, links_path])
+    signature = (include_enrichment,) + rrc.file_signature(*paths)
+    cache_key = "national_locality_items"
+
+    def _build() -> list[dict[str, Any]]:
+        items: list[dict[str, Any]] = []
+        if OFFICIAL_JSON.exists():
+            doc = rrc.load_json_file(OFFICIAL_JSON, label="locality_referential_official.json")
+            items.extend(doc.get("locality_referential") or [])
+        if include_enrichment and ENRICHMENT_JSON.exists():
+            enr = load_enrichment_doc()
+            items.extend(enr.get("locality_referential") or [])
+        if include_enrichment:
+            try:
+                from api.services.nire import groupement_controlled_integration as gci
+
+                items = gci.apply_groupement_links_to_localities(items)
+            except Exception:
+                pass
+        return items
+
+    return rrc.get_or_build(cache_key if include_enrichment else f"{cache_key}_base", signature, _build)
 
 
 def national_locality_count(*, include_enrichment: bool = True) -> int:
+    """Compte dynamique — réutilise le cache de fusion (pas de reparse si chaud)."""
     return len(load_national_locality_items(include_enrichment=include_enrichment))
 
 
@@ -624,6 +647,12 @@ def persist_enrichment(
             json.dumps(doc, ensure_ascii=False, separators=(",", ":")),
             encoding="utf-8",
         )
+        try:
+            from api.services import referential_runtime_cache as rrc
+
+            rrc.invalidate_paths(ENRICHMENT_JSON, OFFICIAL_JSON)
+        except Exception:
+            pass
 
     return {
         "inserted": inserted,
