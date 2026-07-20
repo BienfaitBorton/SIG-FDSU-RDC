@@ -71,17 +71,24 @@ def _round_coord(v: float) -> str:
 
 def make_geo_key(kind: str, lat: float, lon: float, *, radius_m: float = 25000) -> str:
     from api.config import DATA_MODE
+    from api.services import referential_runtime_cache as rrc
+    from app.referentials.ceni_official.service import REGISTRY_PATH
 
-    return "|".join(
-        [
-            "shared_spatial_v1",
-            str(kind),
-            _round_coord(lat),
-            _round_coord(lon),
-            str(int(radius_m)),
-            str(DATA_MODE or "json"),
-        ]
-    )
+    parts = [
+        "shared_spatial_v1",
+        str(kind),
+        _round_coord(lat),
+        _round_coord(lon),
+        str(int(radius_m)),
+        str(DATA_MODE or "json"),
+    ]
+    # Education nearest invalidates when CENI registry changes
+    if str(kind).startswith("education"):
+        try:
+            parts.append(str(rrc.file_signature(REGISTRY_PATH)))
+        except Exception:
+            parts.append("nosig")
+    return "|".join(parts)
 
 
 def get_or_build(key: str, builder: Callable[[], T], *, ttl_s: float | None = None) -> T:

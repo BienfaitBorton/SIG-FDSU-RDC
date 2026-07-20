@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import json
+import threading
+import time
 from functools import lru_cache
+from pathlib import Path
 from typing import Any
 
 from app.referentials.ceni_official.models import CeniCategory
@@ -11,12 +14,20 @@ from app.referentials.ceni_official.service import (
     ANOMALY_PATH,
     BATCH_PATH,
     MAPPABLE_GEOMETRY_STATUSES,
+    REGISTRY_PATH,
     SENTINEL_COORDINATES_STATUS,
     CeniRegistryService,
     apply_quarantine_contract,
 )
 from api.services.national_semantic_classification_engine import DEFAULT_RULES_PATH
 
+ROOT = Path(__file__).resolve().parents[2]
+SIGNAL_PROJECTION_PATH = ROOT / "data" / "cache" / "ceni_mappable_signals_v1.json"
+
+_SIGNAL_LOCK = threading.RLock()
+_SIGNAL_MEM: tuple[dict[str, Any], ...] | None = None
+_SIGNAL_SIG: tuple[Any, ...] | None = None
+_SIGNAL_STATS: dict[str, Any] = {"BUILDS": 0, "MEM_HITS": 0, "DISK_HITS": 0}
 
 @lru_cache(maxsize=1)
 def registry() -> dict[str, Any]:
@@ -122,9 +133,51 @@ def import_batches() -> dict[str, Any]:
     return json.loads(BATCH_PATH.read_text(encoding="utf-8")) if BATCH_PATH.exists() else {"batches": []}
 
 
-@lru_cache(maxsize=1)
-def _mappable_signal_points() -> tuple[dict[str, Any], ...]:
-    """Points CENI mappables pour signal décisionnel (≠ sites FDSU)."""
+def clear_signal_projection_cache(*, clear_disk: bool = False) -> None:
+    global _SIGNAL_MEM, _SIGNAL_SIG
+    with _SIGNAL_LOCK:
+        _SIGNAL_MEM = None
+        _SIGNAL_SIG = None
+        _SIGNAL_STATS["BUILDS"] = 0
+        _SIGNAL_STATS["MEM_HITS"] = 0
+        _SIGNAL_STATS["DISK_HITS"] = 0
+        if clear_disk and SIGNAL_PROJECTION_PATH.exists():
+            try:
+                SIGNAL_PROJECTION_PATH.unlink()
+            except OSError:
+                pass
+
+
+def signal_projection_stats() -> dict[str, Any]:
+    with _SIGNAL_LOCK:
+        return {
+            **_SIGNAL_STATS,
+            "mem_loaded": _SIGNAL_MEM is not None,
+            "mem_count": len(_SIGNAL_MEM or ()),
+            "projection_exists": SIGNAL_PROJECTION_PATH.exists(),
+        }
+
+
+def _registry_signature() -> tuple[Any, ...]:
+    from api.services import referential_runtime_cache as rrc
+
+    return rrc.file_signature(REGISTRY_PATH)
+
+
+def _sig_as_list(sig: tuple[Any, ...]) -> list[Any]:
+    out: list[Any] = []
+    for item in sig:
+        out.append(list(item) if isinstance(item, tuple) else item)
+    return out
+
+
+def _sig_from_meta(meta_sig: Any) -> tuple[Any, ...] | None:
+    if not isinstance(meta_sig, list):
+        return None
+    return tuple(tuple(x) if isinstance(x, list) else x for x in meta_sig)
+
+
+def _build_signal_points_from_registry() -> tuple[dict[str, Any], ...]:
     points: list[dict[str, Any]] = []
     for row in registry().get("assets", []):
         if row.get("geometry_status") not in MAPPABLE_GEOMETRY_STATUSES:
@@ -154,6 +207,54 @@ def _mappable_signal_points() -> tuple[dict[str, Any], ...]:
             }
         )
     return tuple(points)
+
+
+def _mappable_signal_points() -> tuple[dict[str, Any], ...]:
+    """Points CENI mappables — cache mémoire + slim disque (mtime/size registre)."""
+    global _SIGNAL_MEM, _SIGNAL_SIG
+
+    sig = _registry_signature()
+    with _SIGNAL_LOCK:
+        if _SIGNAL_MEM is not None and _SIGNAL_SIG == sig:
+            _SIGNAL_STATS["MEM_HITS"] += 1
+            return _SIGNAL_MEM
+
+        if SIGNAL_PROJECTION_PATH.exists():
+            try:
+                doc = json.loads(SIGNAL_PROJECTION_PATH.read_text(encoding="utf-8"))
+                meta = doc.get("_meta") or {}
+                if _sig_from_meta(meta.get("signature")) == sig and isinstance(doc.get("points"), list):
+                    rows = tuple(doc["points"])
+                    _SIGNAL_MEM = rows
+                    _SIGNAL_SIG = sig
+                    _SIGNAL_STATS["DISK_HITS"] += 1
+                    return _SIGNAL_MEM
+            except Exception:
+                pass
+
+        t0 = time.perf_counter()
+        rows = _build_signal_points_from_registry()
+        _SIGNAL_MEM = rows
+        _SIGNAL_SIG = sig
+        _SIGNAL_STATS["BUILDS"] += 1
+        try:
+            SIGNAL_PROJECTION_PATH.parent.mkdir(parents=True, exist_ok=True)
+            payload = {
+                "_meta": {
+                    "engine": "ceni-mappable-signals-v1",
+                    "source_registry": str(REGISTRY_PATH),
+                    "signature": _sig_as_list(sig),
+                    "count": len(rows),
+                    "build_ms": round((time.perf_counter() - t0) * 1000.0, 1),
+                },
+                "points": list(rows),
+            }
+            tmp = SIGNAL_PROJECTION_PATH.with_suffix(".tmp")
+            tmp.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+            tmp.replace(SIGNAL_PROJECTION_PATH)
+        except Exception:
+            pass
+        return _SIGNAL_MEM
 
 
 def nearest_signals(

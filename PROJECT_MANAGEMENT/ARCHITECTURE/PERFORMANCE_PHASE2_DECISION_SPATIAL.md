@@ -5,7 +5,7 @@
 **HEAD de départ validé :** `f473202611dcdcef53ebdad75b890a8537537f1a`
 **Date :** 2026-07-20
 **Périmètre :** cold path Dossier de Décision / DXL / preuves spatiales (telecom)
-**Statut :** Phase 2A + 2B terminées (poussées). **Phase 2C** correctifs locaux — attente validation (pas de commit).
+**Statut :** Phases 2A–2C terminées et poussées (`a564fd1`). **Phase 2D** correctifs locaux — attente validation (pas de commit).
 
 ---
 
@@ -297,7 +297,7 @@ pytest tests/test_phase2b_spatial_dedup.py tests/test_site_spatial_context_cache
 
 **HEAD de départ :** `c6f00cff880568397dca76f26cea7d865b691989` (Phase 2B)
 **Date :** 2026-07-20
-**Statut :** correctifs locaux — **aucun commit / push** (attente validation)
+**Statut :** Phase 2C **commitée et poussée** (`a564fd1ac11050e0b9e484a1fbb06765eea1a3eb`).
 
 ### 12.1 Baseline cold unique (site 29, process profilage)
 
@@ -425,3 +425,114 @@ pytest tests/test_phase2c_build_graph_perf.py tests/test_phase2b_spatial_dedup.p
 
 **Modifiés :** `transport_service.py`, `shared_spatial_context.py`, `spatial_matching_service.py`, `spatial_decision_graph_service.py`, `telecom_service.py`, `api/main.py`, ce rapport.
 **Ajoutés :** `tests/test_phase2c_build_graph_perf.py` ; scripts de profilage `profile_phase2c_*.py` (outils).
+
+---
+
+## 13. PERFORMANCE PHASE 2D — EDUCATION / NEEDS COLD PATH
+
+**HEAD de départ :** `a564fd1ac11050e0b9e484a1fbb06765eea1a3eb` (Phase 2C)
+**Date :** 2026-07-20
+**Statut :** correctifs locaux — **aucun commit / push** (attente validation)
+
+### 13.1 Baseline NEEDS (site 29, caches vides)
+
+| Métrique | Cold ms | Warm ms |
+|---|---:|---:|
+| NEEDS_TOTAL | **4 316** | 0,2 |
+| EDUCATION full | **1 377** | 8,4 |
+
+Décomposition cold (composants mesurés séparément) :
+
+| COMPONENT | COLD_MS | WARM_MS | % du NEEDS | SOURCE | EXECUTION_MODE |
+|---|---:|---:|---:|---|---|
+| education | 1 343 | 0,1 | 31,1 | CENI SCHOOL projection | Python |
+| telecom | 1 306 | 445 | 30,3 | PostGIS NSME | PostGIS |
+| localities | 1 141 | 24 | 26,4 | uncovered jsonl | Python |
+| neighbors | 371 | 334 | 8,6 | FDSU sites | Python/DB |
+| health | 348 | 271 | 8,1 | PostGIS | PostGIS |
+| roads | 134 | ≈0 | 3,1 | PostGIS KNN | PostGIS |
+| ceni | 113 | 0,1 | 2,6 | CENI signals | Python |
+
+### 13.2 Cause exacte Éducation
+
+| Étape | ms | Détail |
+|---|---:|---|
+| EDUCATION_IO_MS | **60** | lecture `ceni_registry_v1.json` (**55,1 Mo**) |
+| EDUCATION_PARSE_MS | **1 253** | `json.loads` registre complet |
+| EDUCATION_INDEX_BUILD_MS | **294** | projection 23 514 SCHOOL mappables |
+| EDUCATION_NEAREST_MS | **8** | bbox + Haversine — **déjà rapide** |
+
+Le nearest n’était **pas** le goulot. Le cold = parse registre CENI + projection.
+
+Consommateurs : NSME `match_site_to_schools`, SharedSpatialContext, Decision Case evidence, SDG (via needs), dashboard stats.
+
+Sans cache slim, optimiser seulement Éducation déplaçait le parse 55 Mo vers `match_site_to_ceni_signal` (même registre).
+
+### 13.3 Architecture après
+
+| Couche | Rôle |
+|---|---|
+| `referential_runtime_cache.load_json_file` | parse CENI partagé (mtime/size) quand le registre complet est requis |
+| Projection slim Éducation | `data/cache/education_mappable_schools_v1.json` — 23 514 établissements |
+| Projection slim CENI signals | `data/cache/ceni_mappable_signals_v1.json` — 31 956 points mappables |
+| Mémoire | one-shot + `threading.RLock` par signature |
+| SharedSpatialContext | `get_education_nearest` — clé géo + signature registre |
+| Nearest | **inchangé** : `spatial_nearest_utils.nearest_points` (bbox + Haversine) |
+
+**Choix A vs B :** conservation Python + projection slim (pas de migration PostGIS Éducation). Index STRtree/KDTree non nécessaire (nearest ≈ 8 ms). Pas de nouvelle dépendance.
+
+**Startup :** aucun preload Éducation/CENI au lifespan (coût ajouté = **0**). Lazy au premier besoin.
+
+### 13.4 Invalidation / concurrence
+
+- Signature : `rrc.file_signature(REGISTRY_PATH)` = path + mtime_ns + size
+- Changement fichier CENI → miss disque + rebuild
+- Un seul build par signature (RLock) — pas de double construction concurrente
+
+### 13.5 BEFORE / AFTER
+
+| Métrique | BEFORE | AFTER |
+|---|---:|---:|
+| NEEDS cold | **4 316** | **3 192** (−26 %) |
+| NEEDS warm | 0,2 | 0,4 |
+| EDUCATION cold | **1 377** | **341** (−75 %) |
+| EDUCATION warm | 8,4 | **6,5** |
+| SPATIAL_CONTEXT cold | — | **422** |
+| SDG cold HTTP (process frais) | 2 886 (2C) | **3 586** |
+| SDG warm HTTP | 247 (2C) | **267** |
+| FIRST_USEFUL | ~70 (2C) | **40–76** |
+
+Objectif NEEDS &lt; 2 s : **non atteint** sans toucher localities (~1,1 s) + telecom (~1,3 s) — documenté honnêtement.
+
+SDG warm &lt; 300 ms : OK. FIRST_USEFUL : pas de régression.
+
+### 13.6 Exactitude
+
+Site 29 : nearest **E.P. KIMAZA NORD**, distance **3 219,9 m**, id `EDU-CENI-B6B2DFFEA9152AEC674ADB5C` — **identique** avant/après.
+
+### 13.7 Smoke / non-régression
+
+| Check | Résultat |
+|---|---|
+| Site 300 | HTTP **200** — Yoseki |
+| Site 20 476 | HTTP **200** — Kakyelo |
+| Localités / Groupements / MNO | **47 130 / 2 642 / 12 611** |
+
+### 13.8 Tests
+
+```
+pytest tests/test_phase2d_education_cache.py (+ 2B/2C/shared/cache)
+→ 30 passed
+```
+
+### 13.9 Limites restantes (Phase 2E candidate)
+
+- NEEDS cold ~3,2 s dominé par **telecom PostGIS** + **localities uncovered jsonl**
+- SDG cold HTTP ~3,6 s (inclut needs) — léger écart vs 2C 2,9 s (variance + charge projection disque)
+- Neighbors FDSU haversine inchangé
+- Projections slim = runtime `data/cache/*` (non versionnées)
+
+### 13.10 Fichiers Phase 2D (locaux, non commités)
+
+**Modifiés :** `education_referential_service.py`, `ceni_registry_service.py`, `shared_spatial_context.py`, `app/referentials/ceni_official/service.py`, ce rapport.
+**Ajoutés :** `tests/test_phase2d_education_cache.py` ; scripts `profile_phase2d_*.py` (outils, exclus du commit).

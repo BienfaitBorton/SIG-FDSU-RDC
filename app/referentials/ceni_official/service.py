@@ -381,4 +381,9 @@ class CeniRegistryService:
     def load() -> dict[str, Any]:
         if not REGISTRY_PATH.exists():
             return CeniRegistryService().write()
-        return json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+        try:
+            from api.services import referential_runtime_cache as rrc
+
+            return rrc.load_json_file(REGISTRY_PATH, label="ceni_registry_v1.json")
+        except Exception:
+            return json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
