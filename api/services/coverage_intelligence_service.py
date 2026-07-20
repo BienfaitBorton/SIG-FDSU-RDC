@@ -86,15 +86,60 @@ def _iter_jsonl(path: Path) -> Iterator[dict[str, Any]]:
                 yield json.loads(line)
 
 
+_UNCOVERED_DISK_CACHE = PROJECT_ROOT / "data" / "cache" / "nci_localities_uncovered_v1.json"
+_LOCALITY_LOAD_LOCK = __import__("threading").RLock()
+
+
 def _load_localities(dataset: str) -> list[dict[str, Any]]:
+    """Charge localités covered/uncovered — cache mémoire + slim disque (uncovered)."""
     _invalidate_if_stale()
     key = "uncovered" if dataset == "uncovered" else "covered"
     path = COVERAGE_DIR / ("localities_uncovered.jsonl" if key == "uncovered" else "localities_covered.jsonl")
     mtime = _file_mtime(path)
-    if _LOCALITY_CACHE.get(key) is None or _LOCALITY_CACHE.get("mtime") != mtime:
-        _LOCALITY_CACHE[key] = list(_iter_jsonl(path))
+    size = int(path.stat().st_size) if path.exists() else 0
+
+    with _LOCALITY_LOAD_LOCK:
+        if _LOCALITY_CACHE.get(key) is not None and _LOCALITY_CACHE.get(f"mtime_{key}") == mtime:
+            return _LOCALITY_CACHE[key] or []
+
+        # Projection slim disque pour uncovered (évite reparse JSONL ~22 Mo)
+        if key == "uncovered" and _UNCOVERED_DISK_CACHE.exists():
+            try:
+                doc = json.loads(_UNCOVERED_DISK_CACHE.read_text(encoding="utf-8"))
+                meta = doc.get("_meta") or {}
+                if float(meta.get("mtime") or -1) == float(mtime or -2) and int(meta.get("size") or -1) == size:
+                    rows = list(doc.get("localities") or [])
+                    _LOCALITY_CACHE[key] = rows
+                    _LOCALITY_CACHE[f"mtime_{key}"] = mtime
+                    _LOCALITY_CACHE["mtime"] = mtime
+                    return rows
+            except Exception:
+                pass
+
+        rows = list(_iter_jsonl(path))
+        _LOCALITY_CACHE[key] = rows
+        _LOCALITY_CACHE[f"mtime_{key}"] = mtime
         _LOCALITY_CACHE["mtime"] = mtime
-    return _LOCALITY_CACHE[key] or []
+
+        if key == "uncovered" and rows:
+            try:
+                _UNCOVERED_DISK_CACHE.parent.mkdir(parents=True, exist_ok=True)
+                payload = {
+                    "_meta": {
+                        "engine": "nci-uncovered-projection-v1",
+                        "source": str(path),
+                        "mtime": mtime,
+                        "size": size,
+                        "count": len(rows),
+                    },
+                    "localities": rows,
+                }
+                tmp = _UNCOVERED_DISK_CACHE.with_suffix(".tmp")
+                tmp.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+                tmp.replace(_UNCOVERED_DISK_CACHE)
+            except Exception:
+                pass
+        return rows
 
 
 def _norm(text: str | None) -> str:

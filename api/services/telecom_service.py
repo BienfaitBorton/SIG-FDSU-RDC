@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import os
 import threading
+import time
 from typing import Any
 
 from api.config import connect_db
@@ -359,7 +361,29 @@ def ensure_fdsu_mobile_operators() -> None:
     ensure_operator_metadata("ORANGE", "Orange RDC", "MNO")
 
 
+_SPATIAL_TLS = threading.local()
+
+_STATS_LOCK = threading.RLock()
+_STATS_CACHE: dict[str, Any] | None = None
+_STATS_CACHE_AT = 0.0
+_STATS_TTL_S = float(os.environ.get("SIG_TELECOM_STATS_TTL_S", "300") or 300)
+
+
+def clear_statistics_cache() -> None:
+    global _STATS_CACHE, _STATS_CACHE_AT
+    with _STATS_LOCK:
+        _STATS_CACHE = None
+        _STATS_CACHE_AT = 0.0
+
+
 def get_statistics() -> dict[str, Any]:
+    """Agrégats télécom — cache process-local (évite 4 COUNT + GROUP BY à chaque nearest)."""
+    global _STATS_CACHE, _STATS_CACHE_AT
+    now = time.time()
+    with _STATS_LOCK:
+        if _STATS_CACHE is not None and (now - _STATS_CACHE_AT) < _STATS_TTL_S:
+            return _STATS_CACHE
+
     with connect_db() as conn:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute("SELECT COUNT(*) AS count FROM telecom.operators")
@@ -435,7 +459,7 @@ def get_statistics() -> dict[str, Any]:
             )
             by_source = [dict(row) for row in cur.fetchall()]
 
-    return {
+    payload = {
         "operator_count": operator_count,
         "infrastructure_count": point_count,
         "network_line_count": line_count,
@@ -444,6 +468,10 @@ def get_statistics() -> dict[str, Any]:
         "by_operator": by_operator,
         "by_source_file": by_source,
     }
+    with _STATS_LOCK:
+        _STATS_CACHE = payload
+        _STATS_CACHE_AT = time.time()
+    return payload
 
 
 def nearest_infrastructure(
@@ -868,9 +896,6 @@ def nearest_microwave_link(lat: float, lon: float, *, radius_m: float = 25000) -
             if dist is not None and float(dist) > float(radius_m):
                 return None
             return out
-
-
-_SPATIAL_TLS = threading.local()
 
 
 def spatial_context_around(lat: float, lon: float, *, radius_m: float = 25000) -> dict[str, Any]:

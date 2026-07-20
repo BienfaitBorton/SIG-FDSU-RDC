@@ -334,25 +334,33 @@ def match_site_to_uncovered_localities(
 
     pool = localities
     if pool is None:
-        # Préfiltre administratif si possible
-        pool = _uncovered_localities(
-            province=site.get("province"),
-            territoire=site.get("territoire"),
-            coords_only=True,
-        )
+        # Une seule charge du référentiel uncovered, puis filtres en mémoire
+        all_uncovered = _uncovered_localities(coords_only=True)
+        pool = [
+            loc
+            for loc in all_uncovered
+            if (not site.get("province") or str(loc.get("province") or "").lower() == str(site.get("province") or "").lower())
+            and (
+                not site.get("territoire")
+                or str(loc.get("territoire") or "").lower() == str(site.get("territoire") or "").lower()
+            )
+        ]
         # Si trop peu dans le territoire, élargir à la province
+        if len(pool) < 5 and site.get("province"):
+            pool = [
+                loc
+                for loc in all_uncovered
+                if str(loc.get("province") or "").lower() == str(site.get("province") or "").lower()
+            ]
         if len(pool) < 5:
-            pool = _uncovered_localities(province=site.get("province"), coords_only=True)
-        if len(pool) < 5:
-            # Fenêtre spatiale autour du site (évite scan national 25k)
+            # Fenêtre spatiale autour du site (évite scan national)
             try:
                 lat0 = float(lat)
                 lon0 = float(lon)
                 deg = max(0.15, (radius / 111_000.0) * 1.2)
-                all_locs = _uncovered_localities(coords_only=True)
                 pool = [
                     loc
-                    for loc in all_locs
+                    for loc in all_uncovered
                     if abs(float(loc["latitude"]) - lat0) <= deg
                     and abs(float(loc["longitude"]) - lon0) <= deg
                 ]
@@ -1219,7 +1227,8 @@ def match_site_to_telecom(
 
     # Relations FDSU étendues (4 MNO + fibre/MW) — NIRE non bloquant
     try:
-        ctx = telecom_service.spatial_context_around(float(lat), float(lon), radius_m=proximity_m)
+        # SharedSpatialContext : un seul telecom_context partagé (Needs / Case / SDG)
+        ctx = ssc.get_telecom_spatial_context(float(lat), float(lon), radius_m=proximity_m)
         for rel_key, need_prefix in (
             ("NEAREST_MNO_VODACOM", "MNO_VODACOM"),
             ("NEAREST_MNO_ORANGE", "MNO_ORANGE"),

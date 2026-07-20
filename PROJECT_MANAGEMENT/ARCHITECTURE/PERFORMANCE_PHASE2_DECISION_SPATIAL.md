@@ -5,7 +5,7 @@
 **HEAD de départ validé :** `f473202611dcdcef53ebdad75b890a8537537f1a`
 **Date :** 2026-07-20
 **Périmètre :** cold path Dossier de Décision / DXL / preuves spatiales (telecom)
-**Statut :** Phases 2A–2C terminées et poussées (`a564fd1`). **Phase 2D** correctifs locaux — attente validation (pas de commit).
+**Statut :** Phases 2A–2D terminées et poussées (`5e860ae`). **Phase 2E** correctifs locaux — attente validation (pas de commit).
 
 ---
 
@@ -536,3 +536,110 @@ pytest tests/test_phase2d_education_cache.py (+ 2B/2C/shared/cache)
 
 **Modifiés :** `education_referential_service.py`, `ceni_registry_service.py`, `shared_spatial_context.py`, `app/referentials/ceni_official/service.py`, ce rapport.
 **Ajoutés :** `tests/test_phase2d_education_cache.py` ; scripts `profile_phase2d_*.py` (outils, exclus du commit).
+
+---
+
+## 14. PERFORMANCE PHASE 2E — LOCALITY + TELECOM COLD PATH
+
+**HEAD de départ :** `5e860ae06c8caefd73850cabe10567b05ac34536` (Phase 2D)
+**Date :** 2026-07-20
+**Statut :** correctifs locaux — **aucun commit / push** (attente validation)
+
+### 14.1 Clarification référentiel Localités (NSME Needs)
+
+Le chemin Needs / NSME `match_site_to_uncovered_localities` lit **`data/coverage/localities_uncovered.jsonl`** (**24 604** lignes NCI), **pas** le référentiel unifié 47 130 (historique + NCI) utilisé ailleurs (dashboard / NIRE).
+
+Les 47 130 restent confirmés côté référentiel unifié ; le goulot Needs est le parse JSONL uncovered.
+
+### 14.2 Baseline (site 29, caches runtime vides)
+
+| Métrique | Cold ms | Warm ms |
+|---|---:|---:|
+| NEEDS_TOTAL | **3 282** | 0,2 |
+| LOCALITY match | **817** | 20 |
+| TELECOM match | **1 166** | 422 |
+| SPATIAL_CONTEXT | **520** | ≈ 0 |
+
+Localités uncovered :
+
+| Stage | ms |
+|---|---:|
+| LOCALITY_IO_MS | 13 |
+| LOCALITY_PARSE_MS | **556** |
+| LOAD_COLD_MS | 745 |
+| MATCH (incl. load) | 817 |
+| LOCALITY_MERGE_MS | N/A (pas de fusion 47 130 sur ce chemin) |
+| LOCALITY_INDEX_BUILD_MS | 0 (pas d’index spatial — bbox admin + haversine sur pool filtré) |
+| LOCALITY_NEAREST_MS | ~20 (warm match) |
+
+Télécom — top 3 (séquentiel isolé) :
+
+| Stage | COLD_MS |
+|---|---:|
+| nearest_any (`get_statistics` + KNN) | **1 363** |
+| airtel | 193 |
+| mw | 133 |
+
+| Check | Valeur |
+|---|---|
+| DB_CONNECTION_FIRST_MS | **68** |
+| Staging FDSU | **12 611**, sync_now=false |
+| PostGIS infra KNN | Index Scan GiST ~1 ms (EXPLAIN) — **pas de nouvel index** |
+| `run_mno_audit` | non déclenché (staging prêt) |
+
+Cause structurelle Télécom Needs : `match_site_to_telecom` appelait `spatial_context_around` **hors** SharedSpatialContext → recalcul + warm ~420 ms.
+
+### 14.3 Corrections
+
+| Correction | Détail |
+|---|---|
+| Localités | cache mémoire + slim disque `nci_localities_uncovered_v1.json` (mtime/size) ; RLock ; une seule charge puis filtres mémoire |
+| Télécom stats | `get_statistics()` cache process TTL 300 s |
+| Télécom NSME | `ssc.get_telecom_spatial_context` au lieu de `spatial_context_around` direct |
+| Threading | inchangé (≤4 + anti-imbrication) |
+| Startup | **+0 ms** (pas de preload) |
+
+Choix index spatial 47 130 / PostGIS : **non** — le chemin Needs n’utilise pas 47 130 ; uncovered 24k + préfiltre admin suffit après cache disque.
+
+### 14.4 BEFORE / AFTER
+
+| Métrique | BEFORE | AFTER |
+|---|---:|---:|
+| NEEDS cold | **3 282** | **2 892** (−12 %) |
+| NEEDS warm | 0,2 | 0,2 |
+| LOCALITY cold | **817** | **431** (−47 %) |
+| LOCALITY warm | 20 | 35 |
+| TELECOM match cold | **1 166** | **1 053** |
+| TELECOM match warm | **422** | **0,3** |
+| SPATIAL_CONTEXT cold | 520 | 651 |
+| SDG cold (in-process) | — | 4 650 |
+| SDG warm | — | 5 |
+| FIRST_USEFUL | — | **87** |
+
+Objectif NEEDS &lt; 2 s : **non atteint**. Coût résiduel ~2,9 s = education/ceni slim disk + uncovered disk + PostGIS telecom (infra+line+context) + neighbors. Arrêt volontaire sans refonte lourde.
+
+### 14.5 Exactitude
+
+Localité site 29 : `NCI-UNC-66BFD5050A`, **2 508,8 m** — **identique**.
+
+### 14.6 Smoke / non-régression
+
+| Check | Résultat |
+|---|---|
+| Site 300 / 20 476 | HTTP **200** — Yoseki / Kakyelo |
+| Localités unifiées | **47 130** |
+| Uncovered NCI (Needs) | **24 604** |
+| Groupements | **2 642** |
+| Staging MNO | **12 611** |
+
+### 14.7 Tests
+
+```
+pytest tests/test_phase2e_locality_telecom.py (+ 2B/2C/2D/shared/cache)
+→ 35 passed
+```
+
+### 14.8 Fichiers Phase 2E (locaux, non commités)
+
+**Modifiés :** `coverage_intelligence_service.py`, `telecom_service.py`, `spatial_matching_service.py`, ce rapport.
+**Ajoutés :** `tests/test_phase2e_locality_telecom.py` ; scripts `profile_phase2e_*.py` (outils).
