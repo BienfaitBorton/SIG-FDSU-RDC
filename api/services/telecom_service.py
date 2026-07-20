@@ -489,17 +489,13 @@ def nearest_infrastructure(
                 FROM telecom.infrastructure i
                 JOIN telecom.operators o ON o.id = i.operator_id
                 WHERE i.geom IS NOT NULL
-                  AND ST_DWithin(
-                    i.geom::geography,
-                    ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography,
-                    %s
-                  )
-                ORDER BY i.geom::geography <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+                ORDER BY i.geom <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)
                 LIMIT %s
                 """,
-                (lon, lat, lon, lat, radius_m, lon, lat, limit),
+                (lon, lat, lon, lat, max(int(limit) * 5, 50)),
             )
-            rows = [_serialize_row(dict(r)) for r in cur.fetchall()]
+            candidates = [_serialize_row(dict(r)) for r in cur.fetchall()]
+            rows = [r for r in candidates if float(r.get("distance_m") or 0) <= float(radius_m)][: int(limit)]
             # Si rien dans le rayon demandé, remonter le plus proche absolu (contexte hors rayon)
             nearest_absolute = None
             if not rows:
@@ -525,7 +521,7 @@ def nearest_infrastructure(
                     FROM telecom.infrastructure i
                     JOIN telecom.operators o ON o.id = i.operator_id
                     WHERE i.geom IS NOT NULL
-                    ORDER BY i.geom::geography <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+                    ORDER BY i.geom <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)
                     LIMIT 1
                     """,
                     (lon, lat, lon, lat),
@@ -583,7 +579,7 @@ def nearest_network_line(
                 FROM telecom.network_lines l
                 JOIN telecom.operators o ON o.id = l.operator_id
                 WHERE l.geom IS NOT NULL
-                ORDER BY l.geom::geography <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+                ORDER BY l.geom <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)
                 LIMIT 1
                 """,
                 (lon, lat, lon, lat, lon, lat, lon, lat),
@@ -809,14 +805,19 @@ def _nearest_db_operator(lat: float, lon: float, operator_code: str, radius_m: f
                 FROM telecom.infrastructure i
                 JOIN telecom.operators o ON o.id = i.operator_id
                 WHERE o.operator_code = %s AND i.geom IS NOT NULL
-                  AND ST_DWithin(i.geom::geography, ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography, %s)
-                ORDER BY i.geom::geography <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+                ORDER BY i.geom <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)
                 LIMIT 1
                 """,
-                (lon, lat, operator_code, lon, lat, radius_m, lon, lat),
+                (lon, lat, operator_code, lon, lat),
             )
             row = cur.fetchone()
-            return _serialize_row(dict(row)) if row else None
+            if not row:
+                return None
+            out = _serialize_row(dict(row))
+            dist = out.get("distance_m")
+            if dist is not None and float(dist) > float(radius_m):
+                return None
+            return out
 
 
 def nearest_fiber_link(lat: float, lon: float, *, radius_m: float = 25000) -> dict[str, Any] | None:
@@ -829,14 +830,19 @@ def nearest_fiber_link(lat: float, lon: float, *, radius_m: float = 25000) -> di
                 FROM telecom.network_lines l
                 JOIN telecom.operators o ON o.id = l.operator_id
                 WHERE o.operator_code IN ('FIBERCO', 'FTTX') AND l.geom IS NOT NULL
-                  AND ST_DWithin(l.geom::geography, ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography, %s)
-                ORDER BY l.geom::geography <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+                ORDER BY l.geom <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)
                 LIMIT 1
                 """,
-                (lon, lat, lon, lat, radius_m, lon, lat),
+                (lon, lat, lon, lat),
             )
             row = cur.fetchone()
-            return _serialize_row(dict(row)) if row else None
+            if not row:
+                return None
+            out = _serialize_row(dict(row))
+            dist = out.get("distance_m")
+            if dist is not None and float(dist) > float(radius_m):
+                return None
+            return out
 
 
 def nearest_microwave_link(lat: float, lon: float, *, radius_m: float = 25000) -> dict[str, Any] | None:
@@ -849,14 +855,19 @@ def nearest_microwave_link(lat: float, lon: float, *, radius_m: float = 25000) -
                 FROM telecom.network_lines l
                 JOIN telecom.operators o ON o.id = l.operator_id
                 WHERE o.operator_code = 'FIBER_MW' AND l.geom IS NOT NULL
-                  AND ST_DWithin(l.geom::geography, ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography, %s)
-                ORDER BY l.geom::geography <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+                ORDER BY l.geom <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)
                 LIMIT 1
                 """,
-                (lon, lat, lon, lat, radius_m, lon, lat),
+                (lon, lat, lon, lat),
             )
             row = cur.fetchone()
-            return _serialize_row(dict(row)) if row else None
+            if not row:
+                return None
+            out = _serialize_row(dict(row))
+            dist = out.get("distance_m")
+            if dist is not None and float(dist) > float(radius_m):
+                return None
+            return out
 
 
 _SPATIAL_TLS = threading.local()

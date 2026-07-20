@@ -317,36 +317,43 @@ def routes_layer(limit: int = 8000) -> dict[str, Any]:
 
 
 def nearest_road(lon: float, lat: float, max_distance_m: float = 50000) -> dict[str, Any] | None:
-    """Route principale la plus proche d'un point (PostGIS geography)."""
+    """Route principale la plus proche d'un point (KNN GiST geometry + distance geography).
+
+    Évite ``ORDER BY geom::geography <-> …`` / ``ST_DWithin(geography)`` qui forcent
+    un Seq Scan (~1,5 s). Le plan GiST ``geom <->`` reste ~ms ; la distance métrique
+    et le filtre rayon restent en geography sur la seule ligne candidate.
+    """
     if not _table_ready():
         return None
     with connect_db() as conn:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(
                 """
-                SELECT
-                    r.id,
-                    r.source_id,
-                    r.nom,
-                    r.type_route,
-                    r.categorie,
-                    r.etat,
-                    r.source,
-                    r.longueur_m,
-                    ST_Distance(
-                        r.geom::geography,
-                        ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
-                    ) AS distance_m
-                FROM transport.routes r
-                WHERE ST_DWithin(
-                    r.geom::geography,
-                    ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography,
-                    %s
+                WITH nearest AS (
+                    SELECT
+                        r.id,
+                        r.source_id,
+                        r.nom,
+                        r.type_route,
+                        r.categorie,
+                        r.etat,
+                        r.source,
+                        r.longueur_m,
+                        ST_Distance(
+                            r.geom::geography,
+                            ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
+                        ) AS distance_m,
+                        ST_X(ST_ClosestPoint(r.geom, ST_SetSRID(ST_MakePoint(%s, %s), 4326))) AS closest_lon,
+                        ST_Y(ST_ClosestPoint(r.geom, ST_SetSRID(ST_MakePoint(%s, %s), 4326))) AS closest_lat
+                    FROM transport.routes r
+                    WHERE r.geom IS NOT NULL
+                    ORDER BY r.geom <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)
+                    LIMIT 1
                 )
-                ORDER BY r.geom::geography <-> ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography
-                LIMIT 1
+                SELECT * FROM nearest
+                WHERE distance_m <= %s
                 """,
-                (lon, lat, lon, lat, max_distance_m, lon, lat),
+                (lon, lat, lon, lat, lon, lat, lon, lat, max_distance_m),
             )
             row = cur.fetchone()
             return _serialize(dict(row)) if row else None

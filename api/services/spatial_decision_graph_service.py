@@ -457,8 +457,23 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+_PROBE_CACHE: dict[str, Any] | None = None
+_PROBE_CACHE_AT: float = 0.0
+_PROBE_TTL_S = 300.0
+
+
 def _probe_referential_availability(lon: float | None, lat: float | None) -> dict[str, dict[str, Any]]:
-    """Sonde les référentiels déjà présents (sans inventer de relations)."""
+    """Sonde les référentiels déjà présents (sans inventer de relations).
+
+    Résultat quasi indépendant du site (comptages référentiels) — cache process-local.
+    """
+    global _PROBE_CACHE, _PROBE_CACHE_AT
+    import time as _time
+
+    now = _time.time()
+    if _PROBE_CACHE is not None and (now - _PROBE_CACHE_AT) < _PROBE_TTL_S:
+        return _PROBE_CACHE
+
     from pathlib import Path
 
     probes: dict[str, dict[str, Any]] = {}
@@ -660,7 +675,16 @@ def _probe_referential_availability(lon: float | None, lat: float | None) -> dic
 
     probes["energy"] = {"referential_exists": False, "nsme_wired": False}
     probes["markets"] = {"referential_exists": False, "nsme_wired": False}
+    _PROBE_CACHE = probes
+    _PROBE_CACHE_AT = now
     return probes
+
+
+def clear_probe_cache() -> None:
+    """Tests / invalidation explicite."""
+    global _PROBE_CACHE, _PROBE_CACHE_AT
+    _PROBE_CACHE = None
+    _PROBE_CACHE_AT = 0.0
 
 
 def _km(radius_m: Any) -> float | None:
@@ -1220,14 +1244,16 @@ def _road_endpoint(match: dict[str, Any], asset_lon: float | None, asset_lat: fl
         return float(props["need_lon"]), float(props["need_lat"])
     if asset_lon is None or asset_lat is None:
         return None
+    from api.services import shared_spatial_context as ssc
+
     road = _safe(
-        lambda: __import__("api.services.transport_service", fromlist=["nearest_road"]).nearest_road(
-            float(asset_lon), float(asset_lat)
-        ),
+        lambda: ssc.get_nearest_road(float(asset_lon), float(asset_lat)),
         None,
     )
     if not road:
         return None
+    if road.get("closest_lon") is not None and road.get("closest_lat") is not None:
+        return float(road["closest_lon"]), float(road["closest_lat"])
     # Point d’accroche : centroid approximatif via géométrie si fournie
     geom = road.get("geometry") or {}
     coords = geom.get("coordinates") if isinstance(geom, dict) else None
@@ -1242,7 +1268,25 @@ def _road_endpoint(match: dict[str, Any], asset_lon: float | None, asset_lat: fl
 def build_graph(asset_type: str, asset_id: str, *, program_code: str | None = None) -> dict[str, Any] | None:
     from api.services import site_spatial_context_cache as scc
 
-    key = scc.make_key("sdg_graph", asset_id, program_code=program_code, asset_type=asset_type)
+    lat = lon = None
+    try:
+        from api.services.site_entity_resolver import resolve_site
+
+        resolved = resolve_site(asset_id, program_code=program_code, entity_type=asset_type)
+        if resolved and resolved.get("resolved"):
+            lat = resolved.get("latitude")
+            lon = resolved.get("longitude")
+    except Exception:
+        pass
+
+    key = scc.make_key(
+        "sdg_graph",
+        asset_id,
+        program_code=program_code,
+        asset_type=asset_type,
+        lat=lat,
+        lon=lon,
+    )
     return scc.get_or_build(key, lambda: _build_graph_uncached(asset_type, asset_id, program_code=program_code))
 
 

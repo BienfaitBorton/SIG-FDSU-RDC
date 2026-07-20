@@ -5,7 +5,7 @@
 **HEAD de départ validé :** `f473202611dcdcef53ebdad75b890a8537537f1a`
 **Date :** 2026-07-20
 **Périmètre :** cold path Dossier de Décision / DXL / preuves spatiales (telecom)
-**Statut :** Phase 2A terminée (correctif cœur + validation légère). **Phase 2B** ouverte pour impact/needs/SDG/map.
+**Statut :** Phase 2A + 2B terminées (poussées). **Phase 2C** correctifs locaux — attente validation (pas de commit).
 
 ---
 
@@ -290,3 +290,138 @@ pytest tests/test_phase2b_spatial_dedup.py tests/test_site_spatial_context_cache
 
 **Modifiés :** `spatial_matching_service.py`, `spatial_decision_graph_service.py`, `telecom_service.py`, `site_spatial_context_cache.py`, ce rapport.
 **Ajoutés :** `tests/test_phase2b_spatial_dedup.py`, `scripts/profile_phase2b_needs_breakdown.py` (outil, hors runtime).
+
+---
+
+## 12. PERFORMANCE PHASE 2C — premier cold spatial / PostGIS + build_graph SDG
+
+**HEAD de départ :** `c6f00cff880568397dca76f26cea7d865b691989` (Phase 2B)
+**Date :** 2026-07-20
+**Statut :** correctifs locaux — **aucun commit / push** (attente validation)
+
+### 12.1 Baseline cold unique (site 29, process profilage)
+
+| Métrique | Cold ms | Warm ms |
+|---|---:|---:|
+| SPATIAL_CONTEXT (telecom shared) | **1 398** | ≈ 0 |
+| POSTGIS (échantillon infra / roads geography) | **465 – 1 517** | 370 – 1 161 |
+| BUILD_GRAPH | **8 452** | 4 164 (needs déjà chaud) |
+| SDG endpoint | **11 190** | 17 |
+
+Top 3 composants spatiaux (cold) :
+
+| COMPONENT | COLD_MS | WARM_MS | SOURCE | POSTGIS_OR_PYTHON |
+|---|---:|---:|---|---|
+| telecom_nsme | 2 650 | 1 256 | NSME + PostGIS | PostGIS |
+| education_nearest | 1 947 | 11 | CENI schools projection | Python (bbox/haversine) |
+| roads_nsme | 1 517 | 1 161 | `transport.routes` | PostGIS |
+
+### 12.2 Plan PostGIS — routes (goulot prouvé)
+
+`nearest_road` avant (geography `ST_DWithin` + `ORDER BY geom::geography <->`) :
+
+- **Seq Scan** sur 6 512 routes, **Execution Time ≈ 1 593 ms**
+- Index GiST `idx_transport_routes_geom` **non utilisé** (cast geography)
+
+Après (KNN `ORDER BY geom <->` + `ST_Distance` geography + `ST_ClosestPoint` sur 1 ligne) :
+
+- **Index Scan** GiST, **Execution Time ≈ 7 ms**
+- **Aucun index créé** — index existant suffisant
+
+Même pattern KNN geometry appliqué aux nearest telecom infrastructure / fibre / MW encore en `::geography` dans `ORDER BY`.
+
+### 12.3 DATABASE_COLD vs APPLICATION_COLD
+
+| Coût | Ordre de grandeur | Nature |
+|---|---|---|
+| DATABASE_COLD | SELECT 1 ≈ 73 ms ; PostGIS trivial ≈ 176 ms ; 1er Seq Scan geography routes ≈ 1,6 s | connexion + plan + buffers |
+| APPLICATION_COLD | education schools load ≈ 1,9–2,5 s ; probe référentiels SDG ≈ 450 ms ; 3× `_road_endpoint` → `nearest_road` ≈ **3,8 s** | Python / double calcul |
+
+Cause majeure `build_graph` : relations routes **sans** `need_lon`/`need_lat` → 3 appels PostGIS redondants + géométrie absente du SELECT.
+
+### 12.4 Corrections
+
+| Correction | Détail |
+|---|---|
+| `nearest_road` | KNN GiST geometry + closest_lon/lat ; filtre rayon geography |
+| `match_site_to_roads` | propage `need_lon`/`need_lat` ; via `SharedSpatialContext.get_nearest_road` |
+| `_road_endpoint` | réutilise coords / cache partagé — plus de 3× nearest |
+| Telecom nearest | `ORDER BY geom <->` (infra, lines, fiber, MW) |
+| Probe SDG | cache process-local TTL 300 s |
+| Cache `sdg_graph` | clé `site_ctx_v2` + **lat/lon** + mtime règles NSME |
+| Warmup startup | `SELECT 1` + `PostGIS_Version` + 1 KNN routes + staging count (`sync_if_empty=False`) |
+
+### 12.5 Warmup
+
+- **Ajouté** (léger, non bloquant métier)
+- Coût startup mesuré ≈ **460 ms** (connexion + PostGIS + KNN + staging count)
+- Gain utilisateur : 1er SDG cold **11,2 s → 2,9 s** ; roads PostGIS **1,6 s → ~7 ms** (plan)
+- Critère respecté : `startup_added_ms` ≪ gain SDG / routes
+
+### 12.6 build_graph AFTER (needs déjà chaud)
+
+| Stage | ms |
+|---|---:|
+| nodes/edges loop | ≈ 0,3 |
+| probe (1er) | ≈ 453 (puis cache) |
+| **full `_build_graph_uncached` needs warm** | **≈ 36** |
+
+Sérialisation JSON graphe ≈ **4 ms** — non significative.
+
+### 12.7 Cache / invalidation build_graph
+
+- Clé : `site_ctx_v2|sdg_graph|site_id|program|asset_type|DATA_MODE|rules_mtime-size|lat:lon`
+- Invalide si coords changent, règles NSME changent, ou TTL (90 s)
+- Pas de graphe obsolète silencieux hors TTL / clé
+
+### 12.8 Threading
+
+- Inchangé Phase 2B : telecom ≤ 4 workers + garde anti-imbrication
+- Pas de création de pool dans `build_graph`
+- Pas d’augmentation arbitraire des workers
+
+### 12.9 BEFORE / AFTER (site 29)
+
+| Métrique | BEFORE | AFTER |
+|---|---:|---:|
+| SPATIAL_CONTEXT_COLD_MS | 1 398 | **664** |
+| SPATIAL_CONTEXT_WARM_MS | ≈ 0 | ≈ 0 |
+| POSTGIS roads (EXPLAIN / NSME) | 1 593 / 1 517 | **≈ 7** / **293** |
+| BUILD_GRAPH_COLD_MS | 8 452 | **3 171** |
+| BUILD_GRAPH (needs warm) | 4 164 | **≈ 36** |
+| BUILD_GRAPH_WARM (cache graphe) | — | **≈ 2** |
+| SDG_ENDPOINT_COLD_MS | 11 190 (2B HTTP 5 410) | **2 886** |
+| SDG_ENDPOINT_WARM_MS | 17 – 264 | **247** |
+| FIRST_USEFUL_MS (core, process frais + warmup) | 2 373 (2A) | **≈ 70** (pas de régression) |
+
+Objectifs : spatial cold routes OK ; SDG cold **< 3 s** atteint sur process frais ; warm SDG **< 300 ms**.
+
+### 12.10 Limites restantes
+
+- Premier **needs** froid encore ≈ 3–4,5 s (telecom + education Python + health) si caches SharedSpatial / site_ctx vides.
+- Education nearest reste un coût **application** (chargement projection écoles), pas PostGIS.
+- Health `ST_DWithin(geography)` non encore réécrit (secondaire ≈ 0,5 s).
+- Neighbors FDSU haversine (jusqu’à 5000 sites) inchangé.
+
+### 12.11 Smoke / non-régression
+
+| Check | Résultat |
+|---|---|
+| Site 300 | HTTP **200** — Yoseki |
+| Site 20 476 | HTTP **200** — Kakyelo |
+| Localités | **47 130** |
+| Groupements | **2 642** |
+| Staging FDSU MNO | **12 611** |
+
+### 12.12 Tests
+
+```
+pytest tests/test_phase2c_build_graph_perf.py tests/test_phase2b_spatial_dedup.py \
+       tests/test_shared_spatial_context.py tests/test_site_spatial_context_cache.py
+→ 23 passed
+```
+
+### 12.13 Fichiers Phase 2C (locaux, non commités)
+
+**Modifiés :** `transport_service.py`, `shared_spatial_context.py`, `spatial_matching_service.py`, `spatial_decision_graph_service.py`, `telecom_service.py`, `api/main.py`, ce rapport.
+**Ajoutés :** `tests/test_phase2c_build_graph_perf.py` ; scripts de profilage `profile_phase2c_*.py` (outils).

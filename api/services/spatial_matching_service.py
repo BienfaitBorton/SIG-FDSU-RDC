@@ -520,13 +520,16 @@ def match_site_to_roads(asset: dict[str, Any], max_distance_m: float | None = No
     corridor_m = float(radii.get("road_corridor") or 2000)
 
     try:
+        from api.services import shared_spatial_context as ssc
         from api.services import transport_service
 
-        road = transport_service.nearest_road(float(lon), float(lat), max_distance_m=nearest_max)
+        road = ssc.get_nearest_road(float(lon), float(lat), max_distance_m=nearest_max)
         if not road:
             return []
         scored = transport_service.compute_accessibility_score(road.get("distance_m"), road.get("type_route"))
         distance = float(road.get("distance_m") or 0)
+        need_lon = road.get("closest_lon")
+        need_lat = road.get("closest_lat")
         base = {
             "asset_type": "fdsu_site",
             "asset_id": asset.get("id") or asset.get("site_id"),
@@ -543,6 +546,8 @@ def match_site_to_roads(asset: dict[str, Any], max_distance_m: float | None = No
                 "road_etat": road.get("etat"),
                 "accessibility_score": scored.get("score"),
                 "accessibility_justification": scored.get("justification"),
+                "need_lon": need_lon,
+                "need_lat": need_lat,
             },
         }
         matches = [

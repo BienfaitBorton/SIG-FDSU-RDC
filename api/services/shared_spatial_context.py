@@ -197,3 +197,16 @@ def get_ceni_nearest(
         ) or {}
 
     return get_or_build(key, _build)
+
+
+def get_nearest_road(lon: float, lat: float, *, max_distance_m: float = 50000) -> dict[str, Any] | None:
+    """Route la plus proche — une seule résolution PostGIS par (lon, lat, rayon)."""
+    key = make_geo_key("nearest_road", lat, lon, radius_m=max_distance_m)
+
+    def _build() -> dict[str, Any]:
+        from api.services import transport_service as ts
+
+        return ts.nearest_road(float(lon), float(lat), max_distance_m=float(max_distance_m)) or {}
+
+    result = get_or_build(key, _build)
+    return result if result else None

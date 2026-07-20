@@ -71,7 +71,7 @@ _APP_BOOT_STARTED = __import__("time").perf_counter()
 
 @asynccontextmanager
 async def _app_lifespan(app):
-    """Observabilité légère — ne charge aucun référentiel lourd au boot."""
+    """Observabilité légère — warmup spatial minimal (pas de calcul dossier)."""
     import logging
     import time
 
@@ -82,6 +82,38 @@ async def _app_lifespan(app):
     rrc.log_startup("API process import+routes ready", ms=elapsed_ms)
     rrc.log_startup("CENI deferred: lazy (@lru_cache on first CENI/education request)")
     rrc.log_startup("Localities/Groupements: shared mtime cache (no preload at startup)")
+
+    warmup_ms = 0.0
+    try:
+        from api.config import DATA_MODE, connect_db
+
+        if str(DATA_MODE or "").lower() == "db":
+            tw = time.perf_counter()
+            with connect_db() as conn:
+                with conn.cursor() as cur:
+                    cur.execute("SELECT 1")
+                    cur.execute("SELECT PostGIS_Version()")
+                    # Touche index GiST routes (pas de calcul métier)
+                    cur.execute(
+                        """
+                        SELECT id FROM transport.routes
+                        WHERE geom IS NOT NULL
+                        ORDER BY geom <-> ST_SetSRID(ST_MakePoint(15.3, -4.3), 4326)
+                        LIMIT 1
+                        """
+                    )
+                    cur.fetchone()
+            try:
+                from api.services.shared_spatial_context import ensure_fdsu_mno_staging_ready
+
+                ensure_fdsu_mno_staging_ready(sync_if_empty=False)
+            except Exception:
+                pass
+            warmup_ms = (time.perf_counter() - tw) * 1000.0
+            rrc.log_startup("light spatial warmup (SELECT1+PostGIS+routes KNN)", ms=warmup_ms)
+    except Exception as exc:  # noqa: BLE001
+        rrc.log_startup(f"light spatial warmup skipped: {exc}", ms=0)
+
     yield
 
 
