@@ -4,8 +4,33 @@
  * Attaché à window.SpatialImpactController.
  */
 (function initSpatialImpactController(global) {
+  /** Génération de load() — invalide les paint/SDG d’un chargement précédent. */
+  let activeLoadGeneration = 0;
+  /** Génération pour laquelle loadAndMount a déjà été demandé (au plus une fois). */
+  let sdgMountClaimedForGeneration = -1;
+
   function getCore() {
     return global.DxlCore;
+  }
+
+  function startLoadGeneration() {
+    activeLoadGeneration += 1;
+    return activeLoadGeneration;
+  }
+
+  /**
+   * Réserve un unique mount SDG pour la génération courante.
+   * @returns {boolean} true si l’appelant doit déclencher loadAndMount
+   */
+  function claimSdgMount(generation) {
+    if (generation == null || generation !== activeLoadGeneration) return false;
+    if (sdgMountClaimedForGeneration === generation) return false;
+    sdgMountClaimedForGeneration = generation;
+    return true;
+  }
+
+  function isActiveLoadGeneration(generation) {
+    return generation != null && generation === activeLoadGeneration;
   }
 
   function humanize(err, status) {
@@ -103,11 +128,14 @@
 
   /**
    * Charge l’impact spatial avec statut individuel par service.
-   * Retourne { impact, needs, statistics, coverage, explain, map, decisionCase }.
+   * Retourne { impact, needs, statistics, coverage, explain, decisionCase }.
+   * Pas de fetch /spatial-matching/map : le rendu carte est assuré par SpatialDecisionGraph.
    */
-  async function loadData(assetType, assetId) {
+  async function loadData(assetType, assetId, generation) {
     const Dxl = getCore();
     if (!Dxl) return null;
+
+    const gen = generation != null ? generation : startLoadGeneration();
 
     const {
       state,
@@ -126,7 +154,6 @@
       coverage: emptyService('coverage'),
       decisionCase: emptyService('decisionCase'),
       statistics: emptyService('statistics'),
-      map: emptyService('map'),
     };
     state.services = services;
     renderServicesPanel(services);
@@ -135,9 +162,12 @@
       { key: 'needs', path: `/api/spatial-matching/assets/${id}/needs?limit=100` },
       { key: 'impact', path: `/api/spatial-matching/assets/${id}/impact` },
       { key: 'explain', path: `/api/spatial-matching/assets/${id}/explain`, timeoutMs: 12000 },
-      { key: 'map', path: `/api/spatial-matching/map?asset_id=${id}` },
       { key: 'statistics', path: '/api/spatial-matching/statistics' },
-      { key: 'decisionCase', path: `/api/decision/case/${id}?asset_type=${encodeURIComponent(assetType === 'site' ? 'site' : assetType)}` },
+      {
+        key: 'decisionCase',
+        // Noyau léger au premier affichage — preuves spatiales via Needs / Impact / SDG
+        path: `/api/decision/case/${id}?asset_type=${encodeURIComponent(assetType === 'site' ? 'site' : assetType)}&include_spatial_evidence=false`,
+      },
     ];
 
     const refreshCoverageDerived = () => {
@@ -179,10 +209,11 @@
     };
 
     const paint = () => {
+      if (!isActiveLoadGeneration(gen)) return;
       try {
         refreshCoverageDerived();
         renderServicesPanel(services);
-        renderWorkspace(services, assetId);
+        renderWorkspace(services, assetId, gen);
         const summary = summarizeServiceFailures(services);
         const stillLoading = Object.values(services).some((s) => s.status === 'loading');
         if (stillLoading) {
@@ -219,9 +250,11 @@
     return services;
   }
 
-  function renderWorkspace(services, assetId) {
+  function renderWorkspace(services, assetId, generation) {
     const Dxl = getCore();
     if (!Dxl) return;
+
+    const gen = generation != null ? generation : activeLoadGeneration;
 
     const {
       state,
@@ -299,57 +332,69 @@
     }
 
     // Carte — Spatial Decision Graph v2.1 (seul renderer officiel Analyse d’Impact Territorial)
+    // Au plus un loadAndMount par génération de load() ; les paint() suivants mettent à jour l’UI sans remonter.
     const mapSection = document.querySelector('#dxl-map')?.closest('.dxl-section');
     mapSection?.querySelectorAll(':scope > .dxl-panel-soft-error').forEach((el) => el.remove());
     document.querySelector('#ux-legend-dxl')?.remove();
     try {
       const map = ensureMap();
-      if (map && state.layer) {
-        state.layer.clearLayers();
-      }
+      const programCode = needs?.asset?.program_code
+        || decisionCase?.asset?.program_code
+        || state.programCode;
       if (map && global.SpatialDecisionGraph?.loadAndMount) {
-        global.SpatialDecisionGraph.loadAndMount(
-          map,
-          'site',
-          assetId,
-          needs?.asset?.program_code || decisionCase?.asset?.program_code || state.programCode,
-        ).then(() => {
-          document.querySelector('#ux-legend-dxl')?.remove();
-          global.SigDecisionCartographyExperience?.attach?.();
-          if (global.sessionStorage?.getItem('fdsu.sdg.autoPresent') === '1') {
-            global.sessionStorage.removeItem('fdsu.sdg.autoPresent');
-            global.setTimeout(() => global.SpatialDecisionGraph?.startPresentation?.(), 400);
-          }
-        }).catch((err) => {
-          console.warn('[DXL] Spatial Decision Graph', err);
-          if (mapSection) {
-            const note = document.createElement('div');
-            note.className = 'dxl-panel-soft-error sdg-explain-fallback';
-            note.innerHTML = '<strong>Analyse spatiale en diagnostic…</strong>';
-            document.querySelector('#dxl-map')?.before(note);
-            const pc = needs?.asset?.program_code || decisionCase?.asset?.program_code || state.programCode || '';
-            const qs = pc ? `?program_code=${encodeURIComponent(pc)}` : '';
-            fetch(`${location.protocol}//${location.hostname}:8001/api/sdg/assets/${encodeURIComponent(assetId)}/explainability${qs}`)
-              .then((r) => (r.ok ? r.json() : null))
-              .then((payload) => {
-                const card = payload?.explainability;
-                if (!card) {
-                  note.innerHTML = '<strong>Analyse spatiale indisponible</strong> — le graphe n’a pas pu être chargé.';
-                  return;
-                }
-                note.innerHTML = `
+        if (claimSdgMount(gen)) {
+          if (state.layer) state.layer.clearLayers();
+          global.SpatialDecisionGraph.loadAndMount(
+            map,
+            'site',
+            assetId,
+            programCode,
+          ).then(() => {
+            if (!isActiveLoadGeneration(gen)) return;
+            document.querySelector('#ux-legend-dxl')?.remove();
+            global.SigDecisionCartographyExperience?.attach?.();
+            if (global.sessionStorage?.getItem('fdsu.sdg.autoPresent') === '1') {
+              global.sessionStorage.removeItem('fdsu.sdg.autoPresent');
+              global.setTimeout(() => {
+                if (!isActiveLoadGeneration(gen)) return;
+                global.SpatialDecisionGraph?.startPresentation?.();
+              }, 400);
+            }
+          }).catch((err) => {
+            if (!isActiveLoadGeneration(gen)) return;
+            console.warn('[DXL] Spatial Decision Graph', err);
+            if (mapSection) {
+              const note = document.createElement('div');
+              note.className = 'dxl-panel-soft-error sdg-explain-fallback';
+              note.innerHTML = '<strong>Analyse spatiale en diagnostic…</strong>';
+              document.querySelector('#dxl-map')?.before(note);
+              const pc = programCode || '';
+              const qs = pc ? `?program_code=${encodeURIComponent(pc)}` : '';
+              fetch(`${location.protocol}//${location.hostname}:8001/api/sdg/assets/${encodeURIComponent(assetId)}/explainability${qs}`)
+                .then((r) => (r.ok ? r.json() : null))
+                .then((payload) => {
+                  if (!isActiveLoadGeneration(gen)) return;
+                  const card = payload?.explainability;
+                  if (!card) {
+                    note.innerHTML = '<strong>Analyse spatiale indisponible</strong> — le graphe n’a pas pu être chargé.';
+                    return;
+                  }
+                  note.innerHTML = `
                   <strong>${card.title || 'Analyse spatiale indisponible'}</strong>
                   <p>${card.message || ''}</p>
                   <p><em>Disponibles :</em> ${(card.available || []).join(', ') || '—'}</p>
                   <p><em>Manquantes :</em> ${(card.missing || []).join(', ') || '—'}</p>
                   <p class="dxl-note">${card.hint || ''}</p>`;
-              })
-              .catch(() => {
-                note.innerHTML = '<strong>Analyse spatiale indisponible</strong> — diagnostic non joignable.';
-              });
-          }
-        });
-      } else if (mapSection) {
+                })
+                .catch(() => {
+                  if (!isActiveLoadGeneration(gen)) return;
+                  note.innerHTML = '<strong>Analyse spatiale indisponible</strong> — diagnostic non joignable.';
+                });
+            }
+          });
+        }
+      } else if (!global.SpatialDecisionGraph?.loadAndMount && mapSection && claimSdgMount(gen)) {
+        // Une seule note « module manquant » par génération
         const note = document.createElement('p');
         note.className = 'dxl-panel-soft-error';
         note.innerHTML = '<strong>Module Spatial Decision Graph non chargé</strong> — vérifiez spatial-decision-graph.js.';
@@ -443,21 +488,23 @@
       renderActions,
     } = Dxl;
 
+    const gen = startLoadGeneration();
     setLoading(true);
     setStatus('Chargement de l’analyse d’impact territorial…');
     try {
-      const services = await loadData(assetType, assetId);
+      const services = await loadData(assetType, assetId, gen);
+      if (!isActiveLoadGeneration(gen)) return services;
       state.payload = {
         services,
         needs: services.needs?.data,
         impact: services.impact?.data,
         explain: services.explain?.data,
-        map: services.map?.data,
+        map: null,
         statistics: services.statistics?.data,
         decisionCase: services.decisionCase?.data,
       };
       state.services = services;
-      renderWorkspace(services, assetId);
+      renderWorkspace(services, assetId, gen);
       const summary = summarizeServiceFailures(services);
       setStatus(summary.text, summary.isError);
       console.info('[DXL] loadSpatialImpact terminé', {
@@ -471,6 +518,7 @@
     } catch (err) {
       // Ne devrait quasiment jamais arriver (tracedFetch ne throw pas)
       console.error('[DXL] loadSpatialImpact erreur fatale', err);
+      if (!isActiveLoadGeneration(gen)) return state.services;
       setStatus(`Analyse d’Impact Territorial — erreur inattendue : ${humanize(err)}`, true);
       const summary = document.querySelector('#dxl-section-summary');
       if (summary) {
@@ -483,7 +531,7 @@
       renderActions();
       return state.services;
     } finally {
-      setLoading(false);
+      if (isActiveLoadGeneration(gen)) setLoading(false);
     }
   }
 
@@ -570,5 +618,13 @@
     mountOnCaseMap,
     loadCoverageDetail,
     summarizeServiceFailures,
+    /** Hooks de test / diagnostic — garde mount SDG (génération). */
+    _sdgMountGuard: {
+      startLoadGeneration,
+      claimSdgMount,
+      isActiveLoadGeneration,
+      getActiveLoadGeneration: () => activeLoadGeneration,
+      getClaimedGeneration: () => sdgMountClaimedForGeneration,
+    },
   };
 })(typeof window !== 'undefined' ? window : globalThis);
