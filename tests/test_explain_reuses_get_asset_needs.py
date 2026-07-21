@@ -84,6 +84,28 @@ def test_explain_asset_id_uses_get_asset_needs_not_direct_rematch(sms):
     assert "rayon" in explained["summary"].lower() or "service" in explained["summary"].lower()
 
 
+def test_explain_forwards_program_code_to_get_asset_needs(sms):
+    mod, calls, _payload = sms
+    captured = {}
+
+    def tracking_get(asset_id, **filters):
+        calls["get_asset_needs"] += 1
+        captured["filters"] = dict(filters)
+        return {
+            "_meta": {"engine": "test"},
+            "matches": [_match("NCI-A")],
+            "impact": {"population_impacted": 1000},
+        }
+
+    mod.get_asset_needs = tracking_get
+    explained = mod.explain_match(asset_id=30, program_code="sites_40")
+    assert calls["get_asset_needs"] == 1
+    assert calls["match_asset_to_needs"] == 0
+    assert captured["filters"].get("program_code") == "sites_40"
+    assert captured["filters"].get("asset_type") == "fdsu_site"
+    assert explained["match"]["need_id"] == "NCI-A"
+
+
 def test_explain_need_id_filter_preserved(sms):
     mod, calls, _payload = sms
     explained = mod.explain_match(asset_id=30, need_id="NCI-B")

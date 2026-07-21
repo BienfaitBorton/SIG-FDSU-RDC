@@ -1796,10 +1796,19 @@ def compute_coverage_gain(matches: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def explain_match(match: dict[str, Any] | None = None, *, asset_id: str | int | None = None, need_id: str | None = None) -> dict[str, Any]:
+def explain_match(
+    match: dict[str, Any] | None = None,
+    *,
+    asset_id: str | int | None = None,
+    need_id: str | None = None,
+    program_code: str | None = None,
+) -> dict[str, Any]:
     if match is None and asset_id is not None:
         # Réutilise cache / single-flight Needs — évite un second rematch froid parallèle à /needs.
-        payload = get_asset_needs(asset_id, asset_type="fdsu_site")
+        needs_filters: dict[str, Any] = {"asset_type": "fdsu_site"}
+        if program_code:
+            needs_filters["program_code"] = program_code
+        payload = get_asset_needs(asset_id, **needs_filters)
         rows = payload.get("matches") or []
         if need_id:
             rows = [r for r in rows if str(r.get("need_id")) == str(need_id) or str(need_id) in str(r.get("need_id"))]

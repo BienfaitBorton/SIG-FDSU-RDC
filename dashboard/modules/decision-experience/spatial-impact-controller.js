@@ -147,6 +147,14 @@
     } = Dxl;
 
     const id = encodeURIComponent(assetId);
+    const programCode = state.programCode
+      ? String(state.programCode).trim()
+      : '';
+    const withProgramCode = (path) => {
+      if (!programCode) return path;
+      const sep = path.includes('?') ? '&' : '?';
+      return `${path}${sep}program_code=${encodeURIComponent(programCode)}`;
+    };
     const services = {
       impact: emptyService('impact'),
       needs: emptyService('needs'),
@@ -159,14 +167,17 @@
     renderServicesPanel(services);
 
     const requests = [
-      { key: 'needs', path: `/api/spatial-matching/assets/${id}/needs?limit=100` },
-      { key: 'impact', path: `/api/spatial-matching/assets/${id}/impact` },
-      { key: 'explain', path: `/api/spatial-matching/assets/${id}/explain`, timeoutMs: 12000 },
+      { key: 'needs', path: withProgramCode(`/api/spatial-matching/assets/${id}/needs?limit=100`) },
+      { key: 'impact', path: withProgramCode(`/api/spatial-matching/assets/${id}/impact`) },
+      { key: 'explain', path: withProgramCode(`/api/spatial-matching/assets/${id}/explain`), timeoutMs: 12000 },
       { key: 'statistics', path: '/api/spatial-matching/statistics' },
       {
         key: 'decisionCase',
         // Noyau léger au premier affichage — preuves spatiales via Needs / Impact / SDG
-        path: `/api/decision/case/${id}?asset_type=${encodeURIComponent(assetType === 'site' ? 'site' : assetType)}&include_spatial_evidence=false`,
+        // program_code requis pour éviter collision d’identité site_id multi-programmes
+        path: withProgramCode(
+          `/api/decision/case/${id}?asset_type=${encodeURIComponent(assetType === 'site' ? 'site' : assetType)}&include_spatial_evidence=false`,
+        ),
       },
     ];
 

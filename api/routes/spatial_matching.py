@@ -144,17 +144,24 @@ def need_assets(
 def asset_impact(
     asset_id: str,
     asset_type: str | None = Query("fdsu_site"),
+    program_code: str | None = None,
     max_distance_km: float | None = Query(None, ge=0),
 ) -> dict[str, Any]:
-    return nsme.get_asset_impact(asset_id, asset_type=asset_type, max_distance_km=max_distance_km)
+    return nsme.get_asset_impact(
+        asset_id,
+        asset_type=asset_type,
+        program_code=program_code,
+        max_distance_km=max_distance_km,
+    )
 
 
 @router.get("/assets/{asset_id}/explain", summary="Explicabilité d'une correspondance")
 def asset_explain(
     asset_id: str,
     need_id: str | None = Query(None),
+    program_code: str | None = None,
 ) -> dict[str, Any]:
-    return nsme.explain_match(asset_id=asset_id, need_id=need_id)
+    return nsme.explain_match(asset_id=asset_id, need_id=need_id, program_code=program_code)
 
 
 @router.get("/territories/{territory_id}/matches", summary="Correspondances d'un territoire")

@@ -14,11 +14,14 @@ const CONTROLLER = path.resolve(
   '../../dashboard/modules/decision-experience/spatial-impact-controller.js',
 );
 
-function loadController() {
+function loadController(options = {}) {
   const mountCalls = [];
   const fetchCalls = [];
   const mapStub = { id: 'map' };
   const layerStub = { clearLayers() {} };
+  const programCode = Object.prototype.hasOwnProperty.call(options, 'programCode')
+    ? options.programCode
+    : null;
 
   const document = {
     querySelector(sel) {
@@ -81,7 +84,7 @@ function loadController() {
   sandbox.globalThis = sandbox;
 
   sandbox.DxlCore = {
-    state: { layer: layerStub, programCode: 'sites_40', services: {} },
+    state: { layer: layerStub, programCode, services: {} },
     SERVICE_LABELS,
     escapeHtml: (v) => String(v ?? ''),
     formatNumber: (v) => String(v ?? ''),
@@ -162,13 +165,15 @@ function loadedServices(assetId) {
 }
 
 async function testLoadDataOmitsMapFetchKeepsFiveAndSdg() {
-  const { ctrl, mountCalls, fetchCalls, guard } = loadController();
+  // Sans program_code : comportement historique
+  const { ctrl, mountCalls, fetchCalls, guard } = loadController({ programCode: null });
   const gen = guard.startLoadGeneration();
   await ctrl.loadData('site', '41', gen);
 
   const paths = fetchCalls.map((c) => c.path);
   assert.strictEqual(fetchCalls.length, 5, `attendu 5 fetches, obtenu ${fetchCalls.length}: ${paths.join(', ')}`);
   assert.ok(!paths.some((p) => p.includes('/spatial-matching/map')), 'ne doit plus fetch /spatial-matching/map');
+  assert.ok(!paths.some((p) => p.includes('program_code=')), 'sans programCode : aucune URL ne doit l’ajouter');
 
   const expected = [
     '/api/spatial-matching/assets/41/needs?limit=100',
@@ -191,7 +196,40 @@ async function testLoadDataOmitsMapFetchKeepsFiveAndSdg() {
   ctrl.renderWorkspace(loadedServices('41'), '41', gen);
   assert.strictEqual(mountCalls.length, 1);
   assert.strictEqual(mountCalls[0].assetId, '41');
-  console.log('OK loadData: 5 fetches, case sans preuves spatiales, sans /map, SDG préservé');
+  console.log('OK loadData sans program_code: 5 fetches historiques, SDG préservé');
+}
+
+async function testLoadDataPropagatesProgramCode() {
+  const { ctrl, mountCalls, fetchCalls, guard } = loadController({ programCode: 'sites_40' });
+  const gen = guard.startLoadGeneration();
+  await ctrl.loadData('site', '30', gen);
+
+  const paths = fetchCalls.map((c) => c.path);
+  assert.strictEqual(fetchCalls.length, 5);
+
+  const needs = paths.find((p) => p.includes('/needs'));
+  const impact = paths.find((p) => p.includes('/impact'));
+  const explain = paths.find((p) => p.includes('/explain'));
+  const stats = paths.find((p) => p.includes('/statistics'));
+  const decisionCase = paths.find((p) => p.includes('/decision/case/'));
+
+  assert.ok(needs.includes('program_code=sites_40'), `needs: ${needs}`);
+  assert.ok(impact.includes('program_code=sites_40'), `impact: ${impact}`);
+  assert.ok(explain.includes('program_code=sites_40'), `explain: ${explain}`);
+  assert.ok(decisionCase.includes('program_code=sites_40'), `decisionCase: ${decisionCase}`);
+  assert.ok(decisionCase.includes('include_spatial_evidence=false'));
+  assert.strictEqual(stats, '/api/spatial-matching/statistics', 'statistics inchangé');
+  assert.ok(!stats.includes('program_code'));
+
+  // Titre : decisionCase avec même identité programme que SDG
+  const services = loadedServices('30');
+  services.decisionCase.data.asset.site_name = 'BAKI';
+  services.decisionCase.data.asset.program_code = 'sites_40';
+  ctrl.renderWorkspace(services, '30', gen);
+  assert.strictEqual(mountCalls.length, 1);
+  assert.strictEqual(mountCalls[0].assetId, '30');
+  assert.strictEqual(mountCalls[0].programCode, 'sites_40');
+  console.log('OK loadData avec program_code=sites_40 sur needs/impact/explain/case ; SDG + stats OK');
 }
 
 function testSameAssetSixPaintsOneMount() {
@@ -251,6 +289,7 @@ async function main() {
   testRetryAllowsRemount();
   testStaleGenerationBlocked();
   await testLoadDataOmitsMapFetchKeepsFiveAndSdg();
+  await testLoadDataPropagatesProgramCode();
   console.log('ALL PASSED');
 }
 
