@@ -47,10 +47,18 @@ Write-Host "Racine du projet : $ProjectRoot"
 
 $dataModeValue = if ($Mode -eq 'db') { 'db' } elseif ($Mode -eq 'json') { 'json' } else { if ($env:DATA_MODE) { $env:DATA_MODE } else { 'json' } }
 $env:DATA_MODE = $dataModeValue
+# Mode DB : stabilité runtime (pas de WatchFiles) — les caches dérivés sous
+# data/cache/ ne doivent pas redémarrer le worker pendant SDG/Needs.
+# Mode JSON (dev) : hot-reload conservé.
+$useReload = ($dataModeValue -ne 'db')
+$uvicornReloadArg = if ($useReload) { '--reload' } else { '' }
+
 if ($dataModeValue -eq 'db') {
     Write-Host "Mode donnees : DB (PostgreSQL/PostGIS)" -ForegroundColor Yellow
+    Write-Host "Uvicorn : sans --reload (stabilite runtime)" -ForegroundColor Yellow
 } else {
     Write-Host "Mode donnees : JSON (fichiers locaux)" -ForegroundColor Yellow
+    Write-Host "Uvicorn : avec --reload (developpement)" -ForegroundColor Yellow
 }
 Write-Host ""
 
@@ -61,7 +69,7 @@ Write-Host '=== SIG-FDSU RDC - API FastAPI (port 8001) ===' -ForegroundColor Gre
 Write-Host "Mode donnees : `$env:DATA_MODE" -ForegroundColor Yellow
 Write-Host 'Documentation : http://127.0.0.1:8001/docs'
 Write-Host ''
-& '$venvPython' -m uvicorn api.main:app --reload --host 127.0.0.1 --port 8001
+& '$venvPython' -m uvicorn api.main:app $uvicornReloadArg --host 127.0.0.1 --port 8001
 "@
 
 $dashboardWindowCommand = @"
